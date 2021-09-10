@@ -1,0 +1,42 @@
+﻿@model object
+@{
+    var type = Model.GetType();
+    var title = type.GetProperty("Title")?.GetValue(Model)?.ToString(); 
+    var content = type.GetProperty("Content")?.GetValue(Model)?.ToString();
+    var footer = type.GetProperty("Footer")?.GetValue(Model)?.ToString();
+    var color = type.GetProperty("Color")?.GetValue(Model)?.ToString();
+    var dismissible = (bool?)type.GetProperty("Dismissible")?.GetValue(Model);
+    var isDismissible = dismissible.HasValue && dismissible.Value; 
+    
+    var hasData = !string.IsNullOrWhiteSpace(title) || !string.IsNullOrWhiteSpace(content) || !string.IsNullOrWhiteSpace(footer);
+    if (string.IsNullOrWhiteSpace(color))
+    {
+        color = "primary";
+    }
+}
+
+@if (hasData)
+{
+    <div class="w-100 alert alert-@(color) @(isDismissible ? "alert-dismissible fade show" : "")" role="alert">
+        @if (!string.IsNullOrWhiteSpace(title))
+        {
+            <h4 class="alert-heading">@Html.Raw(title)</h4>
+        }
+        @if (!string.IsNullOrWhiteSpace(content))
+        {
+            @Html.Raw(content)
+        }
+        @if (!string.IsNullOrWhiteSpace(footer))
+        {
+            <hr>
+            <p class="mb-0">@Html.Raw(footer)</p>
+        }
+        @if (isDismissible)
+        {
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        }
+
+    </div>
+}
