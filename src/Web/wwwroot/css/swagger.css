@@ -1,0 +1,33 @@
+﻿@charset "UTF-8";
+
+/*!
+ * ==========================================
+ * Swagger Theme
+ * Use this file to put exclusive swagger 4 modifications
+ * ==========================================
+ */
+
+html {
+    font-weight: 200;
+    height: 100vh;
+    margin: 0;
+}
+
+.swagger-ui .info {
+    margin-bottom: 0 !important;
+}
+
+.scheme-container {
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.swagger-title {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.swagger-ui .topbar a {
+    max-width: 40px !important;
+}

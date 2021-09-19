@@ -1,0 +1,41 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Domain.Entities.User> SignInManager
+@inject UserManager<Domain.Entities.User> UserManager
+@{
+    var name = "";
+    if (SignInManager.IsSignedIn(User))
+    {
+        if (@User.Claims.Any(m => m.Type == System.Security.Claims.ClaimTypes.GivenName))
+        {
+            name = @User.Claims.FirstOrDefault(m => m.Type == System.Security.Claims.ClaimTypes.GivenName)?.Value;
+        }
+        else
+        {
+            name = @User?.Identity?.Name;
+        }
+    }
+}
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@name</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" onclick="document.getElementById('form-logout').submit();">Logout</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>
+
+<form id="form-logout" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Default", new { area = "" })">
+</form>

@@ -1,0 +1,104 @@
+﻿@inject IConfiguration Configuration
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@Configuration["AppSettings:Name"] - @ViewData["Title"]</title>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="~/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png">
+    <link rel="manifest" href="~/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <script type="text/javascript">
+        /* Sample function that returns boolean in case the browser is Internet Explorer*/
+        function isIE() {
+          ua = navigator.userAgent;
+          /* MSIE used to detect old browsers and Trident used to newer ones*/
+          return ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1; 
+        }
+        /* Create an alert to show if the browser is IE or not */
+        if (isIE()){
+            window.location = "/browsers.htm";
+        }
+    </script>
+
+    @await RenderSectionAsync("Header", false)
+
+    <environment include="development">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
+    </environment>
+    <environment exclude="development">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
+    </environment>
+
+    @Html.PageStyles()
+    @await RenderSectionAsync("Styles", false)
+
+    <environment include="development">
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    </environment>
+    <environment exclude="development">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
+    </environment>
+
+    <environment include="development">
+        @* <style> *@
+        @*     * { *@
+        @*         border: thin solid red !important; *@
+        @*     } *@
+        @* </style> *@
+    </environment>
+
+</head>
+<body>
+
+@RenderBody()
+
+<environment include="development">
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/popper.js/umd/popper.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+</environment>
+<environment exclude="development">
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/popper.js/umd/popper.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+</environment>
+
+@Html.AntiForgeryToken()
+
+<script>
+    let __RequestVerificationToken = null;
+    __RequestVerificationToken = $("[name=__RequestVerificationToken]").val();
+</script>
+
+@Html.PageScripts()
+@await RenderSectionAsync("Scripts", false)
+
+<environment include="development">
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</environment>
+<environment exclude="development">
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+</environment>
+
+</body>
+</html>

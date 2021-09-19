@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "scripts": {
+    "build": "dotnet tool run dotnet-cake",
+    "run": "dotnet run --project src/Web",
+    "migrate_initial": "powershell ./migrate.ps1 -name Initial",
+    "migrate_update": "powershell ./migrate.ps1 -update",
+    "migrate_rollback": "powershell ./migrate.ps1 -rollback",
+    "migrate_clear": "powershell ./migrate.ps1 -clear"
+  }
+}

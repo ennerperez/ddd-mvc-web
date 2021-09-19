@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Domain.Entities.User> SignInManager
+@inject UserManager<Domain.Entities.User> UserManager
+@inject IConfiguration Configuration
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <div class="container p-0">
+            <a class="navbar-brand" asp-area="" asp-controller="Default" asp-action="Index">
+                <img class="pb-1" src="~/favicon.svg" alt="" width="30" height="30">
+                @Configuration["AppSettings:Name"]
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Default" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Default" asp-action="Privacy">Privacy</a>
+                    </li>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                    	<li class="nav-item">
+                        	<a class="nav-link" href="~/api">API</a>
+                    	</li>
+                    }
+                </ul>
+                <partial name="Partials/_LoginPartial"/>
+            </div>
+        </div>
+    </nav>
+</header>
