@@ -56,20 +56,15 @@ namespace Web.Services
                 {
                     List<T> entities;
                     if (!Directory.Exists(source)) Directory.CreateDirectory(source);
-                    var targetFile = Path.Combine(source, $"{nameof(T)}.json");
+                    var targetFile = Path.Combine(source, $"{typeof(T).Name}.json");
                     if (File.Exists(targetFile))
                     {
                         var responseBody = await File.ReadAllTextAsync(targetFile);
                         entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
                         if (entities != null && entities.Any())
                         {
-                            context.Database.OpenConnection();
-                            using (var transaction = await context.Database.BeginTransactionAsync())
-                            {
                                 dbSet.AddRange(entities);
                                 await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
-                                await transaction.CommitAsync();
-                            }
                         }
                     }
                 }
@@ -114,13 +109,8 @@ namespace Web.Services
 
                     if (entities != null && entities.Any())
                     {
-                        context.Database.OpenConnection();
-                        using (var transaction = await context.Database.BeginTransactionAsync())
-                        {
                             dbSet.AddRange(entities);
                             await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
-                            await transaction.CommitAsync();
-                        }
                     }
                 }
                 catch (Exception ex)
