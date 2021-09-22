@@ -17,134 +17,136 @@ using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 
 #pragma warning disable 618
-
 // ReSharper disable CheckNamespace
 
 namespace Microsoft.AspNetCore
 {
     namespace Authentication
     {
-        public class ApiKey
+        namespace ApiKey
         {
-            public ApiKey(int id, string owner, string key, DateTime created, IReadOnlyCollection<string> roles)
+            public static class ApiKeyAuthenticationDefaults
             {
-                Id = id;
-                Owner = owner ?? throw new ArgumentNullException(nameof(owner));
-                Key = key ?? throw new ArgumentNullException(nameof(key));
-                Created = created;
-                Roles = roles ?? throw new ArgumentNullException(nameof(roles));
+                public const string AuthenticationScheme = "API Key";
+
+                public const string ProblemDetailsContentType = "application/problem+json";
+
+                public const string ApiKeyHeaderName = "X-API-KEY";
             }
 
-            public int Id { get; }
-            public string Owner { get; }
-            public string Key { get; }
-            public DateTime Created { get; }
-            public IReadOnlyCollection<string> Roles { get; }
-        }
-
-        public interface IGetApiKeyQuery
-        {
-            Task<ApiKey> Execute(string providedApiKey);
-        }
-
-        public class StaticApiKeyQuery : IGetApiKeyQuery
-        {
-            private readonly IDictionary<string, ApiKey> _apiKeys;
-
-            public StaticApiKeyQuery(IConfiguration configuration)
+            public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
             {
-                var existingApiKeys = new List<ApiKey>();
-                var apilocal = configuration.GetSection("AppSettings")?["Apikey"];
-                var apikey = new ApiKey(1, configuration["AppSettings:Name"], apilocal, DateTime.Now, new[] { "general" });
-                existingApiKeys.Add(apikey);
-
-                _apiKeys = existingApiKeys.ToDictionary(x => x.Key, x => x);
+                public string AuthenticationType => ApiKeyAuthenticationDefaults.AuthenticationScheme;
+                public string Scheme => ApiKeyAuthenticationDefaults.AuthenticationScheme;
             }
 
-            public Task<ApiKey> Execute(string providedApiKey)
+            public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
             {
-                //providedApiKey = providedApiKey.Decrypt(_configuration.GetAppSetting("Secret"));
-                _apiKeys.TryGetValue(providedApiKey, out var key);
-                return Task.FromResult(key);
-            }
-        }
+                private readonly IGetApiKeyQuery _getApiKeyQuery;
 
-        public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
-        {
-            public const string AuthenticationScheme = "API Key";
-            public string AuthenticationType = AuthenticationScheme;
-            public string Scheme => AuthenticationScheme;
+                public ApiKeyAuthenticationHandler(
+                    IOptionsMonitor<ApiKeyAuthenticationOptions> options,
+                    ILoggerFactory logger,
+                    UrlEncoder encoder,
+                    ISystemClock clock,
+                    IGetApiKeyQuery getApiKeyQuery) : base(options, logger, encoder, clock)
+                {
+                    _getApiKeyQuery = getApiKeyQuery ?? throw new ArgumentNullException(nameof(getApiKeyQuery));
+                }
+
+                protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+                {
+                    if (!Request.Headers.TryGetValue(ApiKeyAuthenticationDefaults.ApiKeyHeaderName, out var apiKeyHeaderValues)) return AuthenticateResult.NoResult();
+
+                    var providedApiKey = apiKeyHeaderValues.FirstOrDefault();
+
+                    if (apiKeyHeaderValues.Count == 0 || string.IsNullOrWhiteSpace(providedApiKey)) return AuthenticateResult.NoResult();
+
+                    var existingApiKey = await _getApiKeyQuery.Execute(providedApiKey);
+
+                    if (existingApiKey != null)
+                    {
+                        var claims = new List<Claim> { new Claim(ClaimTypes.Name, existingApiKey.Owner) };
+
+                        claims.AddRange(existingApiKey.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+                        var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
+                        var identities = new List<ClaimsIdentity> { identity };
+                        var principal = new ClaimsPrincipal(identities);
+                        var ticket = new AuthenticationTicket(principal, Options.Scheme);
+
+                        return AuthenticateResult.Success(ticket);
+                    }
+
+                    return AuthenticateResult.Fail("Invalid API Key provided.");
+                }
+
+                protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
+                {
+                    Response.StatusCode = 401;
+                    Response.ContentType = ApiKeyAuthenticationDefaults.ProblemDetailsContentType;
+                    await base.HandleChallengeAsync(properties);
+                }
+
+                protected override async Task HandleForbiddenAsync(AuthenticationProperties properties)
+                {
+                    Response.StatusCode = 403;
+                    Response.ContentType = ApiKeyAuthenticationDefaults.ProblemDetailsContentType;
+                    await base.HandleForbiddenAsync(properties);
+                }
+            }
+
+            public interface IGetApiKeyQuery
+            {
+                Task<ApiKey> Execute(string providedApiKey);
+            }
+
+            public class ApiKey
+            {
+                public ApiKey(int id, string owner, string key, DateTime created, IReadOnlyCollection<string> roles)
+                {
+                    Id = id;
+                    Owner = owner ?? throw new ArgumentNullException(nameof(owner));
+                    Key = key ?? throw new ArgumentNullException(nameof(key));
+                    Created = created;
+                    Roles = roles ?? throw new ArgumentNullException(nameof(roles));
+                }
+
+                public int Id { get; }
+                public string Owner { get; }
+                public string Key { get; }
+                public DateTime Created { get; }
+                public IReadOnlyCollection<string> Roles { get; }
+            }
+
+            public class StaticApiKeyQuery : IGetApiKeyQuery
+            {
+                private readonly IDictionary<string, ApiKey> _apiKeys;
+
+                public StaticApiKeyQuery(IConfiguration configuration)
+                {
+                    var existingApiKeys = new List<ApiKey>();
+                    var apilocal = configuration.GetSection("AppSettings")?["Apikey"];
+                    var apikey = new ApiKey(1, configuration["AppSettings:Name"], apilocal, DateTime.Now, new[] { "general" });
+                    existingApiKeys.Add(apikey);
+
+                    _apiKeys = existingApiKeys.ToDictionary(x => x.Key, x => x);
+                }
+
+                public Task<ApiKey> Execute(string providedApiKey)
+                {
+                    _apiKeys.TryGetValue(providedApiKey, out var key);
+                    return Task.FromResult(key);
+                }
+            }
         }
 
         public static class AuthenticationBuilderExtensions
         {
-            public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
+            public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKey.ApiKeyAuthenticationOptions> options = null)
             {
-                authenticationBuilder.Services.AddTransient<IGetApiKeyQuery, StaticApiKeyQuery>();
-                return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.AuthenticationScheme, options);
-            }
-        }
-
-        public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
-        {
-            private const string ProblemDetailsContentType = "application/problem+json";
-            public const string ApiKeyHeaderName = "X-API-KEY";
-            private readonly IGetApiKeyQuery _getApiKeyQuery;
-
-            public ApiKeyAuthenticationHandler(
-                IOptionsMonitor<ApiKeyAuthenticationOptions> options,
-                ILoggerFactory logger,
-                UrlEncoder encoder,
-                ISystemClock clock,
-                IGetApiKeyQuery getApiKeyQuery) : base(options, logger, encoder, clock)
-            {
-                _getApiKeyQuery = getApiKeyQuery ?? throw new ArgumentNullException(nameof(getApiKeyQuery));
-            }
-
-            protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
-            {
-                if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out var apiKeyHeaderValues)) return AuthenticateResult.NoResult();
-
-                var providedApiKey = apiKeyHeaderValues.FirstOrDefault();
-
-                if (apiKeyHeaderValues.Count == 0 || string.IsNullOrWhiteSpace(providedApiKey)) return AuthenticateResult.NoResult();
-
-                var existingApiKey = await _getApiKeyQuery.Execute(providedApiKey);
-
-                if (existingApiKey != null)
-                {
-                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, existingApiKey.Owner) };
-
-                    claims.AddRange(existingApiKey.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-                    var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
-                    var identities = new List<ClaimsIdentity> { identity };
-                    var principal = new ClaimsPrincipal(identities);
-                    var ticket = new AuthenticationTicket(principal, Options.Scheme);
-
-                    return AuthenticateResult.Success(ticket);
-                }
-
-                return AuthenticateResult.Fail("Invalid API Key provided.");
-            }
-
-            protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
-            {
-                Response.StatusCode = 401;
-                Response.ContentType = ProblemDetailsContentType;
-                await base.HandleChallengeAsync(properties);
-                //var problemDetails = new UnauthorizedProblemDetails();
-                //await Response.WriteAsync(JsonSerializer.Serialize(problemDetails, DefaultJsonSerializerOptions.Options));
-            }
-
-            protected override async Task HandleForbiddenAsync(AuthenticationProperties properties)
-            {
-                Response.StatusCode = 403;
-                Response.ContentType = ProblemDetailsContentType;
-                await base.HandleForbiddenAsync(properties);
-                //var problemDetails = new ForbiddenProblemDetails();
-
-                //await Response.WriteAsync(JsonSerializer.Serialize(problemDetails, DefaultJsonSerializerOptions.Options));
+                authenticationBuilder.Services.AddTransient<ApiKey.IGetApiKeyQuery, ApiKey.StaticApiKeyQuery>();
+                return authenticationBuilder.AddScheme<ApiKey.ApiKeyAuthenticationOptions, ApiKey.ApiKeyAuthenticationHandler>(ApiKey.ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
             }
         }
     }

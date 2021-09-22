@@ -8,7 +8,9 @@ using Domain;
 using Domain.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.ApiKey;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -113,25 +115,26 @@ namespace Web
                     OnRedirectToLogin = (ctx) =>
                     {
                         if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-                        {
                             ctx.Response.StatusCode = 401;
-                        }
-
                         return Task.CompletedTask;
                     },
                     OnRedirectToAccessDenied = (ctx) =>
                     {
                         if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-                        {
                             ctx.Response.StatusCode = 403;
-                        }
-
                         return Task.CompletedTask;
                     }
                 };
             });
 
             services.AddRazorPages();
+            
+            services.AddAuthentication()
+                .AddJwtBearer()
+                .AddCookie()
+                .AddApiKeySupport();
+            
+            services.AddAuthorization();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -139,24 +142,51 @@ namespace Web
                 var versions = new List<string>();
                 Configuration.Bind("SwaggerSettings:Versions", versions);
                 foreach (var version in versions)
-                {
                     c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = $"{version}" });
-                }
+                c.DocInclusionPredicate((_, _) => true);
+                
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Description = "Put **_ONLY_** your JWT Bearer token",
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { In = ParameterLocation.Header, Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = SecuritySchemeType.ApiKey });
-                c.AddSecurityDefinition("X-API-KEY", new OpenApiSecurityScheme { In = ParameterLocation.Header, Description = "Please enter API Key with X-Api-Key into field", Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName, Type = SecuritySchemeType.ApiKey });
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                
+                c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
+                
+                var apiKeySecurityScheme = new OpenApiSecurityScheme
+                {
+                    Scheme = ApiKeyAuthenticationDefaults.AuthenticationScheme,
+                    Name = ApiKeyAuthenticationDefaults.ApiKeyHeaderName,
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Description = "Put **_ONLY_** your API Key",
 
+                    Reference = new OpenApiReference
+                    {
+                        Id = ApiKeyAuthenticationDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                
+                c.AddSecurityDefinition(apiKeySecurityScheme.Reference.Id, apiKeySecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement { { apiKeySecurityScheme, Array.Empty<string>() } });
+                
                 c.ResolveConflictingActions(apiDescription => apiDescription.First());
-
                 c.CustomSchemaIds(type => type.ToString());
-
                 c.EnableAnnotations();
-                //c.DescribeAllEnumsAsStrings();
-                //c.DescribeStringEnumsInCamelCase();
-            });
 
-            services.AddAuthentication().AddApiKeySupport();
-            services.AddAuthorization();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -216,7 +246,7 @@ namespace Web
                         c.RoutePrefix = swaggerRoutePrefix;
                         var version = versions.LastOrDefault();
                         c.SpecUrl($"{version}/{Name.ToLower()}.json");
-                        
+
                         c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
                     });
                 }
@@ -231,7 +261,7 @@ namespace Web
 
                         c.DocumentTitle = swaggerDocumentTitle;
                         c.RoutePrefix = swaggerRoutePrefix;
-                        
+
                         c.DefaultModelsExpandDepth(-1);
 
                         c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
