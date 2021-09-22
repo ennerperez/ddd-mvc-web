@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions = Microsoft.EntityFrameworkCore.DbContextOptions;
-
-#if SQLITE
+#if SQLITE || LITEDB
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 #endif

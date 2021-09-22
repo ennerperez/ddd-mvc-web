@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO.Compression;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Domain;
 using Domain.Entities;
 using Infrastructure;
@@ -20,9 +17,20 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Contexts;
+
+#if NEWTONSOFT
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+#endif
+
+#if SWAGGER
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.OpenApi.Models;
+#endif
 
 namespace Web
 {
@@ -78,11 +86,47 @@ namespace Web
                 options.User.RequireUniqueEmail = true;
             });
 
+#if NEWTONSOFT
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+#if DEBUG
+                Formatting = Formatting.Indented,
+#else
+                Formatting = Formatting.None,
+#endif
+                //NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            };
+            var jsonOptions = new Action<MvcNewtonsoftJsonOptions>((option) =>
+            {
+#if DEBUG
+                option.SerializerSettings.Formatting = Formatting.Indented;
+#else
+                option.SerializerSettings.Formatting = Formatting.None;
+#endif
+                //option.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                option.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                option.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            });
+#endif
+
+#if NEWTONSOFT
+            services.AddControllersWithViews()
+#if DEBUG
+                .AddRazorRuntimeCompilation();
+#else
+                .AddNewtonsoftJson(jsonOptions);
+#endif
+#else
 #if DEBUG
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 #else
             services.AddControllersWithViews();
+#endif
 #endif
 
             services.AddResponseCompression();
@@ -109,33 +153,17 @@ namespace Web
                 {
                     HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
-
-                options.Events = new CookieAuthenticationEvents()
-                {
-                    OnRedirectToLogin = (ctx) =>
-                    {
-                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-                            ctx.Response.StatusCode = 401;
-                        return Task.CompletedTask;
-                    },
-                    OnRedirectToAccessDenied = (ctx) =>
-                    {
-                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-                            ctx.Response.StatusCode = 403;
-                        return Task.CompletedTask;
-                    }
-                };
+                options.Events = new CustomCookieAuthenticationEvents();
             });
 
+#if NEWTONSOFT
+            services.AddRazorPages()
+                .AddNewtonsoftJson(jsonOptions);
+#else
             services.AddRazorPages();
-            
-            services.AddAuthentication()
-                .AddJwtBearer()
-                .AddCookie()
-                .AddApiKeySupport();
-            
-            services.AddAuthorization();
+#endif
 
+#if SWAGGER
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -144,7 +172,7 @@ namespace Web
                 foreach (var version in versions)
                     c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = $"{version}" });
                 c.DocInclusionPredicate((_, _) => true);
-                
+
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = JwtBearerDefaults.AuthenticationScheme,
@@ -153,17 +181,12 @@ namespace Web
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
                     Description = "Put **_ONLY_** your JWT Bearer token",
-
-                    Reference = new OpenApiReference
-                    {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme
-                    }
+                    Reference = new OpenApiReference { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
                 };
-                
+
                 c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
-                
+
                 var apiKeySecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = ApiKeyAuthenticationDefaults.AuthenticationScheme,
@@ -171,22 +194,29 @@ namespace Web
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Description = "Put **_ONLY_** your API Key",
-
-                    Reference = new OpenApiReference
-                    {
-                        Id = ApiKeyAuthenticationDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme
-                    }
+                    Reference = new OpenApiReference { Id = ApiKeyAuthenticationDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
                 };
-                
+
                 c.AddSecurityDefinition(apiKeySecurityScheme.Reference.Id, apiKeySecurityScheme);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { apiKeySecurityScheme, Array.Empty<string>() } });
-                
+
                 c.ResolveConflictingActions(apiDescription => apiDescription.First());
                 c.CustomSchemaIds(type => type.ToString());
                 c.EnableAnnotations();
-
             });
+
+#if NEWTONSOFT
+            services.AddSwaggerGenNewtonsoftSupport();
+#endif
+
+#endif
+
+            services.AddAuthentication()
+                .AddJwtBearer()
+                .AddCookie()
+                .AddApiKeySupport();
+
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -224,6 +254,8 @@ namespace Web
             app.UseResponseCompression();
 
             app.UseRouting();
+
+#if SWAGGER
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Name.ToLower()}.json"; });
@@ -270,6 +302,8 @@ namespace Web
                     });
                 }
             }
+
+#endif
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

@@ -141,6 +141,40 @@ namespace Microsoft.AspNetCore
             }
         }
 
+        namespace Cookies
+        {
+            public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
+            {
+                public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
+                {
+                    if (context.Request.Path.StartsWithSegments("/api") &&
+                        context.Response.StatusCode == StatusCodes.Status200OK)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return Task.CompletedTask;
+                    }
+                    else
+                    {
+                        return base.RedirectToLogin(context);
+                    }
+                }
+
+                public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
+                {
+                    if (context.Request.Path.StartsWithSegments("/api") &&
+                        context.Response.StatusCode == StatusCodes.Status200OK)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        return Task.CompletedTask;
+                    }
+                    else
+                    {
+                        return base.RedirectToAccessDenied(context);
+                    }
+                }
+            }
+        }
+
         public static class AuthenticationBuilderExtensions
         {
             public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKey.ApiKeyAuthenticationOptions> options = null)
@@ -357,7 +391,7 @@ namespace Microsoft.AspNetCore
 #if DEBUG
                 return true;
 #else
-            return false;
+                return false;
 #endif
             }
         }

@@ -16,8 +16,6 @@ namespace Web.Controllers.API
 {
     [Authorize(AuthenticationSchemes = ApiKeyAuthenticationDefaults.AuthenticationScheme)]
     [ApiExplorerSettings(GroupName = "v1")]
-    [Route("api/[controller]")]
-    [ApiController]
     public class SettingController : ApiControllerBase<Setting>
     {
         private readonly ILogger _logger;

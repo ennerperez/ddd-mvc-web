@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Interfaces;
@@ -18,6 +19,7 @@ namespace Web.Controllers
         }
     }
 
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>

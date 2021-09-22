@@ -2,13 +2,13 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
   <PropertyGroup Label="Options">
-    <EnableNonAsync>false</EnableNonAsync>
-    <EnableBulk>true</EnableBulk>
+    <DefaultJsonSerializer>Newtonsoft.Json</DefaultJsonSerializer>
+    <UsingSwagger>true</UsingSwagger>
   </PropertyGroup>
   
   <PropertyGroup>
-    <BuildConstants Condition="'$(EnableNonAsync)' == 'true'">$(BuildConstants)NONASYNC;</BuildConstants>
-    <BuildConstants Condition="'$(EnableBulk)' == 'true'">$(BuildConstants)BULK;</BuildConstants>
+    <BuildConstants Condition="'$(DefaultJsonSerializer)' == 'Newtonsoft.Json'">$(BuildConstants)NEWTONSOFT;</BuildConstants>
+    <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)SWAGGER;</BuildConstants>
   </PropertyGroup>
 
   <PropertyGroup>
