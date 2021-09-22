@@ -4,13 +4,15 @@
   <PropertyGroup Label="Options">
     <DefaultJsonSerializer>Newtonsoft.Json</DefaultJsonSerializer>
     <UsingSwagger>true</UsingSwagger>
-    <UsingLocalization>true</UsingLocalization>
+    <UsingLocalization>false</UsingLocalization>
+    <UsingInsights>false</UsingInsights>
   </PropertyGroup>
   
   <PropertyGroup>
     <BuildConstants Condition="'$(DefaultJsonSerializer)' == 'Newtonsoft.Json'">$(BuildConstants)NEWTONSOFT;</BuildConstants>
     <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)SWAGGER;</BuildConstants>
     <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)LOCALIZABLE;</BuildConstants>
+    <BuildConstants Condition="'$(UsingInsights)' == 'true'">$(BuildConstants)INSIGHTS;</BuildConstants>
   </PropertyGroup>
 
   <PropertyGroup>
