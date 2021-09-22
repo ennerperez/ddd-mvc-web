@@ -32,6 +32,11 @@ using System.Linq;
 using Microsoft.OpenApi.Models;
 #endif
 
+#if LOCALIZABLE
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+#endif
+
 namespace Web
 {
     public class Startup
@@ -40,15 +45,35 @@ namespace Web
         {
             Configuration = configuration;
             Name = configuration["AppSettings:Name"];
+#if LOCALIZABLE
+            SupportedCultures = configuration.GetSection("CultureInfo:SupportedCultures").Get<string[]>().Select(m => new CultureInfo(m)).ToArray();
+            CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"]);
+#endif
         }
 
         public static string Name { get; private set; }
         internal IConfiguration Configuration { get; private set; }
 
+#if LOCALIZABLE
+        public CultureInfo[] SupportedCultures { get; private set; }
+
+        public static CultureInfo CurrencyCulture { get; private set; }
+
+#endif
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+#if LOCALIZABLE
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture(SupportedCultures.First());
+                options.SupportedCultures = SupportedCultures;
+                options.SupportedUICultures = SupportedCultures;
+            });
+#endif
 
             services
                 .AddDomain()
@@ -208,7 +233,6 @@ namespace Web
 #if NEWTONSOFT
             services.AddSwaggerGenNewtonsoftSupport();
 #endif
-
 #endif
 
             services.AddAuthentication()
@@ -248,6 +272,10 @@ namespace Web
             {
                 app.UseHttpsRedirection();
             }
+
+#if LOCALIZABLE
+            app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
+#endif
 
             app.UseStaticFiles();
 
