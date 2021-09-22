@@ -1,4 +1,6 @@
-﻿namespace System.Net.Http
+﻿// ReSharper disable UnusedParameter.Local
+
+namespace System.Net.Http
 {
     public static class Methods
     {
@@ -12,7 +14,7 @@
 #if DEBUG
                 if (cert.Issuer.Equals("CN=localhost"))
                     return true;
-                return errors == System.Net.Security.SslPolicyErrors.None;
+                return errors == Security.SslPolicyErrors.None;
 #else
                 return true;
 #endif
