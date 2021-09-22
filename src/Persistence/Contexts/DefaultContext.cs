@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Persistence.Conventions;
 using System;
 using System.Data.Common;
-using System.IO;
 using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -12,7 +11,12 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions = Microsoft.EntityFrameworkCore.DbContextOptions;
-#if SQLITE || LITEDB
+
+#if DEBUG
+using System.IO;
+#endif
+
+#if SQLITE
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 #endif

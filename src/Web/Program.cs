@@ -1,10 +1,13 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+
+#if DEBUG
+using Microsoft.Extensions.DependencyInjection;
 using Web.Services;
+#endif
 
 namespace Web
 {
