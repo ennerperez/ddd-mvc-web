@@ -1,4 +1,5 @@
 using System;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
@@ -62,6 +63,16 @@ namespace Persistence
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
             // services.AddTransient<IGenericService<T>, GenericService<T>>();
+            
+            services.AddTransient<IGenericService<Setting>, SettingService>();
+            
+            services.AddTransient<IGenericService<Role>, RoleService>();
+            services.AddTransient<IGenericService<RoleClaim>, RoleClaimService>();
+            services.AddTransient<IGenericService<User>, UserService>();
+            services.AddTransient<IGenericService<UserClaim>, UserClaimService>();
+            services.AddTransient<IGenericService<UserLogin>, UserLoginService>();
+            services.AddTransient<IGenericService<UserRole>, UserRoleService>();
+            services.AddTransient<IGenericService<UserToken>, UserTokenService>();
 
             services.AddTransient<ISettingService, SettingService>();
 

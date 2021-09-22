@@ -1,19 +1,10 @@
-﻿#define ASYNC
-//#define NONASYNC
-//#define BULK
-
-#if ASYNC || NONASYNC
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
-#endif
-#if ASYNC
 using System.Threading.Tasks;
-#endif
-
 using Microsoft.Extensions.Configuration;
 using Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +16,7 @@ using Domain.Interfaces;
 using EFCore.BulkExtensions;
 #endif
 
+// ReSharper disable UnusedTypeParameter
 // ReSharper disable RedundantCast
 // ReSharper disable AssignNullToNotNullAttribute
 
@@ -61,7 +53,6 @@ namespace Persistence.Services
             Configuration = configuration;
         }
 
-#if ASYNC
         public virtual Task<IQueryable<TResult>> ReadAsync<TResult>(
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
@@ -271,7 +262,7 @@ namespace Persistence.Services
 #if BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
-            _dbSet.RemoveRange(list);
+                _dbSet.RemoveRange(list);
 #if BULK
             else
                 await _dbContext.BulkDeleteAsync(list);
@@ -285,13 +276,13 @@ namespace Persistence.Services
 #if BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
-            foreach (var item in entities)
-            {
-                if (item.Id.Equals(default))
-                    await CreateAsync(item);
-                else
-                    await UpdateAsync(item);
-            }
+                foreach (var item in entities)
+                {
+                    if (item.Id.Equals(default))
+                        await CreateAsync(item);
+                    else
+                        await UpdateAsync(item);
+                }
 #if BULK
             else
             {
@@ -350,8 +341,6 @@ namespace Persistence.Services
             return await result.FirstOrDefaultAsync();
         }
 
-#endif
-
 #if NONASYNC
         public virtual IQueryable<TResult> Read<TResult>(
             Expression<Func<TEntity, TResult>> selector,
@@ -362,7 +351,7 @@ namespace Persistence.Services
             bool disableTracking = false,
             bool ignoreQueryFilters = false)
         {
-            IQueryable<TEntity> query = DbSet;
+            IQueryable<TEntity> query = _dbSet;
             if (disableTracking) query = query.AsNoTracking();
             if (include != null) query = include(query);
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
@@ -449,7 +438,7 @@ namespace Persistence.Services
             if (searchPredicate != null)
                 expression = Expression.Lambda<Func<TEntity, bool>>(searchPredicate, parameter);
 
-            IQueryable<TEntity> query = DbSet;
+            IQueryable<TEntity> query = _dbSet;
             if (disableTracking) query = query.AsNoTracking();
             if (include != null) query = include(query);
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
@@ -470,22 +459,22 @@ namespace Persistence.Services
         public virtual int Count(Expression<Func<TEntity, bool>> predicate = null)
         {
             if (predicate != null)
-                return DbSet.Count(predicate);
-            return DbSet.Count();
+                return _dbSet.Count(predicate);
+            return _dbSet.Count();
         }
 
         public virtual long LongCount(Expression<Func<TEntity, bool>> predicate = null)
         {
             if (predicate != null)
-                return DbSet.LongCount(predicate);
-            return DbSet.LongCount();
+                return _dbSet.LongCount(predicate);
+            return _dbSet.LongCount();
         }
 
         public virtual bool Any(Expression<Func<TEntity, bool>> predicate = null)
         {
             if (predicate != null)
-                return DbSet.Any(predicate);
-            return DbSet.Any();
+                return _dbSet.Any(predicate);
+            return _dbSet.Any();
         }
 
         public virtual void Create(params TEntity[] entities)
@@ -496,7 +485,7 @@ namespace Persistence.Services
             {
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
-                    DbSet.AddRange(entities);
+                    _dbSet.AddRange(entities);
                 }
                 else
                 {
@@ -504,8 +493,8 @@ namespace Persistence.Services
                     var parts = entities.Split(size);
                     foreach (var item in parts)
                     {
-                        DbSet.AddRange(item);
-                        DbContext.SaveChanges();
+                        _dbSet.AddRange(item);
+                        _dbContext.SaveChanges();
                     }
 
                     return;
@@ -513,10 +502,10 @@ namespace Persistence.Services
             }
 #if BULK
             else
-                DbContext.BulkInsert(entities);
+                _dbContext.BulkInsert(entities);
 #endif
 
-            DbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         public virtual void Update(params TEntity[] entities)
@@ -527,7 +516,7 @@ namespace Persistence.Services
             {
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
-                    DbSet.UpdateRange(entities);
+                    _dbSet.UpdateRange(entities);
                 }
                 else
                 {
@@ -535,8 +524,8 @@ namespace Persistence.Services
                     var parts = entities.Split(size);
                     foreach (var item in parts)
                     {
-                        DbSet.UpdateRange(item);
-                        DbContext.SaveChanges();
+                        _dbSet.UpdateRange(item);
+                        _dbContext.SaveChanges();
                     }
 
                     return;
@@ -544,10 +533,10 @@ namespace Persistence.Services
             }
 #if BULK
             else
-                DbContext.BulkUpdate(entities);
+                _dbContext.BulkUpdate(entities);
 #endif
 
-            DbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         public virtual void Delete(params TKey[] keys)
@@ -555,20 +544,20 @@ namespace Persistence.Services
             var list = new List<TEntity>();
             foreach (var item in keys)
             {
-                var entity = DbSet.Find(item);
+                var entity = _dbSet.Find(item);
                 if (entity != null)
                     list.Add(entity);
             }
 #if BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
-                DbSet.RemoveRange(list);
+                _dbSet.RemoveRange(list);
 #if BULK
             else
-                DbContext.BulkDelete(list);
+                _dbContext.BulkDelete(list);
 #endif
 
-            DbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         public virtual void CreateOrUpdate(params TEntity[] entities)
@@ -586,14 +575,14 @@ namespace Persistence.Services
 #if BULK
             else
             {
-                DbContext.BulkUpdate(entities.Where(m => !m.Id.Equals(default)));
-                DbContext.BulkInsert(entities.Where(m => m.Id.Equals(default)));
-                DbContext.SaveChanges();
+                _dbContext.BulkUpdate(entities.Where(m => !m.Id.Equals(default)).ToArray());
+                _dbContext.BulkInsert(entities.Where(m => m.Id.Equals(default)).ToArray());
+                _dbContext.SaveChanges();
             }
 #endif
         }
 
-        
+
         // * //
 
 
@@ -605,7 +594,7 @@ namespace Persistence.Services
             bool disableTracking = false,
             bool ignoreQueryFilters = false)
         {
-            IQueryable<TEntity> query = DbSet;
+            IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
                 query = query.AsNoTracking();
             if (include != null)
@@ -626,7 +615,7 @@ namespace Persistence.Services
             bool disableTracking = false,
             bool ignoreQueryFilters = false)
         {
-            IQueryable<TEntity> query = DbSet;
+            IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
                 query = query.AsNoTracking();
             if (include != null)

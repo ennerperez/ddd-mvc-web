@@ -1,15 +1,17 @@
-//#define NEWTONSOFT
-
 using System;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Domain;
 using Domain.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -19,12 +21,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Contexts;
-
-#if NEWTONSOFT
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-#endif
 
 namespace Web
 {
@@ -45,15 +41,15 @@ namespace Web
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services
-            	.AddDomain()
+                .AddDomain()
                 .AddInfrastructure()
                 .AddPersistence(options =>
                 {
-                    options.UseDbEngine(Configuration);
+                    DefaultContext.UseDbEngine(options, Configuration);
                 });
 
             services
-            	.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<Role>()
                 .AddUserManager<UserManager<User>>()
                 .AddRoleManager<RoleManager<Role>>()
@@ -80,51 +76,15 @@ namespace Web
                 options.User.RequireUniqueEmail = true;
             });
 
-#if NEWTONSOFT
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-#if DEBUG
-                Formatting = Formatting.Indented,
-#else
-                Formatting = Formatting.None,
-#endif
-                //NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                DateTimeZoneHandling = DateTimeZoneHandling.Utc
-            };
-            var jsonOptions = new Action<MvcNewtonsoftJsonOptions>((option) =>
-            {
-#if DEBUG
-                option.SerializerSettings.Formatting = Formatting.Indented;
-#else
-                option.SerializerSettings.Formatting = Formatting.None;
-#endif
-                //option.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                option.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                option.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-            });
-#endif
-
 #if DEBUG
             services.AddControllersWithViews()
-#if NEWTONSOFT
-                .AddNewtonsoftJson(jsonOptions)
-#endif
                 .AddRazorRuntimeCompilation();
-#else
-#if NEWTONSOFT
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson(jsonOptions);
 #else
             services.AddControllersWithViews();
 #endif
 
-#endif
-
             services.AddResponseCompression();
-            
+
             services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
             services.AddResponseCompression(config =>
             {
@@ -133,32 +93,67 @@ namespace Web
             });
 
             services.AddHttpContextAccessor();
-            
-#if NEWTONSOFT
-            services.AddRazorPages().AddNewtonsoftJson(jsonOptions);
-#else
-            services.AddRazorPages();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+#if DEBUG
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 #endif
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.Cookie = new CookieBuilder
+                {
+                    HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
+                };
+
+                options.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = (ctx) =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 401;
+                        }
+
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToAccessDenied = (ctx) =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 403;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            services.AddRazorPages();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = "v1" });
+                var versions = new List<string>();
+                Configuration.Bind("SwaggerSettings:Versions", versions);
+                foreach (var version in versions)
+                {
+                    c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = $"{version}" });
+                }
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { In = ParameterLocation.Header, Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = SecuritySchemeType.ApiKey });
-                c.AddSecurityDefinition("X-Api-Key", new OpenApiSecurityScheme { In = ParameterLocation.Header, Description = "Please enter API Key with X-Api-Key into field", Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName, Type = SecuritySchemeType.ApiKey });
+                c.AddSecurityDefinition("X-API-KEY", new OpenApiSecurityScheme { In = ParameterLocation.Header, Description = "Please enter API Key with X-Api-Key into field", Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName, Type = SecuritySchemeType.ApiKey });
 
                 c.ResolveConflictingActions(apiDescription => apiDescription.First());
 
                 c.CustomSchemaIds(type => type.ToString());
 
+                c.EnableAnnotations();
                 //c.DescribeAllEnumsAsStrings();
                 //c.DescribeStringEnumsInCamelCase();
             });
-
-#if NEWTONSOFT
-            services.AddSwaggerGenNewtonsoftSupport();
-#endif
 
             services.AddAuthentication().AddApiKeySupport();
             services.AddAuthorization();
@@ -176,7 +171,7 @@ namespace Web
                     return next();
                 });
             }
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -203,16 +198,48 @@ namespace Web
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Name.ToLower()}.json"; });
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
+            if (Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
             {
-                c.SwaggerEndpoint($"v1/{Name.ToLower()}.json", $"{Name} v1");
-                c.RoutePrefix = "api";
-                c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
-                c.InjectJavascript($"../lib/jquery/jquery{(env.IsDevelopment() ? "" : ".min")}.js");
-                c.InjectJavascript($"../js/swagger{(env.IsDevelopment() ? "" : ".min")}.js");
-            });
+                var uiEngine = Configuration["SwaggerSettings:UIEngine"];
+                var swaggerRoutePrefix = Configuration["SwaggerSettings:RoutePrefix"];
+                var swaggerDocumentTitle = Configuration["SwaggerSettings:DocumentTitle"];
+                var versions = new List<string>();
+                Configuration.Bind("SwaggerSettings:Versions", versions);
+
+                if (uiEngine == "ReDoc")
+                {
+                    // Enable middleware to serve ReDoc (HTML, JS, CSS, etc.),
+                    // specifying the Swagger JSON endpoint.
+                    app.UseReDoc(c =>
+                    {
+                        c.DocumentTitle = swaggerDocumentTitle;
+                        c.RoutePrefix = swaggerRoutePrefix;
+                        var version = versions.LastOrDefault();
+                        c.SpecUrl($"{version}/{Name.ToLower()}.json");
+                        
+                        c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
+                    });
+                }
+                else
+                {
+                    // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+                    // specifying the Swagger JSON endpoint.
+                    app.UseSwaggerUI(c =>
+                    {
+                        foreach (var version in versions)
+                            c.SwaggerEndpoint($"{version}/{Name.ToLower()}.json", $"{swaggerDocumentTitle} {version}");
+
+                        c.DocumentTitle = swaggerDocumentTitle;
+                        c.RoutePrefix = swaggerRoutePrefix;
+                        
+                        c.DefaultModelsExpandDepth(-1);
+
+                        c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
+                        c.InjectJavascript($"../lib/jquery/jquery{(env.IsDevelopment() ? "" : ".min")}.js");
+                        c.InjectJavascript($"../js/swagger{(env.IsDevelopment() ? "" : ".min")}.js");
+                    });
+                }
+            }
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

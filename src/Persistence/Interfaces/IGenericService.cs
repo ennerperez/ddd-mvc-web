@@ -1,16 +1,9 @@
-﻿#define ASYNC
-//#define NONASYNC
-
-using System;
+﻿using System;
 using Domain.Interfaces;
-#if ASYNC || NONASYNC
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq;
 using System.Linq.Expressions;
-#endif
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 
 namespace Persistence.Interfaces
 {
@@ -20,7 +13,6 @@ namespace Persistence.Interfaces
 
     public interface IGenericService<TEntity, TKey> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-#if ASYNC
 
         Task<IQueryable<TResult>> ReadAsync<TResult>(
             Expression<Func<TEntity, TResult>> selector,
@@ -67,8 +59,6 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false);
-
-#endif
 
 #if NONASYNC
 		IQueryable<TResult> Read<TResult>(

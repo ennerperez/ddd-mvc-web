@@ -19,5 +19,8 @@
 <partial name="_Footer"/>
 
 @section Scripts{
-   @await RenderSectionAsync("Scripts", false)
+
+    <partial name="Components/Validation"/>
+
+    @await RenderSectionAsync("Scripts", false)
 }

@@ -9,13 +9,18 @@ using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-#if SQLITE || LITEDB
-using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
-#endif
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions = Microsoft.EntityFrameworkCore.DbContextOptions;
+
+#if SQLITE
+using System.Text.RegularExpressions;
+using Microsoft.Data.Sqlite;
+#endif
+
+// ReSharper disable UnusedVariable
+#pragma warning disable 219
+#pragma warning disable 168
 
 namespace Persistence.Contexts
 {
@@ -74,7 +79,7 @@ namespace Persistence.Contexts
                     .AddEnvironmentVariables()
                     .Build();
 
-                optionsBuilder.UseDbEngine(config);
+                UseDbEngine(optionsBuilder, config);
             }
         }
 #endif
@@ -84,11 +89,8 @@ namespace Persistence.Contexts
         public DbSet<Setting> Settings { get; set; }
 
         #endregion DbSet
-    }
 
-    public static class Extensions
-    {
-        public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config)
+        public static void UseDbEngine(DbContextOptionsBuilder optionsBuilder, IConfiguration config)
         {
 #pragma warning disable 168
 #pragma warning disable 219
@@ -103,12 +105,6 @@ namespace Persistence.Contexts
             var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
             csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);
             optionsBuilder.UseSqlite(csb.ConnectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
-#elif LITEDB
-            csb = new DbConnectionStringBuilder() { ConnectionString = connectionString };
-            var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(filename ?= ?)(.*)(;?)").Groups[2].Value;
-            var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
-            csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);
-            optionsBuilder.UseLiteDB(csb.ConnectionString);
 #elif MYSQL || MARIADB
             optionsBuilder.UseMySql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
 #elif POSTGRE

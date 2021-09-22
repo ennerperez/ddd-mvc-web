@@ -18,6 +18,8 @@ namespace Web.Controllers
         }
     }
 
+    [Route("api/[controller]")]
+    [ApiController]
     public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
         protected readonly IGenericService<TEntity, TKey> Service;

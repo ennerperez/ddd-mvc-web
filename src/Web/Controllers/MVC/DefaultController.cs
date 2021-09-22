@@ -6,6 +6,8 @@ using Web.Models;
 
 namespace Web.MVC.Controllers
 {
+    
+    [AllowAnonymous]
     public class DefaultController : Controller
     {
         private readonly ILogger _logger;

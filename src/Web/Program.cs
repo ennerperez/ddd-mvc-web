@@ -26,12 +26,12 @@ namespace Web
                 .CreateLogger();
             try
             {
-                Log.Information("Application Starting.");
+                Log.Information("Application Starting");
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "The Application failed to start.");
+                Log.Fatal(ex, "The Application failed to start");
                 throw;
             }
             finally

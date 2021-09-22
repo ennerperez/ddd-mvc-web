@@ -1,16 +1,19 @@
-﻿@* @using Microsoft.AspNetCore.Localization *@
-@* @{ *@
-@*     var requestCulture = Context.Features.Get<IRequestCultureFeature>(); *@
-@*     var twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower(); *@
-@* } *@
+﻿@{
+    #if LOCALIZATION
+    var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+    var twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    #else
+    var twoLetterIsoLanguageName = "en";
+    #endif
+}
 
 <environment include="development">
     <script src="~/lib/jquery-validate/jquery.validate.js"></script>
-    @* <script src="~/lib/jquery-validate/localization/messages_@(twoLetterIsoLanguageName).js"></script> *@
+    <script src="~/lib/jquery-validate/localization/messages_@(twoLetterIsoLanguageName).js"></script>
     <script src="~/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.js"></script>
 </environment>
 <environment exclude="development">
     <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
-    @* <script src="~/lib/jquery-validate/localization/messages_@(twoLetterIsoLanguageName).min.js"></script> *@
+    <script src="~/lib/jquery-validate/localization/messages_@(twoLetterIsoLanguageName).min.js"></script>
     <script src="~/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </environment>

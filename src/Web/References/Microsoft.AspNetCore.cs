@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
+// using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -71,9 +71,9 @@ namespace Microsoft.AspNetCore
 
         public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
         {
-            public const string DefaultScheme = "API Key";
-            public string AuthenticationType = DefaultScheme;
-            public string Scheme => DefaultScheme;
+            public const string AuthenticationScheme = "API Key";
+            public string AuthenticationType = AuthenticationScheme;
+            public string Scheme => AuthenticationScheme;
         }
 
         public static class AuthenticationBuilderExtensions
@@ -81,14 +81,14 @@ namespace Microsoft.AspNetCore
             public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
             {
                 authenticationBuilder.Services.AddTransient<IGetApiKeyQuery, StaticApiKeyQuery>();
-                return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.DefaultScheme, options);
+                return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.AuthenticationScheme, options);
             }
         }
 
         public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
         {
             private const string ProblemDetailsContentType = "application/problem+json";
-            public const string ApiKeyHeaderName = "X-Api-Key";
+            public const string ApiKeyHeaderName = "X-API-KEY";
             private readonly IGetApiKeyQuery _getApiKeyQuery;
 
             public ApiKeyAuthenticationHandler(
@@ -173,28 +173,28 @@ namespace Microsoft.AspNetCore
                 return controller.HttpContext.Session.GetObjectFromJson<T>(key);
             }
 
-            public static void Set<T>(this ISession session, string key, T value)
-            {
-                using (var ms = new MemoryStream())
-                {
-                    //TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
-                    var bf = new BinaryFormatter();
-                    bf.Serialize(ms, value);
-                    session.Set(key, ms.ToArray());
-                }
-            }
-
-            public static T Get<T>(this ISession session, string key)
-            {
-                var data = session.Get(key);
-                using (var ms = new MemoryStream(data))
-                {
-                    //TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
-                    var bf = new BinaryFormatter();
-                    var result = (T)bf.Deserialize(ms);
-                    return result;
-                }
-            }
+            // public static void Set<T>(this ISession session, string key, T value)
+            // {
+            //     using (var ms = new MemoryStream())
+            //     {
+            //         //TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+            //         var bf = new BinaryFormatter();
+            //         bf.Serialize(ms, value);
+            //         session.Set(key, ms.ToArray());
+            //     }
+            // }
+            //
+            // public static T Get<T>(this ISession session, string key)
+            // {
+            //     var data = session.Get(key);
+            //     using (var ms = new MemoryStream(data))
+            //     {
+            //         //TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+            //         var bf = new BinaryFormatter();
+            //         var result = (T)bf.Deserialize(ms);
+            //         return result;
+            //     }
+            // }
 
             public static Guid? GetKey(this ISession session)
             {
