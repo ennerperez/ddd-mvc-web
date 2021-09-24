@@ -46,7 +46,7 @@ namespace Microsoft.EntityFrameworkCore
             if (context.Database.ProviderName.EndsWith("SqlServer"))
                 query = string.Join(Environment.NewLine, entityTypes.Select(m =>
                 {
-                    var q1 = "DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
+                    var q1 = $"DBCC CHECKIDENT ('[{m.GetSchema()}].[{m.GetTableName()}]', RESEED, 0);";
                     if (!reseed) q1 = string.Empty;
                     var q0 = $"TRUNCATE TABLE [{m.GetSchema()}].[{m.GetTableName()}];";
                     return string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
@@ -75,7 +75,7 @@ namespace Microsoft.EntityFrameworkCore
             var query = string.Empty;
             if (context.Database.ProviderName.EndsWith("SqlServer"))
             {
-                var q0 = "DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
+                var q0 = $"DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
                 if (!reseed) q0 = string.Empty;
                 var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
                 query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));

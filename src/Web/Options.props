@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
-  <PropertyGroup Label="Options">
-    <DefaultJsonSerializer>Newtonsoft.Json</DefaultJsonSerializer>
+  <PropertyGroup Label="Features">
+    <UsingNewtonsoft>true</UsingNewtonsoft>
     <UsingSwagger>true</UsingSwagger>
-    <UsingLocalization>false</UsingLocalization>
+    <UsingLocalization>true</UsingLocalization>
     <UsingInsights>false</UsingInsights>
   </PropertyGroup>
   
   <PropertyGroup>
-    <BuildConstants Condition="'$(DefaultJsonSerializer)' == 'Newtonsoft.Json'">$(BuildConstants)NEWTONSOFT;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)SWAGGER;</BuildConstants>
-    <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)LOCALIZABLE;</BuildConstants>
-    <BuildConstants Condition="'$(UsingInsights)' == 'true'">$(BuildConstants)INSIGHTS;</BuildConstants>
+    <BuildConstants Condition="'$(UsingNewtonsoft)' == 'true'">$(BuildConstants)USING_NEWTONSOFT;</BuildConstants>
+    <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
+    <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
+    <BuildConstants Condition="'$(UsingInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
   </PropertyGroup>
 
   <PropertyGroup>

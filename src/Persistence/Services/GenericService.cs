@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using Domain.Interfaces;
 
-#if BULK
+#if ENABLE_BULK
 using EFCore.BulkExtensions;
 #endif
 
@@ -36,20 +36,25 @@ namespace Persistence.Services
         protected readonly ILogger Logger;
         protected readonly IConfiguration Configuration;
 
-#if BULK
+#if ENABLE_BULK
         public ushort MinRowsToBulk { get; set; }
 #endif
+
+#if ENABLE_SPLIT
         public ushort MinRowsToSplit { get; set; }
+#endif
 
         protected GenericService(DbContext context, ILoggerFactory logger, IConfiguration configuration)
         {
             _dbContext = context;
             _dbSet = _dbContext.Set<TEntity>();
             Logger = logger.CreateLogger(GetType());
-#if BULK
+#if ENABLE_BULK
             MinRowsToBulk = ushort.Parse(configuration["RepositorySettings:MinRowsToBulk"] ?? "1000");
 #endif
+#if ENABLE_SPLIT
             MinRowsToSplit = ushort.Parse(configuration["RepositorySettings:MinRowsToSplit"] ?? "100");
+#endif
             Configuration = configuration;
         }
 
@@ -190,10 +195,11 @@ namespace Persistence.Services
 
         public virtual async Task CreateAsync(params TEntity[] entities)
         {
-#if BULK
+#if ENABLE_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
             {
+#if ENABLE_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
                     await _dbSet.AddRangeAsync(entities);
@@ -210,21 +216,24 @@ namespace Persistence.Services
 
                     return;
                 }
+#else
+                await _dbSet.AddRangeAsync(entities);
+#endif
             }
-#if BULK
+#if ENABLE_BULK
             else
                 await _dbContext.BulkInsertAsync(entities);
 #endif
-
             await _dbContext.SaveChangesAsync();
         }
 
         public virtual async Task UpdateAsync(params TEntity[] entities)
         {
-#if BULK
+#if ENABLE_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
             {
+#if ENABLE_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
                     _dbSet.UpdateRange(entities);
@@ -241,12 +250,14 @@ namespace Persistence.Services
 
                     return;
                 }
+#else
+                _dbSet.UpdateRange(entities);
+#endif
             }
-#if BULK
+#if ENABLE_BULK
             else
                 await _dbContext.BulkUpdateAsync(entities);
 #endif
-
             await _dbContext.SaveChangesAsync();
         }
 
@@ -259,11 +270,11 @@ namespace Persistence.Services
                 if (entity != null)
                     list.Add(entity);
             }
-#if BULK
+#if ENABLE_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
                 _dbSet.RemoveRange(list);
-#if BULK
+#if ENABLE_BULK
             else
                 await _dbContext.BulkDeleteAsync(list);
 #endif
@@ -273,7 +284,7 @@ namespace Persistence.Services
 
         public virtual async Task CreateOrUpdateAsync(params TEntity[] entities)
         {
-#if BULK
+#if ENABLE_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
                 foreach (var item in entities)
@@ -283,7 +294,7 @@ namespace Persistence.Services
                     else
                         await UpdateAsync(item);
                 }
-#if BULK
+#if ENABLE_BULK
             else
             {
                 await _dbContext.BulkUpdateAsync(entities.Where(m => !m.Id.Equals(default)).ToArray());
@@ -341,7 +352,7 @@ namespace Persistence.Services
             return await result.FirstOrDefaultAsync();
         }
 
-#if NONASYNC
+#if ENABLE_NONASYNC
         public virtual IQueryable<TResult> Read<TResult>(
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
@@ -479,10 +490,11 @@ namespace Persistence.Services
 
         public virtual void Create(params TEntity[] entities)
         {
-#if BULK
+#if ENABLE_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
             {
+#if ENABLE_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
                     _dbSet.AddRange(entities);
@@ -499,8 +511,11 @@ namespace Persistence.Services
 
                     return;
                 }
+#else
+                _dbSet.AddRange(entities);
+#endif
             }
-#if BULK
+#if ENABLE_BULK
             else
                 _dbContext.BulkInsert(entities);
 #endif
@@ -510,10 +525,11 @@ namespace Persistence.Services
 
         public virtual void Update(params TEntity[] entities)
         {
-#if BULK
+#if ENABLE_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
             {
+#if ENABLE_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
                     _dbSet.UpdateRange(entities);
@@ -530,8 +546,11 @@ namespace Persistence.Services
 
                     return;
                 }
+#else
+                _dbSet.UpdateRange(entities);
+#endif
             }
-#if BULK
+#if ENABLE_BULK
             else
                 _dbContext.BulkUpdate(entities);
 #endif
@@ -548,11 +567,11 @@ namespace Persistence.Services
                 if (entity != null)
                     list.Add(entity);
             }
-#if BULK
+#if ENABLE_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
                 _dbSet.RemoveRange(list);
-#if BULK
+#if ENABLE_BULK
             else
                 _dbContext.BulkDelete(list);
 #endif
@@ -562,7 +581,7 @@ namespace Persistence.Services
 
         public virtual void CreateOrUpdate(params TEntity[] entities)
         {
-#if BULK
+#if ENABLE_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
                 foreach (var item in entities)
@@ -572,7 +591,7 @@ namespace Persistence.Services
                     else
                         Update(item);
                 }
-#if BULK
+#if ENABLE_BULK
             else
             {
                 _dbContext.BulkUpdate(entities.Where(m => !m.Id.Equals(default)).ToArray());

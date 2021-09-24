@@ -20,19 +20,19 @@ using Microsoft.Extensions.Hosting;
 using Persistence;
 using Persistence.Contexts;
 
-#if NEWTONSOFT
+#if USING_NEWTONSOFT
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 #endif
 
-#if SWAGGER
+#if USING_SWAGGER
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 #endif
 
-#if LOCALIZABLE
+#if USING_LOCALIZATION
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 #endif
@@ -45,7 +45,7 @@ namespace Web
         {
             Configuration = configuration;
             Name = configuration["AppSettings:Name"];
-#if LOCALIZABLE
+#if USING_LOCALIZATION
             SupportedCultures = configuration.GetSection("CultureInfo:SupportedCultures").Get<string[]>().Select(m => new CultureInfo(m)).ToArray();
             CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"]);
 #endif
@@ -54,7 +54,7 @@ namespace Web
         public static string Name { get; private set; }
         internal IConfiguration Configuration { get; private set; }
 
-#if LOCALIZABLE
+#if USING_LOCALIZATION
         public CultureInfo[] SupportedCultures { get; private set; }
 
         public static CultureInfo CurrencyCulture { get; private set; }
@@ -64,14 +64,14 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-#if INSIGHTS
+#if USING_INSIGHTS
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry(Configuration["AzureSettings:ApplicationInsights:InstrumentationKey"]);
 #endif
             
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-#if LOCALIZABLE
+#if USING_LOCALIZATION
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture(SupportedCultures.First());
@@ -116,7 +116,7 @@ namespace Web
                 options.User.RequireUniqueEmail = true;
             });
 
-#if NEWTONSOFT
+#if USING_NEWTONSOFT
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
 #if DEBUG
@@ -143,7 +143,7 @@ namespace Web
             });
 #endif
 
-#if NEWTONSOFT
+#if USING_NEWTONSOFT
             services.AddControllersWithViews()
 #if DEBUG
                 .AddRazorRuntimeCompilation();
@@ -186,14 +186,14 @@ namespace Web
                 options.Events = new CustomCookieAuthenticationEvents();
             });
 
-#if NEWTONSOFT
+#if USING_NEWTONSOFT
             services.AddRazorPages()
                 .AddNewtonsoftJson(jsonOptions);
 #else
             services.AddRazorPages();
 #endif
 
-#if SWAGGER
+#if USING_SWAGGER
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -235,7 +235,7 @@ namespace Web
                 c.EnableAnnotations();
             });
 
-#if NEWTONSOFT
+#if USING_NEWTONSOFT
             services.AddSwaggerGenNewtonsoftSupport();
 #endif
 #endif
@@ -278,7 +278,7 @@ namespace Web
                 app.UseHttpsRedirection();
             }
 
-#if LOCALIZABLE
+#if USING_LOCALIZATION
             app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
 #endif
 
@@ -288,7 +288,7 @@ namespace Web
 
             app.UseRouting();
 
-#if SWAGGER
+#if USING_SWAGGER
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Name.ToLower()}.json"; });

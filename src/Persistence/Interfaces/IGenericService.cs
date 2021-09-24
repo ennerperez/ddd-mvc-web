@@ -60,7 +60,7 @@ namespace Persistence.Interfaces
             bool disableTracking = false,
             bool ignoreQueryFilters = false);
 
-#if NONASYNC
+#if ENABLE_NONASYNC
 		IQueryable<TResult> Read<TResult>(
 			Expression<Func<TEntity, TResult>> selector = null,
 			Expression<Func<TEntity, bool>> predicate = null,

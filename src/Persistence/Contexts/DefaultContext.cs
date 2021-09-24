@@ -16,7 +16,7 @@ using DbContextOptions = Microsoft.EntityFrameworkCore.DbContextOptions;
 using System.IO;
 #endif
 
-#if SQLITE
+#if SQLITE && USING_SQLITE
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 #endif
@@ -102,19 +102,19 @@ namespace Persistence.Contexts
             DbConnectionStringBuilder csb;
 #pragma warning restore 219
 #pragma warning restore 168
-#if SQLITE
+#if SQLITE && USING_SQLITE
             csb = new SqliteConnectionStringBuilder() { ConnectionString = connectionString };
             var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(data source ?= ?)(.*)(;?)").Groups[2].Value;
             var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
             csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);
             optionsBuilder.UseSqlite(csb.ConnectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
-#elif MYSQL || MARIADB
-            optionsBuilder.UseMySql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
-#elif POSTGRE
-            optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
-#elif MSSQL
+#elif MSSQL && USING_MSSQL
             optionsBuilder.UseSqlServer(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
-#elif ORACLE
+#elif (MYSQL || MARIADB) && (USING_MYSQL && USING_MARIADB)
+            optionsBuilder.UseMySql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
+#elif POSTGRE && USING_POSTGRE
+            optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
+#elif ORACLE && USING_ORACLE
             optionsBuilder.useOracle(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
 #endif
         }
