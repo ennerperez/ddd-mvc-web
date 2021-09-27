@@ -35,7 +35,7 @@ namespace Persistence
         public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, Action<T> configureOptions = null)
         {
             services.AddDbContext<DefaultContext>(optionsBuilder);
-		    services.AddTransient<DbContext, DefaultContext>();
+            services.AddTransient<DbContext, DefaultContext>();
             services.AddPersistence(configureOptions);
             return services;
         }
@@ -63,9 +63,10 @@ namespace Persistence
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
             // services.AddTransient<IGenericService<T>, GenericService<T>>();
-            
+
             services.AddTransient<IGenericService<Setting>, SettingService>();
-            
+
+#if USING_IDENTITY
             services.AddTransient<IGenericService<Role>, RoleService>();
             services.AddTransient<IGenericService<RoleClaim>, RoleClaimService>();
             services.AddTransient<IGenericService<User>, UserService>();
@@ -73,9 +74,11 @@ namespace Persistence
             services.AddTransient<IGenericService<UserLogin>, UserLoginService>();
             services.AddTransient<IGenericService<UserRole>, UserRoleService>();
             services.AddTransient<IGenericService<UserToken>, UserTokenService>();
+#endif
 
             services.AddTransient<ISettingService, SettingService>();
 
+#if USING_IDENTITY
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IRoleClaimService, RoleClaimService>();
             services.AddTransient<IUserService, UserService>();
@@ -83,6 +86,7 @@ namespace Persistence
             services.AddTransient<IUserLoginService, UserLoginService>();
             services.AddTransient<IUserRoleService, UserRoleService>();
             services.AddTransient<IUserTokenService, UserTokenService>();
+#endif
 
             return services;
         }

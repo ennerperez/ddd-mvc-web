@@ -16,8 +16,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.10" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="1.17.0" />
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.10">
       <PrivateAssets>all</PrivateAssets>
@@ -51,6 +49,23 @@
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.2.2" />
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.2" />
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.2" />
+    <PackageReference Condition="'$(UsingAzureB2C)' == 'true'" Include="Microsoft.Identity.Web" Version="1.17.0"/>
+    <PackageReference Condition="'$(UsingAzureB2C)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="1.17.0"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsingAzureB2C)' == 'true'">
+    <Content Remove="Views\Shared\Partials\_Identity.cshtml"/>
+    <Content Remove="Views\Shared\Partials\_AdB2C.cshtml"/>
+    <Content Include="Views\Shared\Partials\_AdB2C.cshtml">
+      <Link>Views\Shared\Partials\_LoginPartial.cshtml</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsingAzureB2C)' == 'false'">
+    <Content Remove="Views\Shared\Partials\_Identity.cshtml"/>
+    <Content Remove="Views\Shared\Partials\_AdB2C.cshtml"/>
+    <Content Include="Views\Shared\Partials\_Identity.cshtml">
+      <Link>Views\Shared\Partials\_LoginPartial.cshtml</Link>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

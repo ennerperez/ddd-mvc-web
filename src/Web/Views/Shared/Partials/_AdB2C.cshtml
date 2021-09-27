@@ -1,0 +1,36 @@
+@using Microsoft.Extensions.Options
+@using Microsoft.Identity.Web
+@inject IOptions<MicrosoftIdentityOptions> AzureADB2COptions
+
+@{
+    var options = AzureADB2COptions.Value;
+}
+
+<ul class="navbar-nav">
+    @if (User.Identity.IsAuthenticated)
+    {
+        if (!string.IsNullOrEmpty(options.EditProfilePolicyId))
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="EditProfile">
+                    <span class="text-dark">@User.Identity.Name!</span>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a href="#" class="nav-link">@User.Identity.Name.ToUpper()</a>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Logout</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Login / Register</a>
+        </li>
+    }
+</ul>

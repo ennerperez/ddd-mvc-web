@@ -7,9 +7,20 @@
     <Deterministic>false</Deterministic>
   </PropertyGroup>
 
+  <Import Project="Options.props" />
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="5.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="5.0.10" />    
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
+    <Compile Remove="Entities\Identity\**" />
+    <EmbeddedResource Remove="Entities\Identity\**" />
+    <None Remove="Entities\Identity\**" />
   </ItemGroup>
 
 </Project>

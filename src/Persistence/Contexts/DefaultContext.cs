@@ -7,7 +7,6 @@ using System.Data.Common;
 using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions = Microsoft.EntityFrameworkCore.DbContextOptions;
@@ -21,13 +20,21 @@ using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 #endif
 
+#if USING_IDENTITY
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+#endif
+
 // ReSharper disable UnusedVariable
 #pragma warning disable 219
 #pragma warning disable 168
 
 namespace Persistence.Contexts
 {
+#if USING_IDENTITY
     public sealed class DefaultContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
+#else
+    public sealed class DefaultContext : DbContext
+#endif
     {
         private readonly DbContextOptions _options;
 

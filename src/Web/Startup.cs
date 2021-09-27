@@ -37,6 +37,14 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 #endif
 
+
+#if USING_ADB2C
+using Microsoft.Identity.Web;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+#endif
+
 namespace Web
 {
     public class Startup
@@ -88,6 +96,7 @@ namespace Web
                     DefaultContext.UseDbEngine(options, Configuration);
                 });
 
+#if USING_IDENTITY
             services
                 .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<Role>()
@@ -115,6 +124,7 @@ namespace Web
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = true;
             });
+#endif
 
 #if USING_NEWTONSOFT
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -240,10 +250,50 @@ namespace Web
             services.AddAuthentication()
                 .AddJwtBearer()
                 .AddCookie()
-                .AddApiKeySupport();
+                .AddApiKeySupport()
+#if USING_ADB2C
+                .AddMicrosoftIdentityWebApp(options =>
+                {
+                    Configuration.Bind("AzureSettings:AdB2C", options);
+#if IDENTITY && ENABLE_LOCALB2C
+                    options.Events.OnTokenValidated = OnTokenValidated;
+#endif
+                })
+#endif
+                .Close();
 
             services.AddAuthorization();
         }
+
+#if USING_ADB2C && USING_IDENTITY && ENABLE_LOCALB2C
+        private async Task OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
+        {
+            if (context.Principal != null && context.Principal.Identity != null)
+            {
+                var cllist = context.Principal.Claims.GroupBy(m => m.Type).Select(m => m.FirstOrDefault()).ToList();
+                var claims = cllist.ToDictionary(k => k.Type, v => v.Value);
+                var emails = claims["emails"];
+
+                //var userManager = Program.Host.Services.GetService<UserManager<Buyer>>();
+                var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
+                if (userManager != null)
+                {
+                    var user = await userManager.Users.FirstOrDefaultAsync(m => m.Email == emails);
+                    if (user == null)
+                    {
+                        var ph = new PasswordHasher<User>();
+                        user = new User() { NormalizedUserName = claims["emails"].ToUpper(), UserName = claims["emails"], Email = claims["emails"], EmailConfirmed = true };
+#if DEBUG
+                        user.PasswordHash = ph.HashPassword(user, $"Admin{DateTime.Now.Year}**");
+#endif
+                        await userManager.CreateAsync(user);
+                        await userManager.AddClaimsAsync(user, claims.Select(m => new Claim(m.Key, m.Value)));
+                    }
+                    //TODO: What if user exists?, update metadata from B2C
+                }
+            }
+        }
+#endif
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -354,5 +404,17 @@ namespace Web
                 endpoints.MapRazorPages();
             });
         }
+    }
+
+    internal static class Extensions
+    {
+        public static AuthenticationBuilder Close(this AuthenticationBuilder builder) => builder;
+        public static IServiceCollection Close(this IServiceCollection builder) => builder;
+        public static IMvcBuilder Close(this IMvcBuilder builder) => builder;
+        public static IdentityBuilder Close(this IdentityBuilder builder) => builder;
+
+#if USING_ADB2C
+        public static MicrosoftIdentityWebAppAuthenticationBuilder Close(this MicrosoftIdentityWebAppAuthenticationBuilder builder) => builder;
+#endif
     }
 }
