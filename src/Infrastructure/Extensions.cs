@@ -28,6 +28,9 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<ISmtpService, SmtpService>();
+#if USING_BLOBS
+            services.AddTransient<IFileService, FileService>();
+#endif
             return services;
         }
     }
