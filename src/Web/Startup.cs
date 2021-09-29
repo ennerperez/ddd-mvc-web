@@ -68,7 +68,7 @@ namespace Web
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry(Configuration["AzureSettings:ApplicationInsights:InstrumentationKey"]);
 #endif
-            
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
 #if USING_LOCALIZATION
@@ -146,10 +146,9 @@ namespace Web
 #if USING_NEWTONSOFT
             services.AddControllersWithViews()
 #if DEBUG
-                .AddRazorRuntimeCompilation();
-#else
-                .AddNewtonsoftJson(jsonOptions);
+                .AddRazorRuntimeCompilation()
 #endif
+                .AddNewtonsoftJson(jsonOptions);
 #else
 #if DEBUG
             services.AddControllersWithViews()
@@ -158,8 +157,6 @@ namespace Web
             services.AddControllersWithViews();
 #endif
 #endif
-
-            services.AddResponseCompression();
 
             services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
             services.AddResponseCompression(config =>
