@@ -1,0 +1,101 @@
+﻿@inject IConfiguration Configuration
+@{
+    var twoLetterIsoLanguageName = "en";
+    if (Html.UsingLocalization())
+    {
+        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    }
+}
+
+<!doctype html>
+<html lang="@twoLetterIsoLanguageName">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@Configuration["AppSettings:Name"] - @ViewData["Title"]</title>
+
+    <partial name="Partials/_FaviconPartial"/>
+
+    <script type="text/javascript">
+        /* Sample function that returns boolean in case the browser is Internet Explorer*/
+        function isIE() {
+          ua = navigator.userAgent;
+          /* MSIE used to detect old browsers and Trident used to newer ones*/
+          return ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1; 
+        }
+        /* Create an alert to show if the browser is IE or not */
+        if (isIE()){
+            window.location = "/browsers.htm";
+        }
+    </script>
+
+    @await RenderSectionAsync("Header", false)
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <environment include="development">
+        @if (@Html.UsingSass())
+        {
+            <link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true"/>
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
+        }
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    </environment>
+    <environment exclude="development">
+        @if (@Html.UsingSass())
+        {
+            <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css"/>
+        }
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
+    </environment>
+
+    @Html.PageStyles()
+    @await RenderSectionAsync("Styles", false)
+
+    <environment include="development">
+        @* <style> *@
+        @*     * { *@
+        @*         border: thin solid red !important; *@
+        @*     } *@
+        @* </style> *@
+    </environment>
+
+</head>
+<body>
+
+@RenderBody()
+
+<environment include="development">
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/popper.js/umd/popper.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</environment>
+<environment exclude="development">
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/popper.js/umd/popper.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+</environment>
+
+@Html.AntiForgeryToken()
+<script>
+    let __RequestVerificationToken = $("[name=__RequestVerificationToken]").val();
+</script>
+
+@Html.PageScripts()
+@await RenderSectionAsync("Scripts", false)
+
+</body>
+</html>

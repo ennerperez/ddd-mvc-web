@@ -1,0 +1,28 @@
+﻿@{
+    var twoLetterIsoLanguageName = "en";
+    if (Html.UsingLocalization())
+    {
+        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    }
+}
+
+@using (Html.BeginScripts())
+{
+    <environment include="development">
+        <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+        @if (twoLetterIsoLanguageName != "en")
+        {
+            <script src="~/lib/jquery-validate/localization/messages_@(twoLetterIsoLanguageName).js"></script>
+        }
+        <script src="~/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    </environment>
+    <environment exclude="development">
+        <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+        @if (twoLetterIsoLanguageName != "en")
+        {
+            <script src="~/lib/jquery-validate/localization/messages_@(twoLetterIsoLanguageName).min.js"></script>
+        }
+        <script src="~/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    </environment>
+}

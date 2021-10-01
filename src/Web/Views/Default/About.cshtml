@@ -1,0 +1,61 @@
+﻿@model IEnumerable<AboutViewModel>
+
+@{
+    ViewBag.Title = "About";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's about information.</p>
+
+<div class="row">
+    <div class="col">
+        <div class="card-group">
+            @{
+                var submodels = Model.Where(m => !m.Dependency);
+            }
+            @foreach (var item in submodels)
+            {
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header" style="background-color: @(item.Color); color: white;">
+                        @item.Name
+                    </div>
+                    <div class="card-body">
+                        <small class="card-text">
+                            @if (item.Name != item.Description)
+                            {
+                                @item.Description<br/>
+                            }
+                            @item.Version
+                        </small>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>@item.Published</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-secondary" style="color: white;">
+                Dependencies
+            </div>
+            <div class="card-body">
+                @foreach (var item in Model.Where(m => m.Dependency))
+                {
+                    <div class="row">
+                        <div class="col-6">
+                            @item.Name
+                        </div>
+                        <div class="col-6 text-end">
+                            @item.Version.ToString()
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
