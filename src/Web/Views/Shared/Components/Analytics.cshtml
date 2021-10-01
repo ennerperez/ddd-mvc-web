@@ -2,29 +2,32 @@
 @inject IConfiguration Configuration
 @inject IHostEnvironment Environment
 
-<environment include="development">
-    <script>
-    // Google Analytics Area
-    </script>
-</environment>
-<environment exclude="development">
-    @{
-        var gtag = Configuration["AppSettings:GATrackingCode"];
-        if (!string.IsNullOrWhiteSpace(gtag))
-        {
-            using (Html.BeginScripts())
-            {
-                <!-- Global site tag (gtag.js) - Google Analytics -->
-                <script async src="https://www.googletagmanager.com/gtag/js?id=@gtag"></script>
-                <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            gtag('config', '@gtag');
+@using (Html.BeginScripts())
+{
+    <environment include="development">
+        <script>
+            // Google Analytics Area
         </script>
+    </environment>
+    <environment exclude="development">
+        @{
+            var gtag = Configuration["GoogleSettings:Analytics:TrackingCode"];
+            if (!string.IsNullOrWhiteSpace(gtag))
+            {
+                using (Html.BeginScripts())
+                {
+                    <!-- Global site tag (gtag.js) - Google Analytics -->
+                    <script async src="https://www.googletagmanager.com/gtag/js?id=@gtag"></script>
+                    <script>
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag() {
+                            dataLayer.push(arguments);
+                        }
+                        gtag('js', new Date());
+                        gtag('config', '@gtag');
+                    </script>
+                }
             }
         }
-    }
-</environment>
+    </environment>
+}
