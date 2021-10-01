@@ -3,15 +3,15 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.5.1",
+      "library": "jquery@3.6.0",
       "destination": "wwwroot/lib/jquery/"
     },
     {
-      "library": "popper.js@1.16.1",
+      "library": "popper.js@2.9.3",
       "destination": "wwwroot/lib/popper.js/"
     },
     {
-      "library": "twitter-bootstrap@4.5.2",
+      "library": "twitter-bootstrap@5.1.1",
       "destination": "wwwroot/lib/bootstrap/"
     },
     {
@@ -27,7 +27,7 @@
       "destination": "wwwroot/lib/jquery-validate-unobtrusive/"
     },
     {
-      "library": "font-awesome@5.14.0",
+      "library": "font-awesome@5.15.4",
       "destination": "wwwroot/lib/font-awesome/"
     }
   ]
