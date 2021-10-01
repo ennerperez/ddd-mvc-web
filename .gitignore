@@ -551,6 +551,7 @@ FodyWeavers.xsd
 
 # BuildBundlerMinifier
 *.min.*
+*.map
 
 # SQLite files
 *.db

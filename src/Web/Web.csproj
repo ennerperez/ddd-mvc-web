@@ -51,12 +51,20 @@
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.2.2" />
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.2" />
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.2" />
+    <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.42.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsingSass)' == 'false'">
+    <Content Remove="wwwroot\scss\**" />
+    <Content Remove="wwwroot\css\bootstrap.css" />
+    <Content Remove="wwwroot\css\bootstrap.min.css" />
+    <Content Remove="wwwroot\css\bootstrap.css.map" />
   </ItemGroup>
 
 </Project>

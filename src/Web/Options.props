@@ -6,6 +6,7 @@
     <UsingSwagger>true</UsingSwagger>
     <UsingLocalization>true</UsingLocalization>
     <UsingInsights>false</UsingInsights>
+    <UsingSass>false</UsingSass>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -13,6 +14,7 @@
     <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
     <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
     <BuildConstants Condition="'$(UsingInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
+    <BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
   </PropertyGroup>
 
   <PropertyGroup>

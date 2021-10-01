@@ -394,6 +394,14 @@ namespace Microsoft.AspNetCore
                 return false;
 #endif
             }
+            public static bool UsingSass(this IHtmlHelper htmlHelper)
+            {
+#if USING_SASS
+                return true;
+#else
+                return false;
+#endif
+            }
         }
 
         namespace Rendering

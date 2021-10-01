@@ -36,12 +36,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <environment include="development">
-        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
+        @if (@Html.UsingSass())
+        {
+            <link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true"/>
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+        }
         <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     </environment>
     <environment exclude="development">
-        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css"/>
+        @if (@Html.UsingSass())
+        {
+            <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+        }
         <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
     </environment>
