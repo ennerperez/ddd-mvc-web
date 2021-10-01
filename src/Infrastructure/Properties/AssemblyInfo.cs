@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyCompany("")]
 // [assembly: AssemblyProduct("")]
 [assembly: AssemblyTitle("Infrastructure")]
-[assembly: AssemblyDescription("Infrastructure")]
+[assembly: AssemblyDescription("Infrastructure Layer")]
 // [assembly: AssemblyCopyright("Copyright ©")]
 // [assembly: AssemblyTrademark("")]
 // [assembly: AssemblyCulture("")]
