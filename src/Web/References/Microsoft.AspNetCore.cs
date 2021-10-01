@@ -394,9 +394,46 @@ namespace Microsoft.AspNetCore
                 return false;
 #endif
             }
+
             public static bool UsingSass(this IHtmlHelper htmlHelper)
             {
 #if USING_SASS
+                return true;
+#else
+                return false;
+#endif
+            }
+
+            public static bool UsingSwagger(this IHtmlHelper htmlHelper)
+            {
+#if USING_SWAGGER
+                return true;
+#else
+                return false;
+#endif
+            }
+
+            public static bool UsingInsights(this IHtmlHelper htmlHelper)
+            {
+#if USING_INSIGHTS
+                return true;
+#else
+                return false;
+#endif
+            }
+
+            public static bool UsingNewtonsoft(this IHtmlHelper htmlHelper)
+            {
+#if USING_NEWTONSOFT
+                return true;
+#else
+                return false;
+#endif
+            }
+
+            public static bool UsingLocalization(this IHtmlHelper htmlHelper)
+            {
+#if USING_LOCALIZATION
                 return true;
 #else
                 return false;

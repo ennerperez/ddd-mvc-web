@@ -1,11 +1,11 @@
 ﻿@inject IConfiguration Configuration
 @{
-    #if USING_LOCALIZATION
-    var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
-    var twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
-    #else
     var twoLetterIsoLanguageName = "en";
-    #endif
+    if (Html.UsingLocalization())
+    {
+        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    }
 }
 
 <!doctype html>
@@ -42,7 +42,7 @@
         }
         else
         {
-            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
         }
         <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
@@ -54,7 +54,7 @@
         }
         else
         {
-            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+            <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css"/>
         }
         <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
