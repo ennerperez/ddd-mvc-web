@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyCompany("")]
 // [assembly: AssemblyProduct("")]
 [assembly: AssemblyTitle("Persistence")]
-[assembly: AssemblyDescription("Persistence")]
+[assembly: AssemblyDescription("Persistence Layer")]
 // [assembly: AssemblyCopyright("Copyright ©")]
 // [assembly: AssemblyTrademark("")]
 // [assembly: AssemblyCulture("")]

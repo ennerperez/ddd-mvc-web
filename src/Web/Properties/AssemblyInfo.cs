@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyCompany("")]
 // [assembly: AssemblyProduct("")]
 [assembly: AssemblyTitle("Web")]
-[assembly: AssemblyDescription("Web")]
+[assembly: AssemblyDescription("Web/API Layer")]
 // [assembly: AssemblyCopyright("Copyright ©")]
 // [assembly: AssemblyTrademark("")]
 // [assembly: AssemblyCulture("")]
