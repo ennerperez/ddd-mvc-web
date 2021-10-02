@@ -139,7 +139,8 @@ namespace Persistence.Configurations
             
             e.Property(m => m.LoginProvider).HasMaxLength(Lengths.Memo);
             e.Property(m => m.ProviderKey).HasMaxLength(Lengths.Memo);
-
+            e.Property(m => m.ProviderDisplayName).HasMaxLength(Lengths.Description);
+            
             //e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Ignore(m => m.Id);
             e.HasKey(m => new { m.UserId, m.LoginProvider });
