@@ -15,11 +15,14 @@ namespace Persistence.Conventions
         {
             DecimalConfig = new Dictionary<int, string[]>();
             Exclude = new[] { "Identity" };
+            UseDateTime = true;
         }
 
         public Dictionary<int, string[]> DecimalConfig { get; set; }
         public string Provider { get; set; }
         public string[] Exclude { get; set; }
+
+        public bool UseDateTime { get; set; }
     }
 
     internal static class ProviderTypeConventions
@@ -38,7 +41,7 @@ namespace Persistence.Conventions
 
             // Fix datetime offset support for integration tests
             // See: https://blog.dangl.me/archive/handling-datetimeoffset-in-sqlite-with-entity-framework-core/
-            if (options.Provider == "Sqlite")
+            if (new[] { "Sqlite" }.Contains(options.Provider))
             {
                 // SQLite does not have proper support for DateTimeOffset via Entity Framework Domain, see the limitations
                 // here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
@@ -99,25 +102,36 @@ namespace Persistence.Conventions
                     columnType = p.GetColumnType();
                     entity.HasColumnType(columnType);
                 }
-                else if (p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?))
+                else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
                 {
-                    p.SetColumnType("datetime");
-                    columnType = p.GetColumnType();
-                    entity.HasColumnType(columnType);
+                    if (options.UseDateTime || (new[] { "Sqlite" }.Contains(options.Provider)))
+                    {
+                        p.SetColumnType("datetime");
+                        columnType = p.GetColumnType();
+                        entity.HasColumnType(columnType);
+                    }
                 }
                 else if (p.ClrType == typeof(string))
                 {
                     var maxValue = p.GetMaxLength();
                     var max = maxValue.HasValue ? maxValue.ToString() : "max";
 
-                    if (new[] { "MySql", "MariaDB" }.Contains(options.Provider) && maxValue.HasValue && maxValue.Value > 500)
+                    if (new[] { "MySql", "MariaDB" }.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
                         p.SetColumnType(max == "max" ? $"longtext" : $"text");
+                    else if (new[] { "Sqlite" }.Contains(options.Provider))
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
+                    else if (new[] { "PostgreSQL" }.Contains(options.Provider))
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
                     else
-                        p.SetColumnType(options.Provider != "Sqlite" ? $"varchar({max})" : $"varchar(500)");
+                        p.SetColumnType($"varchar({max})");
 
                     columnType = p.GetColumnType();
                     entity.HasColumnType(columnType);
                 }
+                
+                // See: https://stackoverflow.com/questions/8746207/1071-specified-key-was-too-long-max-key-length-is-1000-bytes
+                if (new[] { "MySql", "MariaDB" }.Contains(options.Provider) && p.GetMaxLength() > 255)
+                    p.SetMaxLength(255);
             }
 
 #if DEBUG

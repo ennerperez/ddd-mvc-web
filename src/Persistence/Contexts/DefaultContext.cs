@@ -61,6 +61,7 @@ namespace Persistence.Contexts
                 m.Provider = ProviderName;
                 m.DecimalConfig.Add(6, new[] { "Lat", "Long" });
                 m.Exclude = null;
+                m.UseDateTime = false;
             });
             modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
             modelBuilder.AddSincronizableEntitiesConventions<ISyncronizable>(ProviderName);
@@ -111,11 +112,12 @@ namespace Persistence.Contexts
 #elif MSSQL && USING_MSSQL
             optionsBuilder.UseSqlServer(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
 #elif (MYSQL || MARIADB) && (USING_MYSQL && USING_MARIADB)
-            optionsBuilder.UseMySql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
-#elif POSTGRE && USING_POSTGRE
+            var serverVersion = ServerVersion.AutoDetect(connectionString);
+            optionsBuilder.UseMySql(connectionString, serverVersion, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
+#elif POSTGRESQL && USING_POSTGRESQL
             optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
 #elif ORACLE && USING_ORACLE
-            optionsBuilder.useOracle(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
+            optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
 #endif
         }
     }

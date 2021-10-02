@@ -19,6 +19,14 @@ namespace Persistence.Configurations
             e.ToTable("Roles", IdentityConfiguration.Schema, true);
 
             e.Property(m => m.Id).ValueGeneratedOnAdd();
+            
+            e.Property(m => m.Name).HasMaxLength(Lengths.Name).IsRequired();
+            e.Property(m => m.NormalizedName).HasMaxLength(Lengths.Name).IsRequired();
+            e.Property(m => m.Description).HasMaxLength(Lengths.Memo);
+            e.Property(m => m.ConcurrencyStamp).HasMaxLength(Lengths.Guid);
+
+            e.HasIndex(m => m.Name).IsUnique();
+            e.HasIndex(m => m.NormalizedName).IsUnique();
 
             e.HasMany(m => m.RoleClaims)
                 .WithOne(m => m.Role)
@@ -38,7 +46,13 @@ namespace Persistence.Configurations
         public void Configure(EntityTypeBuilder<RoleClaim> e)
         {
             e.ToTable("RolesClaims", IdentityConfiguration.Schema, true);
+            
             e.Property(m => m.Id).ValueGeneratedOnAdd();
+            
+            e.Property(m => m.ClaimType).HasMaxLength(Lengths.Url);
+            e.Property(m => m.ClaimValue).HasMaxLength(Lengths.Memo);
+            
+            e.HasIndex(m => m.ClaimType);
         }
     }
 
@@ -50,6 +64,20 @@ namespace Persistence.Configurations
             e.ToTable("Users", IdentityConfiguration.Schema, true);
 
             e.Property(m => m.Id).ValueGeneratedOnAdd();
+            
+            e.Property(m => m.UserName).HasMaxLength(Lengths.Email);
+            e.Property(m => m.NormalizedUserName).HasMaxLength(Lengths.Email);
+            e.Property(m => m.Email).HasMaxLength(Lengths.Email);
+            e.Property(m => m.NormalizedEmail).HasMaxLength(Lengths.Email);
+            e.Property(m => m.PasswordHash).HasMaxLength(Lengths.Memo);
+            e.Property(m => m.SecurityStamp).HasMaxLength(Lengths.Guid);
+            e.Property(m => m.ConcurrencyStamp).HasMaxLength(Lengths.Guid);
+            e.Property(m => m.PhoneNumber).HasMaxLength(Lengths.Phone);
+
+            e.HasIndex(m => m.UserName);
+            e.HasIndex(m => m.NormalizedUserName);
+            e.HasIndex(m => m.Email);
+            e.HasIndex(m => m.NormalizedEmail);
 
             e.HasMany(m => m.UserClaims)
                 .WithOne(m => m.User)
@@ -79,6 +107,11 @@ namespace Persistence.Configurations
         public void Configure(EntityTypeBuilder<UserClaim> e)
         {
             e.ToTable("UsersClaims", IdentityConfiguration.Schema, true);
+            
+            e.Property(m => m.ClaimType).HasMaxLength(Lengths.Url);
+            e.Property(m => m.ClaimValue).HasMaxLength(Lengths.Memo);
+            
+            e.HasIndex(m => m.ClaimType);
 
             e.Property(m => m.Id).ValueGeneratedOnAdd();
         }
@@ -103,11 +136,12 @@ namespace Persistence.Configurations
         public void Configure(EntityTypeBuilder<UserLogin> e)
         {
             e.ToTable("UsersLogins", IdentityConfiguration.Schema, true);
-
-            //e.Property(m => m.Id).ValueGeneratedOnAdd();
+            
             e.Property(m => m.LoginProvider).HasMaxLength(Lengths.Memo);
             e.Property(m => m.ProviderKey).HasMaxLength(Lengths.Memo);
-
+            e.Property(m => m.ProviderDisplayName).HasMaxLength(Lengths.Description);
+            
+            //e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Ignore(m => m.Id);
             e.HasKey(m => new { m.UserId, m.LoginProvider });
         }
@@ -120,10 +154,11 @@ namespace Persistence.Configurations
         {
             e.ToTable("UsersTokens", IdentityConfiguration.Schema, true);
 
-            //e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Property(m => m.Name).HasMaxLength(Lengths.Memo);
             e.Property(m => m.LoginProvider).HasMaxLength(Lengths.Memo);
+            e.Property(m => m.Value).HasMaxLength(Lengths.Memo);
 
+            //e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Ignore(m => m.Id);
             e.HasKey(m => new { m.UserId, m.LoginProvider, m.Name });
         }

@@ -8,7 +8,9 @@
         public const int Description = 200;
         public const int Memo = 400;
         public const int Email = 255;
+        public const int Url = 256;
         public const int Phone = 20;
         public const int Address = 400;
+        public const int Guid = 36;
     }
 }
