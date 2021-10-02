@@ -21,6 +21,8 @@ namespace Persistence.Conventions
             var defaultDateFunction = provider switch
             {
                 "MySql" => "now()",
+                "MariaDB" => "now()",
+                "PostgreSQL" => "now()",
                 "Sqlite" => "CURRENT_TIMESTAMP",
                 _ => "getdate()"
             };
