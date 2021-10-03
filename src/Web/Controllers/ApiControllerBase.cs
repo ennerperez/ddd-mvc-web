@@ -12,10 +12,24 @@ using Web.Models;
 
 namespace Web.Controllers
 {
+    
     public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
     {
         public ApiControllerBase(IGenericService<TEntity, int> service) : base(service)
         {
+        }
+    }
+
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    public abstract class ApiControllerBaseWithDbContext<TContext> : ControllerBase where TContext : DbContext
+    {
+        protected readonly TContext DbContext;
+
+        public ApiControllerBaseWithDbContext(TContext dbContext)
+        {
+            DbContext = dbContext;
         }
     }
 
