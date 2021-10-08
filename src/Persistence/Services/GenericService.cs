@@ -73,7 +73,9 @@ namespace Persistence.Services
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
 
-            var stprop = typeof(TEntity).GetProperties().FirstOrDefault()?.Name;
+            var stprop = typeof(TEntity)
+                .GetProperties()
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -161,7 +163,9 @@ namespace Persistence.Services
             if (predicate != null) query = query.Where(predicate);
             if (expression != null) query = query.Where(expression);
 
-            var stprop = typeof(TEntity).GetProperties().FirstOrDefault()?.Name;
+            var stprop = typeof(TEntity)
+                .GetProperties()
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -368,7 +372,9 @@ namespace Persistence.Services
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
 
-            var stprop = typeof(TEntity).GetProperties().FirstOrDefault()?.Name;
+            var stprop = typeof(TEntity)
+                .GetProperties()
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -456,7 +462,9 @@ namespace Persistence.Services
             if (predicate != null) query = query.Where(predicate);
             if (expression != null) query = query.Where(expression);
 
-            var stprop = typeof(TEntity).GetProperties().FirstOrDefault()?.Name;
+            var stprop = typeof(TEntity)
+                .GetProperties()
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
