@@ -17,7 +17,9 @@ namespace System.Linq
                 if (args != null)
                 {
                     var typeParams = new[] { Expression.Parameter(typeof(TEntityType), "") };
-                    var props = typeof(TEntityType).GetProperties().ToArray();
+                    var props = typeof(TEntityType).GetProperties()
+                        .Where(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)
+                        .ToArray();
                     if (args.Length == 0)
                     {
                         args = new[] { new[] { props.First().Name, "asc" } };
@@ -63,59 +65,6 @@ namespace System.Linq
                 return exp;
             }
 
-            [Obsolete]
-            public static IOrderedQueryable<TEntityType> SortDynamically<TEntityType>(this IQueryable<TEntityType> query, params string[] args)
-            {
-                var propertyname = args[0];
-                var direction = args[1];
-                var typeParams = new[] { Expression.Parameter(typeof(TEntityType), "") };
-                var pi = typeof(TEntityType).GetProperty(propertyname);
-                if (pi == null) pi = typeof(TEntityType).GetProperties()[0];
-                return (IOrderedQueryable<TEntityType>)query.Provider.CreateQuery(
-                    Expression.Call(
-                        typeof(Queryable),
-                        direction == "asc" ? "OrderBy" : "OrderByDescending",
-                        new[] { typeof(TEntityType), pi.PropertyType },
-                        query.Expression,
-                        Expression.Lambda(Expression.Property(typeParams[0], pi), typeParams))
-                );
-            }
-
-            [Obsolete]
-            public static IOrderedQueryable<TEntityType> SortDynamically<TEntityType>(this IQueryable<TEntityType> query, string propertyname, string direction = "asc")
-            {
-                var typeParams = new[] { Expression.Parameter(typeof(TEntityType), "") };
-                var pi = typeof(TEntityType).GetProperty(propertyname);
-                if (pi == null) pi = typeof(TEntityType).GetProperties()[0];
-                return (IOrderedQueryable<TEntityType>)query.Provider.CreateQuery(
-                    Expression.Call(
-                        typeof(Queryable),
-                        direction == "asc" ? "OrderBy" : "OrderByDescending",
-                        new[] { typeof(TEntityType), pi.PropertyType },
-                        query.Expression,
-                        Expression.Lambda(Expression.Property(typeParams[0], pi), typeParams))
-                );
-
-                // var param = Expression.Parameter(typeof(TEntityType), "s");
-                // var prop = Expression.PropertyOrField(param, propertyname);
-                // var sortLambda = Expression.Lambda(prop, param);
-                //
-                // Expression<Func<IOrderedQueryable<TEntityType>>> sortMethod = (() => query.OrderBy<TEntityType, object>(k => null));
-                // if (direction == "asc")
-                // 	sortMethod = (() => query.OrderBy<TEntityType, object>(k => null));
-                // else if (direction == "desc")
-                // 	sortMethod = (() => query.OrderByDescending<TEntityType, object>(k => null));
-                //
-                // var methodCallExpression = (sortMethod.Body as MethodCallExpression);
-                // if (methodCallExpression == null)
-                // 	throw new Exception("Oops");
-                //
-                // var method = methodCallExpression.Method.GetGenericMethodDefinition();
-                // var genericSortMethod = method.MakeGenericMethod(typeof(TEntityType), prop.Type);
-                // var orderedQuery = (IOrderedQueryable<TEntityType>)genericSortMethod.Invoke(query, new object[] { query, sortLambda });
-                //
-                // return orderedQuery;
-            }
         }
     }
 }
