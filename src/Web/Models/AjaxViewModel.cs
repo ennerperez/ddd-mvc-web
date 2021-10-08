@@ -26,6 +26,8 @@
         public bool Searchable { get; set; }
 
         public bool Orderable { get; set; }
+        
+        public SearchViewModel Search { get; set; }
     }
 
     public class SearchViewModel
