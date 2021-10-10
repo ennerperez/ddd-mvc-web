@@ -15,7 +15,7 @@ if ($clear)
     dotnet ef database drop -f --context $context_name --project src/Persistence --startup-project src/Web
     if (Test-Path src/Persistence/Migrations/$context)
     {
-	   rm -r -fo src/Persistence/Migrations/$context
+	   Remove-Item -r -fo src/Persistence/Migrations/$context
     }
 }
 elseif ($rollback)
