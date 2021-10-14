@@ -6,7 +6,7 @@
     <UsingSwagger>true</UsingSwagger>
     <UsingLocalization>true</UsingLocalization>
     <UsingInsights>false</UsingInsights>
-    <UsingSass>false</UsingSass>
+    <UsingSass>true</UsingSass>
   </PropertyGroup>
   
   <PropertyGroup>
