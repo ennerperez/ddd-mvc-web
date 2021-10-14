@@ -10,7 +10,7 @@
   <Import Project="Options.props"/>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.10">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -20,15 +20,15 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0"/>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.10"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.11"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11"/>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0"/>
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.12"/>
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.13"/>
   </ItemGroup>
 
   <ItemGroup Label="ConditionalReferences">
-    <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.10"/>
-    <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.10"/>
+    <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.11"/>
+    <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.11"/>
     <PackageReference Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1"/>
     <PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10"/>
     <PackageReference Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="5.21.3"/>
