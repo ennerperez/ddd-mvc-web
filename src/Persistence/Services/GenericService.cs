@@ -265,7 +265,7 @@ namespace Persistence.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public virtual async Task DeleteAsync(params TKey[] keys)
+        public virtual async Task DeleteAsync(params object[] keys)
         {
             var list = new List<TEntity>();
             foreach (var item in keys)
