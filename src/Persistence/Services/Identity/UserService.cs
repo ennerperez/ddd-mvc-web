@@ -56,7 +56,7 @@ namespace Persistence.Services
             await base.UpdateAsync(entities);
         }
 
-        public override async Task DeleteAsync(params int[] keys)
+        public override async Task DeleteAsync(params object[] keys)
         {
             if ((await _dbContext.Set<User>().CountAsync() == 1))
                 throw new InvalidOperationException("Cannot delete all users");

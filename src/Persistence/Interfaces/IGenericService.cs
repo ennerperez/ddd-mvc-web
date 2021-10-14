@@ -39,7 +39,7 @@ namespace Persistence.Interfaces
         Task CreateAsync(params TEntity[] entity);
         Task CreateOrUpdateAsync(params TEntity[] entity);
         Task UpdateAsync(params TEntity[] entity);
-        Task DeleteAsync(params TKey[] key);
+        Task DeleteAsync(params object[] key);
 
         // * //
 
@@ -87,7 +87,7 @@ namespace Persistence.Interfaces
 
 		void CreateOrUpdate(params TEntity[] entity);
 		void Update(params TEntity[] entity);
-		void Delete(params TKey[] key);
+		void Delete(params object[] key);
 
 		// * //
 
