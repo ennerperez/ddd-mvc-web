@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Microsoft.AspNetCore.Authentication.ApiKey;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,11 +15,11 @@ namespace Web.Controllers.API
 {
     [Authorize]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class SettingController : ApiControllerBase<Setting>
+    public class UserController : ApiControllerBase<User>
     {
         private readonly ILogger _logger;
 
-        public SettingController(ILoggerFactory loggerFactory, IGenericService<Setting> service) : base(service)
+        public UserController(ILoggerFactory loggerFactory, IGenericService<User> service) : base(service)
         {
             _logger = loggerFactory.CreateLogger(GetType());
         }
@@ -70,7 +69,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Create a new element")]
         [DisableRequestSizeLimit]
         [HttpPost]
-        public async Task<IActionResult> Post(Setting model)
+        public async Task<IActionResult> Post(User model)
         {
             if (model == null) return BadRequest();
 
@@ -78,10 +77,12 @@ namespace Web.Controllers.API
             {
                 var record = model;
                 record.Id = default;
+                record.NormalizedEmail = model.Email.ToUpper();
+                record.NormalizedUserName = model.UserName.ToUpper();
 
                 await Service.CreateAsync(record);
 
-                return Created(Url.Content($"~/api/{nameof(Setting)}/{record.Id}"), record.Id);
+                return Created(Url.Content($"~/api/{nameof(User)}/{record.Id}"), record.Id);
             }
             catch (Exception e)
             {
@@ -93,7 +94,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Setting model)
+        public async Task<IActionResult> Put(int id, [FromBody] User model)
         {
             if (model == null) return BadRequest();
 
@@ -103,10 +104,9 @@ namespace Web.Controllers.API
 
                 if (record != null)
                 {
-                    record.Key = model.Key;
-                    record.Type = model.Type;
-                    record.Value = model.Value;
-
+                    record.Email = model.Email;
+                    record.PhoneNumber = model.PhoneNumber;
+                    record.NormalizedEmail = model.Email.ToUpper();
                     await Service.UpdateAsync(record);
                 }
 
@@ -141,12 +141,12 @@ namespace Web.Controllers.API
         [HttpPost("data")] //INFO: Used to fill Datatable
         public async Task<JsonResult> Data(AjaxViewModel model)
         {
-            var selector = (new Setting()).Select(t => new
+            var selector = (new User()).Select(t => new
             {
-                t.Id, 
-                t.Key, 
-                t.Type, 
-                t.Value
+                t.Id,
+                t.UserName,
+                t.Email,
+                t.PhoneNumber
             });
             return await base.Data(model, selector);
         }
