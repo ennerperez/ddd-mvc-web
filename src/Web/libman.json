@@ -29,6 +29,54 @@
     {
       "library": "font-awesome@5.15.4",
       "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "datatables.net@1.11.3",
+      "destination": "wwwroot/lib/datatables.net"
+    },
+    {
+      "library": "datatables.net-bs5@1.11.3",
+      "destination": "wwwroot/lib/datatables.net-bs5"
+    },
+    {
+      "library": "datatables.net-buttons@2.0.1",
+      "destination": "wwwroot/lib/datatables.net-buttons"
+    },
+    {
+      "library": "datatables.net-buttons-bs5@2.0.1",
+      "destination": "wwwroot/lib/datatables.net-buttons-bs5"
+    },
+    {
+      "library": "jszip@2.5.0",
+      "destination": "wwwroot/lib/jszip"
+    },
+    {
+      "library": "pdfmake@0.1.36",
+      "destination": "wwwroot/lib/pdfmake"
+    },
+    {
+      "library": "datatables.net-responsive@2.2.9",
+      "destination": "wwwroot/lib/datatables.net-responsive"
+    },
+    {
+      "library": "datatables.net-responsive-bs5@2.2.9",
+      "destination": "wwwroot/lib/datatables.net-responsive-bs5"
+    },
+    {
+      "library": "datatables.net-select@1.3.3",
+      "destination": "wwwroot/lib/datatables.net-select"
+    },
+    {
+      "library": "datatables.net-select-bs5@1.3.3",
+      "destination": "wwwroot/lib/datatables.net-select-bs5"
+    },
+    {
+      "library": "limonte-sweetalert2@11.1.7",
+      "destination": "wwwroot/lib/sweetalert2"
+    },
+    {
+      "library": "jquery.mask@1.14.16",
+      "destination": "wwwroot/lib/jquery.mask"
     }
   ]
 }

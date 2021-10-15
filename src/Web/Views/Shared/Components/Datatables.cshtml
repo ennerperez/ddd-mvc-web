@@ -1,0 +1,148 @@
+﻿@{
+    var twoLetterIsoLanguageName = "en";
+    if (Html.UsingLocalization())
+    {
+        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    }
+
+    // var Localizer = new Dictionary<string, string>();
+    // Localizer.Add("print", "Print");
+    // Localizer.Add("actions", "Actions");
+    // Localizer.Add("edit", "Edit");
+    // Localizer.Add("delete", "Delete");
+    // Localizer.Add("search", "Search");
+    // Localizer.Add("last_update", "Las update");
+    // Localizer.Add("last_update_null", "Never updated");
+
+}
+
+@using (Html.BeginStyles())
+{
+    <environment include="Development">
+        <!-- DT -->
+        <link href="~/lib/datatables.net-bs5/dataTables.bootstrap5.css" rel="stylesheet"/>
+        <!-- BUTTONS -->
+        <link href="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.css" rel="stylesheet"/>
+        <!-- RESPONSIVE -->
+        <link href="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.css" rel="stylesheet"/>
+        <!-- SELECT -->
+        <link href="~/lib/datatables.net-select-bs5/select.bootstrap5.css" rel="stylesheet"/>
+
+    </environment>
+    <environment exclude="Development">
+        <!-- DT -->
+        <link href="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.css" rel="stylesheet"/>
+        <!-- BUTTONS -->
+        <link href="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.min.css" rel="stylesheet"/>
+        <!-- RESPONSIVE -->
+        <link href="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.min.css" rel="stylesheet"/>
+        <!-- SELECT -->
+        <link href="~/lib/datatables.net-select-bs5/select.bootstrap5.min.css" rel="stylesheet"/>
+    </environment>
+
+    <style>
+    .dataTables_length{
+        padding-right: 2rem;
+    }
+    </style>
+}
+
+@using (Html.BeginScripts())
+{
+    <script>
+        let dataTableLangPath = '@Url.Content($"~/js/datatables/i18n/{twoLetterIsoLanguageName}.json")';
+    </script>
+    <environment include="Development">
+        <script src="~/lib/jszip/jszip.js"></script>
+        <script src="~/lib/pdfmake/vfs_fonts.js"></script>
+        <script src="~/lib/pdfmake/pdfmake.js"></script>
+        <!-- DT -->
+        <script src="~/lib/datatables.net/jquery.dataTables.js"></script>
+        <script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.js"></script>
+        <!-- BUTTONS -->
+        <script src="~/lib/datatables.net-buttons/js/dataTables.buttons.js"></script>
+        <script src="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.colVis.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.html5.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.print.js"></script>
+        <!-- RESPONSIVE -->
+        <script src="~/lib/datatables.net-responsive/dataTables.responsive.js"></script>
+        <script src="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.js"></script>
+        <!-- SELECT -->
+        <script src="~/lib/datatables.net-select/dataTables.select.js"></script>
+        <script src="~/lib/datatables.net-select-bs5/select.bootstrap5.js"></script>
+
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jszip/jszip.min.js"></script>
+        <script src="~/lib/pdfmake/vfs_fonts.js"></script>
+        <script src="~/lib/pdfmake/pdfmake.min.js"></script>
+        <!-- DT -->
+        <script src="~/lib/datatables.net/jquery.dataTables.min.js"></script>
+        <script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
+        <!-- BUTTONS -->
+        <script src="~/lib/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <!-- RESPONSIVE -->
+        <script src="~/lib/datatables.net-responsive/dataTables.responsive.min.js"></script>
+        <script src="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.min.js"></script>
+        <!-- SELECT -->
+        <script src="~/lib/datatables.net-select/dataTables.select.min.js"></script>
+        <script src="~/lib/datatables.net-select-bs5/select.bootstrap5.min.js"></script>
+    </environment>
+}
+
+@if (Html.IsDebug())
+{
+    <!-- DEBUG -->
+    <style>
+        .dt-debug {
+            display: inline-block;
+            padding: 0.25rem;
+            position: fixed;
+            top: 60%;
+            right: 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            /* image replacement properties */
+            overflow: hidden;
+            white-space: nowrap;
+            visibility: hidden;
+            opacity: 0;
+            -webkit-transition: opacity .3s 0s, visibility 0s .3s;
+            -moz-transition: opacity .3s 0s, visibility 0s .3s;
+            transition: opacity .3s 0s, visibility 0s .3s;
+            background-color: gray;
+            color: white;
+        }
+
+            .dt-debug::content {
+                margin-top: 0.15rem;
+            }
+
+            .dt-debug:hover {
+                color: white;
+            }
+
+            .dt-debug.dt-is-visible {
+                visibility: visible;
+                opacity: 1;
+            }
+    </style>
+    <script>
+        function datatableDebug() {
+            let n = document.createElement('script');
+            n.setAttribute('language', 'JavaScript');
+            n.setAttribute('src', 'https://debug.datatables.net/debug.js');
+            document.body.appendChild(n);
+        }
+    </script>
+    <a class="dt-debug dt-is-visible shadow" href="javascript:datatableDebug()">
+        <i class="fas fa-2x fa-bug"></i>
+    </a>
+    <!-- DEBUG -->
+}
