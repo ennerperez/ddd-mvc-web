@@ -1,0 +1,9 @@
+[
+  {
+    "Id": 1,
+    "Description": "Administrator",
+    "Name": "Admin",
+    "NormalizedName": "ADMIN",
+    "ConcurrencyStamp": "cdc1290d-597d-4a9e-afde-329bb7ad0b73"
+  }
+]

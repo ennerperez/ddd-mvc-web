@@ -21,6 +21,12 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Default" asp-action="Privacy">Privacy</a>
                     </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
+                        </li>
+                    }
                     @if (SignInManager.IsSignedIn(User) && Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
                     {
                     	<li class="nav-item">
