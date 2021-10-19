@@ -5,6 +5,9 @@ using Domain;
 using Domain.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
+#if ENABLE_APIKEY || ENABLE_BEARER
+using Microsoft.AspNetCore.Authentication;
+#endif
 #if ENABLE_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
