@@ -27,11 +27,11 @@ namespace Microsoft.AspNetCore
         {
             public static class ApiKeyAuthenticationDefaults
             {
-                public const string AuthenticationScheme = "API Key";
+                public const string AuthenticationScheme = "ApiKey";
 
                 public const string ProblemDetailsContentType = "application/problem+json";
 
-                public const string ApiKeyHeaderName = "X-API-KEY";
+                public const string ApiKeyHeaderName = "X-Api-Key";
             }
 
             public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
@@ -145,9 +145,16 @@ namespace Microsoft.AspNetCore
         {
             public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
             {
+
+                private string _ApiPrefix;
+
+                public CustomCookieAuthenticationEvents(string apiPrefix)
+                {
+                    _ApiPrefix = apiPrefix;
+                }
                 public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
                 {
-                    if (context.Request.Path.StartsWithSegments("/api") &&
+                    if (!string.IsNullOrWhiteSpace(_ApiPrefix) && context.Request.Path.StartsWithSegments($"/{_ApiPrefix}") &&
                         context.Response.StatusCode == StatusCodes.Status200OK)
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -161,7 +168,7 @@ namespace Microsoft.AspNetCore
 
                 public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
                 {
-                    if (context.Request.Path.StartsWithSegments("/api") &&
+                    if (!string.IsNullOrWhiteSpace(_ApiPrefix) &&  context.Request.Path.StartsWithSegments($"/{_ApiPrefix}") &&
                         context.Response.StatusCode == StatusCodes.Status200OK)
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -177,7 +184,7 @@ namespace Microsoft.AspNetCore
 
         public static class AuthenticationBuilderExtensions
         {
-            public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKey.ApiKeyAuthenticationOptions> options = null)
+            public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, Action<ApiKey.ApiKeyAuthenticationOptions> options = null)
             {
                 authenticationBuilder.Services.AddTransient<ApiKey.IGetApiKeyQuery, ApiKey.StaticApiKeyQuery>();
                 return authenticationBuilder.AddScheme<ApiKey.ApiKeyAuthenticationOptions, ApiKey.ApiKeyAuthenticationHandler>(ApiKey.ApiKeyAuthenticationDefaults.AuthenticationScheme, options);

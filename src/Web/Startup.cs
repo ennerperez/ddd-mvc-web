@@ -187,7 +187,7 @@ namespace Web
                 {
                     HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
-                options.Events = new CustomCookieAuthenticationEvents();
+                options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
             });
 
 #if USING_NEWTONSOFT
@@ -247,7 +247,7 @@ namespace Web
             services.AddAuthentication()
                 .AddJwtBearer()
                 .AddCookie()
-                .AddApiKeySupport();
+                .AddApiKey();
 
             services.AddAuthorization();
         }
