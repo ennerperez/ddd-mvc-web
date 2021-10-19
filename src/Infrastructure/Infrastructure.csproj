@@ -17,6 +17,14 @@
   
   <ItemGroup>
     <PackageReference Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.10.0" />
+    <PackageReference Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.8.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsingAzureBlobs)' == 'false'">
+    <Compile Remove="Services\FileService.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsingAzureQueues)' == 'false'">
+    <Compile Remove="Services\QueueService.cs" />
   </ItemGroup>
 
 </Project>

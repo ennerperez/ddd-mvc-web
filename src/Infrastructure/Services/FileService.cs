@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Specialized;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -26,9 +24,23 @@ namespace Infrastructure.Services
             _logger = logger.CreateLogger(GetType());
         }
 
+        private string _containerName;
+        public string ContainerName
+        {
+            get => _containerName;
+            set
+            {
+                if (value != _containerName)
+                {
+                    _containerName = value;
+                    Deinitialize();
+                }
+            }
+        }
+        
         private string _connectionString;
 
-        private BlobContainerClient _appContainer;
+        private BlobContainerClient _client;
 
         public bool Initialized { get; private set; }
 
@@ -36,15 +48,14 @@ namespace Infrastructure.Services
         {
             if (Initialized) return;
 
-            _logger.LogInformation($"Inicializando cuenta de almacenamiento.");
+            _logger.LogInformation($"Initializing Storage Client");
 
             try
             {
-                _connectionString = _configuration["AzureBlobContainer:ConnectionString"];
-                var containerName = _configuration["AzureBlobContainer:ContainerName"];
+                _connectionString = _configuration["AzureSettings:Storage:ConnectionString"];
 
-                _appContainer = new BlobContainerClient(_connectionString, containerName);
-                await _appContainer.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+                _client = new BlobContainerClient(_connectionString, ContainerName);
+                await _client.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
                 Initialized = true;
             }
@@ -55,7 +66,13 @@ namespace Infrastructure.Services
             }
 
             if (!Initialized)
-                throw new TypeInitializationException(this.GetType().FullName, new Exception("Could not connect to the storage service."));
+                throw new TypeInitializationException(this.GetType().FullName, new Exception("Could not initialize to the storage client."));
+        }
+        public void Deinitialize()
+        {
+            _logger.LogInformation($"Deinitializing Storage Client");
+            Initialized = false;
+            _client = null;
         }
 
         private string NormalizePath(string targetPath)
@@ -84,22 +101,22 @@ namespace Infrastructure.Services
 
         private async Task InternalWriteAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default, bool overwrite = false)
         {
-            await InitializeAsync(cancellationToken: cancellationToken);
+            await InitializeAsync(cancellationToken);
 
             path = NormalizeFilePath(path);
 
             if (!overwrite)
             {
-                var blob = _appContainer.GetBlobClient(path);
+                var blob = _client.GetBlobClient(path);
                 if (blob != null)
                     if (await blob.ExistsAsync())
                         return;
             }
 
             var data = new MemoryStream(bytes);
-            if (overwrite) await _appContainer.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
+            if (overwrite) await _client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
             data.Position = 0;
-            await _appContainer.UploadBlobAsync(path, data, cancellationToken: cancellationToken);
+            await _client.UploadBlobAsync(path, data, cancellationToken);
         }
 
         private async Task InternalWriteAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = false)
@@ -110,21 +127,21 @@ namespace Infrastructure.Services
         
         private async Task<byte[]> InternalReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {
-            await InitializeAsync(cancellationToken: cancellationToken);
+            await InitializeAsync(cancellationToken);
 
             path = NormalizeFilePath(path);
 
-            var blob = _appContainer.GetBlobClient(path);
+            var blob = _client.GetBlobClient(path);
             if (blob != null)
-                if (await blob.ExistsAsync(cancellationToken: cancellationToken))
+                if (await blob.ExistsAsync(cancellationToken))
                 {
                     byte[] result;
                     var download = blob.Download();
                     var downloadPath = Path.GetTempFileName();
                     using (var file = File.OpenWrite(downloadPath))
-                        await download.Value.Content.CopyToAsync(file, cancellationToken: cancellationToken);
+                        await download.Value.Content.CopyToAsync(file, cancellationToken);
 
-                    result = await File.ReadAllBytesAsync(downloadPath, cancellationToken: cancellationToken);
+                    result = await File.ReadAllBytesAsync(downloadPath, cancellationToken);
                     try
                     {
                         File.Delete(downloadPath);
@@ -142,21 +159,21 @@ namespace Infrastructure.Services
 
         private async Task<string> InternalReadAllTextAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
         {
-            await InitializeAsync(cancellationToken: cancellationToken);
+            await InitializeAsync(cancellationToken);
 
             path = NormalizeFilePath(path);
 
-            var blob = _appContainer.GetBlobClient(path);
+            var blob = _client.GetBlobClient(path);
             if (blob != null)
-                if (await blob.ExistsAsync(cancellationToken: cancellationToken))
+                if (await blob.ExistsAsync(cancellationToken))
                 {
                     string result;
                     var download = blob.Download();
                     var downloadPath = Path.GetTempFileName();
                     using (var file = File.OpenWrite(downloadPath))
-                        await download.Value.Content.CopyToAsync(file, cancellationToken: cancellationToken);
+                        await download.Value.Content.CopyToAsync(file, cancellationToken);
 
-                    result = await File.ReadAllTextAsync(downloadPath, encoding, cancellationToken: cancellationToken);
+                    result = await File.ReadAllTextAsync(downloadPath, encoding, cancellationToken);
                     try
                     {
                         File.Delete(downloadPath);
@@ -174,21 +191,21 @@ namespace Infrastructure.Services
 
         private async Task<string[]> InternalReadAllLinesAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
         {
-            await InitializeAsync(cancellationToken: cancellationToken);
+            await InitializeAsync(cancellationToken);
 
             path = NormalizeFilePath(path);
 
-            var blob = _appContainer.GetBlobClient(path);
+            var blob = _client.GetBlobClient(path);
             if (blob != null)
-                if (await blob.ExistsAsync(cancellationToken: cancellationToken))
+                if (await blob.ExistsAsync(cancellationToken))
                 {
                     string[] result;
                     var download = blob.Download();
                     var downloadPath = Path.GetTempFileName();
                     using (var file = File.OpenWrite(downloadPath))
-                        await download.Value.Content.CopyToAsync(file, cancellationToken: cancellationToken);
+                        await download.Value.Content.CopyToAsync(file, cancellationToken);
 
-                    result = await File.ReadAllLinesAsync(downloadPath, encoding, cancellationToken: cancellationToken);
+                    result = await File.ReadAllLinesAsync(downloadPath, encoding, cancellationToken);
                     try
                     {
                         File.Delete(downloadPath);
@@ -205,9 +222,9 @@ namespace Infrastructure.Services
         }
 
         
-        private const int MaxByteArrayLength = 0x7FFFFFC7;
+        //private const int MaxByteArrayLength = 0x7FFFFFC7;
         private static Encoding s_UTF8NoBOM;
-        private static Encoding UTF8NoBOM => s_UTF8NoBOM ?? (s_UTF8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
+        private static Encoding UTF8NoBOM => s_UTF8NoBOM ?? (s_UTF8NoBOM = new UTF8Encoding(false, true));
 
         internal const int DefaultBufferSize = 4096;
 

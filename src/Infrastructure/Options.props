@@ -3,10 +3,12 @@
 
   <PropertyGroup Label="Features">
     <UsingAzureBlobs>true</UsingAzureBlobs>
+    <UsingAzureQueues>false</UsingAzureQueues>
   </PropertyGroup>
 
   <PropertyGroup>
     <BuildConstants Condition="'$(UsingAzureBlobs)' == 'true'">$(BuildConstants)USING_BLOBS;</BuildConstants>
+    <BuildConstants Condition="'$(UsingAzureQueues)' == 'true'">$(BuildConstants)USING_QUEUES;</BuildConstants>
   </PropertyGroup>
   
   <PropertyGroup>

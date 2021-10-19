@@ -31,6 +31,9 @@ namespace Infrastructure
 #if USING_BLOBS
             services.AddTransient<IFileService, FileService>();
 #endif
+#if USING_QUEUES
+            services.AddTransient<IQueueService, QueueService>();
+#endif
             return services;
         }
     }
