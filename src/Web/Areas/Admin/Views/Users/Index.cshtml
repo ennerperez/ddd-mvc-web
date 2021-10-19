@@ -182,7 +182,7 @@
                     let control = validables[s];
                     let data = $(control).val();
                     
-                    let is_valid = (data !== null && data !== "" && data !== undefined) || $(control).attr("requiered") === undefined;
+                    let is_valid = (data !== null && data !== "" && data !== undefined) || $(control).attr("required") === undefined;
                     let feedback = $(control).data('field-feedback');
                     
                     $(control).removeClass("is-invalid");
