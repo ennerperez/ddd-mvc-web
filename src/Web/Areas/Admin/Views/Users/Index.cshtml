@@ -68,6 +68,7 @@
                     },
                     ajax: {
                         url: `${apiUrl}/data`,
+                        headers: { RequestVerificationToken: __RequestVerificationToken },
                         type: 'POST',
                         contentType: "application/json",
                         data: function (d) {
