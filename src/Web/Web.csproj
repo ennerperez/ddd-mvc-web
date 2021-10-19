@@ -3,16 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>default</LangVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableSassWatch)' == 'false'">
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>    
   </PropertyGroup>
 
   <Import Project="Options.props" />
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.11" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.11" />
@@ -42,16 +42,18 @@
   </ItemGroup>
 
   <ItemGroup Label="ConditionalReferences">
+    <PackageReference Condition="'$(EnableBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" NoWarn="NU1605" />
+    <PackageReference Condition="'$(EnableOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.11" NoWarn="NU1605" />
     <PackageReference Condition="'$(UsingInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.18.0" />
     <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.11" />
     <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.2" />
+    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.3" />
     <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
     <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization.Routing" Version="2.2.0" />
     <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.2.0" />
-    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.2.2" />
-    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.2" />
-    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.2" />
+    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
+    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.3" />
     <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.43.2" />
   </ItemGroup>
 

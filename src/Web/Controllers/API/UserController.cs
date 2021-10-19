@@ -13,7 +13,6 @@ using Web.Models;
 
 namespace Web.Controllers.API
 {
-    [Authorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class UserController : ApiControllerBase<User>
     {

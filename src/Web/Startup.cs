@@ -4,10 +4,16 @@ using System.Runtime.InteropServices;
 using Domain;
 using Domain.Entities;
 using Infrastructure;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.ApiKey;
 using Microsoft.AspNetCore.Authentication.Cookies;
+#if ENABLE_APIKEY || ENABLE_BEARER
+using Microsoft.AspNetCore.Authentication;
+#endif
+#if ENABLE_APIKEY
+using Microsoft.AspNetCore.Authentication.ApiKey;
+#endif
+#if ENABLE_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -174,7 +180,7 @@ namespace Web
 
             services.AddHttpContextAccessor();
 
-            services.ConfigureApplicationCookie(options =>
+            var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(1);
 #if DEBUG
@@ -185,10 +191,13 @@ namespace Web
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.Cookie = new CookieBuilder
                 {
-                    HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
+                    HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), 
+                    IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
-                options.Events = new CustomCookieAuthenticationEvents();
+                options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
             });
+
+            services.ConfigureApplicationCookie(cookieOptions);
 
 #if USING_NEWTONSOFT
             services.AddRazorPages()
@@ -207,6 +216,7 @@ namespace Web
                     c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = $"{version}" });
                 c.DocInclusionPredicate((_, _) => true);
 
+#if ENABLE_BEARER
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = JwtBearerDefaults.AuthenticationScheme,
@@ -220,7 +230,8 @@ namespace Web
 
                 c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
-
+#endif
+#if ENABLE_APIKEY
                 var apiKeySecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = ApiKeyAuthenticationDefaults.AuthenticationScheme,
@@ -233,7 +244,7 @@ namespace Web
 
                 c.AddSecurityDefinition(apiKeySecurityScheme.Reference.Id, apiKeySecurityScheme);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { apiKeySecurityScheme, Array.Empty<string>() } });
-
+#endif
                 c.ResolveConflictingActions(apiDescription => apiDescription.First());
                 c.CustomSchemaIds(type => type.ToString());
                 c.EnableAnnotations();
@@ -245,9 +256,14 @@ namespace Web
 #endif
 
             services.AddAuthentication()
-                .AddJwtBearer()
                 .AddCookie()
-                .AddApiKeySupport();
+#if ENABLE_BEARER
+                .AddJwtBearer()
+#endif
+#if ENABLE_APIKEY
+                .AddApiKey()
+#endif
+                ;
 
             services.AddAuthorization();
         }

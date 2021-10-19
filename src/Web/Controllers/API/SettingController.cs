@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Microsoft.AspNetCore.Authentication.ApiKey;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,6 @@ using Web.Models;
 
 namespace Web.Controllers.API
 {
-    [Authorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class SettingController : ApiControllerBase<Setting>
     {

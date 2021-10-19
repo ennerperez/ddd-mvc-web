@@ -1,20 +1,23 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Reflection;
-// using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.ApiKey;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 #pragma warning disable 618
 // ReSharper disable CheckNamespace
@@ -23,15 +26,32 @@ namespace Microsoft.AspNetCore
 {
     namespace Authentication
     {
+        public sealed class SmartScheme
+        {
+            public const string AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme
+#if ENABLE_APIKEY
+                                                       + "," + ApiKeyAuthenticationDefaults.AuthenticationScheme
+#endif
+#if ENABLE_BEARER
+                                                       + "," + JwtBearerDefaults.AuthenticationScheme
+#endif
+#if ENABLE_OPENID
+                                                       + "," + OpenIdConnectDefaults.AuthenticationScheme
+#endif
+                ;
+
+            public const string DefaultScheme = "SmartScheme";
+        }
+
         namespace ApiKey
         {
             public static class ApiKeyAuthenticationDefaults
             {
-                public const string AuthenticationScheme = "API Key";
+                public const string AuthenticationScheme = "ApiKey";
 
                 public const string ProblemDetailsContentType = "application/problem+json";
 
-                public const string ApiKeyHeaderName = "X-API-KEY";
+                public const string ApiKeyHeaderName = "X-Api-Key";
             }
 
             public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
@@ -145,9 +165,16 @@ namespace Microsoft.AspNetCore
         {
             public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
             {
+                private string _ApiPrefix;
+
+                public CustomCookieAuthenticationEvents(string apiPrefix)
+                {
+                    _ApiPrefix = apiPrefix;
+                }
+
                 public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
                 {
-                    if (context.Request.Path.StartsWithSegments("/api") &&
+                    if (!string.IsNullOrWhiteSpace(_ApiPrefix) && context.Request.Path.StartsWithSegments($"/{_ApiPrefix}") &&
                         context.Response.StatusCode == StatusCodes.Status200OK)
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -161,7 +188,7 @@ namespace Microsoft.AspNetCore
 
                 public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
                 {
-                    if (context.Request.Path.StartsWithSegments("/api") &&
+                    if (!string.IsNullOrWhiteSpace(_ApiPrefix) && context.Request.Path.StartsWithSegments($"/{_ApiPrefix}") &&
                         context.Response.StatusCode == StatusCodes.Status200OK)
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -177,10 +204,35 @@ namespace Microsoft.AspNetCore
 
         public static class AuthenticationBuilderExtensions
         {
-            public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKey.ApiKeyAuthenticationOptions> options = null)
+            public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
             {
-                authenticationBuilder.Services.AddTransient<ApiKey.IGetApiKeyQuery, ApiKey.StaticApiKeyQuery>();
-                return authenticationBuilder.AddScheme<ApiKey.ApiKeyAuthenticationOptions, ApiKey.ApiKeyAuthenticationHandler>(ApiKey.ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
+                authenticationBuilder.Services.AddTransient<IGetApiKeyQuery, StaticApiKeyQuery>();
+                return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
+            }
+
+            public static AuthenticationBuilder AddSmartScheme(this AuthenticationBuilder authenticationBuilder)
+            {
+                return authenticationBuilder.AddPolicyScheme("SmartScheme", "Smart Scheme Selector", options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        var hasJwtBearerhHeader = context.Request.Headers.ContainsKey("Authorization") && context.Request.Headers["Authorization"].Any(m => m.ToLower().StartsWith("bearer"));
+                        var hasApiKeyHeader = context.Request.Headers.ContainsKey(ApiKeyAuthenticationDefaults.ApiKeyHeaderName) && !string.IsNullOrWhiteSpace(context.Request.Headers[ApiKeyAuthenticationDefaults.ApiKeyHeaderName]);
+                        // ReSharper disable once UnusedVariable
+                        var hasCookieHeader = context.Request.Headers.ContainsKey("cookie") && !string.IsNullOrWhiteSpace(context.Request.Headers["cookie"]);
+                        var hasOpenId = false; //TODO: OpenId
+
+                        if (hasJwtBearerhHeader)
+                            return JwtBearerDefaults.AuthenticationScheme;
+                        else if (hasApiKeyHeader)
+                            return ApiKeyAuthenticationDefaults.AuthenticationScheme;
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        else if (hasOpenId)
+                            return OpenIdConnectDefaults.AuthenticationScheme;
+
+                        return CookieAuthenticationDefaults.AuthenticationScheme;
+                    };
+                });
             }
         }
     }
