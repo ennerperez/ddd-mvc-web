@@ -11,8 +11,6 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.11" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.11" />
@@ -42,6 +40,8 @@
   </ItemGroup>
 
   <ItemGroup Label="ConditionalReferences">
+    <PackageReference Condition="'$(EnableBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" NoWarn="NU1605" />
+    <PackageReference Condition="'$(EnableOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.11" NoWarn="NU1605" />
     <PackageReference Condition="'$(UsingInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.18.0" />
     <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.11" />
     <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.1" />
