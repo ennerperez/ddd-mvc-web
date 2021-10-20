@@ -18,6 +18,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/js/editor.min.js",
+    "inputFiles": [
+      "wwwroot/js/editor.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/css/swagger.min.css",
     "inputFiles": [
       "wwwroot/css/swagger.css"
