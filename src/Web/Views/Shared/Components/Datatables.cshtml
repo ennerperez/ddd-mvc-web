@@ -50,9 +50,6 @@
 
 @using (Html.BeginScripts())
 {
-    <script>
-        let dataTableLangPath = '@Url.Content($"~/js/datatables/i18n/{twoLetterIsoLanguageName}.json")';
-    </script>
     <environment include="Development">
         <script src="~/lib/jszip/jszip.js"></script>
         <script src="~/lib/pdfmake/vfs_fonts.js"></script>
@@ -94,6 +91,116 @@
         <script src="~/lib/datatables.net-select/dataTables.select.min.js"></script>
         <script src="~/lib/datatables.net-select-bs5/select.bootstrap5.min.js"></script>
     </environment>
+    
+    <script>
+    let __datatable_options = {
+            language: '@Url.Content($"~/js/datatables/i18n/{twoLetterIsoLanguageName}.json")',
+            lengthMenu: [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]],
+            excelHtml5: {
+                icon: "far fa-file-excel me-2",
+                text: "Excel",
+                className: "btn btn-success btn-labeled",
+                progress: {
+                    title: "Wait...",
+                    text: "This process may take a few seconds depending on the number of records you want to export."
+                }
+            },
+            print: {
+                icon: "fas fa-print me-2",
+                text: "Print",
+                className: "btn btn-secondary btn-labeled",
+                fontSize: "10pt"
+            },
+            search:{
+                placeholder: "Search..."
+            }
+        };
+    
+    let __datatable_buttons  = [
+        {
+            extend: "excelHtml5",
+            text: `<span class="btn-label"><i class="${__datatable_options.excelHtml5.icon}"></i></span>${__datatable_options.excelHtml5.text}`,
+            exportOptions: { columns: ':visible:not([data-exportable="false"])' },
+            className: __datatable_options.excelHtml5.className,
+            action: function (e, dt, button, config) {
+                Swal.fire({
+                    title: __datatable_options.excelHtml5.progress.title,
+                    text: __datatable_options.excelHtml5.progress.text,
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    closeOnClickOutside: false,
+                });
+                var that = this;
+                setTimeout(function () {
+                    $.fn.dataTable.ext.buttons.excelHtml5.action.call(that, e, dt, button, config);
+                    Swal.close();
+                }, 1000);
+            }
+        },
+        {
+            extend: 'print',
+            text: `<span class="btn-label"><i class="${__datatable_options.print.icon}"></i></span>${__datatable_options.print.text}`,
+            className: __datatable_options.print.className,
+            exportOptions: { columns: ':visible:not([data-printable="false"])' },
+            customize: function (win) {
+                $(win.document).css('background-image', 'none !important');
+                $(win.document.body).css('font-size', __datatable_options.print.fontSize);
+            }
+        }
+    ];
+    
+    function doSearchDelay(table){
+        let tableId = table.nodes().to$().attr('id');
+        let parent = $(`#${tableId}`).parent();
+        let dataTables_filter = parent.find(".dataTables_filter input");
+        dataTables_filter.unbind().bind('input', (delay(function (e) { table.search($(this).val()).draw();}, 400)));
+        let table_length = parent.find("[name='table_length']");
+        table_length.removeClass("form-control-sm").removeClass("custom-select-sm").css("min-width","6em");
+    }
+    
+    function UIFix(table, target = "#actions"){
+        let tableId = table.nodes().to$().attr('id');
+        let parent = $(`#${tableId}`).parent();
+        
+        let table_length = parent.find("#table_length");
+                
+        let container = table_length.addClass("d-flex justify-content-between p-0");
+        container.append('<div class="p-0" id="filter"/>');
+        container.append('<div class="p-0" id="search"/>');
+        container.append('<div class="p-0" id="actions"/>');
+        
+        let label = parent.find("#table_length label");
+        label.appendTo($("#filter"));
+        
+        let table_length_2 = parent.find("[name='table_length'].form-select-sm");
+        table_length_2.removeClass("form-select-sm");
+        
+        let table_filter = parent.find("#table_filter .form-control-sm");
+        table_filter.removeClass("form-control-sm").attr("placeholder", __datatable_options.search.placeholder).appendTo($("#search"));
+        
+        let table_filter_2 = parent.find("#table_filter");
+        table_filter_2.remove();
+        
+        let dt_buttons = parent.find(".dt-buttons");
+        dt_buttons.appendTo($(target));
+    }
+    
+    function responsiveRenderer(api, rowIdx, columns) {
+        var data = $.map(columns, function (col, i) {
+            return col.hidden ?
+                `<li data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">` +
+                `<span style="width:20%;"><b>${col.title}:</b> </span> ` +
+                `<span>${col.data}</span>` +
+                `</li>` : '';
+        }).join('');
+    
+        return data ?
+            $('<ul class="m-2" style="width:95%" />').append(data) :
+            false;
+    }
+    
+    </script>
 }
 
 @if (Html.IsDebug())

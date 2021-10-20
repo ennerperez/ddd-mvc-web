@@ -24,7 +24,8 @@
                         <th>User</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th data-orderable="false" width="5%"></th>
+                        <th data-printable="false">MFA</th>
+                        <th data-printable="false" data-exportable="false" data-orderable="false" width="5%"></th>
                     </tr>
                     </thead>
                 </table>
@@ -55,16 +56,17 @@
             let apiUrl = '@Url.Content("~/api/user")';
             
             $(document).ready( function () {
+                
                 tableMain = $('#table').DataTable({
-                    language: {url: dataTableLangPath},
+                    language: { url: __datatable_options.language },
                     serverSide: true,
                     processing: false,
                     paging: true,
                     pageLength: 50,
-                    responsive: { details: { renderer: responsiveRender }, },
+                    responsive: { details: { renderer: responsiveRenderer }, },
                     info: true,
                     dom: 'lBfrtip',
-                    buttons: defaultButtons,
+                    buttons: __datatable_buttons,
                     search: {
                         caseInsensitive: true
                     },
@@ -79,8 +81,17 @@
                     },
                     columns: [                  
                         { name: "userName", data: "userName" },
-                        { name: "email", data: "email" },
-                        { name: "phoneNumber", data: "phoneNumber" },
+                        { name: "email", data: "email", render: function (data, type, row) 
+                            { 
+                                return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["emailConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;
+                            }
+                        },
+                        { name: "phoneNumber", data: "phoneNumber", render: function (data, type, row) 
+                            { 
+                                return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["phoneNumberConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;
+                            }
+                        },
+                        { name: "twoFactorEnabled", data: "twoFactorEnabled", render: function (data){ return boolBadgeRender(data, 'N/A', 'Yes', 'No');}},
                         { className: "text-center", data: null, render: function () 
                             {
                                 return `<div class="dropdown">
@@ -96,7 +107,7 @@
                         }
                                             
                     ],
-                    lengthMenu: defaultLengthMenu,
+                    lengthMenu: __datatable_options.lengthMenu,
                     initComplete: function () {
                         
                         $("[name='btn-create']").appendTo($('.dt-buttons'));
@@ -106,10 +117,11 @@
                         
                         hideLoader();
                         // Search Delay
-                        doSearchDelay();
+                        doSearchDelay(tableMain);
                         
                         // UI Fix
-                        UIFix();
+                        UIFix(tableMain);
+
                     }
                 });
                 editorMain = new bootstrap.Modal(document.getElementById('modal-editor'));
