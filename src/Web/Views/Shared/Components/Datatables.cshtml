@@ -131,7 +131,7 @@
                     allowOutsideClick: false,
                     closeOnClickOutside: false,
                 });
-                var that = this;
+                let that = this;
                 setTimeout(function () {
                     $.fn.dataTable.ext.buttons.excelHtml5.action.call(that, e, dt, button, config);
                     Swal.close();
@@ -152,7 +152,7 @@
     
     function doSearchDelay(table){
         let tableId = table.nodes().to$().attr('id');
-        let parent = $(`#${tableId}`).parent();
+        let parent = $(`#${tableId}`).closest("#table_wrapper");
         let dataTables_filter = parent.find(".dataTables_filter input");
         dataTables_filter.unbind().bind('input', (delay(function (e) { table.search($(this).val()).draw();}, 400)));
         let table_length = parent.find("[name='table_length']");
@@ -161,7 +161,7 @@
     
     function UIFix(table, target = "#actions"){
         let tableId = table.nodes().to$().attr('id');
-        let parent = $(`#${tableId}`).parent();
+        let parent = $(`#${tableId}`).closest("#table_wrapper");
         
         let table_length = parent.find("#table_length");
                 
