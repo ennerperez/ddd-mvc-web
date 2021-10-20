@@ -248,7 +248,7 @@ function deleteRecord() {
                 type: method,
                 success: function () {
                     __editor_table.ajax.reload(reHandle);
-                    Toast.fire(__editor_options.sucess);
+                    Toast.fire(__editor_options.success);
                 },
                 error: function (e) {
                     let text = "";
