@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Persistence.Interfaces;
@@ -105,7 +104,10 @@ namespace Web.Controllers.API
                 {
                     record.Email = model.Email;
                     record.PhoneNumber = model.PhoneNumber;
-                    record.NormalizedEmail = model.Email.ToUpper();
+                    record.NormalizedEmail = model.Email?.ToUpper();
+                    record.EmailConfirmed = model.EmailConfirmed;
+                    record.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
+                    record.TwoFactorEnabled = model.TwoFactorEnabled;
                     await Service.UpdateAsync(record);
                 }
 
@@ -145,7 +147,10 @@ namespace Web.Controllers.API
                 t.Id,
                 t.UserName,
                 t.Email,
-                t.PhoneNumber
+                t.EmailConfirmed,
+                t.PhoneNumber,
+                t.PhoneNumberConfirmed,
+                t.TwoFactorEnabled
             });
             return await base.Data(model, selector);
         }
