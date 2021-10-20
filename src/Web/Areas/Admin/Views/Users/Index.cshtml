@@ -115,12 +115,13 @@
                         tableMain.on('draw', reHandle);
                         reHandle();
                         
-                        hideLoader();
                         // Search Delay
                         doSearchDelay(tableMain);
                         
                         // UI Fix
                         UIFix(tableMain);
+                        
+                        hideLoader();
 
                     }
                 });
