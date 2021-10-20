@@ -75,7 +75,7 @@ body {
 
 /* EXTRAS */
 
-[data-field-required='true']:after, .required:after {
+.required:after {
     content: ' *';
     font-size: 0.75rem;
     vertical-align: super;
