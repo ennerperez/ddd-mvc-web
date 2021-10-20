@@ -39,9 +39,9 @@ function delay(callback, ms) {
     };
 }
 
-function boolBadgeRender(input, defaultValue, trueValue, falseValue) {
+function boolBadgeRender(input, defaultValue, trueValue, falseValue, styles) {
 
-    var color = "warning";
+    var color = "secondary";
     var value = defaultValue;
     switch (input) {
         case true:
@@ -56,12 +56,31 @@ function boolBadgeRender(input, defaultValue, trueValue, falseValue) {
             break;
     }
 
-    return `<span class="float-center badge badge-${color}">${value}</span>`;
+    return `<span class="float-center badge bg-${color} ${styles}">${value}</span>`;
 }
 
-function rangeBadgeRender(input, defaultValue, values, texts) {
+function boolPositionBadgeRender(input, position= 'top-0 start-100', styles) {
 
-    var color = "warning";
+    var color = "secondary";
+    switch (input) {
+        case true:
+            color = "success";
+            break;
+        case false:
+            color = "danger";
+            break;
+        default:
+            break;
+    }
+
+    return `<span class="d-print-none position-absolute translate-middle bg-${color} p-2 border border-light rounded-circle ${styles} ${position}">
+                <span class="visually-hidden"></span>
+            </span>`;
+}
+
+function rangeBadgeRender(input, defaultValue, values, texts, styles) {
+
+    var color = "secondary";
     var value = defaultValue;
     if (input === values[0])
     {
@@ -73,75 +92,11 @@ function rangeBadgeRender(input, defaultValue, values, texts) {
         color = "danger";
         value = texts[1];
     }
-    return `<span class="float-center badge badge-${color}">${value}</span>`;
+    return `<span class="float-center badge bg-${color} ${styles}">${value}</span>`;
 }
 
 function dateTimeRender(input, format = "DD/MM/YYYY", nullValue = '') {
     return input !== null ? moment(input).format(format) : nullValue;
-}
-
-function responsiveRender(api, rowIdx, columns) {
-    var data = $.map(columns, function (col, i) {
-        return col.hidden ?
-            `<li data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">` +
-            `<span style="width:20%;"><b>${col.title}:</b> </span> ` +
-            `<span>${col.data}</span>` +
-            `</li>` : '';
-    }).join('');
-
-    return data ?
-        $('<ul class="m-2" style="width:95%" />').append(data) :
-        false;
-}
-
-let defaultButtons = [
-    {
-        extend: "excelHtml5",
-        text: '<span class="btn-label"><i class="far fa-file-excel me-2"></i></span>Excel',
-        className: "btn btn-success btn-labeled",
-        action: function (e, dt, button, config) {
-            Swal.fire({
-                title: 'Wait...',
-                text: "This process may take a few seconds depending on the number of records you want to export.",
-                showCancelButton: false,
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                closeOnClickOutside: false,
-            });
-            var that = this;
-            setTimeout(function () {
-                $.fn.dataTable.ext.buttons.excelHtml5.action.call(that, e, dt, button, config);
-                Swal.close();
-            }, 1000);
-        }
-    },
-    {
-        extend: 'print',
-        text: '<span class="btn-label"><i class="fas fa-print me-2"></i></span>Print',
-        className: "btn btn-secondary btn-labeled",
-        customize: function (win) {
-            $(win.document).css('background-image', 'none !important');
-            $(win.document.body).css('font-size', '10pt');
-        }
-    }
-];
-let defaultLengthMenu = [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "Todos"]];
-
-function doSearchDelay(){
-    $('.dataTables_filter input').unbind().bind('input', (delay(function (e) { tableMain.search($(this).val()).draw();}, 400)));
-    $('[name="table_length"]').removeClass("form-control-sm").removeClass("custom-select-sm").css("min-width","6em");
-}
-
-function UIFix(){
-    var container = $("#table_length").addClass("d-flex justify-content-between p-0");
-    container.append('<div class="p-0" id="filter"/>');
-    container.append('<div class="p-0" id="search"/>');
-    container.append('<div class="p-0" id="actions"/>');
-
-    $("#table_length label").appendTo($("#filter"));
-    $("#table_filter .form-control-sm").removeClass("form-control-sm").attr("placeholder", "Search...").appendTo($("#search"));
-    $("#table_filter").remove();
-    $(".dt-buttons").appendTo($("#actions"));
 }
 
 function compress(file, max_width, max_height, quality) {
@@ -194,7 +149,6 @@ function compress(file, max_width, max_height, quality) {
 
     return true;
 }
-
 
 function resizeMe(img, max_width, max_height, quality) {
     var canvas = document.createElement('canvas');

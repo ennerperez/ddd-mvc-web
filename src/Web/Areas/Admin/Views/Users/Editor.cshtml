@@ -12,24 +12,51 @@
                     <label for="userName" class="form-label required">Name</label>
                     <input id="userName" class="form-control" required
                            data-field="userName"
-                           data-field-validate="true"
-                           data-field-feedback="Please enter a valid user name">
+                           data-validate="true"
+                           data-feedback="Please enter a valid user name">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input id="email" class="form-control" type="email"
                            data-field="email"
-                           data-field-validate="true"
-                           data-field-feedback="Please enter a valid email">
+                           data-validate="true"
+                           data-feedback="Please enter a valid email">
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="emailConfirmed"
+                               data-field="emailConfirmed">
+                        <label class="form-check-label" for="emailConfirmed">
+                            Email confirmed
+                        </label>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="phoneNumber" class="form-label required">Phone</label>
                     <input id="phoneNumber" class="form-control" required
                            data-field="phoneNumber"
-                           data-field-validate="true"
-                           data-field-regex="^\([0-9]{3}\)[0-9]{3}-[0-9]{4}$"
-                           data-field-mask="(000) 000-0000"
-                           data-field-feedback="Please enter a valid phone">
+                           data-validate="true"
+                           data-regex="^[0-9]{10,}$"
+                           data-feedback="Please enter a valid phone"
+                           data-mask="(000) 000-0000">
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="phoneNumberConfirmed"
+                               data-field="phoneNumberConfirmed">
+                        <label class="form-check-label" for="phoneNumberConfirmed">
+                            Phone confirmed
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="twoFactorEnabled"
+                               data-field="twoFactorEnabled">
+                        <label class="form-check-label" for="twoFactorEnabled">
+                            Two Factor
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

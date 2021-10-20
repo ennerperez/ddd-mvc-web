@@ -24,7 +24,8 @@
                         <th>User</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th data-orderable="false" width="5%"></th>
+                        <th data-printable="false">MFA</th>
+                        <th data-printable="false" data-exportable="false" data-orderable="false" width="5%"></th>
                     </tr>
                     </thead>
                 </table>
@@ -42,9 +43,11 @@
 {
     <environment include="development">
         <script src="~/lib/jquery.mask/jquery.mask.js"></script>
+        <script src="~/js/editor.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="development">
         <script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
+        <script src="~/js/editor.min.js" asp-append-version="true"></script>
     </environment>
 
     <script>
@@ -53,16 +56,17 @@
             let apiUrl = '@Url.Content("~/api/user")';
             
             $(document).ready( function () {
+                
                 tableMain = $('#table').DataTable({
-                    language: {url: dataTableLangPath},
+                    language: { url: __datatable_options.language },
                     serverSide: true,
                     processing: false,
                     paging: true,
                     pageLength: 50,
-                    responsive: { details: { renderer: responsiveRender }, },
+                    responsive: { details: { renderer: responsiveRenderer }, },
                     info: true,
                     dom: 'lBfrtip',
-                    buttons: defaultButtons,
+                    buttons: __datatable_buttons,
                     search: {
                         caseInsensitive: true
                     },
@@ -77,8 +81,17 @@
                     },
                     columns: [                  
                         { name: "userName", data: "userName" },
-                        { name: "email", data: "email" },
-                        { name: "phoneNumber", data: "phoneNumber" },
+                        { name: "email", data: "email", render: function (data, type, row) 
+                            { 
+                                return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["emailConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;
+                            }
+                        },
+                        { name: "phoneNumber", data: "phoneNumber", render: function (data, type, row) 
+                            { 
+                                return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["phoneNumberConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;
+                            }
+                        },
+                        { name: "twoFactorEnabled", data: "twoFactorEnabled", render: function (data){ return boolBadgeRender(data, 'N/A', 'Yes', 'No');}},
                         { className: "text-center", data: null, render: function () 
                             {
                                 return `<div class="dropdown">
@@ -94,7 +107,7 @@
                         }
                                             
                     ],
-                    lengthMenu: defaultLengthMenu,
+                    lengthMenu: __datatable_options.lengthMenu,
                     initComplete: function () {
                         
                         $("[name='btn-create']").appendTo($('.dt-buttons'));
@@ -104,255 +117,16 @@
                         
                         hideLoader();
                         // Search Delay
-                        doSearchDelay();
+                        doSearchDelay(tableMain);
                         
                         // UI Fix
-                        UIFix();
+                        UIFix(tableMain);
+
                     }
                 });
                 editorMain = new bootstrap.Modal(document.getElementById('modal-editor'));
-                maskEditor();
+                setEditor(tableMain, editorMain, apiUrl);
             });
-            
-            function maskEditor(){
-                let controls = $(`#${editorMain._element.id} [data-field-mask]`);
-                controls.each(function(s){
-                    let control = controls[s];
-                    let mask = $(control).data("field-mask");
-                    $(control).mask(mask);
-                });
-            }
-            function reHandle() {
-                $("[name='btn-create']").each(function (){
-                    $(this).off("click", createRecord).on("click", createRecord);
-                });
-                $("[name='btn-edit']").each(function () {
-                    $(this).off("click", editRecord).on("click", editRecord);
-                });
-                $("[name='btn-delete']").each(function () {
-                    $(this).off("click", deleteRecord).on("click", deleteRecord);
-                });
-                $("[name='btn-save']").each(function () {
-                    $(this).off("click", saveRecord).on("click", saveRecord);
-                });
-            }
-            function clearEditor(){
-                let controls = $(`#${editorMain._element.id} [data-field]`);
-                controls.each(function(s){
-                    let control = controls[s];
-                    let type = $(control).prop("tagName").toLowerCase();
-                    if ($(control).attr("type") === "checkbox") type = "checkbox";
-                    switch (type){
-                        case "input":
-                        case "select":
-                            $(control).val("");
-                            break;
-                        case "checkbox":
-                            $(control).val("").prop("checked",false);
-                            break;
-                    }
-                    $(control).removeClass("is-invalid");
-                    $(control).parent().find(".invalid-feedback").remove();
-                });
-                let validables = $(`#${editorMain._element.id} [data-field-validate]`);
-                validables.each(function(s){
-                    let control = validables[s];
-                    let type = $(control).prop("tagName").toLowerCase();
-                    switch (type){
-                        case "input":
-                            $(control).unbind("keyup").on("keyup", function (s){
-                                if (s.keyCode === 13 || s.keyCode === 27) return;
-                                $(this).removeClass("is-invalid");
-                                $(this).parent().find(".invalid-feedback").remove();
-                            });
-                            break;
-                        case "select":
-                            $(control).unbind("change").on("change", function (){
-                                $(this).removeClass("is-invalid");
-                                $(this).parent().find(".invalid-feedback").remove();
-                            });
-                            break;
-                    }
-                });
-            }   
-            function validateEditor(){
-                let is_modal_valid = true;
-                let is_focused = false;
-                let validables = $(`#${editorMain._element.id} [data-field-validate]`);
-                validables.each(function(s){
-                    let control = validables[s];
-                    let data = $(control).val();
-                    
-                    let is_valid = (data !== null && data !== "" && data !== undefined) || $(control).attr("required") === undefined;
-                    let feedback = $(control).data('field-feedback');
-                    
-                    $(control).removeClass("is-invalid");
-                    $(control).parent().find(".invalid-feedback").remove();
-                    
-                    if (data !== null && data !== "" && data !== undefined)
-                    {
-                         let pattern = $(control).data('field-regex');
-                         if (pattern !== null && pattern !== undefined)
-                         {
-                             let regexp = new RegExp(pattern);
-                             is_valid = regexp.test(data);
-                         }
-                    }
-                    
-                    if (!is_valid) $(control).addClass("is-invalid");
-                    
-                    if (!is_valid && feedback !== null && feedback !== undefined)
-                        $(control).after(`<div class="invalid-feedback" style="display: block !important;">${feedback}</div>`);
-                    
-                    if (is_modal_valid && !is_valid) is_modal_valid = false;
-                    if (!is_modal_valid && !is_focused)
-                    {
-                        $(control).focus();
-                        is_focused = true;
-                    }
-    
-                });
-                return is_modal_valid;
-            }
-            function getModel(){
-                let controls = $(`#${editorMain._element.id} [data-field]`);
-                let model = {};
-                controls.each(function(s){
-                    let control = controls[s];
-                    let data = null;
-                    let type = $(control).prop("tagName").toLowerCase();
-                    if ($(control).attr("type") === "checkbox") type = "checkbox";
-                    switch (type){
-                        case "input":
-                        case "select":
-                            data = $(control).val();
-                            break;
-                        case "checkbox":
-                            data = $(control).val("").prop("checked");
-                            break;
-                    }
-                    let field = $(control).data("field");
-                    if (data !== null && data !== "") Reflect.set(model, field, data);  
-                });
-                return model;
-            }
-            
-            function createRecord()
-            {
-                clearEditor();
-                editorMain.show();
-            }
-            function editRecord()
-            {
-                clearEditor();
-                
-                let btn = $(this);
-                let row = btn.closest("tr");
-                let data = tableMain.rows(row).data()[0];
-                let controls = $(`#${editorMain._element.id} [data-field]`);
-                controls.each(function(s){
-                    let control = controls[s];
-                    let field = $(control).data("field");
-                    let type = $(control).prop("tagName").toLowerCase();
-                    if ($(control).attr("type") === "checkbox") type = "checkbox";
-                    switch (type){
-                        case "input":
-                        case "select":
-                            $(control).val(data[field]);
-                            break;
-                        case "checkbox":
-                            $(control).val(data[field]).prop("checked", data[field]);
-                            break;
-                    }
-                });
-                
-                editorMain.show();
-            }
-            function deleteRecord()
-            {
-                let btn = $(this);
-                let row = btn.closest("tr");
-                let data = tableMain.rows(row).data()[0];
-                let id = parseInt(data['id']);
-                swal.fire({
-                    title: "Confirmation",
-                    text: "Are you sure you want to delete?",
-                    icon: 'question',
-                    showCancelButton: true, 
-                }).then((result) => {
-                    if (result.value) {
-                        let method = 'DELETE';
-                        let url = `${apiUrl}/${id}`;
-                        $.ajax({
-                            url: url,
-                            headers: { RequestVerificationToken: __RequestVerificationToken },
-                            contentType: "application/json; charset=utf-8",
-                            type: method,
-                            success: function () {
-                                tableMain.ajax.reload(reHandle);
-                                Toast.fire({
-                                    position: "bottom-right",
-                                    icon: "success",
-                                    title: "¡Done!",
-                                });
-                            },
-                            error: function (e) {
-                                let text = "";
-                                if (e.hasOwnProperty("responseJSON")) text = e.responseJSON.detail;
-                                Toast.fire({
-                                    timer: 0,
-                                    position: "bottom-right",
-                                    icon: "error",
-                                    title: "¡Error!",
-                                    text: text,
-                                });
-                            }
-                        });
-                    }
-                });
-            }       
-            function saveRecord()
-            {                    
-                if (!validateEditor()) return;
-                let model = getModel();
-                
-                let method = "POST";
-                let url = `${apiUrl}`;
-                if (model.id !== undefined){
-                    method = "PUT";
-                    url = `${apiUrl}/${model.id}`;
-                }
-                
-                $.ajax({
-                    url: url,
-                    headers: { RequestVerificationToken: __RequestVerificationToken },
-                    accepts: "application/json",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(model),
-                    dataType: "json",
-                    type: method,
-                    success: function () {
-                        editorMain.hide();
-                        tableMain.ajax.reload(reHandle);
-                        Toast.fire({
-                            position: "bottom-right",
-                            icon: "success",
-                            title: "¡Done!",
-                        });
-                    },
-                    error: function (e) {
-                        let text = "";
-                        if (e.hasOwnProperty("responseJSON")) text = e.responseJSON.detail;
-                        Toast.fire({
-                            timer: 0,
-                            position: "bottom-right",
-                            icon: "error",
-                            title: "¡Error!",
-                            text: text,
-                        });
-                    }
-                });
-            }
             
     </script>
 }
