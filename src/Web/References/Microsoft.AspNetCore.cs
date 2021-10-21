@@ -146,7 +146,7 @@ namespace Microsoft.AspNetCore
                 public StaticApiKeyQuery(IConfiguration configuration)
                 {
                     var existingApiKeys = new List<ApiKey>();
-                    var apilocal = configuration.GetSection("AppSettings")?["Apikey"];
+                    var apilocal = configuration.GetSection("AppSettings")?["ApiKey"];
                     var apikey = new ApiKey(1, configuration["AppSettings:Name"], apilocal, DateTime.Now, new[] { "general" });
                     existingApiKeys.Add(apikey);
 
