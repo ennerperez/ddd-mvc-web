@@ -10,6 +10,7 @@ using Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using Domain.Interfaces;
 
 #if ENABLE_BULK
@@ -75,7 +76,7 @@ namespace Persistence.Services
 
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
+                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -165,7 +166,7 @@ namespace Persistence.Services
 
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
+                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -374,7 +375,7 @@ namespace Persistence.Services
 
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
+                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -464,7 +465,7 @@ namespace Persistence.Services
 
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)?.Name;
+                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
