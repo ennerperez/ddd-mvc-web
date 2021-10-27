@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace System.Linq
 {
@@ -18,7 +19,7 @@ namespace System.Linq
                 {
                     var typeParams = new[] { Expression.Parameter(typeof(TEntityType), "") };
                     var props = typeof(TEntityType).GetProperties()
-                        .Where(m => m.PropertyType == typeof(string) || m.PropertyType.IsPrimitive)
+                        .Where(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))
                         .ToArray();
                     if (args.Length == 0)
                     {
