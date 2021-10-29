@@ -126,6 +126,7 @@ function validateEditor() {
         let control = validables[s];
         let data;
         let hasMask = $(control).data("mask") !== undefined;
+        let dataType = $(control).data("type");
         if (dataType === "datetime" || dataType === "date" || dataType === "time")
             data = $(control).datetimepicker("date");
         else if (!hasMask)
