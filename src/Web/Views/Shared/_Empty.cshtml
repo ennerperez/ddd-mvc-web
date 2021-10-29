@@ -72,9 +72,9 @@
     </environment>
 
 </head>
-<body>
+<body id="@(ViewContext.RouteData.Values["area"]?.ToString()?.ToLower())">
 
-@RenderBody()
+    @RenderBody()
 
     <environment include="development">
         <script src="~/lib/jquery/jquery.js"></script>
