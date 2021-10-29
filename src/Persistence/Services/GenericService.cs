@@ -52,7 +52,7 @@ namespace Persistence.Services
             {
                 deleted = m => (m as ISoftDelete).IsDeleted == false;
             }
-            
+
             if (predicate != null && deleted != null)
             {
                 var body = Expression.AndAlso(deleted.Body, predicate.Body);
@@ -163,10 +163,10 @@ namespace Persistence.Services
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] {"Contains", "Equals", "CompareTo"};
+                            var methods = new[] { "Contains", "Equals", "CompareTo" };
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] {type});
+                                var methodInfo = type.GetMethod(method, new[] { type });
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -210,19 +210,22 @@ namespace Persistence.Services
         public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
             predicate = GetSoftDeletePredicate(predicate);
-            return await _dbSet.CountAsync(predicate);
+            if (predicate != null) return await _dbSet.CountAsync(predicate);
+            return await _dbSet.CountAsync();
         }
 
         public virtual async Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
             predicate = GetSoftDeletePredicate(predicate);
-            return await _dbSet.LongCountAsync(predicate);
+            if (predicate != null) return await _dbSet.LongCountAsync(predicate);
+            return await _dbSet.LongCountAsync();
         }
 
         public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
             predicate = GetSoftDeletePredicate(predicate);
-            return await _dbSet.AnyAsync(predicate);
+            if (predicate != null) return await _dbSet.AnyAsync(predicate);
+            return await _dbSet.AnyAsync();
         }
 
         public virtual async Task CreateAsync(params TEntity[] entities)
@@ -375,7 +378,7 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
-            
+
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
@@ -401,7 +404,7 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
-            
+
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
@@ -427,7 +430,7 @@ namespace Persistence.Services
             if (include != null) query = include(query);
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
-            
+
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
@@ -494,10 +497,10 @@ namespace Persistence.Services
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] {"Contains", "Equals", "CompareTo"};
+                            var methods = new[] { "Contains", "Equals", "CompareTo" };
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] {type});
+                                var methodInfo = type.GetMethod(method, new[] { type });
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -521,10 +524,10 @@ namespace Persistence.Services
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
             if (expression != null) query = query.Where(expression);
-            
+
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
-            
+
             var stprop = typeof(TEntity)
                 .GetProperties()
                 .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
@@ -540,20 +543,23 @@ namespace Persistence.Services
 
         public virtual int Count(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate); 
-            return _dbSet.Count(predicate);
+            predicate = GetSoftDeletePredicate(predicate);
+            if (predicate != null) return _dbSet.Count(predicate);
+            return _dbSet.Count();
         }
 
         public virtual long LongCount(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate); 
-            return _dbSet.LongCount(predicate);
+            predicate = GetSoftDeletePredicate(predicate);
+            if (predicate != null) return _dbSet.LongCount(predicate);
+            return _dbSet.LongCount();
         }
 
         public virtual bool Any(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate); 
-            return _dbSet.Any(predicate);
+            predicate = GetSoftDeletePredicate(predicate);
+            if (predicate != null) return _dbSet.Any(predicate);
+            return _dbSet.Any();
         }
 
         public virtual void Create(params TEntity[] entities)
@@ -710,10 +716,10 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
-            
+
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
-            
+
             var result = orderBy != null ? orderBy(query).Select(selector) : query.Select(selector);
             return result.FirstOrDefault();
         }
@@ -736,7 +742,7 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
-            
+
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
