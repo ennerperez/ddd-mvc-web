@@ -8,7 +8,7 @@ namespace Domain.Entities
     {
         public UserRole()
         {
-            Created = DateTime.Now;
+            CreatedAt = DateTime.Now;
         }
 
         public int Id { get; set; }
@@ -19,8 +19,8 @@ namespace Domain.Entities
 
         #region IAuditable
 
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
     }

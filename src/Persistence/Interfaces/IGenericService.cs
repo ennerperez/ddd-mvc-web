@@ -21,7 +21,8 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             int? skip = 0, int? take = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false);
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
         Task<IQueryable<TResult>> SearchAsync<TResult>(
             Expression<Func<TEntity, TResult>> selector,
@@ -31,7 +32,8 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             int? skip = 0, int? take = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false);
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
         Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null);
         Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null);
@@ -49,7 +51,8 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false);
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
 
         Task<TResult> LastOrDefaultAsync<TResult>(
@@ -58,7 +61,8 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false);
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
 #if ENABLE_NONASYNC
 		IQueryable<TResult> Read<TResult>(
@@ -68,7 +72,8 @@ namespace Persistence.Interfaces
 			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
 			int? skip = 0, int? take = null,
 			bool disableTracking = false,
-			bool ignoreQueryFilters = false);
+			bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
 		IQueryable<TResult> Search<TResult>(
 			Expression<Func<TEntity, TResult>> selector = null,
@@ -78,7 +83,8 @@ namespace Persistence.Interfaces
 			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
 			int? skip = 0, int? take = null,
 			bool disableTracking = false,
-			bool ignoreQueryFilters = false);
+			bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
 		int Count(Expression<Func<TEntity, bool>> predicate = null);
 		long LongCount(Expression<Func<TEntity, bool>> predicate = null);
@@ -97,7 +103,8 @@ namespace Persistence.Interfaces
 			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
 			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
 			bool disableTracking = false,
-			bool ignoreQueryFilters = false);
+			bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
 		TResult LastOrDefault<TResult>(
 			Expression<Func<TEntity, TResult>> selector = null,
@@ -105,7 +112,8 @@ namespace Persistence.Interfaces
 			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
 			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
 			bool disableTracking = false,
-			bool ignoreQueryFilters = false);
+			bool ignoreQueryFilters = false,
+            bool includeDeleted = false);
 
 #endif
     }

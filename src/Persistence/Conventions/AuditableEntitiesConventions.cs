@@ -35,11 +35,11 @@ namespace Persistence.Conventions
                 var properties = t.GetProperties().ToArray();
                 if (!properties.Any()) continue;
 
-                var created = properties.First(m => m.Name == "Created");
+                var created = properties.First(m => m.Name == "CreatedAt");
                 created.SetDefaultValueSql(defaultDateFunction);
                 t.AddIndex(created);
 
-                var modified = properties.First(m => m.Name == "Modified");
+                var modified = properties.First(m => m.Name == "ModifiedAt");
                 t.AddIndex(modified);
             }
 

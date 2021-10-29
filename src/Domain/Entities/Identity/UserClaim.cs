@@ -8,7 +8,7 @@ namespace Domain.Entities
     {
         public UserClaim()
         {
-            Created = DateTime.Now;
+            CreatedAt = DateTime.Now;
         }
 
         public UserClaim(string claimType, string claimValue) : this()
@@ -21,8 +21,8 @@ namespace Domain.Entities
 
         #region IAuditable
 
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
     }

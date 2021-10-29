@@ -45,6 +45,28 @@ namespace Persistence.Services
         public ushort MinRowsToSplit { get; set; }
 #endif
 
+        private Expression<Func<TEntity, bool>> GetSoftDeletePredicate(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            Expression<Func<TEntity, bool>> deleted = null;
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+            {
+                deleted = m => (m as ISoftDelete).IsDeleted == false;
+            }
+            
+            if (predicate != null && deleted != null)
+            {
+                var body = Expression.AndAlso(deleted.Body, predicate.Body);
+                var lambda = Expression.Lambda<Func<TEntity, bool>>(body, deleted.Parameters[0]);
+                predicate = lambda;
+            }
+            else if (deleted != null)
+            {
+                predicate = deleted;
+            }
+
+            return predicate;
+        }
+
         protected GenericService(DbContext context, ILoggerFactory logger, IConfiguration configuration)
         {
             _dbContext = context;
@@ -66,7 +88,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             int? skip = 0, int? take = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking) query = query.AsNoTracking();
@@ -74,9 +97,12 @@ namespace Persistence.Services
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
 
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
+
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -95,7 +121,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             int? skip = 0, int? take = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             var searchs = criteria.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
             var parameter = Expression.Parameter(typeof(TEntity));
@@ -136,10 +163,10 @@ namespace Persistence.Services
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] { "Contains", "Equals", "CompareTo" };
+                            var methods = new[] {"Contains", "Equals", "CompareTo"};
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] { type });
+                                var methodInfo = type.GetMethod(method, new[] {type});
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -164,9 +191,12 @@ namespace Persistence.Services
             if (predicate != null) query = query.Where(predicate);
             if (expression != null) query = query.Where(expression);
 
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
+
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -179,23 +209,20 @@ namespace Persistence.Services
 
         public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (predicate != null)
-                return await _dbSet.CountAsync(predicate);
-            return await _dbSet.CountAsync();
+            predicate = GetSoftDeletePredicate(predicate);
+            return await _dbSet.CountAsync(predicate);
         }
 
         public virtual async Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (predicate != null)
-                return await _dbSet.LongCountAsync(predicate);
-            return await _dbSet.LongCountAsync();
+            predicate = GetSoftDeletePredicate(predicate);
+            return await _dbSet.LongCountAsync(predicate);
         }
 
         public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (predicate != null)
-                return await _dbSet.AnyAsync(predicate);
-            return await _dbSet.AnyAsync();
+            predicate = GetSoftDeletePredicate(predicate);
+            return await _dbSet.AnyAsync(predicate);
         }
 
         public virtual async Task CreateAsync(params TEntity[] entities)
@@ -275,6 +302,25 @@ namespace Persistence.Services
                 if (entity != null)
                     list.Add(entity);
             }
+
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+            {
+                foreach (var entity in list.Cast<ISoftDelete>())
+                {
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    if (entity != null && !((ISoftDelete)entity).IsDeleted)
+                    {
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete)entity).IsDeleted = true;
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete)entity).DeletedAt = DateTime.Now;
+                    }
+                }
+
+                await UpdateAsync(list.ToArray());
+                return;
+            }
+
 #if ENABLE_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
@@ -317,7 +363,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
@@ -328,6 +375,9 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
             var result = orderBy != null ? orderBy(query).Select(selector) : query.Select(selector);
             return await result.FirstOrDefaultAsync();
@@ -339,7 +389,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
@@ -350,6 +401,9 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
             query = query.OrderByDescending(m => m.Id);
 
@@ -365,17 +419,21 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             int? skip = 0, int? take = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking) query = query.AsNoTracking();
             if (include != null) query = include(query);
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -394,7 +452,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             int? skip = 0, int? take = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             var searchs = criteria.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
             var parameter = Expression.Parameter(typeof(TEntity));
@@ -435,10 +494,10 @@ namespace Persistence.Services
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] { "Contains", "Equals", "CompareTo" };
+                            var methods = new[] {"Contains", "Equals", "CompareTo"};
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] { type });
+                                var methodInfo = type.GetMethod(method, new[] {type});
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -462,10 +521,13 @@ namespace Persistence.Services
             if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
             if (predicate != null) query = query.Where(predicate);
             if (expression != null) query = query.Where(expression);
-
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
+            
             var stprop = typeof(TEntity)
                 .GetProperties()
-                .FirstOrDefault(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -478,23 +540,20 @@ namespace Persistence.Services
 
         public virtual int Count(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (predicate != null)
-                return _dbSet.Count(predicate);
-            return _dbSet.Count();
+            predicate = GetSoftDeletePredicate(predicate); 
+            return _dbSet.Count(predicate);
         }
 
         public virtual long LongCount(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (predicate != null)
-                return _dbSet.LongCount(predicate);
-            return _dbSet.LongCount();
+            predicate = GetSoftDeletePredicate(predicate); 
+            return _dbSet.LongCount(predicate);
         }
 
         public virtual bool Any(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (predicate != null)
-                return _dbSet.Any(predicate);
-            return _dbSet.Any();
+            predicate = GetSoftDeletePredicate(predicate); 
+            return _dbSet.Any(predicate);
         }
 
         public virtual void Create(params TEntity[] entities)
@@ -567,7 +626,7 @@ namespace Persistence.Services
             _dbContext.SaveChanges();
         }
 
-        public virtual void Delete(params TKey[] keys)
+        public virtual void Delete(params object[] keys)
         {
             var list = new List<TEntity>();
             foreach (var item in keys)
@@ -576,6 +635,25 @@ namespace Persistence.Services
                 if (entity != null)
                     list.Add(entity);
             }
+
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+            {
+                foreach (var entity in list.Cast<ISoftDelete>())
+                {
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    if (entity != null && !((ISoftDelete)entity).IsDeleted)
+                    {
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete)entity).IsDeleted = true;
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete)entity).DeletedAt = DateTime.Now;
+                    }
+                }
+
+                Update(list.ToArray());
+                return;
+            }
+
 #if ENABLE_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
@@ -620,7 +698,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
@@ -631,6 +710,10 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
+            
             var result = orderBy != null ? orderBy(query).Select(selector) : query.Select(selector);
             return result.FirstOrDefault();
         }
@@ -641,7 +724,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
-            bool ignoreQueryFilters = false)
+            bool ignoreQueryFilters = false,
+            bool includeDeleted = false)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
@@ -652,6 +736,9 @@ namespace Persistence.Services
                 query = query.Where(predicate);
             if (ignoreQueryFilters)
                 query = query.IgnoreQueryFilters();
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
+                query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
             query = query.OrderByDescending(m => m.Id);
 

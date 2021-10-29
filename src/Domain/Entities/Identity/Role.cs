@@ -9,7 +9,7 @@ namespace Domain.Entities
     {
         public Role()
         {
-            Created = DateTime.Now;
+            CreatedAt = DateTime.Now;
             RoleClaims = new List<RoleClaim>();
             UserRoles = new List<UserRole>();
         }
@@ -28,8 +28,8 @@ namespace Domain.Entities
 
         #region IAuditable
 
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
 
