@@ -4,6 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
+#if USING_SASS && ENABLE_SASS_WATCH
+using System.Diagnostics;
+#endif
+
 #if DEBUG
 using Microsoft.Extensions.DependencyInjection;
 using Web.Services;
@@ -27,6 +31,13 @@ namespace Web
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
                 .CreateLogger();
+            
+#if USING_SASS && ENABLE_SASS_WATCH
+            var darts = Process.GetProcessesByName("dart");
+            foreach (var process in darts)
+                process.Kill();
+#endif
+            
             try
             {
                 Log.Information("Application Starting");
