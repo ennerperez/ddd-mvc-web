@@ -7,6 +7,8 @@ let __editor_options = {
         text: "Are you sure you want to delete?",
         icon: 'question',
         showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No"
     },
     success: {
         position: "bottom-right",
