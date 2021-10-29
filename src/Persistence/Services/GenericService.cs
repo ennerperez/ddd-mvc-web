@@ -567,7 +567,7 @@ namespace Persistence.Services
             _dbContext.SaveChanges();
         }
 
-        public virtual void Delete(params TKey[] keys)
+        public virtual void Delete(params object[] keys)
         {
             var list = new List<TEntity>();
             foreach (var item in keys)
