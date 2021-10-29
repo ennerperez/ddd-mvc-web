@@ -28,9 +28,9 @@ if (!Date.prototype.toISO8601) {
 }
 
 function delay(callback, ms) {
-    var timer = 0;
+    let timer = 0;
     return function () {
-        var context = this,
+        let context = this,
             args = arguments;
         clearTimeout(timer);
         timer = setTimeout(function () {
@@ -41,8 +41,8 @@ function delay(callback, ms) {
 
 function boolBadgeRender(input, defaultValue, trueValue, falseValue, styles) {
 
-    var color = "secondary";
-    var value = defaultValue;
+    let color = "secondary";
+    let value = defaultValue;
     switch (input) {
         case true:
             color = "success";
@@ -61,7 +61,7 @@ function boolBadgeRender(input, defaultValue, trueValue, falseValue, styles) {
 
 function boolPositionBadgeRender(input, position= 'top-0 start-100', styles) {
 
-    var color = "secondary";
+    let color = "secondary";
     switch (input) {
         case true:
             color = "success";
@@ -80,8 +80,8 @@ function boolPositionBadgeRender(input, position= 'top-0 start-100', styles) {
 
 function rangeBadgeRender(input, defaultValue, values, texts, styles) {
 
-    var color = "secondary";
-    var value = defaultValue;
+    let color = "secondary";
+    let value = defaultValue;
     if (input === values[0])
     {
         color = "success";
@@ -104,7 +104,7 @@ function compress(file, max_width, max_height, quality) {
         return false;
     }
 
-    var compressContent = document.getElementById('compressContent');
+    let compressContent = document.getElementById('compressContent');
     if (compressContent !== null) compressContent.remove();
     compressContent = document.createElement('div');
     compressContent.id = 'compressContent';
@@ -116,29 +116,29 @@ function compress(file, max_width, max_height, quality) {
     document.body.append(compressContent);
 
     // read the files
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.readAsArrayBuffer(file);
 
     reader.onload = function (event) {
         // blob stuff
-        var blob = new Blob([event.target.result]); // create blob...
+        let blob = new Blob([event.target.result]); // create blob...
         window.URL = window.URL || window.webkitURL;
-        var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+        let blobURL = window.URL.createObjectURL(blob); // and get it's URL
 
         // helper Image object
-        var image = new Image();
+        let image = new Image();
         image.src = blobURL;
         //preview.appendChild(image); // preview commented out, I am using the canvas instead
         image.onload = function () {
 
-            var container = $("#compressContent");
-            var i_width = container.data("width");
-            var i_height = container.data("height");
-            var i_quality = container.data("quality");
+            let container = $("#compressContent");
+            let i_width = container.data("width");
+            let i_height = container.data("height");
+            let i_quality = container.data("quality");
 
             // have to wait till it's loaded
-            var resized = resizeMe(image, i_width, i_height, i_quality); // send it to canvas
-            var newinput = document.createElement("input");
+            let resized = resizeMe(image, i_width, i_height, i_quality); // send it to canvas
+            let newinput = document.createElement("input");
             newinput.type = 'hidden';
             newinput.name = 'images[]';
             newinput.id = 'imageCompress';// put result from canvas into new hidden input
@@ -151,9 +151,9 @@ function compress(file, max_width, max_height, quality) {
 }
 
 function resizeMe(img, max_width, max_height, quality) {
-    var canvas = document.createElement('canvas');
-    var width = img.width;
-    var height = img.height;
+    let canvas = document.createElement('canvas');
+    let width = img.width;
+    let height = img.height;
     if (max_width === null) max_width = 640;
     if (max_height === null) max_height = 480;
     if (quality === null) quality = 0.7;
@@ -175,7 +175,7 @@ function resizeMe(img, max_width, max_height, quality) {
     // resize the canvas and draw the image data into it
     canvas.width = width;
     canvas.height = height;
-    var ctx = canvas.getContext("2d");
+    let ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0, width, height);
     /*$("#preview").append(canvas);*/ // do the actual resized preview
     return canvas.toDataURL("image/jpg", quality); // get the data from canvas as 70% JPG (can be also PNG, etc.)
