@@ -275,6 +275,25 @@ namespace Persistence.Services
                 if (entity != null)
                     list.Add(entity);
             }
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+            {
+                foreach (var entity in list.Cast<ISoftDelete>())
+                {
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    if (entity != null && !((ISoftDelete) entity).IsDeleted)
+                    {
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete) entity).IsDeleted = true;
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete) entity).DeletedAt = DateTime.Now;
+                    }
+                }
+
+                await UpdateAsync(list.ToArray());
+                return;
+            }
+            
 #if ENABLE_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
@@ -576,6 +595,25 @@ namespace Persistence.Services
                 if (entity != null)
                     list.Add(entity);
             }
+            
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+            {
+                foreach (var entity in list.Cast<ISoftDelete>())
+                {
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    if (entity != null && !((ISoftDelete) entity).IsDeleted)
+                    {
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete) entity).IsDeleted = true;
+                        // ReSharper disable once SuspiciousTypeConversion.Global
+                        ((ISoftDelete) entity).DeletedAt = DateTime.Now;
+                    }
+                }
+
+                Update(list.ToArray());
+                return;
+            }
+            
 #if ENABLE_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
