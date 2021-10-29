@@ -91,13 +91,13 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
-@Html.AntiForgeryToken()
-<script>
-    let __RequestVerificationToken = $("[name=__RequestVerificationToken]").val();
-</script>
+    @Html.AntiForgeryToken()
+    <script>
+        let __RequestVerificationToken = $("[name=__RequestVerificationToken]").val();
+    </script>
 
-@Html.PageScripts()
-@await RenderSectionAsync("Scripts", false)
+    @Html.PageScripts()
+    @await RenderSectionAsync("Scripts", false)
 
 </body>
 </html>

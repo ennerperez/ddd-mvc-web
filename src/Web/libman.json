@@ -4,31 +4,31 @@
   "libraries": [
     {
       "library": "jquery@3.6.0",
-      "destination": "wwwroot/lib/jquery/"
+      "destination": "wwwroot/lib/jquery"
     },
     {
       "library": "popper.js@2.9.3",
-      "destination": "wwwroot/lib/popper.js/"
+      "destination": "wwwroot/lib/popper.js"
     },
     {
       "library": "twitter-bootstrap@5.1.1",
-      "destination": "wwwroot/lib/bootstrap/"
+      "destination": "wwwroot/lib/bootstrap"
     },
     {
       "library": "bootstrap-icons@1.5.0",
-      "destination": "wwwroot/lib/bootstrap-icons/"
+      "destination": "wwwroot/lib/bootstrap-icons"
     },
     {
       "library": "jquery-validate@1.19.2",
-      "destination": "wwwroot/lib/jquery-validate/"
+      "destination": "wwwroot/lib/jquery-validate"
     },
     {
       "library": "jquery-validation-unobtrusive@3.2.11",
-      "destination": "wwwroot/lib/jquery-validate-unobtrusive/"
+      "destination": "wwwroot/lib/jquery-validate-unobtrusive"
     },
     {
       "library": "font-awesome@5.15.4",
-      "destination": "wwwroot/lib/font-awesome/"
+      "destination": "wwwroot/lib/font-awesome"
     },
     {
       "library": "datatables.net@1.11.3",
