@@ -20,7 +20,7 @@
     <script type="text/javascript">
         /* Sample function that returns boolean in case the browser is Internet Explorer*/
         function isIE() {
-          ua = navigator.userAgent;
+          let ua = navigator.userAgent;
           /* MSIE used to detect old browsers and Trident used to newer ones*/
           return ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1; 
         }
@@ -58,6 +58,7 @@
         }
         <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
+
     </environment>
 
     @Html.PageStyles()
