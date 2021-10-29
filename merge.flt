@@ -29,7 +29,16 @@ f: \.db$
 f: \.png$
 f: \.svg$
 f: \.ico$
+f: \.min.js$
+f: \.min.css$
+f: \.map$
 f: AssemblyInfo.cs$
+f: README.md$
+f: CHANGELOG.md$
+f: LICENSE$
+f: build.cake$
+f: bootstrap.css$
+f: bootstrap.css.map$
 
 d: \\\.svn$ ## Subversion working copy
 d: \\_svn$  ## Subversion working copy ASP.NET Hack
