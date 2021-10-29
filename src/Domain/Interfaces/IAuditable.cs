@@ -10,11 +10,11 @@ namespace Domain.Interfaces
         /// <summary>
         /// Created datetime
         /// </summary>
-        DateTime Created { get; set; }
+        DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// Last modification datetime
         /// </summary>
-        DateTime? Modified { get; set; }
+        DateTime? ModifiedAt { get; set; }
     }
 }

@@ -8,15 +8,15 @@ namespace Domain.Entities
     {
         public RoleClaim()
         {
-            Created = DateTime.Now;
+            CreatedAt = DateTime.Now;
         }
 
         public virtual Role Role { get; set; }
 
         #region IAuditable
 
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
     }

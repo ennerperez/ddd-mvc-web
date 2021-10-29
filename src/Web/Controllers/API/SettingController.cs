@@ -33,7 +33,7 @@ namespace Web.Controllers.API
                 if (collection == null || !collection.Any())
                     return new JsonResult(new { last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>() });
 
-                return new JsonResult(new { last_created = collection.Max(m => m.Created), last_updated = collection.Max(m => m.Modified), items = collection });
+                return new JsonResult(new { last_created = collection.Max(m => m.CreatedAt), last_updated = collection.Max(m => m.ModifiedAt), items = collection });
             }
             catch (Exception e)
             {

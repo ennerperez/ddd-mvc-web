@@ -9,7 +9,7 @@ namespace Domain.Entities
     {
         public Setting()
         {
-            Created = DateTime.Now;
+            CreatedAt = DateTime.Now;
             Type = Data.Text;
         }
         
@@ -34,8 +34,8 @@ namespace Domain.Entities
 
         #region IAuditable
 
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
     }
