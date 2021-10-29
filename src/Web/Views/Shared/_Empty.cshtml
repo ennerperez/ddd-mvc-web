@@ -76,18 +76,20 @@
 
 @RenderBody()
 
-<environment include="development">
-    <script src="~/lib/jquery/jquery.js"></script>
-    <script src="~/lib/popper.js/umd/popper.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-</environment>
-<environment exclude="development">
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/popper.js/umd/popper.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="~/js/site.min.js" asp-append-version="true"></script>
-</environment>
+    <environment include="development">
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/popper.js/umd/popper.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/moment.js/moment-with-locales.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="development">
+        <script src="~/lib/jquery/jquery.min.js"></script>
+        <script src="~/lib/popper.js/umd/popper.min.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/lib/moment.js/moment-with-locales.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
 
 @Html.AntiForgeryToken()
 <script>

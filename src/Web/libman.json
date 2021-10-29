@@ -77,6 +77,14 @@
     {
       "library": "jquery.mask@1.14.16",
       "destination": "wwwroot/lib/jquery.mask"
+    },
+    {
+      "library": "moment.js@2.29.1",
+      "destination": "wwwroot/lib/moment.js"
+    },
+    {
+      "library": "tempusdominus-bootstrap-4@5.39.0",
+      "destination": "wwwroot/lib/tempusdominus-bootstrap-4"
     }
   ]
 }

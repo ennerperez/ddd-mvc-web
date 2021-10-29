@@ -1,0 +1,69 @@
+﻿@{
+    var twoLetterIsoLanguageName = "en";
+    if (Html.UsingLocalization())
+    {
+        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    }
+}
+@using (Html.BeginStyles())
+{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    </environment>
+}
+
+@using (Html.BeginScripts())
+{
+    <environment include="Development">
+        <script src="~/lib/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js" type="text/javascript"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js" type="text/javascript"></script>
+    </environment>
+
+    <script>
+    let __datetimepicker_options = {
+        locale: '@(twoLetterIsoLanguageName)',
+        icons: {
+            time: 'far fa-clock',
+            date: 'far fa-calendar-alt',
+            up: 'fas fa-arrow-up',
+            down: 'fas fa-arrow-down',
+            previous: 'fas fa-chevron-left',
+            next: 'fas fa-chevron-right',
+            today: 'fas fa-calendar-check-o',
+            clear: 'fas fa-trash',
+            close: 'fas fa-times'
+        }
+    };
+    $(document).ready(function (){                
+        $('.datepicker-input').each(function (){
+            let minValue = $(this).attr("min");
+            let maxValue = $(this).attr("max");
+            __datetimepicker_options.minDate = minValue;
+            __datetimepicker_options.maxValue = maxValue;
+            __datetimepicker_options.format = 'L';
+            $(this).datetimepicker(__datetimepicker_options);
+        });
+        $('.timepicker-input').each(function (){
+            let minValue = $(this).attr("min");
+            let maxValue = $(this).attr("max");
+            __datetimepicker_options.minDate = minValue;
+            __datetimepicker_options.maxValue = maxValue;
+            __datetimepicker_options.format = 'LT';
+            $(this).datetimepicker(__datetimepicker_options);
+        });
+        $('.datetimepicker-input').each(function (){
+            let minValue = $(this).attr("min");
+            let maxValue = $(this).attr("max");
+            __datetimepicker_options.minDate = minValue;
+            __datetimepicker_options.maxValue = maxValue;
+            $(this).datetimepicker(__datetimepicker_options);
+        });
+    });
+    </script>
+}

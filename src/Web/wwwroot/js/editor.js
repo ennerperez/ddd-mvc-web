@@ -26,7 +26,6 @@ function setEditor(tableMain, editorMain, apiUrl, options = null) {
     __editor = editorMain;
     __editor_api_url = apiUrl;
     if (options !== null) __editor_options = options;
-
 }
 
 function maskEditor() {
@@ -125,7 +124,9 @@ function validateEditor() {
         let control = validables[s];
         let data;
         let hasMask = $(control).data("mask") !== undefined;
-        if (!hasMask)
+        if (dataType === "datetime" || dataType === "date" || dataType === "time")
+            data = $(control).datetimepicker("date");
+        else if (!hasMask)
             data = $(control).val();
         else
             data = $(control).cleanVal();
@@ -176,12 +177,15 @@ function getModel() {
         let data = null;
         let type = $(control).prop("tagName").toLowerCase();
         let hasMask = $(control).data("mask") !== undefined;
+        let dataType = $(control).data("type");
         if ($(control).attr("type") === "checkbox") type = "checkbox";
         switch (type) {
             case "input":
             case "select":
             case "textarea":
-                if (!hasMask)
+                if (dataType === "datetime" || dataType === "date" || dataType === "time")
+                    data = new Date($(control).datetimepicker("date"));
+                else if (!hasMask)
                     data = $(control).val();
                 else
                     data = $(control).cleanVal();
@@ -213,12 +217,16 @@ function editRecord() {
         let field = $(control).data("field");
         let type = $(control).prop("tagName").toLowerCase();
         let hasMask = $(control).data("mask") !== undefined;
+        let dataType = $(control).data("type");
+
         if ($(control).attr("type") === "checkbox") type = "checkbox";
         switch (type) {
             case "input":
             case "select":
             case "textarea":
-                if (!hasMask)
+                if (dataType === "datetime" || dataType === "date" || dataType === "time")
+                    $(control).datetimepicker("date", data[field]);
+                else if (!hasMask)
                     $(control).val(data[field]);
                 else
                     $(control).val($(control).masked(data[field]));
