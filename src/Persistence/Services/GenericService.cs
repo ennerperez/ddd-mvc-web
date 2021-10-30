@@ -45,25 +45,27 @@ namespace Persistence.Services
         public ushort MinRowsToSplit { get; set; }
 #endif
 
-        private Expression<Func<TEntity, bool>> GetSoftDeletePredicate(Expression<Func<TEntity, bool>> predicate = null)
+        private Expression<Func<TEntity, bool>> PreparePredicate(Expression<Func<TEntity, bool>> predicate = null)
         {
-            Expression<Func<TEntity, bool>> deleted = null;
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                deleted = m => (m as ISoftDelete).IsDeleted == false;
+                if (predicate == null)
+                {
+                    predicate = m => (m as ISoftDelete).IsDeleted == false;
+                }
+                else
+                {
+                    var prop = typeof(TEntity).GetProperty("IsDeleted");
+                    var type = prop?.PropertyType;
+                    var constant = Expression.Constant(false);
+                    var methodInfo = type?.GetMethod("Equals", new[] {type});
+                    var member = Expression.Property(predicate.Parameters[0], prop);
+                    var callExp = Expression.Call(member, methodInfo, constant);
+                    var body = Expression.AndAlso(callExp, predicate.Body);
+                    var lambda = Expression.Lambda<Func<TEntity, bool>>(body, predicate.Parameters[0]);
+                    predicate = lambda;
+                }
             }
-
-            if (predicate != null && deleted != null)
-            {
-                var body = Expression.AndAlso(deleted.Body, predicate.Body);
-                var lambda = Expression.Lambda<Func<TEntity, bool>>(body, deleted.Parameters[0]);
-                predicate = lambda;
-            }
-            else if (deleted != null)
-            {
-                predicate = deleted;
-            }
-
             return predicate;
         }
 
@@ -163,10 +165,10 @@ namespace Persistence.Services
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] { "Contains", "Equals", "CompareTo" };
+                            var methods = new[] {"Contains", "Equals", "CompareTo"};
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] { type });
+                                var methodInfo = type.GetMethod(method, new[] {type});
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -209,21 +211,21 @@ namespace Persistence.Services
 
         public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate);
+            predicate = PreparePredicate(predicate);
             if (predicate != null) return await _dbSet.CountAsync(predicate);
             return await _dbSet.CountAsync();
         }
 
         public virtual async Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate);
+            predicate = PreparePredicate(predicate);
             if (predicate != null) return await _dbSet.LongCountAsync(predicate);
             return await _dbSet.LongCountAsync();
         }
 
         public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate);
+            predicate = PreparePredicate(predicate);
             if (predicate != null) return await _dbSet.AnyAsync(predicate);
             return await _dbSet.AnyAsync();
         }
@@ -543,21 +545,21 @@ namespace Persistence.Services
 
         public virtual int Count(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate);
+            predicate = PreparePredicate(predicate);
             if (predicate != null) return _dbSet.Count(predicate);
             return _dbSet.Count();
         }
 
         public virtual long LongCount(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate);
+            predicate = PreparePredicate(predicate);
             if (predicate != null) return _dbSet.LongCount(predicate);
             return _dbSet.LongCount();
         }
 
         public virtual bool Any(Expression<Func<TEntity, bool>> predicate = null)
         {
-            predicate = GetSoftDeletePredicate(predicate);
+            predicate = PreparePredicate(predicate);
             if (predicate != null) return _dbSet.Any(predicate);
             return _dbSet.Any();
         }
