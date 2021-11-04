@@ -48,7 +48,7 @@ namespace Web.Controllers
             Service = service;
         }
 
-        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector)
+        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null)
         {
             object rows;
 
@@ -63,7 +63,7 @@ namespace Web.Controllers
 
             var order = orderBy.Select(m => new[] { m.Key, m.Value }).ToArray();
             
-            Expression predicate = null;
+            Expression predicateExpression = null;
             ParameterExpression parameter;
 
             var filters = model.Columns.Where(m => m.Searchable && m.Search != null && !string.IsNullOrWhiteSpace(m.Search.Value))
@@ -117,7 +117,7 @@ namespace Web.Controllers
                             {
                                 var member = item;
                                 var callExp = Expression.Call(member, methodInfo, constant);
-                                predicate = predicate == null ? (Expression)callExp : Expression.AndAlso(predicate, callExp);
+                                predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
                                 break;
                             }
                         }
@@ -126,8 +126,13 @@ namespace Web.Controllers
             }
 
             Expression<Func<TEntity, bool>> expression = null;
-            if (predicate != null)
-                expression = Expression.Lambda<Func<TEntity, bool>>(predicate, parameter);
+            if (predicateExpression != null)
+            {
+                if (predicate != null)
+                    predicateExpression = Expression.AndAlso(predicate, predicateExpression);
+                
+                expression = Expression.Lambda<Func<TEntity, bool>>(predicateExpression, parameter);
+            }
 
             if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
             {
