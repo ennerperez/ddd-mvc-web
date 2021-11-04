@@ -54,71 +54,77 @@ namespace Web.Controllers
 
             var props = typeof(TEntity).GetProperties().ToArray();
             var orderBy = new Dictionary<string, string>();
-            foreach (var item in model.Order)
+            if (model.Order != null)
             {
-                var column = model.Columns[item.Column];
-                var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                if (prop != null) orderBy.Add(prop.Name, item.Dir);
+                foreach (var item in model.Order)
+                {
+                    var column = model.Columns[item.Column];
+                    var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
+                    if (prop != null) orderBy.Add(prop.Name, item.Dir);
+                }
             }
 
             var order = orderBy.Select(m => new[] { m.Key, m.Value }).ToArray();
             
             Expression predicateExpression = null;
-            ParameterExpression parameter;
+            ParameterExpression parameter = null;
 
-            var filters = model.Columns.Where(m => m.Searchable && m.Search != null && !string.IsNullOrWhiteSpace(m.Search.Value))
-                .Select(column =>
-                {
-                    var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                    if (prop != null)
-                        return new { Property = prop, column.Name, column.Search.Value };
-
-                    return null;
-                });
-            
-            var args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
-
-            ParameterExpression NestedMember(MemberExpression me)
+            if (model.Columns != null)
             {
-                if (me.Expression is ParameterExpression)
-                    return (ParameterExpression)me.Expression;
-                else if (me.Expression is MemberExpression)
-                    return NestedMember((MemberExpression)me.Expression);
-                else
-                    return null;
-            }
+                var filters = model.Columns.Where(m => m.Searchable && m.Search != null && !string.IsNullOrWhiteSpace(m.Search.Value))
+                    .Select(column =>
+                    {
+                        var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
+                        if (prop != null)
+                            return new {Property = prop, column.Name, column.Search.Value};
 
-            parameter = NestedMember(args.First());
+                        return null;
+                    });
 
-            ConstantExpression constant;
-            foreach (var filter in filters)
-            {
-                foreach (var item in args.Where(m=> filter != null && m.Member.Name.ToLower() == filter.Name.ToLower()))
+                var args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
+
+                ParameterExpression NestedMember(MemberExpression me)
                 {
-                    var type = filter.Property.PropertyType;
-                    object value = null;
-                    try
-                    {
-                        value = Convert.ChangeType(filter.Value, type);
-                    }
-                    catch (Exception)
-                    {
-                        // ignore
-                    }
+                    if (me.Expression is ParameterExpression)
+                        return (ParameterExpression)me.Expression;
+                    else if (me.Expression is MemberExpression)
+                        return NestedMember((MemberExpression)me.Expression);
+                    else
+                        return null;
+                }
 
-                    if (value != null && value != type.GetDefault())
+                parameter = NestedMember(args.First());
+
+                ConstantExpression constant;
+                foreach (var filter in filters)
+                {
+                    foreach (var item in args.Where(m => filter != null && m.Member.Name.ToLower() == filter.Name.ToLower()))
                     {
-                        constant = Expression.Constant(value);
-                        var methods = new[] { "Contains", "Equals", "CompareTo" };
-                        foreach (var method in methods)
+                        var type = filter.Property.PropertyType;
+                        object value = null;
+                        try
                         {
-                            var methodInfo = type.GetMethod(method, new[] { type });
-                            if (methodInfo != null)
+                            value = Convert.ChangeType(filter.Value, type);
+                        }
+                        catch (Exception)
+                        {
+                            // ignore
+                        }
+
+                        if (value != null && value != type.GetDefault())
+                        {
+                            constant = Expression.Constant(value);
+                            var methods = new[] {"Contains", "Equals", "CompareTo"};
+                            foreach (var method in methods)
                             {
-                                var member = item;
-                                var callExp = Expression.Call(member, methodInfo, constant);
-                                predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
-                                break;
+                                var methodInfo = type.GetMethod(method, new[] {type});
+                                if (methodInfo != null)
+                                {
+                                    var member = item;
+                                    var callExp = Expression.Call(member, methodInfo, constant);
+                                    predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
+                                    break;
+                                }
                             }
                         }
                     }
