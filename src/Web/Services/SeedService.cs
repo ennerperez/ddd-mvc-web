@@ -66,8 +66,8 @@ namespace Web.Services
                         entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
                         if (entities != null && entities.Any())
                         {
-                                dbSet.AddRange(entities);
-                                await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
+                            dbSet.AddRange(entities);
+                            await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
                         }
                     }
                 }
@@ -112,8 +112,8 @@ namespace Web.Services
 
                     if (entities != null && entities.Any())
                     {
-                            dbSet.AddRange(entities);
-                            await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
+                        dbSet.AddRange(entities);
+                        await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
                     }
                 }
                 catch (Exception ex)
