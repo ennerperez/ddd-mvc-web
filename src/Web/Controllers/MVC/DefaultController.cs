@@ -43,6 +43,7 @@ namespace Web.MVC.Controllers
             var domain = Assembly.GetAssembly(typeof(Domain.Extensions));
             var infrastructure = Assembly.GetAssembly(typeof(Infrastructure.Extensions));
             var persistence = Assembly.GetAssembly(typeof(Persistence.Extensions));
+            var business = Assembly.GetAssembly(typeof(Business.Extensions));
             var web = Assembly.GetAssembly(typeof(Program));
 
             var models = new List<AboutViewModel>
@@ -54,7 +55,7 @@ namespace Web.MVC.Controllers
                     Description = domain.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
                     Version = domain.GetName().Version,
                     Published = System.IO.File.GetCreationTime(domain.Location),
-                    Color = "#ed1c2e"
+                    Color = "#f54437"
                 },
                 new()
                 {
@@ -63,7 +64,7 @@ namespace Web.MVC.Controllers
                     Description = infrastructure.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
                     Version = infrastructure.GetName().Version,
                     Published = System.IO.File.GetCreationTime(infrastructure.Location),
-                    Color = "#007bc3"
+                    Color = "#ea1f64"
                 },
                 new()
                 {
@@ -72,16 +73,25 @@ namespace Web.MVC.Controllers
                     Description = persistence.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
                     Version = persistence.GetName().Version,
                     Published = System.IO.File.GetCreationTime(persistence.Location),
-                    Color = "#ff8202",
+                    Color = "#9d28b1",
                 },
                 new()
                 {
-                    Name = web.GetName().Name,
+                    Name = business.GetName().Name,
+                    Title = business.GetCustomAttributes(true).OfType<AssemblyTitleAttribute>().FirstOrDefault()?.Title,
+                    Description = business.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
+                    Version = business.GetName().Version,
+                    Published = System.IO.File.GetCreationTime(business.Location),
+                    Color = "#683bb8",
+                },
+                new()
+                {
+                    Name = web.GetName().Name ?? "Web",
                     Title = web.GetCustomAttributes(true).OfType<AssemblyTitleAttribute>().FirstOrDefault()?.Title,
-                    Description = web.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
+                    Description = web.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description ?? "Web Layer",
                     Version = web.GetName().Version,
                     Published = System.IO.File.GetCreationTime(web.Location),
-                    Color = "#2d572c",
+                    Color = "#4052b6",
                 }
             };
 
