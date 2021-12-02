@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Business.Interfaces;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace Web.Controllers
     
     public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
     {
-        public ApiControllerBase(IGenericService<TEntity, int> service) : base(service)
+        public ApiControllerBase(IGenericRepository<TEntity, int> repository) : base(repository)
         {
         }
     }
@@ -41,11 +42,13 @@ namespace Web.Controllers
     [ApiController]
     public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-        protected readonly IGenericService<TEntity, TKey> Service;
+        protected readonly IGenericRepository<TEntity, TKey> Repository;
+        protected readonly IMediator<TEntity, TKey> Mediator;
 
-        public ApiControllerBase(IGenericService<TEntity, TKey> service)
+        public ApiControllerBase(IGenericRepository<TEntity, TKey> repository, IMediator<TEntity, TKey> mediator)
         {
-            Service = service;
+            Repository = repository;
+            Mediator = mediator;
         }
 
         public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null)
@@ -142,18 +145,18 @@ namespace Web.Controllers
 
             if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
             {
-                rows = await Service.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order),
+                rows = await Repository.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order),
                     skip: model.Start, take: model.Length);
             }
             else
             {
-                rows = await Service.ReadAsync(selector, expression, o => o.SortDynamically(order),
+                rows = await Repository.ReadAsync(selector, expression, o => o.SortDynamically(order),
                     skip: model.Start, take: model.Length);
             }
 
             var data = await ((IQueryable<object>)rows).ToListAsync();
 
-            var total = await Service.CountAsync();
+            var total = await Repository.CountAsync();
             var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
             var stotal = isFiltered ? data.Count : total;
 
