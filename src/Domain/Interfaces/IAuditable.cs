@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Entities;
 
 namespace Domain.Interfaces
 {
@@ -16,5 +17,15 @@ namespace Domain.Interfaces
         /// Last modification datetime
         /// </summary>
         DateTime? ModifiedAt { get; set; }
+        
+    }
+
+    public interface IExtendedAuditable
+    {
+        int? CreatedById { get; set; }
+        User CreatedBy { get; set; }
+        
+        int? ModifiedById { get; set; }
+        User ModifiedBy { get; set; }
     }
 }

@@ -128,7 +128,7 @@ function validateEditor() {
         let hasMask = $(control).data("mask") !== undefined;
         let dataType = $(control).data("type");
         if (dataType === "datetime" || dataType === "date" || dataType === "time")
-            data = $(control).datetimepicker("date");
+            data = $(control).datepicker("date");
         else if (!hasMask)
             data = $(control).val();
         else
@@ -187,7 +187,7 @@ function getModel() {
             case "select":
             case "textarea":
                 if (dataType === "datetime" || dataType === "date" || dataType === "time")
-                    data = new Date($(control).datetimepicker("date"));
+                    data = new Date($(control).datepicker("date"));
                 else if (!hasMask)
                     data = $(control).val();
                 else
@@ -228,7 +228,7 @@ function editRecord() {
             case "select":
             case "textarea":
                 if (dataType === "datetime" || dataType === "date" || dataType === "time")
-                    $(control).datetimepicker("date", data[field]);
+                    $(control).datepicker("setDate", data[field]);
                 else if (!hasMask)
                     $(control).val(data[field]);
                 else

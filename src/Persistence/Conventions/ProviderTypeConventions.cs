@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 #if DEBUG
 using System.Diagnostics;
@@ -82,6 +83,7 @@ namespace Persistence.Conventions
             var items1 = modelBuilder.Model.GetEntityTypes().Where(m => !options.Exclude.Contains(m.Name)).SelectMany(t => t.GetProperties()).ToArray();
             foreach (var p in items1)
             {
+                if (p.DeclaringEntityType.ClrType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(p.DeclaringEntityType.ClrType)) continue;
                 var entity = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
                 var columnType = p.GetColumnType();
                 if (columnType != null) continue;

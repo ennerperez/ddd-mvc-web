@@ -310,7 +310,7 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                foreach (var entity in list) //.Cast<ISoftDelete>())
+                foreach (var entity in list.Cast<ISoftDelete>())
                 {
                     // ReSharper disable once SuspiciousTypeConversion.Global
                     if (entity != null && !((ISoftDelete)entity).IsDeleted)

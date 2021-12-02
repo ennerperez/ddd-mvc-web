@@ -19,7 +19,6 @@ namespace Web.MVC.Controllers
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
-        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
@@ -52,7 +51,7 @@ namespace Web.MVC.Controllers
                 {
                     Name = domain.GetName().Name,
                     Title = domain.GetCustomAttributes(true).OfType<AssemblyTitleAttribute>().FirstOrDefault()?.Title,
-                    Description = domain.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
+                    Description = domain.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description ?? "Domain Layer",
                     Version = domain.GetName().Version,
                     Published = System.IO.File.GetCreationTime(domain.Location),
                     Color = "#f54437"
@@ -61,7 +60,7 @@ namespace Web.MVC.Controllers
                 {
                     Name = infrastructure.GetName().Name,
                     Title = infrastructure.GetCustomAttributes(true).OfType<AssemblyTitleAttribute>().FirstOrDefault()?.Title,
-                    Description = infrastructure.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
+                    Description = infrastructure.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description ?? "Infrastructure Layer",
                     Version = infrastructure.GetName().Version,
                     Published = System.IO.File.GetCreationTime(infrastructure.Location),
                     Color = "#ea1f64"
@@ -70,7 +69,7 @@ namespace Web.MVC.Controllers
                 {
                     Name = persistence.GetName().Name,
                     Title = persistence.GetCustomAttributes(true).OfType<AssemblyTitleAttribute>().FirstOrDefault()?.Title,
-                    Description = persistence.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
+                    Description = persistence.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description ?? "Persistence Layer",
                     Version = persistence.GetName().Version,
                     Published = System.IO.File.GetCreationTime(persistence.Location),
                     Color = "#9d28b1",
@@ -79,7 +78,7 @@ namespace Web.MVC.Controllers
                 {
                     Name = business.GetName().Name,
                     Title = business.GetCustomAttributes(true).OfType<AssemblyTitleAttribute>().FirstOrDefault()?.Title,
-                    Description = business.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description,
+                    Description = business.GetCustomAttributes(true).OfType<AssemblyDescriptionAttribute>().FirstOrDefault()?.Description ?? "Business Layer",
                     Version = business.GetName().Version,
                     Published = System.IO.File.GetCreationTime(business.Location),
                     Color = "#683bb8",
