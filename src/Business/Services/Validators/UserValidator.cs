@@ -1,30 +1,42 @@
 ﻿using System;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Business.Interfaces.Validators;
 using Domain.Entities;
-using Persistence.Contexts;
+using Microsoft.Extensions.Logging;
+using Persistence.Interfaces;
 
 namespace Business.Services.Validators
 {
     public class UserValidator : IUserValidator
     {
-        private readonly DefaultContext _context;
+        private readonly ILogger _logger;
+        private readonly IGenericService<User> _userService;
 
-        public UserValidator(DefaultContext context)
+        public UserValidator(IGenericService<User> userService, ILoggerFactory loggerFactory)
         {
-            _context = context;
+            _userService = userService;
+            _logger = loggerFactory.CreateLogger(GetType());
         }
 
-        public Task ValidateAsync(User entity)
+        public async Task ValidateAsync(User model, [CallerMemberName] string callerMemberName = "")
         {
-            if (string.IsNullOrWhiteSpace(entity.Email))
-                throw new ArgumentException("Email is required");
+            if (callerMemberName.StartsWith("Delete"))
+            {
+                if (model.Id == 1)
+                    throw new ArgumentException("Cannot delete the default user");
 
-            if (_context.Users.Any(x => x.NormalizedEmail == entity.Email.ToUpper() && x.Id != entity.Id))
-                throw new ArgumentException("Email already exists");
+                if (await _userService.CountAsync() == 1)
+                    throw new ArgumentException("Cannot delete the last user");
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(model.Email))
+                    throw new ArgumentException("Email is required");
 
-            return Task.CompletedTask;
+                if (await _userService.AnyAsync(x => x.NormalizedEmail == model.Email.ToUpper() && x.Id != model.Id))
+                    throw new ArgumentException("Email already exists");
+            }
         }
     }
 }
