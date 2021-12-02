@@ -1,0 +1,63 @@
+﻿@using Microsoft.AspNetCore.Localization
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+}
+@using (Html.BeginStyles())
+{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    </environment>
+}
+
+@using (Html.BeginScripts())
+{
+    <environment include="Development">
+        <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    </environment>
+    <script src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.@(twoLetterIsoLanguageName).min.js"></script>
+    <script>
+    
+    let __datepicker_options = {
+        format: 'yyyy-mm-dd',
+        language: '@(twoLetterIsoLanguageName)',
+        autoclose: true,
+        todayHighlight: true,
+        clearBtn: true,
+        todayBtn: true,
+        toggleActive: true,
+        orientation: 'bottom'
+    };
+    $(document).ready(function (){
+
+        $('.datepicker').datepicker(__datepicker_options);
+        $.each($(".datepicker[data-btn]"), function ( index, value)
+        {
+            var picker =  $(this);
+            var btn = picker.data("btn");
+            if (btn !== "")
+                $(`#${btn}`).on("click", function () { picker.datepicker("show"); });
+        });
+        $.each($(".datepicker[data-chk]"), function ( index, value)
+        {
+            var picker = $(this);
+            var chk = picker.data("chk");
+            if (chk !== "")
+                $(`#${chk}`).on("change", function () {
+                    //if (!$(this).prop("checked")) picker.datepicker("setDate", null);
+                    if ($(this).prop("checked"))
+                        picker.removeAttr("readonly");
+                    else
+                        picker.attr("readonly", "readonly");
+              });
+        });
+        
+    });
+    </script>
+}

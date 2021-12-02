@@ -85,6 +85,14 @@
     {
       "library": "tempusdominus-bootstrap-4@5.39.0",
       "destination": "wwwroot/lib/tempusdominus-bootstrap-4"
+    },
+    {
+      "library": "bootstrap-datepicker@1.9.0",
+      "destination": "wwwroot/lib/bootstrap-datepicker"
+    },
+    {
+      "library": "lightbox2@2.11.3",
+      "destination": "wwwroot/lib/lightbox2"
     }
   ]
 }
