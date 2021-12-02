@@ -1,6 +1,7 @@
 using System;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using Business;
 using Domain;
 using Domain.Entities;
 using Infrastructure;
@@ -99,7 +100,8 @@ namespace Web
                 .AddPersistence(options =>
                 {
                     DefaultContext.UseDbEngine(options, Configuration);
-                });
+                })
+                .AddBusiness();
 
             services
                 .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)

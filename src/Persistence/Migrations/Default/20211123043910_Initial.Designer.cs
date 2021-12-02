@@ -9,7 +9,7 @@ using Persistence.Contexts;
 namespace Persistence.Migrations.Default
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20211029153232_Initial")]
+    [Migration("20211123043910_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -160,17 +160,11 @@ namespace Persistence.Migrations.Default
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("LockoutEnabled")

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Business.Interfaces;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,17 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    
     public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
     {
-        public ApiControllerBase(IGenericService<TEntity, int> service) : base(service)
+        public ApiControllerBase(IGenericRepository<TEntity, int> repository, IMediator<TEntity, int> mediator) : base(repository, mediator)
+        {
+        }
+
+        public ApiControllerBase(IGenericRepository<TEntity, int> repository) : base(repository)
+        {
+        }
+
+        public ApiControllerBase(IMediator<TEntity, int> mediator) : base(mediator)
         {
         }
     }
@@ -41,84 +49,102 @@ namespace Web.Controllers
     [ApiController]
     public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-        protected readonly IGenericService<TEntity, TKey> Service;
+        protected readonly IGenericRepository<TEntity, TKey> Repository;
+        protected readonly IMediator<TEntity, TKey> Mediator;
 
-        public ApiControllerBase(IGenericService<TEntity, TKey> service)
+        public ApiControllerBase(IGenericRepository<TEntity, TKey> repository, IMediator<TEntity, TKey> mediator)
         {
-            Service = service;
+            Repository = repository;
+            Mediator = mediator;
         }
 
-        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector)
+        public ApiControllerBase(IGenericRepository<TEntity, TKey> repository)
+        {
+            Repository = repository;
+        }
+
+        public ApiControllerBase(IMediator<TEntity, TKey> mediator)
+        {
+            Mediator = mediator;
+        }
+
+        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null)
         {
             object rows;
 
             var props = typeof(TEntity).GetProperties().ToArray();
             var orderBy = new Dictionary<string, string>();
-            foreach (var item in model.Order)
+            if (model.Order != null)
             {
-                var column = model.Columns[item.Column];
-                var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                if (prop != null) orderBy.Add(prop.Name, item.Dir);
-            }
-
-            var order = orderBy.Select(m => new[] { m.Key, m.Value }).ToArray();
-            
-            Expression predicate = null;
-            ParameterExpression parameter;
-
-            var filters = model.Columns.Where(m => m.Searchable && m.Search != null && !string.IsNullOrWhiteSpace(m.Search.Value))
-                .Select(column =>
+                foreach (var item in model.Order)
                 {
+                    var column = model.Columns[item.Column];
                     var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                    if (prop != null)
-                        return new { Property = prop, column.Name, column.Search.Value };
-
-                    return null;
-                });
-            
-            var args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
-
-            ParameterExpression NestedMember(MemberExpression me)
-            {
-                if (me.Expression is ParameterExpression)
-                    return (ParameterExpression)me.Expression;
-                else if (me.Expression is MemberExpression)
-                    return NestedMember((MemberExpression)me.Expression);
-                else
-                    return null;
+                    if (prop != null) orderBy.Add(prop.Name, item.Dir);
+                }
             }
 
-            parameter = NestedMember(args.First());
+            var order = orderBy.Select(m => new[] {m.Key, m.Value}).ToArray();
 
-            ConstantExpression constant;
-            foreach (var filter in filters)
+            Expression predicateExpression = null;
+            ParameterExpression parameter = null;
+
+            if (model.Columns != null)
             {
-                foreach (var item in args.Where(m=> filter != null && m.Member.Name.ToLower() == filter.Name.ToLower()))
-                {
-                    var type = filter.Property.PropertyType;
-                    object value = null;
-                    try
+                var filters = model.Columns.Where(m => m.Searchable && m.Search != null && !string.IsNullOrWhiteSpace(m.Search.Value))
+                    .Select(column =>
                     {
-                        value = Convert.ChangeType(filter.Value, type);
-                    }
-                    catch (Exception)
-                    {
-                        // ignore
-                    }
+                        var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
+                        if (prop != null)
+                            return new {Property = prop, column.Name, column.Search.Value};
 
-                    if (value != null && value != type.GetDefault())
+                        return null;
+                    });
+
+                var args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
+
+                ParameterExpression NestedMember(MemberExpression me)
+                {
+                    if (me.Expression is ParameterExpression)
+                        return (ParameterExpression)me.Expression;
+                    else if (me.Expression is MemberExpression)
+                        return NestedMember((MemberExpression)me.Expression);
+                    else
+                        return null;
+                }
+
+                parameter = NestedMember(args.First());
+
+                ConstantExpression constant;
+                foreach (var filter in filters)
+                {
+                    foreach (var item in args.Where(m => filter != null && m.Member.Name.ToLower() == filter.Name.ToLower()))
                     {
-                        constant = Expression.Constant(value);
-                        var methods = new[] { "Contains", "Equals", "CompareTo" };
-                        foreach (var method in methods)
+                        var type = filter.Property.PropertyType;
+                        object value = null;
+                        try
                         {
-                            var methodInfo = type.GetMethod(method, new[] { type });
-                            if (methodInfo != null)
+                            value = Convert.ChangeType(filter.Value, type);
+                        }
+                        catch (Exception)
+                        {
+                            // ignore
+                        }
+
+                        if (value != null && value != type.GetDefault())
+                        {
+                            constant = Expression.Constant(value);
+                            var methods = new[] {"Contains", "Equals", "CompareTo"};
+                            foreach (var method in methods)
                             {
-                                var member = item;
-                                var callExp = Expression.Call(member, methodInfo, constant);
-                                predicate = predicate == null ? (Expression)callExp : Expression.AndAlso(predicate, callExp);
-                                break;
+                                var methodInfo = type.GetMethod(method, new[] {type});
+                                if (methodInfo != null)
+                                {
+                                    var member = item;
+                                    var callExp = Expression.Call(member, methodInfo, constant);
+                                    predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -126,27 +152,32 @@ namespace Web.Controllers
             }
 
             Expression<Func<TEntity, bool>> expression = null;
-            if (predicate != null)
-                expression = Expression.Lambda<Func<TEntity, bool>>(predicate, parameter);
+            if (predicateExpression != null)
+            {
+                if (predicate != null)
+                    predicateExpression = Expression.AndAlso(predicate, predicateExpression);
+
+                expression = Expression.Lambda<Func<TEntity, bool>>(predicateExpression, parameter);
+            }
 
             if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
             {
-                rows = await Service.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order),
+                rows = await Repository.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order),
                     skip: model.Start, take: model.Length);
             }
             else
             {
-                rows = await Service.ReadAsync(selector, expression, o => o.SortDynamically(order),
+                rows = await Repository.ReadAsync(selector, expression, o => o.SortDynamically(order),
                     skip: model.Start, take: model.Length);
             }
 
             var data = await ((IQueryable<object>)rows).ToListAsync();
 
-            var total = await Service.CountAsync();
+            var total = await Repository.CountAsync();
             var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
             var stotal = isFiltered ? data.Count : total;
 
-            return new JsonResult(new { iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data });
+            return new JsonResult(new {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
         }
     }
 }

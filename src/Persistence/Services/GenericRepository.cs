@@ -23,14 +23,14 @@ using EFCore.BulkExtensions;
 
 namespace Persistence.Services
 {
-    public abstract class GenericService<TEntity> : GenericService<TEntity, int>, IGenericService<TEntity> where TEntity : class, IEntity<int>
+    public abstract class GenericRepository<TEntity> : GenericRepository<TEntity, int>, IGenericRepository<TEntity> where TEntity : class, IEntity<int>
     {
-        protected GenericService(DbContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
+        protected GenericRepository(DbContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {
         }
     }
 
-    public abstract class GenericService<TEntity, TKey> : IGenericService<TEntity, TKey> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
+    public abstract class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
         protected DbContext _dbContext;
         protected DbSet<TEntity> _dbSet;
@@ -69,7 +69,7 @@ namespace Persistence.Services
             return predicate;
         }
 
-        protected GenericService(DbContext context, ILoggerFactory logger, IConfiguration configuration)
+        protected GenericRepository(DbContext context, ILoggerFactory logger, IConfiguration configuration)
         {
             _dbContext = context;
             _dbSet = _dbContext.Set<TEntity>();
@@ -310,7 +310,7 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                foreach (var entity in list.Cast<ISoftDelete>())
+                foreach (var entity in list) //.Cast<ISoftDelete>())
                 {
                     // ReSharper disable once SuspiciousTypeConversion.Global
                     if (entity != null && !((ISoftDelete)entity).IsDeleted)

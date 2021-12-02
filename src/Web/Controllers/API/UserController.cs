@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Business.Interfaces;
+using Business.Interfaces.Creators;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,9 +18,11 @@ namespace Web.Controllers.API
     public class UserController : ApiControllerBase<User>
     {
         private readonly ILogger _logger;
+        private readonly IUserMediator _userMediator;
 
-        public UserController(ILoggerFactory loggerFactory, IGenericService<User> service) : base(service)
+        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository, IMediator<User> mediator) : base(repository, mediator)
         {
+            _userMediator = userMediator;
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
@@ -28,7 +32,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Service.ReadAsync(s => s);
+                var collection = await Repository.ReadAsync(s => s);
 
                 if (collection == null || !collection.Any())
                     return new JsonResult(new { last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>() });
@@ -50,7 +54,7 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var items = await Service.ReadAsync(s => s, p => p.Id == id);
+                    var items = await Repository.ReadAsync(s => s, p => p.Id == id);
 
                     return new JsonResult(items);
                 }
@@ -78,7 +82,7 @@ namespace Web.Controllers.API
                 record.NormalizedEmail = model.Email.ToUpper();
                 record.NormalizedUserName = model.UserName.ToUpper();
 
-                await Service.CreateAsync(record);
+                await _userMediator.CreateAsync(record);
 
                 return Created(Url.Content($"~/api/{nameof(User)}/{record.Id}"), record.Id);
             }
@@ -98,7 +102,7 @@ namespace Web.Controllers.API
 
             try
             {
-                var record = await Service.FirstOrDefaultAsync(s => s, p => p.Id == id);
+                var record = await Repository.FirstOrDefaultAsync(s => s, p => p.Id == id);
 
                 if (record != null)
                 {
@@ -108,7 +112,8 @@ namespace Web.Controllers.API
                     record.EmailConfirmed = model.EmailConfirmed;
                     record.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
                     record.TwoFactorEnabled = model.TwoFactorEnabled;
-                    await Service.UpdateAsync(record);
+                    
+                    await _userMediator.UpdateAsync(record);
                 }
 
                 return Ok(id);
@@ -126,7 +131,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Service.DeleteAsync(id);
+                await _userMediator.DeleteAsync(id);
                 return Ok(id);
             }
             catch (Exception e)

@@ -11,9 +11,9 @@ using Persistence.Interfaces;
 
 namespace Persistence.Services
 {
-    public class SettingService : GenericService<Setting>, ISettingService
+    public class SettingRepository : GenericRepository<Setting>, ISettingRepository
     {
-        public SettingService(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
+        public SettingRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {
         }
 

@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Persistence.Interfaces
 {
-    public interface IRoleService : IGenericService<Role>
+    public interface IUserRoleRepository : IGenericRepository<UserRole>
     {
     }
 }

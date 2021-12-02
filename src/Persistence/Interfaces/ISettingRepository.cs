@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Persistence.Interfaces
 {
-    public interface ISettingService : IGenericService<Setting>
+    public interface ISettingRepository : IGenericRepository<Setting>
     {
         string GetValue(string key);
         TValue GetValue<TValue>(string key) where TValue : struct;
