@@ -11,40 +11,40 @@ namespace Business.Services.Creators
     {
         private readonly ILogger _logger;
         private readonly IUserValidator _userValidator;
-        private readonly IGenericService<User> _userService;
+        private readonly IGenericRepository<User> _userRepository;
 
-        public UserMediator(IUserValidator userValidator, IGenericService<User> userService,  ILoggerFactory loggerFactory)
+        public UserMediator(IUserValidator userValidator, IGenericRepository<User> userRepository,  ILoggerFactory loggerFactory)
         {
             _userValidator = userValidator;
-            _userService = userService;
+            _userRepository = userRepository;
             _logger = loggerFactory.CreateLogger(GetType());
         }
         
         public async Task<User> CreateAsync(User model)
         {
             await _userValidator.ValidateAsync(model);
-            await _userService.CreateAsync(model);
+            await _userRepository.CreateAsync(model);
             return model;
         }
 
         public async Task<User> ReadAsync(int key)
         {
-            var result = await _userService.FirstOrDefaultAsync(m=> m, p=> p.Id == key);
+            var result = await _userRepository.FirstOrDefaultAsync(m=> m, p=> p.Id == key);
             return result;
         }
 
         public async Task<User> UpdateAsync(User model)
         {
             await _userValidator.ValidateAsync(model);
-            await _userService.UpdateAsync(model);
+            await _userRepository.UpdateAsync(model);
             return model;
         }
 
         public async Task<bool> DeleteAsync(int key)
         {
-            var model = await _userService.FirstOrDefaultAsync(m=> m, p=> p.Id == key);
+            var model = await _userRepository.FirstOrDefaultAsync(m=> m, p=> p.Id == key);
             await _userValidator.ValidateAsync(model);
-            await _userService.DeleteAsync(key);
+            await _userRepository.DeleteAsync(key);
             return true;
         }
     }

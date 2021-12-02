@@ -19,7 +19,7 @@ namespace Web.Controllers.API
         private readonly ILogger _logger;
         private readonly IUserMediator _userMediator;
 
-        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericService<User> service) : base(service)
+        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository) : base(repository)
         {
             _userMediator = userMediator;
             _logger = loggerFactory.CreateLogger(GetType());
@@ -31,7 +31,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Service.ReadAsync(s => s);
+                var collection = await Repository.ReadAsync(s => s);
 
                 if (collection == null || !collection.Any())
                     return new JsonResult(new { last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>() });
@@ -53,7 +53,7 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var items = await Service.ReadAsync(s => s, p => p.Id == id);
+                    var items = await Repository.ReadAsync(s => s, p => p.Id == id);
 
                     return new JsonResult(items);
                 }
@@ -101,7 +101,7 @@ namespace Web.Controllers.API
 
             try
             {
-                var record = await Service.FirstOrDefaultAsync(s => s, p => p.Id == id);
+                var record = await Repository.FirstOrDefaultAsync(s => s, p => p.Id == id);
 
                 if (record != null)
                 {

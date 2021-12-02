@@ -11,11 +11,11 @@ namespace Business.Services.Validators
     public class UserValidator : IUserValidator
     {
         private readonly ILogger _logger;
-        private readonly IGenericService<User> _userService;
+        private readonly IGenericRepository<User> _userRepository;
 
-        public UserValidator(IGenericService<User> userService, ILoggerFactory loggerFactory)
+        public UserValidator(IGenericRepository<User> userRepository, ILoggerFactory loggerFactory)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
@@ -26,7 +26,7 @@ namespace Business.Services.Validators
                 if (model.Id == 1)
                     throw new ArgumentException("Cannot delete the default user");
 
-                if (await _userService.CountAsync() == 1)
+                if (await _userRepository.CountAsync() == 1)
                     throw new ArgumentException("Cannot delete the last user");
             }
             else
@@ -34,7 +34,7 @@ namespace Business.Services.Validators
                 if (string.IsNullOrWhiteSpace(model.Email))
                     throw new ArgumentException("Email is required");
 
-                if (await _userService.AnyAsync(x => x.NormalizedEmail == model.Email.ToUpper() && x.Id != model.Id))
+                if (await _userRepository.AnyAsync(x => x.NormalizedEmail == model.Email.ToUpper() && x.Id != model.Id))
                     throw new ArgumentException("Email already exists");
             }
         }

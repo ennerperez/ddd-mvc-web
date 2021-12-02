@@ -17,7 +17,7 @@ namespace Web.Controllers.API
     {
         private readonly ILogger _logger;
 
-        public SettingController(ILoggerFactory loggerFactory, IGenericService<Setting> service) : base(service)
+        public SettingController(ILoggerFactory loggerFactory, IGenericRepository<Setting> repository) : base(repository)
         {
             _logger = loggerFactory.CreateLogger(GetType());
         }
@@ -28,7 +28,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Service.ReadAsync(s => s);
+                var collection = await Repository.ReadAsync(s => s);
 
                 if (collection == null || !collection.Any())
                     return new JsonResult(new { last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>() });
@@ -50,7 +50,7 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var items = await Service.ReadAsync(s => s, p => p.Id == id);
+                    var items = await Repository.ReadAsync(s => s, p => p.Id == id);
 
                     return new JsonResult(items);
                 }
@@ -76,7 +76,7 @@ namespace Web.Controllers.API
                 var record = model;
                 record.Id = default;
 
-                await Service.CreateAsync(record);
+                await Repository.CreateAsync(record);
 
                 return Created(Url.Content($"~/api/{nameof(Setting)}/{record.Id}"), record.Id);
             }
@@ -96,7 +96,7 @@ namespace Web.Controllers.API
 
             try
             {
-                var record = await Service.FirstOrDefaultAsync(s => s, p => p.Id == id);
+                var record = await Repository.FirstOrDefaultAsync(s => s, p => p.Id == id);
 
                 if (record != null)
                 {
@@ -104,7 +104,7 @@ namespace Web.Controllers.API
                     record.Type = model.Type;
                     record.Value = model.Value;
 
-                    await Service.UpdateAsync(record);
+                    await Repository.UpdateAsync(record);
                 }
 
                 return Ok(id);
@@ -122,7 +122,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Service.DeleteAsync(id);
+                await Repository.DeleteAsync(id);
                 return Ok(id);
             }
             catch (Exception e)

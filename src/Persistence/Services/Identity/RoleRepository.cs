@@ -6,9 +6,9 @@ using Persistence.Contexts;
 
 namespace Persistence.Services
 {
-    public class RoleService : GenericService<Role>, IRoleService
+    public class RoleRepository : GenericRepository<Role>, IRoleRepository
     {
-        public RoleService(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
+        public RoleRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {
         }
     }

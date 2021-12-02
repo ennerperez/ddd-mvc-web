@@ -62,27 +62,27 @@ namespace Persistence
         /// <returns></returns>
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
-            // services.AddTransient<IGenericService<T>, GenericService<T>>();
+            // services.AddTransient<IGenericRepository<T>, GenericRepository<T>>();
             
-            services.AddTransient<IGenericService<Setting>, SettingService>();
+            services.AddTransient<IGenericRepository<Setting>, SettingRepository>();
             
-            services.AddTransient<IGenericService<Role>, RoleService>();
-            services.AddTransient<IGenericService<RoleClaim>, RoleClaimService>();
-            services.AddTransient<IGenericService<User>, UserService>();
-            services.AddTransient<IGenericService<UserClaim>, UserClaimService>();
-            services.AddTransient<IGenericService<UserLogin>, UserLoginService>();
-            services.AddTransient<IGenericService<UserRole>, UserRoleService>();
-            services.AddTransient<IGenericService<UserToken>, UserTokenService>();
+            services.AddTransient<IGenericRepository<Role>, RoleRepository>();
+            services.AddTransient<IGenericRepository<RoleClaim>, RoleClaimRepository>();
+            services.AddTransient<IGenericRepository<User>, UserRepository>();
+            services.AddTransient<IGenericRepository<UserClaim>, UserClaimRepository>();
+            services.AddTransient<IGenericRepository<UserLogin>, UserLoginRepository>();
+            services.AddTransient<IGenericRepository<UserRole>, UserRoleRepository>();
+            services.AddTransient<IGenericRepository<UserToken>, UserTokenRepository>();
 
-            services.AddTransient<ISettingService, SettingService>();
+            services.AddTransient<ISettingRepository, SettingRepository>();
 
-            services.AddTransient<IRoleService, RoleService>();
-            services.AddTransient<IRoleClaimService, RoleClaimService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserClaimService, UserClaimService>();
-            services.AddTransient<IUserLoginService, UserLoginService>();
-            services.AddTransient<IUserRoleService, UserRoleService>();
-            services.AddTransient<IUserTokenService, UserTokenService>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<IRoleClaimRepository, RoleClaimRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserClaimRepository, UserClaimRepository>();
+            services.AddTransient<IUserLoginRepository, UserLoginRepository>();
+            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
+            services.AddTransient<IUserTokenRepository, UserTokenRepository>();
 
             return services;
         }
