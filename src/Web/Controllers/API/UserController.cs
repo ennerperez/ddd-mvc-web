@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Business.Interfaces;
 using Business.Interfaces.Creators;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace Web.Controllers.API
         private readonly ILogger _logger;
         private readonly IUserMediator _userMediator;
 
-        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository) : base(repository)
+        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository, IMediator<User> mediator) : base(repository, mediator)
         {
             _userMediator = userMediator;
             _logger = loggerFactory.CreateLogger(GetType());

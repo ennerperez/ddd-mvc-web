@@ -16,10 +16,17 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    
     public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
     {
+        public ApiControllerBase(IGenericRepository<TEntity, int> repository, IMediator<TEntity, int> mediator) : base(repository, mediator)
+        {
+        }
+
         public ApiControllerBase(IGenericRepository<TEntity, int> repository) : base(repository)
+        {
+        }
+
+        public ApiControllerBase(IMediator<TEntity, int> mediator) : base(mediator)
         {
         }
     }
@@ -51,6 +58,16 @@ namespace Web.Controllers
             Mediator = mediator;
         }
 
+        public ApiControllerBase(IGenericRepository<TEntity, TKey> repository)
+        {
+            Repository = repository;
+        }
+
+        public ApiControllerBase(IMediator<TEntity, TKey> mediator)
+        {
+            Mediator = mediator;
+        }
+
         public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null)
         {
             object rows;
@@ -67,8 +84,8 @@ namespace Web.Controllers
                 }
             }
 
-            var order = orderBy.Select(m => new[] { m.Key, m.Value }).ToArray();
-            
+            var order = orderBy.Select(m => new[] {m.Key, m.Value}).ToArray();
+
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
 
@@ -139,7 +156,7 @@ namespace Web.Controllers
             {
                 if (predicate != null)
                     predicateExpression = Expression.AndAlso(predicate, predicateExpression);
-                
+
                 expression = Expression.Lambda<Func<TEntity, bool>>(predicateExpression, parameter);
             }
 
@@ -160,7 +177,7 @@ namespace Web.Controllers
             var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
             var stotal = isFiltered ? data.Count : total;
 
-            return new JsonResult(new { iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data });
+            return new JsonResult(new {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
         }
     }
 }
