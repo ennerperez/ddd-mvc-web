@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Business.Interfaces.Creators;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,9 +17,11 @@ namespace Web.Controllers.API
     public class UserController : ApiControllerBase<User>
     {
         private readonly ILogger _logger;
+        private readonly IUserMediator _userMediator;
 
-        public UserController(ILoggerFactory loggerFactory, IGenericService<User> service) : base(service)
+        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericService<User> service) : base(service)
         {
+            _userMediator = userMediator;
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
@@ -78,7 +81,7 @@ namespace Web.Controllers.API
                 record.NormalizedEmail = model.Email.ToUpper();
                 record.NormalizedUserName = model.UserName.ToUpper();
 
-                await Service.CreateAsync(record);
+                await _userMediator.CreateAsync(record);
 
                 return Created(Url.Content($"~/api/{nameof(User)}/{record.Id}"), record.Id);
             }
@@ -108,7 +111,8 @@ namespace Web.Controllers.API
                     record.EmailConfirmed = model.EmailConfirmed;
                     record.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
                     record.TwoFactorEnabled = model.TwoFactorEnabled;
-                    await Service.UpdateAsync(record);
+                    
+                    await _userMediator.UpdateAsync(record);
                 }
 
                 return Ok(id);
@@ -126,7 +130,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Service.DeleteAsync(id);
+                await _userMediator.DeleteAsync(id);
                 return Ok(id);
             }
             catch (Exception e)
