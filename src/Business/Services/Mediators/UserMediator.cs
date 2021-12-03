@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Business.Interfaces.Creators;
+using Business.Interfaces.Mediators;
 using Business.Interfaces.Validators;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Persistence.Interfaces;
 
-namespace Business.Services.Creators
+namespace Business.Services.Mediators
 {
     public class UserMediator : IUserMediator
     {
