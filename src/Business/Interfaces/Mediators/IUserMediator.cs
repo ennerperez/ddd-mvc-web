@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Business.Interfaces.Creators
+namespace Business.Interfaces.Mediators
 {
     public interface IUserMediator : IMediator<User>
     {
