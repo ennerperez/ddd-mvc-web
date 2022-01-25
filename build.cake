@@ -25,26 +25,35 @@ Task("Clean")
     CleanDirectory($"./src/Infrastructure/bin/{configuration}");
     CleanDirectory($"./src/Persistence/bin/{configuration}");
     CleanDirectory($"./src/Web/bin/{configuration}");
+    CleanDirectory(publishDirectory);
 });
 
 Task("Build")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    DotNetCoreBuild("./src/Solution.sln", new DotNetCoreBuildSettings
+    var settings = new DotNetPublishSettings
     {
         Configuration = configuration,
-        NoRestore = true,
-        OutputDirectory = outputDirectory,
-        ArgumentCustomization = args => args.Append($@"/p:PublishProfile={configuration} /p:PackageLocation=""../../{publishDirectory}"" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true"),
-    });
+        OutputDirectory = outputDirectory
+    };
+    
+    DotNetPublish("./src/Web/Web.csproj", settings);
+
 });
 
-Task("Test")
+Task("Zip")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    DotNetCoreTest("./src/Solution.sln", new DotNetCoreTestSettings
+    Zip(outputDirectory, System.IO.Path.Combine(outputDirectory,"..",configuration+".zip"));    
+});
+
+Task("Test")
+    .IsDependentOn("Zip")
+    .Does(() =>
+{
+    DotNetTest("./src/Solution.sln", new DotNetTestSettings
     {
         Configuration = configuration,
         NoBuild = true,
