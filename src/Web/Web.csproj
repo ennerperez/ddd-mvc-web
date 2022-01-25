@@ -3,7 +3,7 @@
   <Import Project="Options.props" />
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>default</LangVersion>
     <Deterministic>false</Deterministic>
   </PropertyGroup>
