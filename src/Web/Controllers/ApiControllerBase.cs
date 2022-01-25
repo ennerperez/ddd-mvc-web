@@ -88,6 +88,16 @@ namespace Web.Controllers
 
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
+            
+            ParameterExpression NestedMember(MemberExpression me)
+            {
+                if (me.Expression is ParameterExpression)
+                    return (ParameterExpression)me.Expression;
+                else if (me.Expression is MemberExpression)
+                    return NestedMember((MemberExpression)me.Expression);
+                else
+                    return null;
+            }
 
             if (model.Columns != null)
             {
@@ -102,17 +112,6 @@ namespace Web.Controllers
                     });
 
                 var args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
-
-                ParameterExpression NestedMember(MemberExpression me)
-                {
-                    if (me.Expression is ParameterExpression)
-                        return (ParameterExpression)me.Expression;
-                    else if (me.Expression is MemberExpression)
-                        return NestedMember((MemberExpression)me.Expression);
-                    else
-                        return null;
-                }
-
                 parameter = NestedMember(args.First());
 
                 ConstantExpression constant;
@@ -158,6 +157,13 @@ namespace Web.Controllers
                     predicateExpression = Expression.AndAlso(predicate, predicateExpression);
 
                 expression = Expression.Lambda<Func<TEntity, bool>>(predicateExpression, parameter);
+            }
+            else
+            {
+                if (predicate != null)
+                {
+                    expression = predicate;
+                }
             }
 
             if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
