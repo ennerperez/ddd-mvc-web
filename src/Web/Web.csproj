@@ -42,10 +42,11 @@
   </ItemGroup>
 
   <!--https://github.com/dotnet/aspnetcore/issues/16862-->
-  <PropertyGroup>
+  <!--https://github.com/dotnet/Scaffolding/issues/1714-->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ResolveStaticWebAssetsInputsDependsOn>RemoveIdentityAssets</ResolveStaticWebAssetsInputsDependsOn>
   </PropertyGroup>
-  <Target Name="RemoveIdentityAssets">
+  <Target Name="RemoveIdentityAssets" Condition=" '$(Configuration)' == 'Release' ">
     <ItemGroup>
       <StaticWebAsset Remove="@(StaticWebAsset)" Condition="%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'" />
     </ItemGroup>
