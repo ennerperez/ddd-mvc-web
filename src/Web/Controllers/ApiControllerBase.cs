@@ -9,6 +9,7 @@ using Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Persistence.Interfaces;
 using Web.Models;
 
@@ -68,7 +69,7 @@ namespace Web.Controllers
             Mediator = mediator;
         }
 
-        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null)
+        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
         {
             object rows;
 
@@ -168,12 +169,12 @@ namespace Web.Controllers
 
             if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
             {
-                rows = await Repository.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order),
+                rows = await Repository.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order), include: include,
                     skip: model.Start, take: model.Length);
             }
             else
             {
-                rows = await Repository.ReadAsync(selector, expression, o => o.SortDynamically(order),
+                rows = await Repository.ReadAsync(selector, expression, o => o.SortDynamically(order), include: include,
                     skip: model.Start, take: model.Length);
             }
 
