@@ -92,6 +92,7 @@ namespace Web
                 options.SupportedCultures = SupportedCultures;
                 options.SupportedUICultures = SupportedCultures;
             });
+            services.AddLocalization(options=> options.ResourcesPath = "Resources");
 #endif
 
             services
@@ -160,6 +161,9 @@ namespace Web
 
 #if USING_NEWTONSOFT
             services.AddControllersWithViews()
+#if USING_LOCALIZATION
+                .AddViewLocalization()
+#endif
 #if DEBUG
                 .AddRazorRuntimeCompilation()
 #endif
@@ -167,9 +171,17 @@ namespace Web
 #else
 #if DEBUG
             services.AddControllersWithViews()
+#if USING_LOCALIZATION
+                .AddViewLocalization()
+#endif
                 .AddRazorRuntimeCompilation();
 #else
+#if USING_LOCALIZATION
+            services.AddControllersWithViews()
+                .AddViewLocalization();
+#else
             services.AddControllersWithViews();
+#endif
 #endif
 #endif
 

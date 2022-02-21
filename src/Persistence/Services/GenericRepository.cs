@@ -111,7 +111,7 @@ namespace Persistence.Services
             if (take != null && take <= 0) take = null;
             if (skip != null) result = result.Skip(skip.Value);
             if (take != null) result = result.Take(take.Value);
-
+            
             return Task.FromResult(result);
         }
 

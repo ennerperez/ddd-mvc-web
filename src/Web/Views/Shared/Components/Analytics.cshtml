@@ -1,6 +1,6 @@
 ﻿@using Microsoft.Extensions.Hosting
-@inject IConfiguration Configuration
-@inject IHostEnvironment Environment
+@inject IConfiguration _configuration
+@inject IHostEnvironment _environment
 
 @using (Html.BeginScripts())
 {
@@ -11,7 +11,7 @@
     </environment>
     <environment exclude="development">
         @{
-            var gtag = Configuration["GoogleSettings:Analytics:TrackingCode"];
+            var gtag = _configuration["GoogleSettings:Analytics:TrackingCode"];
             if (!string.IsNullOrWhiteSpace(gtag))
             {
                 using (Html.BeginScripts())
