@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Localization
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    var twoLetterIsoLanguageName = requestCulture.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
+    var twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower();
 }
 @using (Html.BeginStyles())
 {
