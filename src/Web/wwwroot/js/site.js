@@ -180,3 +180,73 @@ function resizeMe(img, max_width, max_height, quality) {
     /*$("#preview").append(canvas);*/ // do the actual resized preview
     return canvas.toDataURL("image/jpg", quality); // get the data from canvas as 70% JPG (can be also PNG, etc.)
 }
+
+/* Model Builder */
+
+function getModel(source) {
+    let controls = $(`#${source} [data-field]`);
+    let model = {};
+    controls.each(function (s) {
+        let control = controls[s];
+        let data = null;
+        let type = $(control).prop("tagName").toLowerCase();
+        let hasMask = $(control).data("mask") !== undefined;
+        let dataType = $(control).data("type");
+        if ($(control).attr("type") === "checkbox") type = "checkbox";
+        switch (type) {
+            case "input":
+            case "select":
+            case "textarea":
+                if (dataType === "datetime" || dataType === "date" || dataType === "time") {
+                    data = $(control).datepicker("getDate");
+                }
+                else if (!hasMask) {
+                    data = $(control).val();
+                }
+                else {
+                    data = $(control).cleanVal();
+                }
+                break;
+            case "checkbox":
+                data = $(control).val("").prop("checked");
+                break;
+        }
+        let field = $(control).data("field");
+        if (data !== null && data !== "") Reflect.set(model, field, data);
+    });
+    return model;
+}
+
+function validateModel(source) {
+    let controls = $(`#${source} [data-field]`);
+    return controls.each(function (s) {
+        let control = controls[s];
+        let data = null;
+        let type = $(control).prop("tagName").toLowerCase();
+        let hasMask = $(control).data("mask") !== undefined;
+        let dataType = $(control).data("type");
+        let required = $(control).attr("required") !== undefined;
+        if ($(control).attr("type") === "checkbox") type = "checkbox";
+        switch (type) {
+            case "input":
+            case "select":
+            case "textarea":
+                if (dataType === "datetime" || dataType === "date" || dataType === "time") {
+                    data = $(control).datepicker("getDate");
+                } else if (!hasMask) {
+                    data = $(control).val();
+                } else {
+                    data = $(control).cleanVal();
+                }
+                break;
+            case "checkbox":
+                data = $(control).val("").prop("checked");
+                break;
+        }
+        if ((data === null || data === "" || data === undefined) && required) {
+            $(control).focus();
+            return false;
+        }
+        return true;
+    });
+}
