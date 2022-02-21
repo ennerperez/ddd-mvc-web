@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration _configuration
 @{
     var twoLetterIsoLanguageName = "en";
     if (Html.UsingLocalization())
@@ -13,7 +13,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@Configuration["AppSettings:Name"] - @ViewData["Title"]</title>
+    <title>@_configuration["AppSettings:Name"] - @ViewData["Title"]</title>
 
     <partial name="Partials/_FaviconPartial"/>
 

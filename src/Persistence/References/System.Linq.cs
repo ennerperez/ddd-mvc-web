@@ -46,13 +46,13 @@ namespace System.Linq
                 return result;
             }
 
-            public static Expression<Func<T, TE>> GetPropertySelector<T, TE>(this Type @this, string propertyName)
+            public static Expression<Func<T, Te>> GetPropertySelector<T, Te>(this Type @this, string propertyName)
             {
                 var arg = Expression.Parameter(typeof(T), "x");
                 var property = Expression.Property(arg, propertyName);
                 //return the property as object
-                var conv = Expression.Convert(property, typeof(TE));
-                var exp = Expression.Lambda<Func<T, TE>>(conv, new ParameterExpression[] { arg });
+                var conv = Expression.Convert(property, typeof(Te));
+                var exp = Expression.Lambda<Func<T, Te>>(conv, new ParameterExpression[] { arg });
                 return exp;
             }
 

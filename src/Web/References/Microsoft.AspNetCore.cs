@@ -165,16 +165,16 @@ namespace Microsoft.AspNetCore
         {
             public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
             {
-                private string _ApiPrefix;
+                private string _apiPrefix;
 
                 public CustomCookieAuthenticationEvents(string apiPrefix)
                 {
-                    _ApiPrefix = apiPrefix;
+                    _apiPrefix = apiPrefix;
                 }
 
                 public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
                 {
-                    if (!string.IsNullOrWhiteSpace(_ApiPrefix) && context.Request.Path.StartsWithSegments($"/{_ApiPrefix}") &&
+                    if (!string.IsNullOrWhiteSpace(_apiPrefix) && context.Request.Path.StartsWithSegments($"/{_apiPrefix}") &&
                         context.Response.StatusCode == StatusCodes.Status200OK)
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -188,7 +188,7 @@ namespace Microsoft.AspNetCore
 
                 public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
                 {
-                    if (!string.IsNullOrWhiteSpace(_ApiPrefix) && context.Request.Path.StartsWithSegments($"/{_ApiPrefix}") &&
+                    if (!string.IsNullOrWhiteSpace(_apiPrefix) && context.Request.Path.StartsWithSegments($"/{_apiPrefix}") &&
                         context.Response.StatusCode == StatusCodes.Status200OK)
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;

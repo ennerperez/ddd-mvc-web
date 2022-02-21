@@ -1,8 +1,8 @@
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@inject SignInManager<User> _signInManager
+@inject UserManager<User> _userManager
 @{
     var name = "";
-    if (SignInManager.IsSignedIn(User))
+    if (_signInManager.IsSignedIn(User))
     {
         if (@User.Claims.Any(m => m.Type == System.Security.Claims.ClaimTypes.GivenName))
         {
@@ -16,7 +16,7 @@
 }
 
 <ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
+    @if (_signInManager.IsSignedIn(User))
     {
         <li class="nav-item">
             <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@name</a>
