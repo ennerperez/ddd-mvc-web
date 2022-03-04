@@ -1,0 +1,14 @@
+[
+  {
+    "Id": 1,
+    "UserId": 1,
+    "ClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
+    "ClaimValue": "John"
+  },
+  {
+    "Id": 2,
+    "UserId": 1,
+    "ClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
+    "ClaimValue": "Smith"
+  }
+]
