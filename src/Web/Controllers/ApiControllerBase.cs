@@ -69,27 +69,30 @@ namespace Web.Controllers
             Mediator = mediator;
         }
 
-        public async Task<JsonResult> Data<TResult>(AjaxViewModel model, Expression<Func<TEntity, TResult>> selector, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
+        public async Task<JsonResult> Data<TResult>(AjaxViewModel model,
+            Expression<Func<TEntity, TResult>> selector,
+            Expression<Func<TEntity, bool>> predicate = null,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
         {
             object rows;
 
-            var props = typeof(TEntity).GetProperties().ToArray();
-            var orderBy = new Dictionary<string, string>();
+            var props = typeof(TResult).GetProperties().ToArray();
+            var orderByKeys = new Dictionary<string, string>();
             if (model.Order != null)
             {
                 foreach (var item in model.Order)
                 {
                     var column = model.Columns[item.Column];
                     var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                    if (prop != null) orderBy.Add(prop.Name, item.Dir);
+                    if (prop != null) orderByKeys.Add(prop.Name, item.Dir);
                 }
             }
 
-            var order = orderBy.Select(m => new[] {m.Key, m.Value}).ToArray();
+            var order = orderByKeys.Select(m => new[] {m.Key, m.Value}).ToArray();
 
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
-            
+
             ParameterExpression NestedMember(MemberExpression me)
             {
                 if (me.Expression is ParameterExpression)
@@ -112,8 +115,18 @@ namespace Web.Controllers
                         return null;
                     });
 
-                var args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
-                parameter = NestedMember(args.First());
+                MemberExpression[] args = null;
+                if (selector.Body is NewExpression)
+                {
+                    args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
+                    parameter = NestedMember(args.First());
+                }
+                else if (selector.Body is MemberInitExpression)
+                {
+                    //TODO: Validate args
+                    // args = ((MemberInitExpression)selector.Body).NewExpression.Arguments.OfType<MemberExpression>().ToArray();
+                    // parameter = NestedMember(args.First());
+                }
 
                 ConstantExpression constant;
                 foreach (var filter in filters)
