@@ -102,9 +102,9 @@ namespace Persistence.Services
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
-            var stprop = typeof(TEntity)
-                .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+            
+            var stprop = _dbSet.EntityType.GetProperties()
+                .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -196,9 +196,8 @@ namespace Persistence.Services
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
-            var stprop = typeof(TEntity)
-                .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+            var stprop = _dbSet.EntityType.GetProperties()
+                .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -436,9 +435,8 @@ namespace Persistence.Services
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
-            var stprop = typeof(TEntity)
-                .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+            var stprop = _dbSet.EntityType.GetProperties()
+                .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
@@ -530,9 +528,8 @@ namespace Persistence.Services
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
-            var stprop = typeof(TEntity)
-                .GetProperties()
-                .FirstOrDefault(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))?.Name;
+            var stprop = _dbSet.EntityType.GetProperties()
+                .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
             if (skip != null && skip <= 0) skip = null;
