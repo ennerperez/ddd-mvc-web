@@ -22,6 +22,7 @@
                     <thead>
                     <tr>
                         <th>User</th>
+                        <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th data-printable="false">MFA</th>
@@ -81,6 +82,10 @@
                     },
                     columns: [                  
                         { name: "userName", data: "userName" },
+                        { name: "fullName", data: null, render: function (data, type, row){
+                            return row['firstName'] != null && row["lastName"] !== null ? `${row['firstName']} ${row["lastName"]}` : '';
+                        }
+                        },
                         { name: "email", data: "email", render: function (data, type, row) 
                             { 
                                 return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["emailConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;

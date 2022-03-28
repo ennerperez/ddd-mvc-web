@@ -7,7 +7,9 @@ using Business.Interfaces;
 using Business.Interfaces.Mediators;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Persistence.Contexts;
 using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Web.Models;
@@ -19,11 +21,13 @@ namespace Web.Controllers.API
     {
         private readonly ILogger _logger;
         private readonly IUserMediator _userMediator;
+        private readonly DefaultContext context;
 
-        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository, IMediator<User> mediator) : base(repository, mediator)
+        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository, IMediator<User> mediator, DefaultContext context) : base(repository, mediator)
         {
             _userMediator = userMediator;
             _logger = loggerFactory.CreateLogger(GetType());
+            this.context = context;
         }
 
         [SwaggerOperation("List all elements")]
@@ -149,14 +153,18 @@ namespace Web.Controllers.API
         {
             var selector = (new User()).Select(t => new
             {
-                t.Id,
-                t.UserName,
-                t.Email,
-                t.EmailConfirmed,
-                t.PhoneNumber,
-                t.PhoneNumberConfirmed,
-                t.TwoFactorEnabled
+                Id = t.Id,
+                UserName = t.UserName,
+                Email = t.Email,
+                EmailConfirmed = t.EmailConfirmed,
+                PhoneNumber = t.PhoneNumber,
+                PhoneNumberConfirmed = t.PhoneNumberConfirmed,
+                TwoFactorEnabled = t.TwoFactorEnabled,
+                FirstName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName).ClaimValue,
+                LastName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname).ClaimValue,
+                //LoginCounts = t.UserLogins.Count()
             });
+            
             return await base.Data(model, selector);
         }
 

@@ -74,6 +74,10 @@ namespace Persistence.Configurations
             e.Property(m => m.ConcurrencyStamp).HasMaxLength(Lengths.Guid);
             e.Property(m => m.PhoneNumber).HasMaxLength(Lengths.Phone);
 
+            e.Ignore(m => m.FirstName);
+            e.Ignore(m => m.LastName);
+            e.Ignore(m => m.FullName);
+
             e.HasIndex(m => m.UserName);
             e.HasIndex(m => m.NormalizedUserName);
             e.HasIndex(m => m.Email);

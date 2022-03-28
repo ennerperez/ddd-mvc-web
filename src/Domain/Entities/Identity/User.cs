@@ -15,7 +15,11 @@ namespace Domain.Entities
             UserTokens = new List<UserToken>();
             UserClaims = new List<UserClaim>();
         }
-
+        
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName => string.Join(" ", FirstName, LastName);
+        
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<UserLogin> UserLogins { get; set; }
         public ICollection<UserToken> UserTokens { get; set; }
