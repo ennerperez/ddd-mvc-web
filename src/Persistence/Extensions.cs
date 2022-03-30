@@ -65,30 +65,12 @@ namespace Persistence
         /// <returns></returns>
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
-            // services.AddTransient<IGenericRepository<T>, GenericRepository<T>>();
+            //TODO: Make this possible
+            //services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            //services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddRepositoriesFromAssembly(Assembly.GetExecutingAssembly());
             
-            // services.AddTransient<IGenericRepository<Setting>, SettingRepository>();
-            //
-            // services.AddTransient<IGenericRepository<Role>, RoleRepository>();
-            // services.AddTransient<IGenericRepository<RoleClaim>, RoleClaimRepository>();
-            // services.AddTransient<IGenericRepository<User>, UserRepository>();
-            // services.AddTransient<IGenericRepository<UserClaim>, UserClaimRepository>();
-            // services.AddTransient<IGenericRepository<UserLogin>, UserLoginRepository>();
-            // services.AddTransient<IGenericRepository<UserRole>, UserRoleRepository>();
-            // services.AddTransient<IGenericRepository<UserToken>, UserTokenRepository>();
-
-            services.AddTransient<ISettingRepository, SettingRepository>();
-
-            services.AddTransient<IRoleRepository, RoleRepository>();
-            services.AddTransient<IRoleClaimRepository, RoleClaimRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserClaimRepository, UserClaimRepository>();
-            services.AddTransient<IUserLoginRepository, UserLoginRepository>();
-            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
-            services.AddTransient<IUserTokenRepository, UserTokenRepository>();
-
             return services;
         }
 
@@ -103,8 +85,17 @@ namespace Persistence
             
             var assembliesToScan = assemblies.Distinct().ToArray();
             ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), services, assembliesToScan, false);
+            ConnectImplementationsToTypesClosing(typeof(IGenericRepository<>), services, assembliesToScan, false);
+            ConnectImplementationsToDomain(typeof(IGenericRepository<>), services, assembliesToScan, false);
         }
-        
+
+        private static void ConnectImplementationsToDomain(Type openRequestInterface, IServiceCollection services, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)
+        {
+            var types = assembliesToScan
+                .SelectMany(a => a.DefinedTypes)
+                .Where(t => !t.IsOpenGeneric());
+        }
+
         private static void ConnectImplementationsToTypesClosing(Type openRequestInterface, IServiceCollection services, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)
         {
             var concretions = new List<Type>();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Business.Interfaces;
+using Business.Abstractions;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,8 +24,8 @@ namespace Web.Controllers.API
         }
 
         [SwaggerOperation("List all elements")]
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("All")]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Get specific element by id")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             if (id != 0)
             {
@@ -64,11 +64,28 @@ namespace Web.Controllers.API
 
             return new JsonResult(null);
         }
+        
+        [SwaggerOperation("List all using a paged list")]
+        [HttpGet("Page/{page}")]
+        public async Task<IActionResult> GetPage(int page, int size = 10)
+        {
+            try
+            {
+                var collection = await Mediator.GetPaginated((new Setting()).Select(s => s),
+                    null, null, null, skip: ((page - 1) * size), take: size);
+                return new JsonResult(collection);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return Problem(e.Message);
+            }
+        }
 
         [SwaggerOperation("Create a new element")]
         [DisableRequestSizeLimit]
         [HttpPost]
-        public async Task<IActionResult> Post(Setting model)
+        public async Task<IActionResult> Create(Setting model)
         {
             if (model == null) return BadRequest();
 
@@ -91,7 +108,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Setting model)
+        public async Task<IActionResult> Update(int id, [FromBody] Setting model)
         {
             if (model == null) return BadRequest();
 

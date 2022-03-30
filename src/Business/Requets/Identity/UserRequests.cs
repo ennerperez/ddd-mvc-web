@@ -4,16 +4,17 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
+using Business.Models;
 using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Interfaces;
 
-namespace Business.Requets.Identity
+namespace Business.Requests.Identity
 {
-    
     #region Create
 
     public class CreateUserRequest : IRequest<int>
@@ -28,10 +29,10 @@ namespace Business.Requets.Identity
 
     public class CreateUserRequestHandler : IRequestHandler<CreateUserRequest, int>
     {
-        private readonly IUserRepository _repository;
+        private readonly IGenericRepository<User> _repository;
         //private readonly IdentityDbContext _context;
 
-        public CreateUserRequestHandler(IUserRepository repository)
+        public CreateUserRequestHandler(IGenericRepository<User> repository)
         {
             _repository = repository;
         }
@@ -58,7 +59,7 @@ namespace Business.Requets.Identity
             await _repository.CreateAsync(entity);
             //await _repository.SaveChangesAsync();
 
-            //entity.DomainEvents.Add(new DomainEvent<User>("Create", entity));
+            entity.DomainEvents.Add(new DomainEvent<User>("Create", entity));
 
             return entity.Id;
         }
@@ -66,7 +67,7 @@ namespace Business.Requets.Identity
 
     public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
     {
-        public CreateUserRequestValidator(IUserRepository repository)
+        public CreateUserRequestValidator(IGenericRepository<User> repository)
         {
             RuleFor(m => m.Email)
                 .NotEmpty()
@@ -79,56 +80,62 @@ namespace Business.Requets.Identity
     }
 
     #endregion
-    
+
     #region Read
-    
-    public class ReadUserRequest<TResult> : GenericRequest<User, TResult>
-    {
-        public ReadUserRequest(Expression<Func<User, TResult>> selector)
-        {
-            
-        }
-    }
 
-    public class ReadUserRequestHandler<TResult> : GenericRequest<User, TResult>
+    public class ReadPaginatedUsersRequestHandler : IRequestHandler<GenericPaginatedRequest<User, User>, PaginatedList<User>>
     {
-        
-        private readonly IUserRepository _repository;
-        //private readonly IdentityDbContext _context;
+        private readonly IGenericRepository<User> _repository;
 
-        public ReadUserRequestHandler(IUserRepository repository)
+        public ReadPaginatedUsersRequestHandler(IGenericRepository<User> repository)
         {
             _repository = repository;
         }
-        
-        public Task<User[]> Handle(ReadUserRequest<TResult> request, CancellationToken cancellationToken)
+
+        public async Task<PaginatedList<User>> Handle(GenericPaginatedRequest<User, User> request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
+            var take = request.Take ?? 10;
+            var skip = request.Skip ?? 10;
+            var number = (skip / take) + 1;
+            var result = await PaginatedList<User>.CreateAsync(entities, number, request.Take ?? 10);
+
+            return result;
         }
     }
-    
+
+    public class ReadUsersRequestHandler : IRequestHandler<GenericRequest<User, User>, User[]>
+    {
+        private readonly IGenericRepository<User> _repository;
+
+        public ReadUsersRequestHandler(IGenericRepository<User> repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<User[]> Handle(GenericRequest<User, User> request, CancellationToken cancellationToken)
+        {
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
+            var items = await entities.ToArrayAsync();
+            return items;
+        }
+    }
 
     #endregion
 
     #region Update
 
-    public class UpdateUserRequest : IRequest<int>
+    public class UpdateUserRequest : CreateUserRequest
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string UserName { get; set; }
         public int Id { get; set; }
     }
 
     public class UpdateUserRequestHandler : IRequestHandler<UpdateUserRequest, int>
     {
-        private readonly IUserRepository _repository;
+        private readonly IGenericRepository<User> _repository;
         //private readonly IdentityDbContext _context;
 
-        public UpdateUserRequestHandler(IUserRepository repository)
+        public UpdateUserRequestHandler(IGenericRepository<User> repository)
         {
             _repository = repository;
         }
@@ -152,7 +159,7 @@ namespace Business.Requets.Identity
             await _repository.UpdateAsync(entity);
             //await _repository.SaveChangesAsync();
 
-            //entity.DomainEvents.Add(new DomainEvent<User>("Update", entity));
+            entity.DomainEvents.Add(new DomainEvent<User>("Update", entity));
 
             return entity.Id;
         }
@@ -160,7 +167,7 @@ namespace Business.Requets.Identity
 
     public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
     {
-        public UpdateUserRequestValidator(IUserRepository repository)
+        public UpdateUserRequestValidator(IGenericRepository<User> repository)
         {
             RuleFor(m => new {m.Id, m.Email})
                 .CustomAsync(async (v, x, c) =>
@@ -182,10 +189,10 @@ namespace Business.Requets.Identity
 
     public class DeleteUserRequestHandler : IRequestHandler<DeleteUserRequest, int>
     {
-        private readonly IUserRepository _repository;
+        private readonly IGenericRepository<User> _repository;
         //private readonly IdentityDbContext _context;
 
-        public DeleteUserRequestHandler(IUserRepository repository)
+        public DeleteUserRequestHandler(IGenericRepository<User> repository)
         {
             _repository = repository;
         }
@@ -198,7 +205,7 @@ namespace Business.Requets.Identity
             await _repository.DeleteAsync(request.Id);
             //await _repository.SaveChangesAsync();
 
-            //entity.DomainEvents.Add(new DomainEvent<User>("Delete", entity));
+            entity.DomainEvents.Add(new DomainEvent<User>("Delete", entity));
 
             return entity.Id;
         }
@@ -206,7 +213,7 @@ namespace Business.Requets.Identity
 
     public class DeleteUserRequestValidator : AbstractValidator<DeleteUserRequest>
     {
-        public DeleteUserRequestValidator(IUserRepository repository)
+        public DeleteUserRequestValidator(IGenericRepository<User> repository)
         {
             RuleFor(m => m.Id)
                 .NotEmpty()
