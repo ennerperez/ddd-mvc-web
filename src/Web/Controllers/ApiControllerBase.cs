@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Business.Interfaces;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using Web.Models;
 
 // ReSharper disable RedundantCast
@@ -33,8 +33,8 @@ namespace Web.Controllers
         {
             Repository = repository;
         }
-
-        public async Task<JsonResult> Data<TResult>(AjaxViewModel model,
+        
+        public async Task<JsonResult> Table<TResult>(TableRequestViewModel model,
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)

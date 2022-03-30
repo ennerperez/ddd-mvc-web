@@ -170,9 +170,9 @@ namespace Web.Controllers.API
 
         #region Extras
 
-        [SwaggerOperation("Get a data for ajax operations")]
-        [HttpPost("data")] //INFO: Used to fill Datatable
-        public async Task<JsonResult> Data(AjaxViewModel model)
+        [SwaggerOperation("Get data in table format")]
+        [HttpPost("Table")]
+        public async Task<JsonResult> Table(TableRequestViewModel model)
         {
             var selector = (new User()).Select(t => new
             {
@@ -188,7 +188,7 @@ namespace Web.Controllers.API
                 //LoginCounts = t.UserLogins.Count()
             });
 
-            return await base.Data(model, selector);
+            return await base.Table(model, selector);
         }
 
         #endregion

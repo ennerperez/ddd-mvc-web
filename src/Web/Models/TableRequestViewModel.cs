@@ -1,6 +1,6 @@
 ﻿namespace Web.Models
 {
-    public class AjaxViewModel
+    public class TableRequestViewModel
     {
         public int Draw { get; set; }
 
