@@ -1,10 +1,8 @@
 ﻿using System;
-using Business.Interfaces;
-using Business.Interfaces.Mediators;
-using Business.Interfaces.Validators;
-using Business.Services.Mediators;
-using Business.Services.Validators;
-using Domain.Entities;
+using System.Reflection;
+using Business.Behaviours;
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -58,12 +56,12 @@ namespace Business
         /// <returns></returns>
         public static IServiceCollection AddBusiness(this IServiceCollection services)
         {
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddMediatR(Assembly.GetExecutingAssembly());
             
-            services.AddTransient<IValidator<User>, UserValidator>();
-            services.AddTransient<IMediator<User>, UserMediator>();
-            
-            services.AddTransient<IUserValidator, UserValidator>();
-            services.AddTransient<IUserMediator, UserMediator>();
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             
             return services;
         }
