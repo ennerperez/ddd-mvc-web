@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
@@ -11,11 +7,8 @@ using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Persistence.Interfaces;
-using Persistence.Services;
 
 namespace Business.Requests
 {

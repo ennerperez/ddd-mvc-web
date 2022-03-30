@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
 using Business.Models;
-using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Enums;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Persistence.Interfaces;
-using Persistence.Services;
 
 namespace Business.Requests
 {
@@ -49,9 +41,6 @@ namespace Business.Requests
             };
 
             await _repository.CreateAsync(entity);
-            //await _repository.SaveChangesAsync();
-
-            //entity.DomainEvents.Add(new DomainEvent<Setting>("Create", entity));
 
             return entity.Id;
         }
@@ -63,7 +52,7 @@ namespace Business.Requests
         {
             RuleFor(m => m.Key)
                 .NotEmpty()
-                .CustomAsync(async (v, x, c) =>
+                .CustomAsync(async (v, x, _) =>
                 {
                     var identificationInUse = await repository.AnyAsync(m => m.Key == v);
                     if (identificationInUse) x.AddFailure("Key is already in use");
@@ -126,7 +115,6 @@ namespace Business.Requests
     public class UpdateSettingRequestHandler : IRequestHandler<UpdateSettingRequest, int>
     {
         private readonly IGenericRepository<Setting> _repository;
-        //private readonly IdentityDbContext _context;
 
         public UpdateSettingRequestHandler(IGenericRepository<Setting> repository)
         {
@@ -143,9 +131,6 @@ namespace Business.Requests
             entity.Value = request.Value;
 
             await _repository.UpdateAsync(entity);
-            //await _repository.SaveChangesAsync();
-
-            //entity.DomainEvents.Add(new DomainEvent<Setting>("Update", entity));
 
             return entity.Id;
         }
@@ -157,7 +142,7 @@ namespace Business.Requests
         {
             RuleFor(m => new {m.Id, m.Key})
                 .NotEmpty()
-                .CustomAsync(async (v, x, c) =>
+                .CustomAsync(async (v, x, _) =>
                 {
                     var identificationInUse = await repository.AnyAsync(m => m.Key == v.Key && m.Id != v.Id);
                     if (identificationInUse) x.AddFailure("Key is already in use");
@@ -178,7 +163,6 @@ namespace Business.Requests
     public class DeleteSettingRequestHandler : IRequestHandler<DeleteSettingRequest, int>
     {
         private readonly IGenericRepository<Setting> _repository;
-        //private readonly IdentityDbContext _context;
 
         public DeleteSettingRequestHandler(IGenericRepository<Setting> repository)
         {
@@ -191,9 +175,6 @@ namespace Business.Requests
             if (entity == null) throw new Exception("Setting not found");
 
             await _repository.DeleteAsync(request.Id);
-            //await _repository.SaveChangesAsync();
-
-            //entity.DomainEvents.Add(new DomainEvent<User>("Delete", entity));
 
             return entity.Id;
         }
@@ -201,7 +182,7 @@ namespace Business.Requests
 
     public class DeleteSettingRequestValidator : AbstractValidator<DeleteSettingRequest>
     {
-        public DeleteSettingRequestValidator(IGenericRepository<Setting> repository)
+        public DeleteSettingRequestValidator()
         {
             RuleFor(m => m.Id)
                 .NotEmpty();
