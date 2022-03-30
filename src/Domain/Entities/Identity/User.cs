@@ -6,7 +6,7 @@ using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class User : IdentityUser<int>, IEntity<int>, IAuditable, IHasDomainEvent<User>
+    public class User : IdentityUser<int>, IEntity<int>, IAuditable
     {
         public User()
         {
@@ -15,7 +15,6 @@ namespace Domain.Entities
             UserLogins = new List<UserLogin>();
             UserTokens = new List<UserToken>();
             UserClaims = new List<UserClaim>();
-            DomainEvents = new List<DomainEvent<User>>();
         }
         
         public string FirstName { get; set; }
@@ -34,6 +33,5 @@ namespace Domain.Entities
 
         #endregion IAuditable
 
-        public IList<DomainEvent<User>> DomainEvents { get; set; }
     }
 }

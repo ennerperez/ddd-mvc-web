@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
+using Business.Exceptions;
 using Business.Models;
 using Domain.Abstractions;
 using Domain.Entities;
@@ -26,7 +27,6 @@ namespace Business.Requests
     public class CreateClientRequestHandler : IRequestHandler<CreateClientRequest, int>
     {
         private readonly IGenericRepository<Client> _repository;
-        //private readonly IdentityDbContext _context;
 
         public CreateClientRequestHandler(IGenericRepository<Client> repository)
         {
@@ -35,19 +35,15 @@ namespace Business.Requests
 
         public async Task<int> Handle(CreateClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = new Client
-            {
-                Identification = request.Identification,
-                FullName = request.FullName,
-                PhoneNumber = request.PhoneNumber,
-                Address = request.Address,
-                Category = request.Category
-            };
+            var entity = new Client();
+
+            entity.Identification = request.Identification;
+            entity.FullName = request.FullName;
+            entity.PhoneNumber = request.PhoneNumber;
+            entity.Address = request.Address;
+            entity.Category = request.Category;
 
             await _repository.CreateAsync(entity);
-            //await _repository.SaveChangesAsync();
-
-            entity.DomainEvents.Add(new DomainEvent<Client>("Create", entity));
 
             return entity.Id;
         }
@@ -61,7 +57,7 @@ namespace Business.Requests
                 .NotEmpty()
                 .CustomAsync(async (v, x, c) =>
                 {
-                    var identificationInUse = await repository.AnyAsync(m => m.Identification == v);
+                    var identificationInUse = await repository.AnyAsync(m => m.Identification == v, c);
                     if (identificationInUse) x.AddFailure("Identification is already in use");
                 });
             RuleFor(m => m.FullName).NotEmpty();
@@ -83,11 +79,9 @@ namespace Business.Requests
 
         public async Task<PaginatedList<Client>> Handle(GenericPaginatedRequest<Client, Client> request, CancellationToken cancellationToken)
         {
-            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
-            var take = request.Take ?? 10;
-            var skip = request.Skip ?? 10;
-            var number = (skip / take) + 1;
-            var result = await PaginatedList<Client>.CreateAsync(entities, number, request.Take ?? 10);
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+            var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
+            var result = await PaginatedList<Client>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
             return result;
         }
@@ -104,8 +98,8 @@ namespace Business.Requests
 
         public async Task<Client[]> Handle(GenericRequest<Client, Client> request, CancellationToken cancellationToken)
         {
-            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
-            var items = await entities.ToArrayAsync();
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+            var items = await entities.ToArrayAsync(cancellationToken);
             return items;
         }
     }
@@ -114,38 +108,39 @@ namespace Business.Requests
 
     #region Update
 
-    public class UpdateClientRequest : CreateClientRequest
+    public class UpdateClientRequest : IRequest
     {
         public int Id { get; set; }
+        public string Identification { get; set; }
+        public string Category { get; set; }
+        public string FullName { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Address { get; set; }
     }
 
-    public class UpdateClientRequestHandler : IRequestHandler<UpdateClientRequest, int>
+    public class UpdateClientRequestHandler : IRequestHandler<UpdateClientRequest>
     {
         private readonly IGenericRepository<Client> _repository;
-        //private readonly IdentityDbContext _context;
 
         public UpdateClientRequestHandler(IGenericRepository<Client> repository)
         {
             _repository = repository;
         }
 
-        public async Task<int> Handle(UpdateClientRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id);
-            if (entity == null) throw new Exception("Client not found");
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            if (entity == null) throw new NotFoundException(nameof(Client), request.Id);
 
-            if (!string.IsNullOrWhiteSpace(request.Identification)) entity.Identification = request.Identification;
-            if (!string.IsNullOrWhiteSpace(request.FullName)) entity.FullName = request.FullName;
+            entity.Identification = request.Identification;
+            entity.FullName = request.FullName;
             entity.Address = request.Address;
             entity.PhoneNumber = request.PhoneNumber;
             entity.Category = request.Category;
 
-            await _repository.UpdateAsync(entity);
-            //await _repository.SaveChangesAsync();
+            await _repository.UpdateAsync(entity, cancellationToken);
 
-            entity.DomainEvents.Add(new DomainEvent<Client>("Update", entity));
-
-            return entity.Id;
+            return Unit.Value;
         }
     }
 
@@ -153,11 +148,13 @@ namespace Business.Requests
     {
         public UpdateClientRequestValidator(IGenericRepository<Client> repository)
         {
+            RuleFor(m => m.Id).NotEmpty();
+            RuleFor(m => m.Identification).NotEmpty();
             RuleFor(m => new {m.Id, m.Identification})
                 .NotEmpty()
                 .CustomAsync(async (v, x, c) =>
                 {
-                    var identificationInUse = await repository.AnyAsync(m => m.Identification == v.Identification && m.Id != v.Id);
+                    var identificationInUse = await repository.AnyAsync(m => m.Identification == v.Identification && m.Id != v.Id, c);
                     if (identificationInUse) x.AddFailure("Identification is already in use");
                 });
             RuleFor(m => m.FullName).NotEmpty();
@@ -168,32 +165,28 @@ namespace Business.Requests
 
     #region Delete
 
-    public class DeleteClientRequest : IRequest<int>
+    public class DeleteClientRequest : IRequest
     {
         public int Id { get; set; }
     }
 
-    public class DeleteClientRequestHandler : IRequestHandler<DeleteClientRequest, int>
+    public class DeleteClientRequestHandler : IRequestHandler<DeleteClientRequest>
     {
         private readonly IGenericRepository<Client> _repository;
-        //private readonly IdentityDbContext _context;
 
         public DeleteClientRequestHandler(IGenericRepository<Client> repository)
         {
             _repository = repository;
         }
 
-        public async Task<int> Handle(DeleteClientRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id);
-            if (entity == null) throw new Exception("Client not found");
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            if (entity == null) throw new NotFoundException(nameof(Client), request.Id);
 
-            await _repository.DeleteAsync(request.Id);
-            //await _repository.SaveChangesAsync();
+            await _repository.DeleteAsync(request.Id, cancellationToken);
 
-            //entity.DomainEvents.Add(new DomainEvent<User>("Delete", entity));
-
-            return entity.Id;
+            return Unit.Value;
         }
     }
 

@@ -1,9 +1,8 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
+using Business.Exceptions;
 using Business.Models;
-using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
 using MediatR;
@@ -23,12 +22,13 @@ namespace Business.Requests.Identity
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
     }
 
     public class CreateUserRequestHandler : IRequestHandler<CreateUserRequest, int>
     {
         private readonly IGenericRepository<User> _repository;
-        //private readonly IdentityDbContext _context;
 
         public CreateUserRequestHandler(IGenericRepository<User> repository)
         {
@@ -37,16 +37,16 @@ namespace Business.Requests.Identity
 
         public async Task<int> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            var entity = new User
-            {
-                Email = request.Email,
-                NormalizedEmail = request.Email.ToUpper(),
-                UserName = request.UserName,
-                NormalizedUserName = request.UserName.ToUpper(),
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                PhoneNumber = request.PhoneNumber,
-            };
+            var entity = new User();
+            entity.Email = request.Email;
+            entity.NormalizedEmail = request.Email.ToUpper();
+            entity.EmailConfirmed = request.EmailConfirmed;
+            entity.UserName = request.UserName;
+            entity.NormalizedUserName = request.UserName.ToUpper();
+            entity.FirstName = request.FirstName;
+            entity.LastName = request.LastName;
+            entity.PhoneNumber = request.PhoneNumber;
+            entity.PhoneNumberConfirmed = request.PhoneNumberConfirmed;
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
@@ -54,10 +54,7 @@ namespace Business.Requests.Identity
                 entity.PasswordHash = ph.HashPassword(entity, request.Password);
             }
 
-            await _repository.CreateAsync(entity);
-            //await _repository.SaveChangesAsync();
-
-            entity.DomainEvents.Add(new DomainEvent<User>("Create", entity));
+            await _repository.CreateAsync(entity, cancellationToken);
 
             return entity.Id;
         }
@@ -71,7 +68,7 @@ namespace Business.Requests.Identity
                 .NotEmpty()
                 .CustomAsync(async (v, x, c) =>
                 {
-                    var emailInUse = await repository.AnyAsync(m => m.NormalizedEmail == v.ToUpper());
+                    var emailInUse = await repository.AnyAsync(m => m.NormalizedEmail == v.ToUpper(), c);
                     if (emailInUse) x.AddFailure("Email is already in use");
                 });
         }
@@ -92,11 +89,9 @@ namespace Business.Requests.Identity
 
         public async Task<PaginatedList<User>> Handle(GenericPaginatedRequest<User, User> request, CancellationToken cancellationToken)
         {
-            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
-            var take = request.Take ?? 10;
-            var skip = request.Skip ?? 10;
-            var number = (skip / take) + 1;
-            var result = await PaginatedList<User>.CreateAsync(entities, number, request.Take ?? 10);
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null, null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+            var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
+            var result = await PaginatedList<User>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
             return result;
         }
@@ -113,8 +108,8 @@ namespace Business.Requests.Identity
 
         public async Task<User[]> Handle(GenericRequest<User, User> request, CancellationToken cancellationToken)
         {
-            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
-            var items = await entities.ToArrayAsync();
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+            var items = await entities.ToArrayAsync(cancellationToken);
             return items;
         }
     }
@@ -123,30 +118,42 @@ namespace Business.Requests.Identity
 
     #region Update
 
-    public class UpdateUserRequest : CreateUserRequest
+    public class UpdateUserRequest : IRequest
     {
         public int Id { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PhoneNumber { get; set; }
+        public string UserName { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
     }
 
-    public class UpdateUserRequestHandler : IRequestHandler<UpdateUserRequest, int>
+    public class UpdateUserRequestHandler : IRequestHandler<UpdateUserRequest>
     {
         private readonly IGenericRepository<User> _repository;
-        //private readonly IdentityDbContext _context;
 
         public UpdateUserRequestHandler(IGenericRepository<User> repository)
         {
             _repository = repository;
         }
 
-        public async Task<int> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id);
-            if (entity == null) throw new Exception("User not found");
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            if (entity == null) throw new NotFoundException(nameof(User), request.Id);
 
-            if (!string.IsNullOrWhiteSpace(request.Email)) entity.Email = request.Email;
-            if (!string.IsNullOrWhiteSpace(request.FirstName)) entity.FirstName = request.FirstName;
-            if (!string.IsNullOrWhiteSpace(request.LastName)) entity.LastName = request.LastName;
-            if (!string.IsNullOrWhiteSpace(request.PhoneNumber)) entity.PhoneNumber = request.PhoneNumber;
+            entity.Email = request.Email;
+            entity.NormalizedEmail = request.Email.ToUpper();
+            entity.EmailConfirmed = request.EmailConfirmed;
+            entity.UserName = request.UserName;
+            entity.NormalizedUserName = request.UserName.ToUpper();
+            entity.FirstName = request.FirstName;
+            entity.LastName = request.LastName;
+            entity.PhoneNumber = request.PhoneNumber;
+            entity.PhoneNumberConfirmed = request.PhoneNumberConfirmed;
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
@@ -154,12 +161,9 @@ namespace Business.Requests.Identity
                 entity.PasswordHash = ph.HashPassword(entity, request.Password);
             }
 
-            await _repository.UpdateAsync(entity);
-            //await _repository.SaveChangesAsync();
+            await _repository.UpdateAsync(entity, cancellationToken);
 
-            entity.DomainEvents.Add(new DomainEvent<User>("Update", entity));
-
-            return entity.Id;
+            return Unit.Value;
         }
     }
 
@@ -167,10 +171,12 @@ namespace Business.Requests.Identity
     {
         public UpdateUserRequestValidator(IGenericRepository<User> repository)
         {
+            RuleFor(m => m.Id).NotEmpty();
+            RuleFor(m => m.Email).NotEmpty();
             RuleFor(m => new {m.Id, m.Email})
                 .CustomAsync(async (v, x, c) =>
                 {
-                    var emailInUse = await repository.AnyAsync(m => m.NormalizedEmail == v.Email.ToUpper() && m.Id != v.Id);
+                    var emailInUse = await repository.AnyAsync(m => m.NormalizedEmail == v.Email.ToUpper() && m.Id != v.Id, c);
                     if (emailInUse) x.AddFailure("Email is already in use");
                 });
         }
@@ -180,32 +186,28 @@ namespace Business.Requests.Identity
 
     #region Delete
 
-    public class DeleteUserRequest : IRequest<int>
+    public class DeleteUserRequest : IRequest
     {
         public int Id { get; set; }
     }
 
-    public class DeleteUserRequestHandler : IRequestHandler<DeleteUserRequest, int>
+    public class DeleteUserRequestHandler : IRequestHandler<DeleteUserRequest>
     {
         private readonly IGenericRepository<User> _repository;
-        //private readonly IdentityDbContext _context;
 
         public DeleteUserRequestHandler(IGenericRepository<User> repository)
         {
             _repository = repository;
         }
 
-        public async Task<int> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id);
-            if (entity == null) throw new Exception("User not found");
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            if (entity == null) throw new NotFoundException(nameof(User), request.Id);
 
-            await _repository.DeleteAsync(request.Id);
-            //await _repository.SaveChangesAsync();
+            await _repository.DeleteAsync(request.Id, cancellationToken);
 
-            entity.DomainEvents.Add(new DomainEvent<User>("Delete", entity));
-
-            return entity.Id;
+            return Unit.Value;
         }
     }
 
@@ -218,7 +220,7 @@ namespace Business.Requests.Identity
                 .CustomAsync(async (v, x, c) =>
                 {
                     if (v == 1) x.AddFailure("Cannot delete the default user");
-                    if (await repository.CountAsync() == 1) x.AddFailure("Cannot delete the last user");
+                    if (await repository.CountAsync(cancellationToken: c) == 1) x.AddFailure("Cannot delete the last user");
                 });
         }
     }

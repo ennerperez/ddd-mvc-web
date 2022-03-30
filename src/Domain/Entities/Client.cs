@@ -5,13 +5,12 @@ using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class Client : IEntity<int>, IAuditable, IHasDomainEvent<Client>
+    public class Client : IEntity<int>, IAuditable
     {
 
         public Client()
         {
             CreatedAt = DateTime.Now;
-            DomainEvents = new List<DomainEvent<Client>>();
         }
         public int Id { get; set; }
 
@@ -26,6 +25,5 @@ namespace Domain.Entities
         public DateTime? ModifiedAt { get; set; }
         #endregion
 
-        public IList<DomainEvent<Client>> DomainEvents { get; set; }
     }
 }
