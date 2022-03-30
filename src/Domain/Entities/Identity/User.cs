@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using Domain.Abstractions;
 using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class User : IdentityUser<int>, IEntity<int>, IAuditable
+    public class User : IdentityUser<int>, IEntity<int>, IAuditable, IHasDomainEvent<User>
     {
         public User()
         {
@@ -14,6 +15,7 @@ namespace Domain.Entities
             UserLogins = new List<UserLogin>();
             UserTokens = new List<UserToken>();
             UserClaims = new List<UserClaim>();
+            DomainEvents = new List<DomainEvent<User>>();
         }
         
         public string FirstName { get; set; }
@@ -31,5 +33,7 @@ namespace Domain.Entities
         public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
+
+        public IList<DomainEvent<User>> DomainEvents { get; set; }
     }
 }
