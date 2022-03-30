@@ -48,6 +48,15 @@ namespace Persistence.Interfaces
         Task CreateOrUpdateAsync(params TEntity[] entity);
         Task UpdateAsync(params TEntity[] entity);
         Task DeleteAsync(params object[] key);
+        
+        Task CreateAsync(TEntity entity,
+            CancellationToken cancellationToken = default);
+        Task CreateOrUpdateAsync(TEntity entity,
+            CancellationToken cancellationToken = default);
+        Task UpdateAsync(TEntity entity,
+            CancellationToken cancellationToken = default);
+        Task DeleteAsync(object key,
+            CancellationToken cancellationToken = default);
 
         // * //
 
@@ -97,11 +106,16 @@ namespace Persistence.Interfaces
 		int Count(Expression<Func<TEntity, bool>> predicate = null);
 		long LongCount(Expression<Func<TEntity, bool>> predicate = null);
 		bool Any(Expression<Func<TEntity, bool>> predicate = null);
-		void Create(params TEntity[] entity);
-
+		
+        void Create(params TEntity[] entity);
 		void CreateOrUpdate(params TEntity[] entity);
 		void Update(params TEntity[] entity);
 		void Delete(params object[] key);
+        
+        void Create(TEntity entity);
+        void CreateOrUpdate(TEntity entity);
+        void Update(TEntity entity);
+        void Delete(object key);
 
 		// * //
 
