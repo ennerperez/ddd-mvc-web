@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
+using System.Threading;
 using Domain.Interfaces;
 
 #if ENABLE_BULK
@@ -91,8 +92,10 @@ namespace Persistence.Services
             int? skip = 0, int? take = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false)
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default)
         {
+
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking) query = query.AsNoTracking();
             if (include != null) query = include(query);
@@ -124,7 +127,8 @@ namespace Persistence.Services
             int? skip = 0, int? take = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false)
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default)
         {
             var searchs = criteria.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
             var parameter = Expression.Parameter(typeof(TEntity));
@@ -208,25 +212,28 @@ namespace Persistence.Services
             return await Task.FromResult(result);
         }
 
-        public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null)
+        public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             predicate = PreparePredicate(predicate);
-            if (predicate != null) return await _dbSet.CountAsync(predicate);
-            return await _dbSet.CountAsync();
+            if (predicate != null) return await _dbSet.CountAsync(predicate, cancellationToken);
+            return await _dbSet.CountAsync(cancellationToken);
         }
 
-        public virtual async Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null)
+        public virtual async Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             predicate = PreparePredicate(predicate);
-            if (predicate != null) return await _dbSet.LongCountAsync(predicate);
-            return await _dbSet.LongCountAsync();
+            if (predicate != null) return await _dbSet.LongCountAsync(predicate, cancellationToken);
+            return await _dbSet.LongCountAsync(cancellationToken);
         }
 
-        public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null)
+        public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             predicate = PreparePredicate(predicate);
-            if (predicate != null) return await _dbSet.AnyAsync(predicate);
-            return await _dbSet.AnyAsync();
+            if (predicate != null) return await _dbSet.AnyAsync(predicate, cancellationToken);
+            return await _dbSet.AnyAsync(cancellationToken);
         }
 
         public virtual async Task CreateAsync(params TEntity[] entities)
@@ -309,6 +316,7 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
+                // ReSharper disable once SuspiciousTypeConversion.Global
                 foreach (var entity in list.Cast<ISoftDelete>())
                 {
                     // ReSharper disable once SuspiciousTypeConversion.Global
@@ -368,7 +376,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false)
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
@@ -384,7 +393,7 @@ namespace Persistence.Services
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
 
             var result = orderBy != null ? orderBy(query).Select(selector) : query.Select(selector);
-            return await result.FirstOrDefaultAsync();
+            return await result.FirstOrDefaultAsync(cancellationToken);
         }
 
         public virtual async Task<TResult> LastOrDefaultAsync<TResult>(
@@ -394,7 +403,8 @@ namespace Persistence.Services
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false)
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
@@ -412,7 +422,7 @@ namespace Persistence.Services
             query = query.OrderByDescending(m => m.Id);
 
             var result = orderBy != null ? orderBy(query).Select(selector) : query.Select(selector);
-            return await result.FirstOrDefaultAsync();
+            return await result.FirstOrDefaultAsync(cancellationToken);
         }
 
 #if ENABLE_NONASYNC
@@ -643,6 +653,7 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
+                // ReSharper disable once SuspiciousTypeConversion.Global
                 foreach (var entity in list.Cast<ISoftDelete>())
                 {
                     // ReSharper disable once SuspiciousTypeConversion.Global
