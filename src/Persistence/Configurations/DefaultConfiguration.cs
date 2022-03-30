@@ -26,4 +26,19 @@ namespace Persistence.Configurations
             e.HasIndex(m => m.Key).IsUnique();
         }
     }
+    
+    [DbContext(typeof(DefaultContext))]
+    public sealed class ClientConfiguration : IEntityTypeConfiguration<Client>
+    {
+        public void Configure(EntityTypeBuilder<Client> e)
+        {
+            e.ToTable("Clients", DefaultConfiguration.Schema, true);
+
+            e.Property(m => m.Id).ValueGeneratedOnAdd();
+            e.Property(m => m.Identification).HasMaxLength(Lengths.Code).IsRequired();
+            e.Property(m => m.FullName).HasDefaultValue(Data.Text).IsRequired();
+
+            e.HasIndex(m => m.Identification).IsUnique();
+        }
+    }
 }
