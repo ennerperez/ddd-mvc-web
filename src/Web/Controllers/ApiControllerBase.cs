@@ -6,10 +6,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Business.Interfaces;
 using Domain.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
 using Web.Models;
 
@@ -17,56 +19,19 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
-    {
-        public ApiControllerBase(IGenericRepository<TEntity, int> repository, IMediator<TEntity, int> mediator) : base(repository, mediator)
-        {
-        }
-
-        public ApiControllerBase(IGenericRepository<TEntity, int> repository) : base(repository)
-        {
-        }
-
-        public ApiControllerBase(IMediator<TEntity, int> mediator) : base(mediator)
-        {
-        }
-    }
-
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public abstract class ApiControllerBaseWithDbContext<TContext> : ControllerBase where TContext : DbContext
-    {
-        protected readonly TContext DbContext;
-
-        public ApiControllerBaseWithDbContext(TContext dbContext)
-        {
-            DbContext = dbContext;
-        }
-    }
-
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-        protected readonly IGenericRepository<TEntity, TKey> Repository;
-        protected readonly IMediator<TEntity, TKey> Mediator;
+        private ISender _mediator = null!;
+        protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
-        public ApiControllerBase(IGenericRepository<TEntity, TKey> repository, IMediator<TEntity, TKey> mediator)
-        {
-            Repository = repository;
-            Mediator = mediator;
-        }
+        protected readonly IGenericRepository<TEntity, TKey> Repository;
 
         public ApiControllerBase(IGenericRepository<TEntity, TKey> repository)
         {
             Repository = repository;
-        }
-
-        public ApiControllerBase(IMediator<TEntity, TKey> mediator)
-        {
-            Mediator = mediator;
         }
 
         public async Task<JsonResult> Data<TResult>(AjaxViewModel model,
@@ -198,6 +163,13 @@ namespace Web.Controllers
             var stotal = isFiltered ? data.Count : total;
 
             return new JsonResult(new {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
+        }
+    }
+
+    public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
+    {
+        public ApiControllerBase(IGenericRepository<TEntity, int> repository) : base(repository)
+        {
         }
     }
 }

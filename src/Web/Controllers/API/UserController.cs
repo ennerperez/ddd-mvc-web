@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Business.Abstractions;
 using Business.Interfaces;
 using Business.Interfaces.Mediators;
+using Business.Requets.Identity;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +23,10 @@ namespace Web.Controllers.API
     public class UserController : ApiControllerBase<User>
     {
         private readonly ILogger _logger;
-        private readonly IUserMediator _userMediator;
-        private readonly DefaultContext context;
 
-        public UserController(ILoggerFactory loggerFactory, IUserMediator userMediator, IGenericRepository<User> repository, IMediator<User> mediator, DefaultContext context) : base(repository, mediator)
+        public UserController(ILoggerFactory loggerFactory, IGenericRepository<User> repository) : base(repository)
         {
-            _userMediator = userMediator;
             _logger = loggerFactory.CreateLogger(GetType());
-            this.context = context;
         }
 
         [SwaggerOperation("List all elements")]
@@ -36,12 +35,17 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Repository.ReadAsync(s => s);
+                //Mediator.Send2<User>(s=> new { s.Id, s.Email}, null);
+                //var d1 = Mediator.Send2<User>(s => new {s.Id, s.Email}, p => true, CancellationToken.None);
+                var collection = await Mediator.Send((new User()).Select(s => new {s.Id, s.Email, s.CreatedAt, s.ModifiedAt}), null, null, null);
+
+                //var collection = await Mediator.Send(new ReadUserRequest(s=> new {s.Id, s.Email}));
+                //var collection = await Repository.ReadAsync(s => s);
 
                 if (collection == null || !collection.Any())
-                    return new JsonResult(new { last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>() });
+                    return new JsonResult(new {last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>()});
 
-                return new JsonResult(new { last_created = collection.Max(m => m.CreatedAt), last_updated = collection.Max(m => m.ModifiedAt), items = collection });
+                return new JsonResult(new {last_created = collection.Max(m => m.CreatedAt), last_updated = collection.Max(m => m.ModifiedAt), items = collection});
             }
             catch (Exception e)
             {
@@ -58,9 +62,11 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var items = await Repository.ReadAsync(s => s, p => p.Id == id);
+                    var collection = await Mediator.Send((new User()).Select(s => s), p => p.Id == id, null, null);
 
-                    return new JsonResult(items);
+                    //var items = await Repository.ReadAsync(s => s, p => p.Id == id);
+
+                    return new JsonResult(collection);
                 }
                 catch (Exception e)
                 {
@@ -75,20 +81,22 @@ namespace Web.Controllers.API
         [SwaggerOperation("Create a new element")]
         [DisableRequestSizeLimit]
         [HttpPost]
-        public async Task<IActionResult> Post(User model)
+        public async Task<IActionResult> Post(CreateUserRequest model)
         {
             if (model == null) return BadRequest();
 
             try
             {
-                var record = model;
-                record.Id = default;
-                record.NormalizedEmail = model.Email.ToUpper();
-                record.NormalizedUserName = model.UserName.ToUpper();
+                var result = await Mediator.Send(model);
 
-                await _userMediator.CreateAsync(record);
+                // var record = model;
+                // record.Id = default;
+                // record.NormalizedEmail = model.Email.ToUpper();
+                // record.NormalizedUserName = model.UserName.ToUpper();
+                //
+                // await _userMediator.CreateAsync(record);
 
-                return Created(Url.Content($"~/api/{nameof(User)}/{record.Id}"), record.Id);
+                return Created(Url.Content($"~/api/{nameof(User)}/{result}"), result);
             }
             catch (Exception e)
             {
@@ -100,25 +108,27 @@ namespace Web.Controllers.API
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] User model)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateUserRequest model)
         {
-            if (model == null) return BadRequest();
+            if (model == null || id != model.Id) return BadRequest();
 
             try
             {
-                var record = await Repository.FirstOrDefaultAsync(s => s, p => p.Id == id);
+                // var record = await Repository.FirstOrDefaultAsync(s => s, p => p.Id == id);
+                //
+                // if (record != null)
+                // {
+                //     record.Email = model.Email;
+                //     record.PhoneNumber = model.PhoneNumber;
+                //     record.NormalizedEmail = model.Email?.ToUpper();
+                //     record.EmailConfirmed = model.EmailConfirmed;
+                //     record.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
+                //     record.TwoFactorEnabled = model.TwoFactorEnabled;
+                //     
+                //     await _userMediator.UpdateAsync(record);
+                // }
 
-                if (record != null)
-                {
-                    record.Email = model.Email;
-                    record.PhoneNumber = model.PhoneNumber;
-                    record.NormalizedEmail = model.Email?.ToUpper();
-                    record.EmailConfirmed = model.EmailConfirmed;
-                    record.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
-                    record.TwoFactorEnabled = model.TwoFactorEnabled;
-                    
-                    await _userMediator.UpdateAsync(record);
-                }
+                await Mediator.Send(model);
 
                 return Ok(id);
             }
@@ -135,7 +145,8 @@ namespace Web.Controllers.API
         {
             try
             {
-                await _userMediator.DeleteAsync(id);
+                await Mediator.Send(new DeleteUserRequest() {Id = id});
+                //await _userMediator.DeleteAsync(id);
                 return Ok(id);
             }
             catch (Exception e)
@@ -164,7 +175,7 @@ namespace Web.Controllers.API
                 LastName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname).ClaimValue,
                 //LoginCounts = t.UserLogins.Count()
             });
-            
+
             return await base.Data(model, selector);
         }
 
