@@ -10,7 +10,7 @@ using Persistence.Contexts;
 
 namespace Persistence.Services
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class UserRepository : GenericRepository<User>
     {
         public UserRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {

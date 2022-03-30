@@ -6,7 +6,7 @@ using Persistence.Contexts;
 
 namespace Persistence.Services
 {
-    public class UserTokenRepository : GenericRepository<UserToken>, IUserTokenRepository
+    public class UserTokenRepository : GenericRepository<UserToken>
     {
         public UserTokenRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {

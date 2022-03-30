@@ -6,7 +6,7 @@ using Persistence.Contexts;
 
 namespace Persistence.Services
 {
-    public class UserRoleRepository : GenericRepository<UserRole>, IUserRoleRepository
+    public class UserRoleRepository : GenericRepository<UserRole>
     {
         public UserRoleRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {
