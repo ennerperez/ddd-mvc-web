@@ -1,7 +1,10 @@
 using System;
-using Domain.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Persistence.Contexts;
 using Persistence.Interfaces;
 using Persistence.Services;
@@ -63,16 +66,18 @@ namespace Persistence
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
             // services.AddTransient<IGenericRepository<T>, GenericRepository<T>>();
+
+            services.AddRepositoriesFromAssembly(Assembly.GetExecutingAssembly());
             
-            services.AddTransient<IGenericRepository<Setting>, SettingRepository>();
-            
-            services.AddTransient<IGenericRepository<Role>, RoleRepository>();
-            services.AddTransient<IGenericRepository<RoleClaim>, RoleClaimRepository>();
-            services.AddTransient<IGenericRepository<User>, UserRepository>();
-            services.AddTransient<IGenericRepository<UserClaim>, UserClaimRepository>();
-            services.AddTransient<IGenericRepository<UserLogin>, UserLoginRepository>();
-            services.AddTransient<IGenericRepository<UserRole>, UserRoleRepository>();
-            services.AddTransient<IGenericRepository<UserToken>, UserTokenRepository>();
+            // services.AddTransient<IGenericRepository<Setting>, SettingRepository>();
+            //
+            // services.AddTransient<IGenericRepository<Role>, RoleRepository>();
+            // services.AddTransient<IGenericRepository<RoleClaim>, RoleClaimRepository>();
+            // services.AddTransient<IGenericRepository<User>, UserRepository>();
+            // services.AddTransient<IGenericRepository<UserClaim>, UserClaimRepository>();
+            // services.AddTransient<IGenericRepository<UserLogin>, UserLoginRepository>();
+            // services.AddTransient<IGenericRepository<UserRole>, UserRoleRepository>();
+            // services.AddTransient<IGenericRepository<UserToken>, UserTokenRepository>();
 
             services.AddTransient<ISettingRepository, SettingRepository>();
 
@@ -86,5 +91,87 @@ namespace Persistence
 
             return services;
         }
+
+        #region FromAssembly
+        
+        private static void AddRepositoriesFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
+        {
+            if (!assemblies.Any())
+            {
+                throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
+            }
+            
+            var assembliesToScan = assemblies.Distinct().ToArray();
+            ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), services, assembliesToScan, false);
+        }
+        
+        private static void ConnectImplementationsToTypesClosing(Type openRequestInterface, IServiceCollection services, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)
+        {
+            var concretions = new List<Type>();
+            var interfaces = new List<Type>();
+            foreach (var type in assembliesToScan.SelectMany(a => a.DefinedTypes).Where(t => !t.IsOpenGeneric()))
+            {
+                var interfaceTypes = type.FindInterfacesThatClose(openRequestInterface).ToArray();
+                if (!interfaceTypes.Any()) continue;
+
+                if (type.IsConcrete())
+                {
+                    concretions.Add(type);
+                }
+
+                foreach (var interfaceType in interfaceTypes)
+                {
+                    interfaces.Fill(interfaceType);
+                }
+            }
+
+            foreach (var @interface in interfaces)
+            {
+                var exactMatches = concretions.Where(x => x.CanBeCastTo(@interface)).ToList();
+                if (addIfAlreadyExists)
+                {
+                    foreach (var type in exactMatches)
+                    {
+                        services.AddTransient(@interface, type);
+                    }
+                }
+                else
+                {
+                    if (exactMatches.Count > 1)
+                    {
+                        exactMatches.RemoveAll(m => !m.IsMatchingWithInterface(@interface));
+                    }
+
+                    foreach (var type in exactMatches)
+                    {
+                        services.TryAddTransient(@interface, type);
+                    }
+                }
+
+                if (!@interface.IsOpenGeneric())
+                {
+                    AddConcretionsThatCouldBeClosed(@interface, concretions, services);
+                }
+            }
+        }
+        
+        private static void AddConcretionsThatCouldBeClosed(Type @interface, List<Type> concretions, IServiceCollection services)
+        {
+            foreach (var type in concretions
+                         .Where(x => x.IsOpenGeneric() && x.CouldCloseTo(@interface)))
+            {
+                try
+                {
+                    services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+        
+        #endregion
+        
     }
 }
