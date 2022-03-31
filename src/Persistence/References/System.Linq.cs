@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 
+// ReSharper disable once CheckNamespace
 namespace System.Linq
 {
     namespace Expressions
@@ -19,11 +20,15 @@ namespace System.Linq
                 {
                     var typeParams = new[] { Expression.Parameter(typeof(TEntityType), "") };
                     var props = typeof(TEntityType).GetProperties()
-                        .Where(m=> m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))
+                        .Where(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))
                         .ToArray();
                     if (args.Length == 0)
                     {
-                        args = new[] { new[] { props.First().Name, "asc" } };
+                        //if (typeof(IEntity).IsAssignableFrom(typeof(TEntityType)) || typeof(IEntity<>).IsAssignableFrom(typeof(TEntityType)))
+                        if (props.Any(m=> m.Name == "Id"))
+                            args = new[] { new[] { props.First(m => m.Name == "Id").Name, "asc" } };
+                        else
+                            args = new[] { new[] { props.First().Name, "asc" } };
                     }
 
                     foreach (var item in args.Where(m => m.Length > 0))
@@ -65,7 +70,6 @@ namespace System.Linq
                 var exp = Expression.Lambda<Func<T, string>>(conv, new ParameterExpression[] { arg });
                 return exp;
             }
-
         }
     }
 }

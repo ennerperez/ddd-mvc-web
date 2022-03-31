@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Entities
+namespace Domain.Entities.Identity
 {
     public class User : IdentityUser<int>, IEntity<int>, IAuditable
     {
@@ -16,9 +16,9 @@ namespace Domain.Entities
             UserClaims = new List<UserClaim>();
         }
         
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string FullName => string.Join(" ", FirstName, LastName);
+        public string GivenName { get; set; }
+        public string Surname { get; set; }
+        public string FullName => string.Join(" ", GivenName, Surname);
         
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<UserLogin> UserLogins { get; set; }
@@ -31,5 +31,6 @@ namespace Domain.Entities
         public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
+
     }
 }

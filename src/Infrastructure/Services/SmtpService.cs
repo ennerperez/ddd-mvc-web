@@ -69,10 +69,10 @@ namespace Infrastructure.Services
                     {
                         client.SendMailAsync(message);
                     }
-                    catch (Exception ex)
+                    catch (Exception e)
                     {
                         if (_logger != null)
-                            _logger.LogError(ex, ex.Message);
+                            _logger.LogError(e,"{Message}", e.Message);
                     }
                 });
                 thread.Start();
@@ -83,10 +83,10 @@ namespace Infrastructure.Services
                 {
                     await client.SendMailAsync(message);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
                     if (_logger != null)
-                        _logger.LogError(ex, ex.Message);
+                        _logger.LogError(e,"{Message}", e.Message);
                 }
             }
         }

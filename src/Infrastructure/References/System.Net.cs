@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedParameter.Local
-
+// ReSharper disable once CheckNamespace
 namespace System.Net.Http
 {
     public static class Methods

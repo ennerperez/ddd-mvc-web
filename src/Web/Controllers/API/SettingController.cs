@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Business.Interfaces;
+using Business.Models;
+using Business.Requests;
 using Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using Web.Models;
 
 namespace Web.Controllers.API
 {
@@ -24,40 +25,39 @@ namespace Web.Controllers.API
         }
 
         [SwaggerOperation("List all elements")]
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("All")]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var collection = await Repository.ReadAsync(s => s);
-
+                var collection = await Mediator.SendWithRepository((new Setting()).Select(s => s), null, null, null);
                 if (collection == null || !collection.Any())
-                    return new JsonResult(new { last_created = default(DateTime?), last_updated = default(DateTime?), items = new List<Setting>() });
+                    return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>()});
 
-                return new JsonResult(new { last_created = collection.Max(m => m.CreatedAt), last_updated = collection.Max(m => m.ModifiedAt), items = collection });
+                return new JsonResult(new {lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection});
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
 
         [SwaggerOperation("Get specific element by id")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             if (id != 0)
             {
                 try
                 {
-                    var items = await Repository.ReadAsync(s => s, p => p.Id == id);
+                    var collection = await Mediator.SendWithRepository((new Setting()).Select(s => s), p => p.Id == id, null, null);
 
-                    return new JsonResult(items);
+                    return new JsonResult(collection);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, e.Message);
+                    _logger.LogError(e,"{Message}", e.Message);
                     return Problem(e.Message);
                 }
             }
@@ -65,25 +65,38 @@ namespace Web.Controllers.API
             return new JsonResult(null);
         }
 
+        [SwaggerOperation("List all using a paged list")]
+        [HttpGet("Page/{page}")]
+        public async Task<IActionResult> GetPage(int page, int size = 10)
+        {
+            try
+            {
+                var collection = await Mediator.SendWithPage((new Setting()).Select(s => s),
+                    null, null, null, skip: ((page - 1) * size), take: size);
+                return new JsonResult(collection);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,"{Message}", e.Message);
+                return Problem(e.Message);
+            }
+        }
+
         [SwaggerOperation("Create a new element")]
         [DisableRequestSizeLimit]
         [HttpPost]
-        public async Task<IActionResult> Post(Setting model)
+        public async Task<IActionResult> Create(CreateSettingRequest model)
         {
             if (model == null) return BadRequest();
 
             try
             {
-                var record = model;
-                record.Id = default;
-
-                await Repository.CreateAsync(record);
-
-                return Created(Url.Content($"~/api/{nameof(Setting)}/{record.Id}"), record.Id);
+                var result = await Mediator.Send(model);
+                return Created(Url.Content($"~/api/{nameof(Setting)}/{result}"), result);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -91,28 +104,37 @@ namespace Web.Controllers.API
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Setting model)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateSettingRequest model)
         {
-            if (model == null) return BadRequest();
+            if (model == null || id != model.Id) return BadRequest();
 
             try
             {
-                var record = await Repository.FirstOrDefaultAsync(s => s, p => p.Id == id);
-
-                if (record != null)
-                {
-                    record.Key = model.Key;
-                    record.Type = model.Type;
-                    record.Value = model.Value;
-
-                    await Repository.UpdateAsync(record);
-                }
-
+                await Mediator.Send(model);
                 return Ok(id);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e,"{Message}", e.Message);
+                return Problem(e.Message);
+            }
+        }
+        
+        [SwaggerOperation("Partial update an existing element by id")]
+        [DisableRequestSizeLimit]
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PartialUpdate(int id, [FromBody] PartialUpdateSettingRequest model)
+        {
+            if (model == null || id != model.Id) return BadRequest();
+
+            try
+            {
+                await Mediator.Send(model);
+                return Ok(id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -123,30 +145,30 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Repository.DeleteAsync(id);
+                await Mediator.Send(new DeleteSettingRequest() {Id = id});
                 return Ok(id);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
 
         #region Extras
 
-        [SwaggerOperation("Get a data for ajax operations")]
-        [HttpPost("data")] //INFO: Used to fill Datatable
-        public async Task<JsonResult> Data(AjaxViewModel model)
+        [SwaggerOperation("Get data in table format")]
+        [HttpPost("Table")]
+        public async Task<JsonResult> Table(TableInfo model)
         {
             var selector = (new Setting()).Select(t => new
             {
-                t.Id, 
-                t.Key, 
-                t.Type, 
+                t.Id,
+                t.Key,
                 t.Value
             });
-            return await base.Data(model, selector);
+
+            return await base.Table(model, selector);
         }
 
         #endregion
