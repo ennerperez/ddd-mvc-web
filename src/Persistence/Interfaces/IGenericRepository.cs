@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Persistence.Interfaces
@@ -22,7 +23,8 @@ namespace Persistence.Interfaces
             int? skip = 0, int? take = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false);
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default);
 
         Task<IQueryable<TResult>> SearchAsync<TResult>(
             Expression<Func<TEntity, TResult>> selector,
@@ -33,15 +35,28 @@ namespace Persistence.Interfaces
             int? skip = 0, int? take = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false);
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default);
 
-        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null);
-        Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null);
-        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null);
+        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null,
+            CancellationToken cancellationToken = default);
+        Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null,
+            CancellationToken cancellationToken = default);
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null,
+            CancellationToken cancellationToken = default);
         Task CreateAsync(params TEntity[] entity);
         Task CreateOrUpdateAsync(params TEntity[] entity);
         Task UpdateAsync(params TEntity[] entity);
         Task DeleteAsync(params object[] key);
+        
+        Task CreateAsync(TEntity entity,
+            CancellationToken cancellationToken = default);
+        Task CreateOrUpdateAsync(TEntity entity,
+            CancellationToken cancellationToken = default);
+        Task UpdateAsync(TEntity entity,
+            CancellationToken cancellationToken = default);
+        Task DeleteAsync(object key,
+            CancellationToken cancellationToken = default);
 
         // * //
 
@@ -52,7 +67,8 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false);
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default);
 
 
         Task<TResult> LastOrDefaultAsync<TResult>(
@@ -62,7 +78,8 @@ namespace Persistence.Interfaces
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = false,
             bool ignoreQueryFilters = false,
-            bool includeDeleted = false);
+            bool includeDeleted = false,
+            CancellationToken cancellationToken = default);
 
 #if ENABLE_NONASYNC
 		IQueryable<TResult> Read<TResult>(
@@ -89,11 +106,16 @@ namespace Persistence.Interfaces
 		int Count(Expression<Func<TEntity, bool>> predicate = null);
 		long LongCount(Expression<Func<TEntity, bool>> predicate = null);
 		bool Any(Expression<Func<TEntity, bool>> predicate = null);
-		void Create(params TEntity[] entity);
-
+		
+        void Create(params TEntity[] entity);
 		void CreateOrUpdate(params TEntity[] entity);
 		void Update(params TEntity[] entity);
 		void Delete(params object[] key);
+        
+        void Create(TEntity entity);
+        void CreateOrUpdate(TEntity entity);
+        void Update(TEntity entity);
+        void Delete(object key);
 
 		// * //
 

@@ -1,16 +1,15 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Domain.Entities;
-using Persistence.Interfaces;
 using Persistence.Contexts;
 
-namespace Persistence.Services
+namespace Persistence.Services.Identity
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class UserRepository : GenericRepository<User>
     {
         public UserRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
         {

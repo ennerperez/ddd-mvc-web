@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.EntityFrameworkCore
 {
     public static class RelationalEntityTypeBuilderExtensions
@@ -32,7 +33,7 @@ namespace Microsoft.EntityFrameworkCore
 
         public static void Initialize(this DbContext context)
         {
-            if (context.Database.ProviderName.EndsWith("Sqlite"))
+            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
                 context.Database.EnsureCreated();
             else
                 context.Database.Migrate();
@@ -43,7 +44,7 @@ namespace Microsoft.EntityFrameworkCore
             var database = context.Database;
             var entityTypes = context.Model.GetEntityTypes().ToArray();
             var query = string.Empty;
-            if (context.Database.ProviderName.EndsWith("SqlServer"))
+            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
                 query = string.Join(Environment.NewLine, entityTypes.Select(m =>
                 {
                     var q1 = $"DBCC CHECKIDENT ('[{m.GetSchema()}].[{m.GetTableName()}]', RESEED, 0);";
@@ -51,7 +52,7 @@ namespace Microsoft.EntityFrameworkCore
                     var q0 = $"TRUNCATE TABLE [{m.GetSchema()}].[{m.GetTableName()}];";
                     return string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
                 }).ToArray());
-            else if (context.Database.ProviderName.EndsWith("Sqlite"))
+            else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
                 query = string.Join(Environment.NewLine, entityTypes.Select(m =>
                 {
                     var q1 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{m.GetTableName()}';";
@@ -73,19 +74,25 @@ namespace Microsoft.EntityFrameworkCore
             var database = context.Database;
             var entityType = context.Model.FindEntityType(typeof(TEntity));
             var query = string.Empty;
-            if (context.Database.ProviderName.EndsWith("SqlServer"))
+            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
             {
-                var q0 = $"DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
-                if (!reseed) q0 = string.Empty;
-                var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
-                query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                if (entityType != null)
+                {
+                    var q0 = $"DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
+                    if (!reseed) q0 = string.Empty;
+                    var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
+                    query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                }
             }
-            else if (context.Database.ProviderName.EndsWith("Sqlite"))
+            else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
             {
-                var q0 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{entityType.GetTableName()}';";
-                if (!reseed) q0 = string.Empty;
-                var q1 = $"DELETE FROM {entityType.GetTableName()};";
-                query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                if (entityType != null)
+                {
+                    var q0 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{entityType.GetTableName()}';";
+                    if (!reseed) q0 = string.Empty;
+                    var q1 = $"DELETE FROM {entityType.GetTableName()};";
+                    query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -117,7 +124,7 @@ namespace Microsoft.EntityFrameworkCore
             var database = context.Database;
             var entityType = context.Model.FindEntityType(typeof(TEntity));
             var query = string.Empty;
-            if (context.Database.ProviderName.EndsWith("SqlServer"))
+            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
                 query = $"SET IDENTITY_INSERT [{entityType.GetSchema()}].[{entityType.GetTableName()}] {(enable ? "ON" : "OFF")};";
 
             if (!string.IsNullOrWhiteSpace(query))

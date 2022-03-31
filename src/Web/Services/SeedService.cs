@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,13 +38,18 @@ namespace Web.Services
                 try
                 {
                     await FromLocal<Setting>(context, cancellationToken: cancellationToken);
+                    
                     await FromLocal<Role>(context, cancellationToken: cancellationToken);
                     await FromLocal<User>(context, cancellationToken: cancellationToken);
                     await FromLocal<UserRole>(context, cancellationToken: cancellationToken);
+                    
+                    #if DEBUG
+                    await FromLocal<Client>(context, cancellationToken: cancellationToken);
+                    #endif
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, e.Message);
+                    _logger.LogError(e,"{Message}", e.Message);
                 }
             }
 
@@ -58,7 +64,12 @@ namespace Web.Services
                 try
                 {
                     List<T> entities;
-                    if (!Directory.Exists(source)) Directory.CreateDirectory(source);
+                    if (!Directory.Exists(source))
+                        if (source != null)
+                        {
+                            Directory.CreateDirectory(source);
+                        }
+
                     var targetFile = Path.Combine(source, $"{typeof(T).Name}.json");
                     if (File.Exists(targetFile))
                     {
@@ -71,9 +82,9 @@ namespace Web.Services
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    _logger.LogError(e,"{Message}", e.Message);
                 }
                 finally
                 {
@@ -116,9 +127,9 @@ namespace Web.Services
                         await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    _logger.LogError(e,"{Message}", e.Message);
                 }
                 finally
                 {

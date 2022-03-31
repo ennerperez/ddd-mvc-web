@@ -6,6 +6,7 @@ using System;
 using System.Data.Common;
 using System.Linq;
 using Domain.Entities;
+using Domain.Entities.Identity;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -49,7 +50,7 @@ namespace Persistence.Contexts
         {
             if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
 
-            ProviderName = Database.ProviderName.Split('.').Last();
+            ProviderName = Database.ProviderName?.Split('.').Last();
 
             // Configurations
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DefaultContext).Assembly, m => m.GetCustomAttributes(typeof(DbContextAttribute), true).OfType<DbContextAttribute>().Any(a => a.ContextType == typeof(DefaultContext)));

@@ -9,11 +9,25 @@
             <div class="modal-body">
                 <input type="hidden" data-field="id" id="id"/>
                 <div class="mb-3">
-                    <label for="userName" class="form-label required">Name</label>
-                    <input id="userName" class="form-control" required
+                    <label for="givenName" class="form-label required">Given Name</label>
+                    <input id="givenName" class="form-control" required
+                           data-field="givenName"
+                           data-validate="true"
+                           data-feedback="Please enter a valid given name">
+                </div>
+                <div class="mb-3">
+                    <label for="surName" class="form-label required">Sur Name</label>
+                    <input id="surName" class="form-control" required
+                           data-field="surname"
+                           data-validate="true"
+                           data-feedback="Please enter a valid sur name">
+                </div>
+                <div class="mb-3">
+                    <label for="userName" class="form-label">User Name</label>
+                    <input id="userName" class="form-control" type="email"
                            data-field="userName"
                            data-validate="true"
-                           data-feedback="Please enter a valid user name">
+                           data-feedback="Please enter a valid userName">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
@@ -32,7 +46,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="phoneNumber" class="form-label required">Phone</label>
+                    <label for="phoneNumber" class="form-label required">Phone Number</label>
                     <input id="phoneNumber" class="form-control" required
                            data-field="phoneNumber"
                            data-validate="true"

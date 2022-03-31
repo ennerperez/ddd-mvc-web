@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Clients";
+}
+
+<partial name="Partials/_LoaderPartial"/>
+
+<div id="content" class="page" style="display: none;">
+    <div class="page-title py-1">
+        <h3 class="m-0 p-0">
+            <i class="fas fa-users"></i> @ViewData["Title"]
+        </h3>
+    </div>
+    <div class="page-content m-2">
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-labeled btn-primary" name="btn-create">
+                    <span class="btn-label">
+                        <i class="fa fa-plus"></i>
+                    </span>Add
+                </button>
+                <table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Identification</th>
+                        <th>Full Name</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Category</th>
+                        <th data-printable="false" data-exportable="false" data-orderable="false" width="5%"></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="Editor"/>
+
+<partial name="Components/Datatables"/>
+<partial name="Components/Sweetalert"/>
+
+@section Scripts
+{
+    <environment include="development">
+        <script src="~/lib/jquery.mask/jquery.mask.js"></script>
+        <script src="~/js/editor.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="development">
+        <script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
+        <script src="~/js/editor.min.js" asp-append-version="true"></script>
+    </environment>
+
+    <script>
+            let tableMain = null;
+            let editorMain = null;
+            let apiUrl = '@Url.Content("~/api/client")';
+            
+            $(document).ready( function () {
+                
+                tableMain = $('#table').DataTable({
+                    language: { url: __datatable_options.language },
+                    serverSide: true,
+                    processing: false,
+                    paging: true,
+                    pageLength: 50,
+                    responsive: { details: { renderer: responsiveRenderer }, },
+                    info: true,
+                    dom: 'lBfrtip',
+                    buttons: __datatable_buttons,
+                    search: {
+                        caseInsensitive: true
+                    },
+                    ajax: {
+                        url: `${apiUrl}/table`,
+                        headers: { RequestVerificationToken: __RequestVerificationToken },
+                        type: 'POST',
+                        contentType: "application/json",
+                        data: function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
+                    columns: [                  
+                        { name: "identification", data: "identification" },
+                        { name: "fullName", data: "fullName" },
+                        { name: "address", data: "address" },
+                        { name: "phoneNumber", data: "phoneNumber", render: function (data, type, row) 
+                            { 
+                                return `<span class="position-relative">${data}</span>`;
+                            }
+                        },
+                        { name: "category", data: "category" },
+                        { className: "text-center", data: null, render: function () 
+                            {
+                                return `<div class="dropdown">
+                                            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Actions">
+                                                <i class="fas fa-bolt"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <button type="button" class="dropdown-item" name="btn-edit">Edit</button>
+                                                <button type="button" class="dropdown-item text-danger" name="btn-delete">Delete</button>
+                                            </div>
+                                        </div>`;
+                            }
+                        }
+                                            
+                    ],
+                    lengthMenu: __datatable_options.lengthMenu,
+                    initComplete: function () {
+                        
+                        $("[name='btn-create']").appendTo($('.dt-buttons'));
+                        
+                        tableMain.on('draw', reHandle);
+                        reHandle();
+                        
+                        // Search Delay
+                        doSearchDelay(tableMain);
+                        
+                        // UI Fix
+                        UIFix(tableMain);
+                        
+                        hideLoader();
+
+                    }
+                });
+                editorMain = new bootstrap.Modal(document.getElementById('modal-editor'));
+                setEditor(tableMain, editorMain, apiUrl);
+            });
+            
+    </script>
+}

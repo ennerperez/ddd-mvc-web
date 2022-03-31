@@ -1,3 +1,4 @@
+@using Domain.Entities.Identity
 @inject SignInManager<User> _signInManager
 @inject UserManager<User> _userManager
 @{
@@ -10,7 +11,7 @@
         }
         else
         {
-            name = @User?.Identity?.Name;
+            name = @User.Identity?.Name;
         }
     }
 }

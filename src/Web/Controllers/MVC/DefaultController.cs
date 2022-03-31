@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Web.Models;
 
-namespace Web.MVC.Controllers
+namespace Web.Controllers.MVC
 {
     [AllowAnonymous]
     public class DefaultController : Controller
@@ -32,7 +32,7 @@ namespace Web.MVC.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            _logger.LogError(HttpContext.TraceIdentifier);
+            _logger.LogError("{TraceIdentifier}", HttpContext.TraceIdentifier);
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
@@ -98,12 +98,7 @@ namespace Web.MVC.Controllers
 
             foreach (var item in assemblies)
             {
-                var model = new AboutViewModel()
-                {
-                    Name = item.Name, 
-                    Version = item.Version, 
-                    Dependency = true,
-                };
+                var model = new AboutViewModel() { Name = item.Name, Version = item.Version, Dependency = true, };
                 if (!models.Any(m => m.Name == model.Name))
                     models.Add(model);
             }
