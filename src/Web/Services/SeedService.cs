@@ -64,7 +64,12 @@ namespace Web.Services
                 try
                 {
                     List<T> entities;
-                    if (!Directory.Exists(source)) Directory.CreateDirectory(source);
+                    if (!Directory.Exists(source))
+                        if (source != null)
+                        {
+                            Directory.CreateDirectory(source);
+                        }
+
                     var targetFile = Path.Combine(source, $"{typeof(T).Name}.json");
                     if (File.Exists(targetFile))
                     {

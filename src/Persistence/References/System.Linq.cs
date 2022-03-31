@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Reflection;
-using Domain.Interfaces;
 
 // ReSharper disable once CheckNamespace
 namespace System.Linq

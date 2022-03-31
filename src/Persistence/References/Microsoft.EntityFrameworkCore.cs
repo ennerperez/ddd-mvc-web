@@ -76,17 +76,23 @@ namespace Microsoft.EntityFrameworkCore
             var query = string.Empty;
             if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
             {
-                var q0 = $"DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
-                if (!reseed) q0 = string.Empty;
-                var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
-                query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                if (entityType != null)
+                {
+                    var q0 = $"DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
+                    if (!reseed) q0 = string.Empty;
+                    var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
+                    query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                }
             }
             else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
             {
-                var q0 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{entityType.GetTableName()}';";
-                if (!reseed) q0 = string.Empty;
-                var q1 = $"DELETE FROM {entityType.GetTableName()};";
-                query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                if (entityType != null)
+                {
+                    var q0 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{entityType.GetTableName()}';";
+                    if (!reseed) q0 = string.Empty;
+                    var q1 = $"DELETE FROM {entityType.GetTableName()};";
+                    query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(query))
