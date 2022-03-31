@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Options">
-    <EnableNonAsync>true</EnableNonAsync>
+    <EnableNonAsync>false</EnableNonAsync>
     <EnableBulk>true</EnableBulk>
     <EnableSplit>true</EnableSplit>
   </PropertyGroup>
