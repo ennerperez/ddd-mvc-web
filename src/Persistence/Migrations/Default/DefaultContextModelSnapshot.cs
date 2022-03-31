@@ -63,7 +63,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("Clients", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Role", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +110,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.RoleClaim", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -148,46 +148,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("RolesClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Setting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Type")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(7);
-
-                    b.Property<string>("Value")
-                        .HasColumnType("varchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("Key")
-                        .IsUnique();
-
-                    b.HasIndex("ModifiedAt");
-
-                    b.ToTable("Settings", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -268,7 +229,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserClaim", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,7 +267,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("UsersClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserLogin", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserLogin", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
@@ -340,7 +301,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("UsersLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserRole", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
@@ -367,7 +328,7 @@ namespace Persistence.Migrations.Default
                     b.ToTable("UsersRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToken", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserToken", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
@@ -401,9 +362,48 @@ namespace Persistence.Migrations.Default
                     b.ToTable("UsersTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.RoleClaim", b =>
+            modelBuilder.Entity("Domain.Entities.Setting", b =>
                 {
-                    b.HasOne("Domain.Entities.Role", "Role")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("Type")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(7);
+
+                    b.Property<string>("Value")
+                        .HasColumnType("varchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("ModifiedAt");
+
+                    b.ToTable("Settings", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Identity.RoleClaim", b =>
+                {
+                    b.HasOne("Domain.Entities.Identity.Role", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -412,9 +412,9 @@ namespace Persistence.Migrations.Default
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserClaim", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserClaim", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Identity.User", "User")
                         .WithMany("UserClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -423,9 +423,9 @@ namespace Persistence.Migrations.Default
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserLogin", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserLogin", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Identity.User", "User")
                         .WithMany("UserLogins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -434,15 +434,15 @@ namespace Persistence.Migrations.Default
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserRole", b =>
                 {
-                    b.HasOne("Domain.Entities.Role", "Role")
+                    b.HasOne("Domain.Entities.Identity.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Identity.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -453,9 +453,9 @@ namespace Persistence.Migrations.Default
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToken", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.UserToken", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Identity.User", "User")
                         .WithMany("UserTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -464,14 +464,14 @@ namespace Persistence.Migrations.Default
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Role", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.Role", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.Identity.User", b =>
                 {
                     b.Navigation("UserClaims");
 

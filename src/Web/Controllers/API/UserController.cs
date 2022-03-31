@@ -9,6 +9,7 @@ using Domain.Entities;
 using Domain.Entities.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
@@ -171,11 +172,11 @@ namespace Web.Controllers.API
                 t.PhoneNumber,
                 t.PhoneNumberConfirmed,
                 t.TwoFactorEnabled,
-                FirstName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName).ClaimValue,
-                LastName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname).ClaimValue,
+                GivenName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName).ClaimValue,
+                Surname = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname).ClaimValue,
             });
 
-            return await base.Table(model, selector);
+            return await base.Table(model, selector, include: i=> i.Include(m=> m.UserClaims));
         }
 
         #endregion

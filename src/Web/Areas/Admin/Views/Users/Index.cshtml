@@ -21,7 +21,6 @@
                 <table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
                     <thead>
                     <tr>
-                        <th>User</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -81,9 +80,8 @@
                         }
                     },
                     columns: [                  
-                        { name: "userName", data: "userName" },
                         { name: "fullName", data: null, render: function (data, type, row){
-                            return row['firstName'] != null && row["lastName"] !== null ? `${row['firstName']} ${row["lastName"]}` : '';
+                            return row['givenName'] != null && row["surname"] !== null ? `${row['givenName']} ${row["surname"]}` : '';
                         }
                         },
                         { name: "email", data: "email", render: function (data, type, row) 

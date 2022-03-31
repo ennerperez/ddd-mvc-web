@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
@@ -16,14 +18,15 @@ namespace Business.Requests.Identity
 
     public class CreateUserRequest : IRequest<int>
     {
+        public string GivenName { get; set; }
+        public string Surname { get; set; }
+        public string UserName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string UserName { get; set; }
         public bool EmailConfirmed { get; set; }
+        public string PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
+        public bool TwoFactorEnabled { get; set; }
     }
 
     public class CreateUserRequestHandler : IRequestHandler<CreateUserRequest, int>
@@ -43,10 +46,15 @@ namespace Business.Requests.Identity
             entity.EmailConfirmed = request.EmailConfirmed;
             entity.UserName = request.UserName;
             entity.NormalizedUserName = request.UserName.ToUpper();
-            entity.FirstName = request.FirstName;
-            entity.LastName = request.LastName;
+            entity.GivenName = request.GivenName;
+            entity.Surname = request.Surname;
             entity.PhoneNumber = request.PhoneNumber;
             entity.PhoneNumberConfirmed = request.PhoneNumberConfirmed;
+            entity.TwoFactorEnabled = request.TwoFactorEnabled;
+
+            entity.UserClaims = new List<UserClaim>();
+            entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.GivenName, request.GivenName));
+            entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.Surname, request.Surname));
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
@@ -55,7 +63,6 @@ namespace Business.Requests.Identity
             }
 
             await _repository.CreateAsync(entity, cancellationToken);
-
             return entity.Id;
         }
     }
@@ -65,7 +72,7 @@ namespace Business.Requests.Identity
         public CreateUserRequestValidator(IGenericRepository<User> repository)
         {
             RuleFor(m => m.Email).NotEmpty();
-            RuleFor(m => new {m.Email})
+            RuleFor(m => new { m.Email })
                 .CustomAsync(async (m, v, c) =>
                 {
                     var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper(), c);
@@ -121,14 +128,15 @@ namespace Business.Requests.Identity
     public class UpdateUserRequest : IRequest
     {
         public int Id { get; set; }
+        public string GivenName { get; set; }
+        public string Surname { get; set; }
+        public string UserName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string UserName { get; set; }
         public bool EmailConfirmed { get; set; }
+        public string PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
+        public bool TwoFactorEnabled { get; set; }
     }
 
     public class UpdateUserRequestHandler : IRequestHandler<UpdateUserRequest>
@@ -142,7 +150,7 @@ namespace Business.Requests.Identity
 
         public async Task<Unit> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, include: i => i.Include(m => m.UserClaims), cancellationToken: cancellationToken);
             if (entity == null) throw new NotFoundException(nameof(User), request.Id);
 
             entity.Email = request.Email;
@@ -150,16 +158,35 @@ namespace Business.Requests.Identity
             entity.EmailConfirmed = request.EmailConfirmed;
             entity.UserName = request.UserName;
             entity.NormalizedUserName = request.UserName.ToUpper();
-            entity.FirstName = request.FirstName;
-            entity.LastName = request.LastName;
+            entity.GivenName = request.GivenName;
+            entity.Surname = request.Surname;
             entity.PhoneNumber = request.PhoneNumber;
             entity.PhoneNumberConfirmed = request.PhoneNumberConfirmed;
+            entity.TwoFactorEnabled = request.TwoFactorEnabled;
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
                 var ph = new PasswordHasher<User>();
                 entity.PasswordHash = ph.HashPassword(entity, request.Password);
             }
+
+            #region Claims
+
+            if (entity.UserClaims == null || !entity.UserClaims.Any()) entity.UserClaims = new List<UserClaim>();
+
+            var givenName = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName);
+            if (givenName != null)
+                givenName.ClaimValue = request.GivenName;
+            else
+                entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.GivenName, request.GivenName));
+
+            var surname = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname);
+            if (surname != null)
+                surname.ClaimValue = request.Surname;
+            else
+                entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.Surname, request.Surname));
+
+            #endregion
 
             await _repository.UpdateAsync(entity, cancellationToken);
 
@@ -173,7 +200,7 @@ namespace Business.Requests.Identity
         {
             RuleFor(m => m.Id).NotEmpty();
             RuleFor(m => m.Email).NotEmpty();
-            RuleFor(m => new {m.Id, m.Email})
+            RuleFor(m => new { m.Id, m.Email })
                 .CustomAsync(async (m, v, c) =>
                 {
                     var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
@@ -181,20 +208,21 @@ namespace Business.Requests.Identity
                 });
         }
     }
-    
-    /* PARTIAL */
-    
+
+/* PARTIAL */
+
     public class PartialUpdateUserRequest : IRequest
     {
         public int Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string GivenName { get; set; }
+        public string Surname { get; set; }
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
         public bool? EmailConfirmed { get; set; }
         public bool? PhoneNumberConfirmed { get; set; }
+        public bool? TwoFactorEnabled { get; set; }
     }
 
     public class PartialUpdateUserRequestHandler : IRequestHandler<PartialUpdateUserRequest>
@@ -208,7 +236,7 @@ namespace Business.Requests.Identity
 
         public async Task<Unit> Handle(PartialUpdateUserRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, include: i=> i.Include(m=> m.UserClaims), cancellationToken: cancellationToken);
             if (entity == null) throw new NotFoundException(nameof(User), request.Id);
 
             if (request.Email != null)
@@ -216,6 +244,7 @@ namespace Business.Requests.Identity
                 entity.Email = request.Email;
                 entity.NormalizedEmail = request.Email.ToUpper();
             }
+
             if (request.EmailConfirmed != null) entity.EmailConfirmed = request.EmailConfirmed.Value;
             if (request.UserName != null)
             {
@@ -223,16 +252,40 @@ namespace Business.Requests.Identity
                 entity.NormalizedUserName = request.UserName.ToUpper();
             }
 
-            if (request.FirstName != null) entity.FirstName = request.FirstName;
-            if (request.LastName != null) entity.LastName = request.LastName;
+            if (request.GivenName != null) entity.GivenName = request.GivenName;
+            if (request.Surname != null) entity.Surname = request.Surname;
             if (request.PhoneNumber != null) entity.PhoneNumber = request.PhoneNumber;
             if (request.PhoneNumberConfirmed != null) entity.PhoneNumberConfirmed = request.PhoneNumberConfirmed.Value;
+            if (request.TwoFactorEnabled != null) entity.TwoFactorEnabled = request.TwoFactorEnabled.Value;
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
                 var ph = new PasswordHasher<User>();
                 entity.PasswordHash = ph.HashPassword(entity, request.Password);
             }
+            
+            #region Claims
+            
+            if (entity.UserClaims == null || !entity.UserClaims.Any()) entity.UserClaims = new List<UserClaim>();
+            if (request.GivenName != null)
+            {
+                var givenName = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName);
+                if (givenName != null)
+                    givenName.ClaimValue = request.GivenName;
+                else
+                    entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.GivenName, request.GivenName));
+            }
+
+            if (request.Surname != null)
+            {
+                var surname = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname);
+                if (surname != null)
+                    surname.ClaimValue = request.Surname;
+                else
+                    entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.Surname, request.Surname));
+            }
+
+            #endregion
 
             await _repository.UpdateAsync(entity, cancellationToken);
 
@@ -245,7 +298,7 @@ namespace Business.Requests.Identity
         public PartialUpdateUserRequestValidator(IGenericRepository<User> repository)
         {
             RuleFor(m => m.Id).NotEmpty();
-            RuleFor(m => new {m.Id, m.Email})
+            RuleFor(m => new { m.Id, m.Email })
                 .CustomAsync(async (m, v, c) =>
                 {
                     if (m.Email != null)
@@ -291,7 +344,7 @@ namespace Business.Requests.Identity
         public DeleteUserRequestValidator(IGenericRepository<User> repository)
         {
             RuleFor(m => m.Id).NotEmpty();
-            RuleFor(m => new {m.Id})
+            RuleFor(m => new { m.Id })
                 .CustomAsync(async (m, v, c) =>
                 {
                     if (m.Id == 1) v.AddFailure("Cannot delete the default user");

@@ -47,6 +47,7 @@ namespace Web.Controllers
                 foreach (var item in model.Order)
                 {
                     var column = model.Columns[item.Column];
+                    if (column.Data == null) continue;
                     var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
                     if (prop != null) orderByKeys.Add(prop.Name, item.Dir);
                 }

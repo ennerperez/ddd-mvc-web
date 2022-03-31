@@ -38,9 +38,14 @@ namespace Web.Services
                 try
                 {
                     await FromLocal<Setting>(context, cancellationToken: cancellationToken);
+                    
                     await FromLocal<Role>(context, cancellationToken: cancellationToken);
                     await FromLocal<User>(context, cancellationToken: cancellationToken);
                     await FromLocal<UserRole>(context, cancellationToken: cancellationToken);
+                    
+                    #if DEBUG
+                    await FromLocal<Client>(context, cancellationToken: cancellationToken);
+                    #endif
                 }
                 catch (Exception e)
                 {

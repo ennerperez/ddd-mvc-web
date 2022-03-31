@@ -16,9 +16,9 @@ namespace Domain.Entities.Identity
             UserClaims = new List<UserClaim>();
         }
         
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string FullName => string.Join(" ", FirstName, LastName);
+        public string GivenName { get; set; }
+        public string Surname { get; set; }
+        public string FullName => string.Join(" ", GivenName, Surname);
         
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<UserLogin> UserLogins { get; set; }
