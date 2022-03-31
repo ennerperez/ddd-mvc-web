@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Entities
+namespace Domain.Entities.Identity
 {
     public class Role : IdentityRole<int>, IEntity<int>, IAuditable
     {

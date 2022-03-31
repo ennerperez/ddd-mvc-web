@@ -5,8 +5,8 @@ using Persistence.Conventions;
 using System;
 using System.Data.Common;
 using System.Linq;
-using Domain.Abstractions;
 using Domain.Entities;
+using Domain.Entities.Identity;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -66,7 +66,6 @@ namespace Persistence.Contexts
             });
             modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
             modelBuilder.AddSincronizableEntitiesConventions<ISyncronizable>(ProviderName);
-            modelBuilder.IgnoreDomainEventsEntitiesConventions();
         }
 
 #if DEBUG

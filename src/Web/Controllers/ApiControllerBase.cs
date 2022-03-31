@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Business.Models;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
-using Swashbuckle.AspNetCore.Annotations;
-using Web.Models;
 
 // ReSharper disable RedundantCast
 
@@ -34,7 +33,7 @@ namespace Web.Controllers
             Repository = repository;
         }
         
-        public async Task<JsonResult> Table<TResult>(TableRequestViewModel model,
+        public async Task<JsonResult> Table<TResult>(TableInfo model,
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
@@ -162,7 +161,7 @@ namespace Web.Controllers
             var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
             var stotal = isFiltered ? data.Count : total;
 
-            return new JsonResult(new {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
+            return new JsonResult(new TableResult() {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
         }
     }
 

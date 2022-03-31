@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Persistence.Contexts;
 using Persistence.Interfaces;
-using Persistence.Services;
 
 namespace Persistence
 {
@@ -86,14 +85,6 @@ namespace Persistence
             var assembliesToScan = assemblies.Distinct().ToArray();
             ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), services, assembliesToScan, false);
             ConnectImplementationsToTypesClosing(typeof(IGenericRepository<>), services, assembliesToScan, false);
-            ConnectImplementationsToDomain(typeof(IGenericRepository<>), services, assembliesToScan, false);
-        }
-
-        private static void ConnectImplementationsToDomain(Type openRequestInterface, IServiceCollection services, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)
-        {
-            var types = assembliesToScan
-                .SelectMany(a => a.DefinedTypes)
-                .Where(t => !t.IsOpenGeneric());
         }
 
         private static void ConnectImplementationsToTypesClosing(Type openRequestInterface, IServiceCollection services, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)

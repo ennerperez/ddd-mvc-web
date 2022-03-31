@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Business.Abstractions;
+using Business.Models;
 using Business.Requests;
 using Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using Web.Models;
 
 namespace Web.Controllers.API
 {
@@ -30,7 +30,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.Get((new Client()).Select(s => new Client {Id = s.Id, Identification = s.Identification, CreatedAt = s.CreatedAt, ModifiedAt = s.ModifiedAt}), null, null, null);
+                var collection = await Mediator.SendWithRepository((new Client()).Select(s => s), null, null, null);
                 if (collection == null || !collection.Any())
                     return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>()});
 
@@ -38,7 +38,7 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -51,13 +51,13 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var collection = await Mediator.Get((new Client()).Select(s => s), p => p.Id == id, null, null);
+                    var collection = await Mediator.SendWithRepository((new Client()).Select(s => s), p => p.Id == id, null, null);
 
                     return new JsonResult(collection);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, e.Message);
+                    _logger.LogError(e,"{Message}", e.Message);
                     return Problem(e.Message);
                 }
             }
@@ -71,13 +71,13 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.GetPaginated((new Client()).Select(s => s),
+                var collection = await Mediator.SendWithPage((new Client()).Select(s => s),
                     null, null, null, skip: ((page - 1) * size), take: size);
                 return new JsonResult(collection);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -96,7 +96,7 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -115,7 +115,26 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e,"{Message}", e.Message);
+                return Problem(e.Message);
+            }
+        }
+        
+        [SwaggerOperation("Partial update an existing element by id")]
+        [DisableRequestSizeLimit]
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PartialUpdate(int id, [FromBody] PartialUpdateClientRequest model)
+        {
+            if (model == null || id != model.Id) return BadRequest();
+
+            try
+            {
+                await Mediator.Send(model);
+                return Ok(id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -131,7 +150,7 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e,"{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -140,7 +159,7 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Get data in table format")]
         [HttpPost("Table")]
-        public async Task<JsonResult> Table(TableRequestViewModel model)
+        public async Task<JsonResult> Table(TableInfo model)
         {
             var selector = (new Client()).Select(t => new
             {

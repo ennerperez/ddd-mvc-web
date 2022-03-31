@@ -31,7 +31,7 @@ namespace Business.Behaviours
             if (elapsedMilliseconds > 500)
             {
                 var requestName = typeof(TRequest).Name;
-                var userName = string.Empty;
+                //var userName = string.Empty;
 
                 _logger.LogWarning("Request: {Name} ({ElapsedMilliseconds} milliseconds) {@Request}", requestName, elapsedMilliseconds, request);
             }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
 using Business.Exceptions;
 using Business.Models;
-using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
 using MediatR;
@@ -53,14 +51,14 @@ namespace Business.Requests
     {
         public CreateClientRequestValidator(IGenericRepository<Client> repository)
         {
-            RuleFor(m => m.Identification)
-                .NotEmpty()
-                .CustomAsync(async (v, x, c) =>
-                {
-                    var identificationInUse = await repository.AnyAsync(m => m.Identification == v, c);
-                    if (identificationInUse) x.AddFailure("Identification is already in use");
-                });
+            RuleFor(m => m.Identification).NotEmpty();
             RuleFor(m => m.FullName).NotEmpty();
+            RuleFor(m => new {m.Identification})
+                .CustomAsync(async (m, v, c) =>
+                {
+                    var identificationInUse = await repository.AnyAsync(p => p.Identification == m.Identification, c);
+                    if (identificationInUse) v.AddFailure("Identification is already in use");
+                });
         }
     }
 
@@ -68,7 +66,7 @@ namespace Business.Requests
 
     #region Read
 
-    public class ReadPaginatedClientsRequestHandler : IRequestHandler<GenericPaginatedRequest<Client, Client>, PaginatedList<Client>>
+    public class ReadPaginatedClientsRequestHandler : IRequestHandler<PaginatedRequest<Client, Client>, PaginatedList<Client>>
     {
         private readonly IGenericRepository<Client> _repository;
 
@@ -77,7 +75,7 @@ namespace Business.Requests
             _repository = repository;
         }
 
-        public async Task<PaginatedList<Client>> Handle(GenericPaginatedRequest<Client, Client> request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<Client>> Handle(PaginatedRequest<Client, Client> request, CancellationToken cancellationToken)
         {
             var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
             var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
@@ -150,14 +148,68 @@ namespace Business.Requests
         {
             RuleFor(m => m.Id).NotEmpty();
             RuleFor(m => m.Identification).NotEmpty();
-            RuleFor(m => new {m.Id, m.Identification})
-                .NotEmpty()
-                .CustomAsync(async (v, x, c) =>
-                {
-                    var identificationInUse = await repository.AnyAsync(m => m.Identification == v.Identification && m.Id != v.Id, c);
-                    if (identificationInUse) x.AddFailure("Identification is already in use");
-                });
             RuleFor(m => m.FullName).NotEmpty();
+            RuleFor(m => new {m.Id, m.Identification})
+                .CustomAsync(async (m, v, c) =>
+                {
+                    var identificationInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
+                    if (identificationInUse) v.AddFailure("Identification is already in use");
+                });
+        }
+    }
+    
+    /* PARTIAL */
+    
+    public class PartialUpdateClientRequest : IRequest
+    {
+        public int Id { get; set; }
+        public string Identification { get; set; }
+        public string Category { get; set; }
+        public string FullName { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Address { get; set; }
+    }
+
+    public class PartialUpdateClientRequestHandler : IRequestHandler<PartialUpdateClientRequest>
+    {
+        private readonly IGenericRepository<Client> _repository;
+
+        public PartialUpdateClientRequestHandler(IGenericRepository<Client> repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<Unit> Handle(PartialUpdateClientRequest request, CancellationToken cancellationToken)
+        {
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            if (entity == null) throw new NotFoundException(nameof(Client), request.Id);
+
+            entity.Identification = request.Identification;
+            entity.FullName = request.FullName;
+            entity.Address = request.Address;
+            entity.PhoneNumber = request.PhoneNumber;
+            entity.Category = request.Category;
+
+            await _repository.UpdateAsync(entity, cancellationToken);
+
+            return Unit.Value;
+        }
+    }
+
+    public class PartialUpdateClientRequestValidator : AbstractValidator<PartialUpdateClientRequest>
+    {
+        public PartialUpdateClientRequestValidator(IGenericRepository<Client> repository)
+        {
+            RuleFor(m => m.Id).NotEmpty();
+            RuleFor(m => new {m.Id, m.Identification})
+                .CustomAsync(async (m, v, c) =>
+                {
+                    if (m.Identification != null)
+                    {
+                        var identificationInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
+                        if (identificationInUse) v.AddFailure("Identification is already in use");
+                    }
+                });
         }
     }
 
@@ -192,10 +244,9 @@ namespace Business.Requests
 
     public class DeleteClientRequestValidator : AbstractValidator<DeleteClientRequest>
     {
-        public DeleteClientRequestValidator(IGenericRepository<Client> repository)
+        public DeleteClientRequestValidator()
         {
-            RuleFor(m => m.Id)
-                .NotEmpty();
+            RuleFor(m => m.Id).NotEmpty();
         }
     }
 

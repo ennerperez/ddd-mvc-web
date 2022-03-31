@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Domain.Abstractions;
 using Domain.Interfaces;
 
 namespace Domain.Entities

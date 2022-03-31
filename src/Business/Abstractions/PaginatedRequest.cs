@@ -1,46 +1,35 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Business.Models;
+using Business.Interfaces;
 using Domain.Interfaces;
-using MediatR;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace Business.Abstractions
 {
-    public static partial class ISenderExtensions
+    public class PaginatedRequest<TResult> : IPaginatedRequest<TResult>
     {
-        public static async Task<PaginatedList<TResult>> GetPaginated<TEntity, TResult>(this ISender @this,
-            Expression<Func<TEntity, TResult>> selector,
-            Expression<Func<TEntity, bool>> predicate,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy,
-            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include,
-            int? skip = 0, int? take = null,
-            bool disableTracking = false,
-            bool ignoreQueryFilters = false,
-            bool includeDeleted = false) where TEntity : class, IEntity<int>
-        {
-            var request = new GenericPaginatedRequest<TEntity, TResult>()
-            {
-                Selector = selector,
-                Predicate = predicate,
-                OrderBy = orderBy,
-                Include = include,
-                Skip = skip,
-                Take = take,
-                DisableTracking = disableTracking,
-                IgnoreQueryFilters = ignoreQueryFilters,
-                IncludeDeleted = includeDeleted
-            };
-
-            var result = await @this.Send(request);
-            if (result != null) return result;
-            return null;
-        }
     }
-    
-    public class PaginatedRequest<TResult> : IRequest<PaginatedList<TResult>>
+
+    public class PaginatedRequest<TEntity, TResult> : PaginatedRequest<TEntity, int, TResult> where TEntity : class, IEntity<int>
     {
+    }
+
+    public class PaginatedRequest<TEntity, TKey, TResult> : IPaginatedRequest<TResult> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
+    {
+        public Expression<Func<TEntity, TResult>> Selector { get; set; }
+        public Expression<Func<TEntity, bool>> Predicate { get; set; }
+        public Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> OrderBy { get; set; }
+        public Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> Include { get; set; }
+        public int? Skip { get; set; }
+        public int? Take { get; set; }
+        public bool DisableTracking { get; set; }
+        public bool IgnoreQueryFilters { get; set; }
+        public bool IncludeDeleted { get; set; }
+        
+        /* */
+        
+        public int Page { get; set; }
+        public int Size { get; set; }
     }
 }

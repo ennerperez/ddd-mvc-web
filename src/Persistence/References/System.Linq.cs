@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 
+// ReSharper disable once CheckNamespace
 namespace System.Linq
 {
     namespace Expressions

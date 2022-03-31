@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Business.Abstractions;
 using Business.Exceptions;
 using Business.Models;
-using Domain.Entities;
+using Domain.Entities.Identity;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -64,12 +64,12 @@ namespace Business.Requests.Identity
     {
         public CreateUserRequestValidator(IGenericRepository<User> repository)
         {
-            RuleFor(m => m.Email)
-                .NotEmpty()
-                .CustomAsync(async (v, x, c) =>
+            RuleFor(m => m.Email).NotEmpty();
+            RuleFor(m => new {m.Email})
+                .CustomAsync(async (m, v, c) =>
                 {
-                    var emailInUse = await repository.AnyAsync(m => m.NormalizedEmail == v.ToUpper(), c);
-                    if (emailInUse) x.AddFailure("Email is already in use");
+                    var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper(), c);
+                    if (emailInUse) v.AddFailure("Email is already in use");
                 });
         }
     }
@@ -78,7 +78,7 @@ namespace Business.Requests.Identity
 
     #region Read
 
-    public class ReadPaginatedUsersRequestHandler : IRequestHandler<GenericPaginatedRequest<User, User>, PaginatedList<User>>
+    public class ReadPaginatedUsersRequestHandler : IRequestHandler<PaginatedRequest<User, User>, PaginatedList<User>>
     {
         private readonly IGenericRepository<User> _repository;
 
@@ -87,7 +87,7 @@ namespace Business.Requests.Identity
             _repository = repository;
         }
 
-        public async Task<PaginatedList<User>> Handle(GenericPaginatedRequest<User, User> request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<User>> Handle(PaginatedRequest<User, User> request, CancellationToken cancellationToken)
         {
             var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null, null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
             var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
@@ -174,10 +174,85 @@ namespace Business.Requests.Identity
             RuleFor(m => m.Id).NotEmpty();
             RuleFor(m => m.Email).NotEmpty();
             RuleFor(m => new {m.Id, m.Email})
-                .CustomAsync(async (v, x, c) =>
+                .CustomAsync(async (m, v, c) =>
                 {
-                    var emailInUse = await repository.AnyAsync(m => m.NormalizedEmail == v.Email.ToUpper() && m.Id != v.Id, c);
-                    if (emailInUse) x.AddFailure("Email is already in use");
+                    var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
+                    if (emailInUse) v.AddFailure("Email is already in use");
+                });
+        }
+    }
+    
+    /* PARTIAL */
+    
+    public class PartialUpdateUserRequest : IRequest
+    {
+        public int Id { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PhoneNumber { get; set; }
+        public string UserName { get; set; }
+        public bool? EmailConfirmed { get; set; }
+        public bool? PhoneNumberConfirmed { get; set; }
+    }
+
+    public class PartialUpdateUserRequestHandler : IRequestHandler<PartialUpdateUserRequest>
+    {
+        private readonly IGenericRepository<User> _repository;
+
+        public PartialUpdateUserRequestHandler(IGenericRepository<User> repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<Unit> Handle(PartialUpdateUserRequest request, CancellationToken cancellationToken)
+        {
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
+            if (entity == null) throw new NotFoundException(nameof(User), request.Id);
+
+            if (request.Email != null)
+            {
+                entity.Email = request.Email;
+                entity.NormalizedEmail = request.Email.ToUpper();
+            }
+            if (request.EmailConfirmed != null) entity.EmailConfirmed = request.EmailConfirmed.Value;
+            if (request.UserName != null)
+            {
+                entity.UserName = request.UserName;
+                entity.NormalizedUserName = request.UserName.ToUpper();
+            }
+
+            if (request.FirstName != null) entity.FirstName = request.FirstName;
+            if (request.LastName != null) entity.LastName = request.LastName;
+            if (request.PhoneNumber != null) entity.PhoneNumber = request.PhoneNumber;
+            if (request.PhoneNumberConfirmed != null) entity.PhoneNumberConfirmed = request.PhoneNumberConfirmed.Value;
+
+            if (!string.IsNullOrWhiteSpace(request.Password))
+            {
+                var ph = new PasswordHasher<User>();
+                entity.PasswordHash = ph.HashPassword(entity, request.Password);
+            }
+
+            await _repository.UpdateAsync(entity, cancellationToken);
+
+            return Unit.Value;
+        }
+    }
+
+    public class PartialUpdateUserRequestValidator : AbstractValidator<PartialUpdateUserRequest>
+    {
+        public PartialUpdateUserRequestValidator(IGenericRepository<User> repository)
+        {
+            RuleFor(m => m.Id).NotEmpty();
+            RuleFor(m => new {m.Id, m.Email})
+                .CustomAsync(async (m, v, c) =>
+                {
+                    if (m.Email != null)
+                    {
+                        var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
+                        if (emailInUse) v.AddFailure("Email is already in use");
+                    }
                 });
         }
     }
@@ -215,12 +290,12 @@ namespace Business.Requests.Identity
     {
         public DeleteUserRequestValidator(IGenericRepository<User> repository)
         {
-            RuleFor(m => m.Id)
-                .NotEmpty()
-                .CustomAsync(async (v, x, c) =>
+            RuleFor(m => m.Id).NotEmpty();
+            RuleFor(m => new {m.Id})
+                .CustomAsync(async (m, v, c) =>
                 {
-                    if (v == 1) x.AddFailure("Cannot delete the default user");
-                    if (await repository.CountAsync(cancellationToken: c) == 1) x.AddFailure("Cannot delete the last user");
+                    if (m.Id == 1) v.AddFailure("Cannot delete the default user");
+                    if (await repository.CountAsync(cancellationToken: c) == 1) v.AddFailure("Cannot delete the last user");
                 });
         }
     }

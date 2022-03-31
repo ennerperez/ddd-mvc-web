@@ -3,7 +3,7 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 using Business;
 using Domain;
-using Domain.Entities;
+using Domain.Entities.Identity;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 #if ENABLE_APIKEY || ENABLE_BEARER
