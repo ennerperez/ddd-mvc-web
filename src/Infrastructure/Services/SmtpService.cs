@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services
 {
-     public class SmtpService : ISmtpService
+     public class SmtpService : IEmailService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;

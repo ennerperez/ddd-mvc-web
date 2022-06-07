@@ -1,18 +1,10 @@
-@using Domain.Entities.Identity
 @inject SignInManager<User> _signInManager
 @inject UserManager<User> _userManager
 @{
     var name = "";
     if (_signInManager.IsSignedIn(User))
     {
-        if (@User.Claims.Any(m => m.Type == System.Security.Claims.ClaimTypes.GivenName))
-        {
-            name = @User.Claims.FirstOrDefault(m => m.Type == System.Security.Claims.ClaimTypes.GivenName)?.Value;
-        }
-        else
-        {
-            name = @User.Identity?.Name;
-        }
+        name = @User.Claims.Any(m => m.Type == System.Security.Claims.ClaimTypes.GivenName) ? @User.Claims.FirstOrDefault(m => m.Type == System.Security.Claims.ClaimTypes.GivenName)?.Value : @User.Identity?.Name;
     }
 }
 

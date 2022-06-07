@@ -16,7 +16,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Web.Controllers.API
 {
-[ApiExplorerSettings(GroupName = "v1")]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class UserController : ApiControllerBase<User>
     {
         private readonly ILogger _logger;
@@ -34,13 +34,13 @@ namespace Web.Controllers.API
             {
                 var collection = await Mediator.SendWithRepository((new User()).Select(s => s), null, null, null);
                 if (collection == null || !collection.Any())
-                    return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>()});
+                    return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>() });
 
-                return new JsonResult(new {lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection});
+                return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"{Message}", e.Message);
+                _logger.LogError(e, "{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -59,7 +59,7 @@ namespace Web.Controllers.API
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e,"{Message}", e.Message);
+                    _logger.LogError(e, "{Message}", e.Message);
                     return Problem(e.Message);
                 }
             }
@@ -79,7 +79,7 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"{Message}", e.Message);
+                _logger.LogError(e, "{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -98,7 +98,7 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"{Message}", e.Message);
+                _logger.LogError(e, "{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -117,11 +117,11 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"{Message}", e.Message);
+                _logger.LogError(e, "{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
-        
+
         [SwaggerOperation("Partial update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPatch("{id}")]
@@ -136,7 +136,7 @@ namespace Web.Controllers.API
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"{Message}", e.Message);
+                _logger.LogError(e, "{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -147,12 +147,12 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Mediator.Send(new DeleteUserRequest() {Id = id});
+                await Mediator.Send(new DeleteUserRequest() { Id = id });
                 return Ok(id);
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"{Message}", e.Message);
+                _logger.LogError(e, "{Message}", e.Message);
                 return Problem(e.Message);
             }
         }
@@ -176,7 +176,7 @@ namespace Web.Controllers.API
                 Surname = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname).ClaimValue,
             });
 
-            return await base.Table(model, selector, include: i=> i.Include(m=> m.UserClaims));
+            return await base.Table(model, selector, include: i => i.Include(m => m.UserClaims));
         }
 
         #endregion

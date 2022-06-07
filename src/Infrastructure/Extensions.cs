@@ -27,7 +27,14 @@ namespace Infrastructure
         /// <returns></returns>
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddTransient<ISmtpService, SmtpService>();
+            services.AddTransient<IEmailService, SmtpService>();
+            
+#if USING_BLOBS
+            services.AddTransient<IFileService, FileService>();
+#endif
+#if USING_QUEUES
+            services.AddTransient<IQueueService, QueueService>();
+#endif
             return services;
         }
     }

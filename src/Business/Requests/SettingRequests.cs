@@ -52,8 +52,8 @@ namespace Business.Requests
             RuleFor(m => new { m.Key })
                 .CustomAsync(async (m, v, c) =>
                 {
-                    var identificationInUse = await repository.AnyAsync(p => p.Key == m.Key, c);
-                    if (identificationInUse) v.AddFailure("Key is already in use");
+                    var keyInUse = await repository.AnyAsync(p => p.Key == m.Key, c);
+                    if (keyInUse) v.AddFailure("Key is already in use");
                 });
         }
     }

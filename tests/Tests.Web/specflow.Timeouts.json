@@ -1,0 +1,15 @@
+﻿{
+  "Timeouts": {
+    "BeforeScenario": 0,
+    "AfterScenario": 0,
+    "BeforeFeature": 2500,
+    "AfterFeature": 0,
+    "BeforeStep": 2000,
+    "AfterStep": 500,
+    "BeforeScreenshot": 0,
+    "AfterScreenshot": 0,
+    "BeforeRecording": 0,
+    "AfterRecording": 0,
+    "MaxAttempts": 20
+  }
+}

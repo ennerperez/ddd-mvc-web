@@ -566,15 +566,15 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/rider,linux,macos,windows,visualstudio,visualstudiocode
 
-# LibraryManager
-**/lib
+# Specials
+*.zip
+archives
+package-lock.json
+*.private.env.json
 
-# SQLite files
-*.db
-*.sqlite3
-*.sqlite
-*.db-journal
-*.sqlite3-journal
-*.sqlite-journal
-*.db-shm
-*.db-wal
+#Extras
+**/bootstrap.css
+**/Data
+
+# SpecFlow
+*.feature.cs

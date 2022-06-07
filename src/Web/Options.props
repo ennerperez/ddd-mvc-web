@@ -5,7 +5,7 @@
     <UsingNewtonsoft>true</UsingNewtonsoft>
     <UsingSwagger>true</UsingSwagger>
     <UsingLocalization>true</UsingLocalization>
-    <UsingInsights>false</UsingInsights>
+    <UsingInsights>true</UsingInsights>
     <UsingSass>true</UsingSass>
   </PropertyGroup>
 
@@ -13,7 +13,7 @@
     <EnableSassWatch>true</EnableSassWatch>
     <EnableBearer>true</EnableBearer>
     <EnableApiKey>true</EnableApiKey>
-    <EnableOpenId>false</EnableOpenId>
+    <EnableOpenId>true</EnableOpenId>
   </PropertyGroup>
   
   <PropertyGroup>

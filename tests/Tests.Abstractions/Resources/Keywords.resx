@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AutomationType" xml:space="preserve">
+    <value>AutomationType</value>
+  </data>
+  <data name="PlatformTarget" xml:space="preserve">
+    <value>Platform</value>
+  </data>
+  <data name="ApplicationTarget" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="EnvironmentTarget" xml:space="preserve">
+    <value>Environment</value>
+  </data>
+  <data name="Channel" xml:space="preserve">
+    <value>Channel</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="TestPlan" xml:space="preserve">
+    <value>TestPlan</value>
+  </data>
+  <data name="TestSuite" xml:space="preserve">
+    <value>TestSuite</value>
+  </data>
+  <data name="TestCase" xml:space="preserve">
+    <value>TestCase</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="NotYetImplemented" xml:space="preserve">
+    <value>NotYetImplemented</value>
+  </data>
+  <data name="RestoreDatabase" xml:space="preserve">
+    <value>RestoreDatabase</value>
+  </data>
+</root>

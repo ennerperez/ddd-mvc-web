@@ -204,6 +204,18 @@ namespace Microsoft.AspNetCore
 
         public static class AuthenticationBuilderExtensions
         {
+            
+            public static AuthenticationBuilder Close(this AuthenticationBuilder authenticationBuilder)
+            {
+                return authenticationBuilder;
+            }
+#if ENABLE_AB2C
+            public static MicrosoftIdentityWebAppAuthenticationBuilder Close(this MicrosoftIdentityWebAppAuthenticationBuilder authenticationBuilder)
+            {
+                return authenticationBuilder;
+            }
+#endif
+            
             public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
             {
                 authenticationBuilder.Services.AddTransient<IGetApiKeyQuery, StaticApiKeyQuery>();

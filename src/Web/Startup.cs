@@ -1,3 +1,5 @@
+// #define SESSION_TEST
+
 using System;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -44,14 +46,26 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 #endif
 
-#if DEBUG && USING_SASS
-using AspNetCore.SassCompiler;
-#endif
-
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Web
 {
     public class Startup
     {
+        
+#if DEBUG && SESSION_TEST
+        // internal static TimeSpan SessionIdleTimeout = TimeSpan.FromMinutes(1);
+        // internal static TimeSpan SessionIOTimeout = TimeSpan.FromMinutes(1);
+        internal static TimeSpan AntiforgeryExpiration = TimeSpan.FromMinutes(10);
+        internal static TimeSpan CookieExpireTimeSpan = TimeSpan.FromMinutes(10);
+        internal static TimeSpan TokenExpiryDurationMinutes = TimeSpan.FromMinutes(10);
+#else
+        // internal static TimeSpan SessionIdleTimeout = TimeSpan.FromHours(4);
+        // internal static TimeSpan SessionIOTimeout = TimeSpan.FromHours(4);
+        internal static TimeSpan AntiforgeryExpiration = TimeSpan.FromHours(8);
+        internal static TimeSpan CookieExpireTimeSpan = TimeSpan.FromDays(8);
+        internal static TimeSpan TokenExpiryDurationMinutes = TimeSpan.FromDays(8);
+#endif
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -62,13 +76,13 @@ namespace Web
 #endif
         }
 
-        public static string Name { get; private set; }
+        internal static string Name { get; private set; }
         internal IConfiguration Configuration { get; private set; }
 
 #if USING_LOCALIZATION
-        public CultureInfo[] SupportedCultures { get; private set; }
+        internal CultureInfo[] SupportedCultures { get; private set; }
 
-        public static CultureInfo CurrencyCulture { get; private set; }
+        internal static CultureInfo CurrencyCulture { get; private set; }
 
 #endif
 
@@ -94,6 +108,8 @@ namespace Web
             });
             services.AddLocalization(options=> options.ResourcesPath = "Resources");
 #endif
+            
+            services.AddHttpContextAccessor();
 
             services
                 .AddDomain()
@@ -111,7 +127,7 @@ namespace Web
                 .AddRoleManager<RoleManager<Role>>()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DefaultContext>();
-
+            
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
@@ -191,8 +207,6 @@ namespace Web
                 config.EnableForHttps = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection");
                 config.Providers.Add<GzipCompressionProvider>();
             });
-
-            services.AddHttpContextAccessor();
 
             var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
             {
@@ -277,7 +291,7 @@ namespace Web
 #if ENABLE_APIKEY
                 .AddApiKey()
 #endif
-                ;
+                .Close();
 
             services.AddAuthorization();
         }

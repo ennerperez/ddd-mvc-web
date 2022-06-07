@@ -1,0 +1,47 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AutomationType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="PlatformTarget" xml:space="preserve">
+    <value>Plataforma</value>
+  </data>
+  <data name="ApplicationTarget" xml:space="preserve">
+    <value>Aplicacion</value>
+  </data>
+  <data name="EnvironmentTarget" xml:space="preserve">
+    <value>Entorno</value>
+  </data>
+  <data name="Channel" xml:space="preserve">
+    <value>Canal</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Codigo</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Prioridad</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="RestoreDatabase" xml:space="preserve">
+    <value>ReiniciarBaseDeDatos</value>
+  </data>
+  <data name="NotYetImplemented" xml:space="preserve">
+    <value>NoImplementado</value>
+  </data>
+</root>
