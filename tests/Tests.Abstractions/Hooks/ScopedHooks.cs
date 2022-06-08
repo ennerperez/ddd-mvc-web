@@ -4,11 +4,10 @@ using Tests.Abstractions.Interfaces;
 
 namespace Tests.Abstractions.Hooks
 {
-    [Binding]
-    public sealed class ScopedHooks
+    public abstract class ScopedHooks
     {
-        private readonly IAutomationContext _automationContext;
-        private readonly IAutomationConfiguration _automationConfiguration;
+        protected readonly IAutomationContext _automationContext;
+        protected readonly IAutomationConfiguration _automationConfiguration;
 
         // For additional details on SpecFlow hooks see http://go.specflow.org/doc-hooks
         public ScopedHooks(IAutomationContext automationContext, IAutomationConfiguration automationConfiguration)
@@ -17,8 +16,8 @@ namespace Tests.Abstractions.Hooks
             _automationConfiguration = automationConfiguration;
         }
 
-        [BeforeStep]
-        private void FlagScenarioAsPending()
+        [BeforeScenario]
+        public void FlagScenarioAsPending()
         {
             if (_automationContext.ScenarioContext.ScenarioInfo.Tags.Contains(Resources.Keywords.NotYetImplemented))
             {

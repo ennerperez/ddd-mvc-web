@@ -1,10 +1,8 @@
-﻿using TechTalk.SpecFlow;
-using Tests.Abstractions.Interfaces;
+﻿using Tests.Abstractions.Interfaces;
 
 namespace Tests.Abstractions.Steps
 {
-    [Binding]
-    internal class GenericSteps
+    public abstract class GenericSteps
     {
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
