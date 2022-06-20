@@ -7,10 +7,8 @@ using Business;
 using Domain;
 using Domain.Entities.Identity;
 using Infrastructure;
-using Microsoft.AspNetCore.Authentication.Cookies;
-#if ENABLE_APIKEY || ENABLE_BEARER
 using Microsoft.AspNetCore.Authentication;
-#endif
+using Microsoft.AspNetCore.Authentication.Cookies;
 #if ENABLE_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
