@@ -217,7 +217,6 @@ namespace Web
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.Cookie = new CookieBuilder
                 {
-                    HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), 
                     IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
                 options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);

@@ -24,9 +24,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.12.0" />
     <PackageReference Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.10.0" />
   </ItemGroup>

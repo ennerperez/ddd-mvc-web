@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Authentication.ApiKey;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+#if ENABLE_AB2C
+using Microsoft.Identity.Web;
+#endif
 
 #pragma warning disable 618
 // ReSharper disable CheckNamespace
