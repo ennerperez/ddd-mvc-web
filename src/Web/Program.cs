@@ -8,10 +8,8 @@ using Serilog;
 using System.Diagnostics;
 #endif
 
-#if DEBUG
 using Microsoft.Extensions.DependencyInjection;
 using Web.Services;
-#endif
 
 namespace Web
 {
