@@ -11,11 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\.files\AssemblyInfo.General.cs">
+    <Compile Include="..\..\src\.files\AssemblyInfo.General.cs">
       <Link>Properties\AssemblyInfo.General.cs</Link>
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="..\..\.files\AssemblyInfo.Version.cs">
+    <Compile Include="..\..\src\.files\AssemblyInfo.Version.cs">
       <Link>Properties\AssemblyInfo.Version.cs</Link>
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>

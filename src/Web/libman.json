@@ -51,7 +51,7 @@
       "destination": "wwwroot/lib/jszip"
     },
     {
-      "library": "pdfmake@0.1.36",
+      "library": "pdfmake@0.1.39",
       "destination": "wwwroot/lib/pdfmake"
     },
     {

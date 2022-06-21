@@ -13,8 +13,8 @@ ProjectSection(SolutionItems) = preProject
 	build.cake = build.cake
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
-	.files\AssemblyInfo.General.cs = .files\AssemblyInfo.General.cs
-	.files\AssemblyInfo.Version.cs = .files\AssemblyInfo.Version.cs
+	src\.files\AssemblyInfo.General.cs = src\.files\AssemblyInfo.General.cs
+	src\.files\AssemblyInfo.Version.cs = src\.files\AssemblyInfo.Version.cs
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{72CB5A30-A3C6-48AD-9ABC-F5094874734A}"
@@ -32,7 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{B0F8
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".workflow", ".workflow", "{218BDA05-D55C-49DC-80F4-71B7AA3C07A2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".workflows", ".workflows", "{218BDA05-D55C-49DC-80F4-71B7AA3C07A2}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
