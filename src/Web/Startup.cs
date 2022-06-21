@@ -391,6 +391,10 @@ namespace Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+#if USING_QUESTPDF
+            DocumentService.RegisterFonts("wwwroot/fonts");
+#endif
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
