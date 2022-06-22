@@ -39,11 +39,11 @@
       "destination": "wwwroot/lib/datatables.net-bs5"
     },
     {
-      "library": "datatables.net-buttons@2.0.1",
+      "library": "datatables.net-buttons@2.2.3",
       "destination": "wwwroot/lib/datatables.net-buttons"
     },
     {
-      "library": "datatables.net-buttons-bs5@2.0.1",
+      "library": "datatables.net-buttons-bs5@2.2.3",
       "destination": "wwwroot/lib/datatables.net-buttons-bs5"
     },
     {
