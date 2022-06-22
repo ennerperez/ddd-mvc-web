@@ -3,6 +3,8 @@
 using System;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Business;
 using Domain;
 using Domain.Entities.Identity;
