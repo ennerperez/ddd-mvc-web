@@ -92,6 +92,7 @@ namespace Persistence.Contexts
         #region DbSet
 
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<Client> Clients { get; set; }
 
         #endregion DbSet
 
