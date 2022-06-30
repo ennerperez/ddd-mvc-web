@@ -31,6 +31,10 @@ namespace Infrastructure
         {
             services.AddTransient<IEmailService, SmtpService>();
             services.AddFromAssembly(Assembly.GetExecutingAssembly());
+            
+            services.AddHttpClient();
+
+            services.AddTransient<IEmailService, SmtpService>();
 
 #if USING_BLOBS
             services.AddTransient<IFileService, FileService>();

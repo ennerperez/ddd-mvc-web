@@ -21,7 +21,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -34,14 +41,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.18" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.19" />
   </ItemGroup>
 
   <ItemGroup Label="ConditionalReferences">
     <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.6" />
     <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
     <PackageReference Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
-    <PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
+    <PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5" />
     <PackageReference Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="6.21.61" />
     <PackageReference Condition="'$(EnableBulk)' == 'true'" Include="EFCore.BulkExtensions" Version="6.5.2" />
   </ItemGroup>

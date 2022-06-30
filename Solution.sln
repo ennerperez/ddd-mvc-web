@@ -33,9 +33,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{B0F8
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".workflows", ".workflows", "{218BDA05-D55C-49DC-80F4-71B7AA3C07A2}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A3FE360B-E0E9-470A-B0A3-87E1B6E3B415}"
 EndProject
@@ -46,6 +43,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Business", "tests\Tests.Business\Tests.Business.csproj", "{0A29A9B6-8767-43E5-A5F7-43352A6F51E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Web", "tests\Tests.Web\Tests.Web.csproj", "{D696D734-98A3-426D-A1D5-613DFB9400A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{D5DD9FFE-68B1-49AD-84DB-8394731BCA7E}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure", "azure", "{458BF0DB-73C1-4FB3-BABB-4D3197029618}"
+	ProjectSection(SolutionItems) = preProject
+		.azure\workflows\build.yml = .azure\workflows\build.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,5 +102,7 @@ Global
 		{293AB7D0-1FD6-48FD-B699-DAF5AD41EF31} = {D4673DF9-2E71-4450-8099-E05AA6DD6183}
 		{0A29A9B6-8767-43E5-A5F7-43352A6F51E2} = {D4673DF9-2E71-4450-8099-E05AA6DD6183}
 		{D696D734-98A3-426D-A1D5-613DFB9400A4} = {D4673DF9-2E71-4450-8099-E05AA6DD6183}
+		{D5DD9FFE-68B1-49AD-84DB-8394731BCA7E} = {218BDA05-D55C-49DC-80F4-71B7AA3C07A2}
+		{458BF0DB-73C1-4FB3-BABB-4D3197029618} = {218BDA05-D55C-49DC-80F4-71B7AA3C07A2}
 	EndGlobalSection
 EndGlobal

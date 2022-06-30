@@ -203,6 +203,16 @@ namespace Infrastructure.Services
         }
 
         
+        private async Task<bool> InternalExistsAsync(string path, CancellationToken cancellationToken = default)
+        {
+            var _client = await GetClientAsync(string.Empty, cancellationToken);
+            
+            var blob = _client.GetBlobClient(path);
+            if (blob != null) return await blob.ExistsAsync(cancellationToken);
+            
+            return false;
+        }
+        
         //private const int MaxByteArrayLength = 0x7FFFFFC7;
         private static Encoding s_UTF8NoBOM;
         private static Encoding UTF8NoBOM => s_UTF8NoBOM ?? (s_UTF8NoBOM = new UTF8Encoding(false, true));
@@ -485,6 +495,9 @@ namespace Infrastructure.Services
 
         public Task WriteAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default)
             => InternalWriteAllBytesAsync(path, bytes, cancellationToken, true);
+
+        public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
+            => InternalExistsAsync(path, cancellationToken);
 
         public Task<string[]> ReadAllLinesAsync(string path, CancellationToken cancellationToken = default)
             => ReadAllLinesAsync(path, Encoding.UTF8, cancellationToken);

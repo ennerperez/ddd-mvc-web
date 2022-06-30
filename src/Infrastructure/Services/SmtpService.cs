@@ -63,11 +63,11 @@ namespace Infrastructure.Services
 #endif
             if (useThread)
             {
-                var thread = new Task(() =>
+                var thread = new Task(async () =>
                 {
                     try
                     {
-                        client.SendMailAsync(message);
+                        await client.SendMailAsync(message);
                     }
                     catch (Exception e)
                     {

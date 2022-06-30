@@ -77,6 +77,6 @@ namespace Infrastructure.Interfaces
         Task AppendAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default);
         Task AppendAllLinesAsync(string path, IEnumerable<string> contents, CancellationToken cancellationToken = default);
         Task AppendAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default);
-
+        Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default);
     }
 }

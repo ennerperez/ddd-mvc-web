@@ -4,14 +4,14 @@
   <PropertyGroup Label="Features">
     <UsingSqlite>true</UsingSqlite>
     <UsingSqlServer>true</UsingSqlServer>
-    <UsingMariaDb>false</UsingMariaDb>
-    <UsingMySql>false</UsingMySql>
-    <UsingPostgreSql>false</UsingPostgreSql>
-    <UsingOracle>false</UsingOracle>
+    <UsingMariaDb>true</UsingMariaDb>
+    <UsingMySql>true</UsingMySql>
+    <UsingPostgreSql>true</UsingPostgreSql>
+    <UsingOracle>true</UsingOracle>
   </PropertyGroup>
 
   <PropertyGroup Label="Options">
-    <EnableNonAsync>false</EnableNonAsync>
+    <EnableNonAsync>true</EnableNonAsync>
     <EnableBulk>true</EnableBulk>
     <EnableSplit>true</EnableSplit>
   </PropertyGroup>
