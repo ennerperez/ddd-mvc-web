@@ -85,6 +85,19 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup Label="EN" Condition="'$(DefaultLanguage)' == 'EN'">
+    <Compile Update="Steps\GenericSteps.en.cs">
+      <DependentUpon>GenericSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\GenericSteps.es.cs" />
+  </ItemGroup>
+  <ItemGroup Label="ES" Condition="'$(DefaultLanguage)' == 'ES'">
+    <Compile Update="Steps\GenericSteps.es.cs">
+      <DependentUpon>GenericSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\GenericSteps.en.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />

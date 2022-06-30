@@ -14,7 +14,7 @@ using Xunit;
 namespace Tests.Business.Steps
 {
     [Binding]
-    internal class ScopedSteps
+    internal partial class ScopedSteps
     {
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
@@ -31,22 +31,20 @@ namespace Tests.Business.Steps
             _defaultContext = defaultContext;
         }
 
-        [Given("I have a valid configuration")]
-        public Task ValidateConfigurationAsync()
+        private Task ValidateConfigurationAsync(string method)
         {
             return Task.CompletedTask;
         }
 
-        [When("I initialize the application")]
-        public Task InitializedApplicationAsync()
+        private Task InitializedApplicationAsync(string method)
         {
             return Task.CompletedTask;
         }
 
-        [Then("I should get a valid run")]
-        public Task GetValidRunAsync()
+        private Task GetValidRunAsync(string method)
         {
             return Task.CompletedTask;
         }
+        
     }
 }

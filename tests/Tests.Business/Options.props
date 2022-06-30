@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TestExecutionFramework>xUnit</TestExecutionFramework>
+    <DefaultLanguage>EN</DefaultLanguage>
   </PropertyGroup>
 
   <PropertyGroup Label="BuildConstants">
