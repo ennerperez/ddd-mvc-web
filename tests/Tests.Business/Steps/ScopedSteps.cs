@@ -14,7 +14,7 @@ using Xunit;
 namespace Tests.Business.Steps
 {
     [Binding]
-    internal partial class ScopedSteps
+    public partial class ScopedSteps
     {
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 

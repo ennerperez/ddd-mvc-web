@@ -2,49 +2,46 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Persistence.Contexts;
 using TechTalk.SpecFlow;
+using Tests.Abstractions.Interfaces;
 using Xunit.Framework;
 
 namespace Tests.Web.Steps
 {
     [Binding]
-    public sealed class ScopedSteps
+    public partial class ScopedSteps
     {
-        [Given("I have a valid configuration")]
-        public Task ValidateConfigurationAsync()
+        
+        // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
+
+        private readonly IAutomationConfiguration _automationConfiguration;
+        private readonly IAutomationContext _automationContext;
+        private readonly DefaultContext _defaultContext;
+
+        private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
+
+        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, DefaultContext defaultContext)
+        {
+            _automationConfiguration = automationConfiguration;
+            _automationContext = automationContext;
+            _defaultContext = defaultContext;
+        }
+        
+        private Task ValidateConfigurationAsync(string method)
         {
             return Task.CompletedTask;
         }
 
-        [When("I initialize the application")]
-        public Task InitializedApplicationAsync()
+        private Task InitializedApplicationAsync(string method)
         {
             return Task.CompletedTask;
         }
 
-        [Then("I should get a valid run")]
-        public Task GetValidRunAsync()
+        private Task GetValidRunAsync(string method)
         {
             return Task.CompletedTask;
         }
 
-        [Given(@"The application is running")]
-        public void GivenTheApplicationIsRunning()
-        {
-            try
-            {
-                var processs = new Process();
-                var path = Path.Combine(Directory.GetCurrentDirectory(),"..","..","..","..","..");
-                processs.StartInfo = new ProcessStartInfo("dotnet", "run") { WorkingDirectory = path };
-
-                processs.Start();
-
-                Assert.Pass();
-            }
-            catch (Exception e)
-            {
-                Assert.Fail(e.Message);
-            }
-        }
     }
 }

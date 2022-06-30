@@ -3,7 +3,7 @@ using TechTalk.SpecFlow;
 
 namespace Tests.Business.Steps
 {
-    internal partial class ScopedSteps
+    public partial class ScopedSteps
     {
         [Given("Tengo una configuraci[o|ó]n v[a|á]lida")]
         public Task CuandoTengoConfiguracionValidaAsync()

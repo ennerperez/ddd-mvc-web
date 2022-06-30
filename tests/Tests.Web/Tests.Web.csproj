@@ -90,12 +90,20 @@
       <DependentUpon>GenericSteps.cs</DependentUpon>
     </Compile>
     <Compile Remove="Steps\GenericSteps.es.cs" />
+    <Compile Update="Steps\ScopedSteps.en.cs">
+      <DependentUpon>ScopedSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\ScopedSteps.es.cs" />
   </ItemGroup>
   <ItemGroup Label="ES" Condition="'$(DefaultLanguage)' == 'ES'">
     <Compile Update="Steps\GenericSteps.es.cs">
       <DependentUpon>GenericSteps.cs</DependentUpon>
     </Compile>
     <Compile Remove="Steps\GenericSteps.en.cs" />
+    <Compile Update="Steps\ScopedSteps.es.cs">
+      <DependentUpon>ScopedSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\ScopedSteps.en.cs" />
   </ItemGroup>
 
   <ItemGroup>
