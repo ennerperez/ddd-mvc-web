@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using MediatR;
 using TechTalk.SpecFlow;
 using Persistence.Contexts;
 using Tests.Abstractions.Interfaces;
@@ -20,15 +21,15 @@ namespace Tests.Business.Steps
 
         private readonly IAutomationConfiguration _automationConfiguration;
         private readonly IAutomationContext _automationContext;
-        private readonly DefaultContext _defaultContext;
+        private readonly ISender _mediator;
 
         private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
-        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, DefaultContext defaultContext)
+        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, ISender mediator)
         {
             _automationConfiguration = automationConfiguration;
             _automationContext = automationContext;
-            _defaultContext = defaultContext;
+            _mediator = mediator;
         }
 
         private Task ValidateConfigurationAsync(string method)
