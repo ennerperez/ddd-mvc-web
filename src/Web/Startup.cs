@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
 
@@ -201,12 +202,22 @@ namespace Web
 #endif
 #endif
 
-            services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+            services.AddResponseCaching(options =>
+            {
+                options.MaximumBodySize = 1024;
+                options.UseCaseSensitivePaths = true;
+            });
+            
             services.AddResponseCompression(config =>
             {
                 config.EnableForHttps = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection");
+                config.Providers.Add<BrotliCompressionProvider>();
                 config.Providers.Add<GzipCompressionProvider>();
+                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml", "text/css", "text/javascript" });
             });
+            
+            services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
+            services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.SmallestSize; });
 
             var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
             {
@@ -328,8 +339,40 @@ namespace Web
 #if USING_LOCALIZATION
             app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
 #endif
+            
+            var cacheControlInSeconds = Configuration.GetValue<int>("AppSettings:CacheControl");
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + cacheControlInSeconds.ToString("0");
+                }
+            });
+                
+            app.UseResponseCaching();
+            
+            app.Use(async (context, next) =>
+            {
+                string path = context.Request.Path;
+
+                if (path.EndsWith(".css") || path.EndsWith(".js"))
+                {
+                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds.ToString("0")}");
+                }
+                else if (path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".webp") || path.EndsWith(".svg"))
+                {
+                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds.ToString("0")}");
+                }
+                else
+                {
+                    //Request for views fall here.
+                    context.Response.Headers.Append("Cache-Control", "no-cache");
+                    context.Response.Headers.Append("Cache-Control", "private, no-store");
+                }
+
+                await next();
+            });
 
             app.UseResponseCompression();
 
