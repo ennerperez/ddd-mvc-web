@@ -36,17 +36,6 @@ namespace Infrastructure.Services
 #endif
             return data;
         }
-
-        public static void RegisterFonts(string path, string format = "ttf")
-        {
-            if (!Directory.Exists(path))
-                return;
-
-            var fonts = Directory.GetFiles(path, $"*.{format}");
-            foreach (var font in fonts)
-                using (var fs = File.OpenRead(font))
-                    QuestPDF.Drawing.FontManager.RegisterFont(fs);
-        }
     }
 }
 #endif
