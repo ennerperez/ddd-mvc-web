@@ -95,7 +95,10 @@ namespace Web
 #endif
 #if USING_INSIGHTS
             // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry(Configuration["AzureSettings:ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(options =>
+            { 
+                options.ConnectionString = Configuration["AzureSettings:ApplicationInsights:ConnectionString"];
+            });
 #endif
 
             services.AddDatabaseDeveloperPageExceptionFilter();
