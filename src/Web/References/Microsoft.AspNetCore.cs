@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Policy;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,6 +19,8 @@ using Microsoft.AspNetCore.Authentication.ApiKey;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 #if ENABLE_AB2C
 using Microsoft.Identity.Web;
 #endif
@@ -521,6 +524,27 @@ namespace Microsoft.AspNetCore
                 {
                     return new SelectList(source.OrderBy(m => m.Key), dataValueField, dataTextField);
                 }
+                
+                public static async Task<string> ToHtmlAsync(this Controller @this, string viewToRender, ViewDataDictionary viewData )
+                {
+                    var engine = @this.HttpContext.RequestServices.GetService<ICompositeViewEngine>();
+                    if (engine == null) return string.Empty;
+                    
+                    var result = engine.FindView(@this.ControllerContext, viewToRender, false);
+
+                    StringWriter output;
+                    using (output = new StringWriter())
+                    {
+                        if (result.View != null)
+                        {
+                            var viewContext = new ViewContext(@this.ControllerContext, result.View, viewData, @this.TempData, output, new HtmlHelperOptions());
+                            await result.View.RenderAsync(viewContext);
+                        }
+                    }
+
+                    return output.ToString();
+                }
+                
             }
         }
     }
