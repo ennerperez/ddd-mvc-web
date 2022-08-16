@@ -1,11 +1,8 @@
 // #define SESSION_TEST
 
 using System;
-using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Business;
 using Domain;
 using Domain.Entities.Identity;
@@ -440,7 +437,9 @@ namespace Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-            RegisterFonts("wwwroot/fonts");
+#if USING_QUESTPDF
+            DocumentService.RegisterFonts("wwwroot/fonts");
+#endif
             
             app.UseEndpoints(endpoints =>
             {
@@ -452,17 +451,6 @@ namespace Web
                     pattern: "{controller=Default}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
-        }
-        
-        private static void RegisterFonts(string path, string format = "ttf")
-        {
-            if (!Directory.Exists(path))
-                return;
-
-            var fonts = Directory.GetFiles(path, $"*.{format}");
-            foreach (var font in fonts)
-                using (var fs = File.OpenRead(font))
-                    QuestPDF.Drawing.FontManager.RegisterFont(fs);
         }
     }
 }

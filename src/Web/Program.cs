@@ -55,9 +55,7 @@ namespace Web
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog() //Uses Serilog instead of default .NET Logger
-#if DEBUG
                 .ConfigureServices(service => service.AddHostedService<SeedService>())
-#endif
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

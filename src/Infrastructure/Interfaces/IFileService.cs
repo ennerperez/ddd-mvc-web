@@ -9,6 +9,9 @@ namespace Infrastructure.Interfaces
 {
     public interface IFileService
     {
+        string ContainerName { get; set; }
+        bool CreateIfNotExists { get; set; }
+        
         StreamReader OpenText(string path);
         StreamWriter CreateText(string path);
         StreamWriter AppendText(string path);
@@ -77,6 +80,6 @@ namespace Infrastructure.Interfaces
         Task AppendAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default);
         Task AppendAllLinesAsync(string path, IEnumerable<string> contents, CancellationToken cancellationToken = default);
         Task AppendAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default);
-        Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default);
+
     }
 }

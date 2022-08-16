@@ -40,6 +40,9 @@ namespace Infrastructure
 #if USING_QUEUES
             services.AddTransient<IQueueService, QueueService>();
 #endif
+#if USING_TABLES
+            services.AddTransient<ITableService, TableService>();
+#endif
             return services;
         }
 

@@ -30,6 +30,7 @@ namespace Infrastructure.Services
         }
 
         public string ContainerName { get; set; }
+        public bool CreateIfNotExists { get; set; }
 
         public async Task<BlobContainerClient> GetClientAsync(string containerName = "", CancellationToken cancellationToken = default)
         {

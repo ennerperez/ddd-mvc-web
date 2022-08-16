@@ -9,6 +9,9 @@ namespace Infrastructure.Interfaces
 {
     public interface IQueueService
     {
+        string QueueName { get; set; }
+        bool CreateIfNotExists { get; set; }
+        
 #if USING_QUEUES
 
         Task<PeekedMessage> PeekMessageAsync(string queueName = "");

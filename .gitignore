@@ -573,8 +573,9 @@ package-lock.json
 *.private.env.json
 
 #Extras
-**/bootstrap.css
 **/Data
 
 # SpecFlow
 *.feature.cs
+# SCSS
+**/bootstrap*.css

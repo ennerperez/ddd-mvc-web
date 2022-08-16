@@ -4,12 +4,14 @@
   <PropertyGroup Label="Features">
     <UsingAzureBlobs>true</UsingAzureBlobs>
     <UsingAzureQueues>true</UsingAzureQueues>
+    <UsingAzureTables>true</UsingAzureTables>
     <UsingQuestPDF>true</UsingQuestPDF>
   </PropertyGroup>
 
   <PropertyGroup>
     <BuildConstants Condition="'$(UsingAzureBlobs)' == 'true'">$(BuildConstants)USING_BLOBS;</BuildConstants>
     <BuildConstants Condition="'$(UsingAzureQueues)' == 'true'">$(BuildConstants)USING_QUEUES;</BuildConstants>
+    <BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
     <BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
   </PropertyGroup>
 

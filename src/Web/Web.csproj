@@ -22,22 +22,22 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.8" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.25.1" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.25.1" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.8" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -62,10 +62,10 @@
   </Target>
 
   <ItemGroup Label="ConditionalReferences">
-    <PackageReference Condition="'$(EnableBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
-    <PackageReference Condition="'$(EnableOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.7" />
+    <PackageReference Condition="'$(EnableBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
+    <PackageReference Condition="'$(EnableOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.8" />
     <PackageReference Condition="'$(UsingInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
-    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
+    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
     <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
     <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
@@ -74,7 +74,7 @@
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.4.0" />
-    <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.54.0" />
+    <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.54.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -20,9 +20,9 @@ namespace Tests.Abstractions
         public static IEnumerable<T> GetTagValues<T>(this string[] stringArray, string name)
         {
             var regEx = new Regex(@$"{name}\((.*)\)", RegexOptions.Compiled);
-            var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).ToArray();
-            var result = tags.Any() ? tags.Select(m=> Convert.ChangeType(m.Groups[1].Value, typeof(T))) : null;
-            return (IEnumerable<T>)result;
+            var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).SelectMany(o => o.Groups[1].Value.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator)).ToArray();
+            var result = tags.Any() ? tags.Select(m=> (T)Convert.ChangeType(m, typeof(T))).ToArray() : null;
+            return result;
         }
         
         public static string GetAllContextInformation(this IAutomationContext @this)
