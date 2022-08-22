@@ -3,7 +3,7 @@ using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class Client : IEntity<int>, IAuditable
+    public class Client : IEntity, IAuditable
     {
 
         public Client()

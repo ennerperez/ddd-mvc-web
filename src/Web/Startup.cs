@@ -1,3 +1,5 @@
+// #define SESSION_TEST
+
 using System;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -5,10 +7,8 @@ using Business;
 using Domain;
 using Domain.Entities.Identity;
 using Infrastructure;
-using Microsoft.AspNetCore.Authentication.Cookies;
-#if ENABLE_APIKEY || ENABLE_BEARER
 using Microsoft.AspNetCore.Authentication;
-#endif
+using Microsoft.AspNetCore.Authentication.Cookies;
 #if ENABLE_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
 
@@ -44,14 +45,26 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 #endif
 
-#if DEBUG && USING_SASS
-using AspNetCore.SassCompiler;
-#endif
-
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Web
 {
     public class Startup
     {
+        
+#if DEBUG && SESSION_TEST
+        // internal static TimeSpan SessionIdleTimeout = TimeSpan.FromMinutes(1);
+        // internal static TimeSpan SessionIOTimeout = TimeSpan.FromMinutes(1);
+        internal static TimeSpan AntiforgeryExpiration = TimeSpan.FromMinutes(10);
+        internal static TimeSpan CookieExpireTimeSpan = TimeSpan.FromMinutes(10);
+        internal static TimeSpan TokenExpiryDurationMinutes = TimeSpan.FromMinutes(10);
+#else
+        // internal static TimeSpan SessionIdleTimeout = TimeSpan.FromHours(4);
+        // internal static TimeSpan SessionIOTimeout = TimeSpan.FromHours(4);
+        internal static TimeSpan AntiforgeryExpiration = TimeSpan.FromHours(8);
+        internal static TimeSpan CookieExpireTimeSpan = TimeSpan.FromDays(8);
+        internal static TimeSpan TokenExpiryDurationMinutes = TimeSpan.FromDays(8);
+#endif
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -62,13 +75,13 @@ namespace Web
 #endif
         }
 
-        public static string Name { get; private set; }
+        internal static string Name { get; private set; }
         internal IConfiguration Configuration { get; private set; }
 
 #if USING_LOCALIZATION
-        public CultureInfo[] SupportedCultures { get; private set; }
+        internal CultureInfo[] SupportedCultures { get; private set; }
 
-        public static CultureInfo CurrencyCulture { get; private set; }
+        internal static CultureInfo CurrencyCulture { get; private set; }
 
 #endif
 
@@ -80,7 +93,10 @@ namespace Web
 #endif
 #if USING_INSIGHTS
             // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry(Configuration["AzureSettings:ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(options =>
+            { 
+                options.ConnectionString = Configuration["AzureSettings:ApplicationInsights:ConnectionString"];
+            });
 #endif
 
             services.AddDatabaseDeveloperPageExceptionFilter();
@@ -94,6 +110,8 @@ namespace Web
             });
             services.AddLocalization(options=> options.ResourcesPath = "Resources");
 #endif
+            
+            services.AddHttpContextAccessor();
 
             services
                 .AddDomain()
@@ -111,7 +129,7 @@ namespace Web
                 .AddRoleManager<RoleManager<Role>>()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DefaultContext>();
-
+            
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
@@ -185,14 +203,22 @@ namespace Web
 #endif
 #endif
 
-            services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+            services.AddResponseCaching(options =>
+            {
+                options.MaximumBodySize = 1024;
+                options.UseCaseSensitivePaths = true;
+            });
+            
             services.AddResponseCompression(config =>
             {
                 config.EnableForHttps = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection");
+                config.Providers.Add<BrotliCompressionProvider>();
                 config.Providers.Add<GzipCompressionProvider>();
+                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml", "text/css", "text/javascript" });
             });
-
-            services.AddHttpContextAccessor();
+            
+            services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
+            services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.SmallestSize; });
 
             var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
             {
@@ -205,7 +231,6 @@ namespace Web
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.Cookie = new CookieBuilder
                 {
-                    HttpOnly = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"), 
                     IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
                 options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -277,7 +302,7 @@ namespace Web
 #if ENABLE_APIKEY
                 .AddApiKey()
 #endif
-                ;
+                .Close();
 
             services.AddAuthorization();
         }
@@ -315,8 +340,40 @@ namespace Web
 #if USING_LOCALIZATION
             app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
 #endif
+            
+            var cacheControlInSeconds = Configuration.GetValue<int>("AppSettings:CacheControl");
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + cacheControlInSeconds.ToString("0");
+                }
+            });
+                
+            app.UseResponseCaching();
+            
+            app.Use(async (context, next) =>
+            {
+                string path = context.Request.Path;
+
+                if (path.EndsWith(".css") || path.EndsWith(".js"))
+                {
+                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds.ToString("0")}");
+                }
+                else if (path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".webp") || path.EndsWith(".svg"))
+                {
+                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds.ToString("0")}");
+                }
+                else
+                {
+                    //Request for views fall here.
+                    context.Response.Headers.Append("Cache-Control", "no-cache");
+                    context.Response.Headers.Append("Cache-Control", "private, no-store");
+                }
+
+                await next();
+            });
 
             app.UseResponseCompression();
 
@@ -380,6 +437,10 @@ namespace Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+#if USING_QUESTPDF
+            DocumentService.RegisterFonts("wwwroot/fonts");
+#endif
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

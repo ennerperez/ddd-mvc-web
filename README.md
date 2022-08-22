@@ -1,4 +1,4 @@
-![logo](src/.editoricon.png)
+![logo](.editoricon.png)
 
 # [Title]
 

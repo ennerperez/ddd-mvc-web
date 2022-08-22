@@ -53,7 +53,7 @@ Task("Test")
     .IsDependentOn("Zip")
     .Does(() =>
 {
-    DotNetTest("./src/Solution.sln", new DotNetTestSettings
+    DotNetTest("./Solution.sln", new DotNetTestSettings
     {
         Configuration = configuration,
         NoBuild = true,

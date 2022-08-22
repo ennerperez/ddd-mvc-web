@@ -15,7 +15,7 @@
       "destination": "wwwroot/lib/bootstrap"
     },
     {
-      "library": "bootstrap-icons@1.5.0",
+      "library": "bootstrap-icons@1.8.3",
       "destination": "wwwroot/lib/bootstrap-icons"
     },
     {
@@ -39,11 +39,11 @@
       "destination": "wwwroot/lib/datatables.net-bs5"
     },
     {
-      "library": "datatables.net-buttons@2.0.1",
+      "library": "datatables.net-buttons@2.2.3",
       "destination": "wwwroot/lib/datatables.net-buttons"
     },
     {
-      "library": "datatables.net-buttons-bs5@2.0.1",
+      "library": "datatables.net-buttons-bs5@2.2.3",
       "destination": "wwwroot/lib/datatables.net-buttons-bs5"
     },
     {
@@ -51,7 +51,7 @@
       "destination": "wwwroot/lib/jszip"
     },
     {
-      "library": "pdfmake@0.1.36",
+      "library": "pdfmake@0.1.39",
       "destination": "wwwroot/lib/pdfmake"
     },
     {
