@@ -19,7 +19,11 @@ using Persistence.Interfaces;
 
 namespace Web.Controllers
 {
+#if !USING_SMARTSCHEMA
+    [Authorize]
+#else
     [Authorize(AuthenticationSchemes = SmartScheme.AuthenticationScheme)]
+#endif
     [Route("api/[controller]")]
     [ApiController]
     public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
@@ -33,7 +37,7 @@ namespace Web.Controllers
         {
             Repository = repository;
         }
-        
+
         public async Task<JsonResult> Table<TResult>(TableInfo model,
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
@@ -54,7 +58,7 @@ namespace Web.Controllers
                 }
             }
 
-            var order = orderByKeys.Select(m => new[] {m.Key, m.Value}).ToArray();
+            var order = orderByKeys.Select(m => new[] { m.Key, m.Value }).ToArray();
 
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
@@ -76,7 +80,7 @@ namespace Web.Controllers
                     {
                         var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
                         if (prop != null)
-                            return new {Property = prop, column.Name, column.Search.Value};
+                            return new { Property = prop, column.Name, column.Search.Value };
 
                         return null;
                     });
@@ -113,10 +117,10 @@ namespace Web.Controllers
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] {"Contains", "Equals", "CompareTo"};
+                            var methods = new[] { "Contains", "Equals", "CompareTo" };
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] {type});
+                                var methodInfo = type.GetMethod(method, new[] { type });
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -163,7 +167,7 @@ namespace Web.Controllers
             var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
             var stotal = isFiltered ? data.Count : total;
 
-            return new JsonResult(new TableResult() {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
+            return new JsonResult(new TableResult() { iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data });
         }
     }
 
