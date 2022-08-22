@@ -32,7 +32,7 @@ namespace Web.Controllers.API
             {
                 var collection = await Mediator.SendWithRepository((new Client()).Select(s => s), null, null, null);
                 if (collection == null || !collection.Any())
-                    return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>()});
+                    return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Client>()});
 
                 return new JsonResult(new {lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection});
             }

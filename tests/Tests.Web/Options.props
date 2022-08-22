@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <TestExecutionFramework>xUnit</TestExecutionFramework>
+    <DefaultLanguage>EN</DefaultLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Label="BuildConstants">
+    <BuildConstants Condition="'$(TestExecutionFramework)' == 'xUnit'">$(BuildConstants)XUNIT;</BuildConstants>
+    <BuildConstants Condition="'$(TestExecutionFramework)' == 'NUnit'">$(BuildConstants)NUNIT;</BuildConstants>
+    <DefineConstants Condition="'$(BuildConstants)' != ''">$(BuildConstants)$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+</Project>

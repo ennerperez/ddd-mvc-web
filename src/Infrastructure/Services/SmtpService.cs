@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services
 {
-     public class SmtpService : ISmtpService
+     public class SmtpService : IEmailService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
@@ -63,11 +63,11 @@ namespace Infrastructure.Services
 #endif
             if (useThread)
             {
-                var thread = new Task(() =>
+                var thread = new Task(async () =>
                 {
                     try
                     {
-                        client.SendMailAsync(message);
+                        await client.SendMailAsync(message);
                     }
                     catch (Exception e)
                     {

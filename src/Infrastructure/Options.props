@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup Label="Features">
+    <UsingAzureBlobs>true</UsingAzureBlobs>
+    <UsingAzureQueues>true</UsingAzureQueues>
+    <UsingAzureTables>true</UsingAzureTables>
+    <UsingQuestPDF>true</UsingQuestPDF>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildConstants Condition="'$(UsingAzureBlobs)' == 'true'">$(BuildConstants)USING_BLOBS;</BuildConstants>
+    <BuildConstants Condition="'$(UsingAzureQueues)' == 'true'">$(BuildConstants)USING_QUEUES;</BuildConstants>
+    <BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
+    <BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="'$(BuildConstants)' != ''">$(BuildConstants)$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+</Project>

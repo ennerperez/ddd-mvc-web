@@ -1,0 +1,116 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="Options.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>default</LangVersion>
+    <IsPackable>false</IsPackable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\.files\AssemblyInfo.General.cs">
+      <Link>Properties\AssemblyInfo.General.cs</Link>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\src\.files\AssemblyInfo.Version.cs">
+      <Link>Properties\AssemblyInfo.Version.cs</Link>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl" Version="3.0.6" />
+    <PackageReference Include="Flurl.Http" Version="3.2.4" />
+    <PackageReference Include="Selenium.Support" Version="4.4.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="104.0.5112.7900" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="NUnit" Condition="'$(TestExecutionFramework)' == 'NUnit'">
+    <PackageReference Include="nunit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
+    <None Remove="xunit.runner.json" />
+  </ItemGroup>
+  <ItemGroup Label="xUnit" Condition="'$(TestExecutionFramework)' == 'xUnit'">
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runners" Version="2.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.console" Version="2.4.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.utility" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.reporters" Version="2.4.2" />
+    <PackageReference Include="SpecFlow.xUnit" Version="3.9.74" />
+    <Content Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="specflow.Development.json" />
+    <Content Include="specflow.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>specflow.json</DependentUpon>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Label="Specflow">
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="specflow.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Update="specflow.Development.json">
+      <DependentUpon>specflow.json</DependentUpon>
+    </None>
+    <Content Include="specflow.Timeouts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>specflow.json</DependentUpon>
+    </Content>
+    <Content Include="specflow.Timeouts.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>specflow.Timeouts.json</DependentUpon>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Label="EN" Condition="'$(DefaultLanguage)' == 'EN'">
+    <Compile Update="Steps\GenericSteps.en.cs">
+      <DependentUpon>GenericSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\GenericSteps.es.cs" />
+    <Compile Update="Steps\ScopedSteps.en.cs">
+      <DependentUpon>ScopedSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\ScopedSteps.es.cs" />
+  </ItemGroup>
+  <ItemGroup Label="ES" Condition="'$(DefaultLanguage)' == 'ES'">
+    <Compile Update="Steps\GenericSteps.es.cs">
+      <DependentUpon>GenericSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\GenericSteps.en.cs" />
+    <Compile Update="Steps\ScopedSteps.es.cs">
+      <DependentUpon>ScopedSteps.cs</DependentUpon>
+    </Compile>
+    <Compile Remove="Steps\ScopedSteps.en.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tests.Abstractions\Tests.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

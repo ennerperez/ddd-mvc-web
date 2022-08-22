@@ -1,0 +1,9 @@
+﻿{
+  "$schema": "https://specflow.org/specflow-config.json",
+  "trace": { "traceSuccessfulSteps": true },
+  "generator": { "allowDebugGeneratedFiles": true },
+  "bindingCulture": { "language": "en"  },
+  "language": { "feature": "en" },
+  "requiredTags": [],
+  "requiredTagPrefixes": ["Environment"]
+}
