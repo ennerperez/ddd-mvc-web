@@ -20,6 +20,8 @@ namespace Persistence
         {
             services.AddDbContext<DefaultContext>(optionsBuilder);
             services.AddTransient<DbContext, DefaultContext>();
+            DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
+            
             services.AddPersistence();
             return services;
         }
@@ -36,6 +38,8 @@ namespace Persistence
         {
             services.AddDbContext<DefaultContext>(optionsBuilder);
             services.AddTransient<DbContext, DefaultContext>();
+            DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
+            
             services.AddPersistence(configureOptions);
             return services;
         }
@@ -51,6 +55,8 @@ namespace Persistence
         {
             services.AddDbContext<DefaultContext>();
             services.AddTransient<DbContext, DefaultContext>();
+            DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
+            
             services.AddPersistence();
             return services;
         }
@@ -76,9 +82,7 @@ namespace Persistence
         private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
         {
             if (!assemblies.Any())
-            {
                 throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
-            }
 
             var assembliesToScan = assemblies.Distinct().ToArray();
             services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), assembliesToScan, false);
@@ -86,5 +90,7 @@ namespace Persistence
         }
 
         #endregion
+
+        public static Func<DbContext> DbContext { get; set; }
     }
 }
