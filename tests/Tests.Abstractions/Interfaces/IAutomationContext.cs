@@ -22,7 +22,5 @@ namespace Tests.Abstractions.Interfaces
         string TestPlanTarget { get; set; }
         string TestCaseTarget { get; set; }
         
-        public Dictionary<string, object> AttributeLibrary { get; }
-        
     }
 }

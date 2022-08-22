@@ -6,7 +6,7 @@ using Tests.Abstractions.Interfaces;
 
 namespace Tests.Business.Contexts
 {
-    public class AutomationContext : IAutomationContext
+    public class AutomationContext : IAutomationContext, IAttributeLibrary
     {
         public AutomationContext(IAutomationConfiguration automationConfigurations, FeatureContext featureContext, ScenarioContext scenarioContext)
         {
@@ -38,6 +38,27 @@ namespace Tests.Business.Contexts
         public bool IsInitialized { get; set; }
 
         public Dictionary<string, object> AttributeLibrary { get; } = new();
+        public object GetAttributeFromAttributeLibrary(string attributeKey, bool throwException = true)
+        {
+            if (AttributeLibrary.TryGetValue(attributeKey, out var attributeObject))
+            {
+                return attributeObject;
+            }
+            else if (throwException)
+            {
+                throw new KeyNotFoundException($"The {attributeKey} Attribute Key is not defined anywhere within the Feature.");
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void SetAttributeInAttributeLibrary(string attributeKey, object attributeObject)
+        {
+            AttributeLibrary.Remove(attributeKey);
+            AttributeLibrary.Add(attributeKey, attributeObject);
+        }
 
         public Exception TestError { get; } = null;
     }
