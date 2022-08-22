@@ -99,11 +99,28 @@ namespace System
         #endregion
 
 
-        public static T AsEnum<T>(this string @this, bool ignoreCase = true) where T : Enum
+        public static T AsEnum<T>(this string @this, bool ignoreCase = true)
         {
             if (!string.IsNullOrWhiteSpace(@this))
                 return (T)Enum.Parse(typeof(T), @this, ignoreCase: ignoreCase);
             return default(T);
+        }
+
+        public static object AsEnum(this string @this, Type type, bool ignoreCase = true)
+        {
+            if (!string.IsNullOrWhiteSpace(@this))
+                return Enum.Parse(type, @this, ignoreCase: ignoreCase);
+            return default;
+        }
+
+        public static bool Is(this string @this, string value, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
+        {
+            if (!string.IsNullOrWhiteSpace(@this))
+                return @this.Equals(value, comparison);
+            else if (!string.IsNullOrWhiteSpace(value)) 
+                return false;
+            else
+                return @this == value;
         }
     }
 }

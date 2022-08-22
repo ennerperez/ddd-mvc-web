@@ -90,6 +90,10 @@ namespace Tests.Business
                 .AddPersistence(options =>
                 {
                     DefaultContext.UseDbEngine(options, Configuration);
+                    Persistence.Extensions.DbContext = () =>
+                    {
+                        return Container.GetRequiredService<DefaultContext>();
+                    };
                 })
                 .AddBusiness();
 

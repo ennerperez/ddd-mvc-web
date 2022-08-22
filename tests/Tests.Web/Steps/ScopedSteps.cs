@@ -1,11 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using Persistence.Contexts;
+﻿using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
-using Xunit.Framework;
 
 namespace Tests.Web.Steps
 {
@@ -17,15 +12,13 @@ namespace Tests.Web.Steps
 
         private readonly IAutomationConfiguration _automationConfiguration;
         private readonly IAutomationContext _automationContext;
-        private readonly DefaultContext _defaultContext;
 
         private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
-        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, DefaultContext defaultContext)
+        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext)
         {
             _automationConfiguration = automationConfiguration;
             _automationContext = automationContext;
-            _defaultContext = defaultContext;
         }
         
         private Task ValidateConfigurationAsync(string method)

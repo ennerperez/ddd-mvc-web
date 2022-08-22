@@ -20,13 +20,15 @@ namespace Tests.Business.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "Environment(development)")]
+    [Xunit.TraitAttribute("Category", "RestoreDatabase")]
     public partial class InitializationFeature : object, Xunit.IClassFixture<InitializationFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
         private static string[] featureTags = new string[] {
-                "Environment(development)"};
+                "Environment(development)",
+                "RestoreDatabase"};
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         

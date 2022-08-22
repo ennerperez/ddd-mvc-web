@@ -1,4 +1,5 @@
 ﻿@Environment(development)
+@RestoreDatabase
 Feature: Initialization
 Initalizing the application
 
