@@ -577,5 +577,6 @@ package-lock.json
 
 # SpecFlow
 *.feature.cs
+
 # SCSS
 **/bootstrap*.css
