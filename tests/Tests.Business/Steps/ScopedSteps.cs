@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using TechTalk.SpecFlow;
-using Persistence.Contexts;
 using Tests.Abstractions.Interfaces;
+using Tests.Abstractions.Services;
 
 #if NUNIT
 using NUnit.Framework;
@@ -24,12 +24,15 @@ namespace Tests.Business.Steps
         private readonly ISender _mediator;
 
         private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
+        
+        protected readonly LoremIpsumService _loremIpsumService;
 
-        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, ISender mediator)
+        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, ISender mediator, LoremIpsumService loremIpsumService)
         {
             _automationConfiguration = automationConfiguration;
             _automationContext = automationContext;
             _mediator = mediator;
+            _loremIpsumService = loremIpsumService;
         }
 
         private Task ValidateConfigurationAsync(string method)

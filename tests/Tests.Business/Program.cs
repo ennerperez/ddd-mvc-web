@@ -18,6 +18,7 @@ using SolidToken.SpecFlow.DependencyInjection;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Helpers;
 using Tests.Abstractions.Interfaces;
+using Tests.Abstractions.Services;
 using Tests.Abstractions.Settings;
 using Tests.Business.Contexts;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -32,8 +33,8 @@ namespace Tests.Business
         public static IConfiguration Configuration { get; private set; }
         public static ILogger Logger { get; private set; }
 
-        public static ServiceCollection Services { get; private set; }
-        public static ServiceProvider Container { get; private set; }
+        public static IServiceCollection Services { get; private set; }
+        public static IServiceProvider Container { get; private set; }
 
         #endregion
 
@@ -95,6 +96,7 @@ namespace Tests.Business
             Services.AddScoped<IAutomationConfiguration, SpecFlowConfiguration>();
             Services.AddScoped<IAutomationContext, AutomationContext>();
             Services.AddSingleton<IStepHelper, StepsHelper>();
+            Services.AddSingleton<LoremIpsumService>();
 
             Container = Services.BuildServiceProvider();
             var factory = Container.GetService<ILoggerFactory>();

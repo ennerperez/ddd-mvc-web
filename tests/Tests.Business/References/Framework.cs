@@ -13,15 +13,15 @@ namespace Xunit.Framework
         }
 
         [DebuggerStepThrough]
-        public static void Fail(string message = "")
+        private static void Fail(string message = "")
         {
             Xunit.Assert.True(false, message);
         }
 
         [DebuggerStepThrough]
-        public static void Fail(Exception exception)
+        public static void Fail(Exception exception, bool stack = false)
         {
-            var message = $"{exception.Message}\r\n\r\n{exception.StackTrace}";
+            var message = $"{exception.Message}{(stack? $"\r\n\r\n{exception.StackTrace}" : "")}";
             Fail(message);
         }
 

@@ -1,36 +1,71 @@
 ﻿// ReSharper disable once CheckNamespace
 
+using System.Threading;
+
 namespace System
 {
     public static class Extensions
     {
-        
+        private static int seedCounter = new Random().Next();
+
+        [ThreadStatic] private static Random rng;
+
+        internal static Random Instance
+        {
+            get
+            {
+                if (rng == null)
+                {
+                    int seed = Interlocked.Increment(ref seedCounter);
+                    rng = new Random(seed);
+                }
+
+                return rng;
+            }
+        }
+
+        public static int Random()
+        {
+            return Instance.Next();
+        }
+
+        public static int Random(int maxValue)
+        {
+            return Instance.Next(maxValue);
+        }
+
+        public static int Random(int minValue, int maxValue)
+        {
+            return Instance.Next(minValue, maxValue);
+        }
+
+
         /// <summary>
         /// Returns an Int32 with a random value across the entire range of
         /// possible values.
         /// </summary>
-        public static int NextInt32(this Random rng)
+        public static int NextInt32(this Random @this)
         {
-            int firstBits = rng.Next(0, 1 << 4) << 28;
-            int lastBits = rng.Next(0, 1 << 28);
+            int firstBits = @this.Next(0, 1 << 4) << 28;
+            int lastBits = @this.Next(0, 1 << 28);
             return firstBits | lastBits;
         }
 
         #region NextLong
 
-        public static long NextLong(this Random random)
+        public static long NextLong(this Random @this)
         {
-            return random.NextInt64();
+            return @this.NextInt64();
         }
 
-        public static long NextLong(this Random random, long maxValue)
+        public static long NextLong(this Random @this, long maxValue)
         {
-            return random.NextInt64(0, maxValue);
+            return @this.NextInt64(0, maxValue);
         }
 
-        public static long NextLong(this Random random, long minValue, long maxValue)
+        public static long NextLong(this Random @this, long minValue, long maxValue)
         {
-            return random.NextInt64(minValue, maxValue);
+            return @this.NextInt64(minValue, maxValue);
         }
 
         #endregion
@@ -62,5 +97,13 @@ namespace System
         }
 
         #endregion
+
+
+        public static T AsEnum<T>(this string @this, bool ignoreCase = true) where T : Enum
+        {
+            if (!string.IsNullOrWhiteSpace(@this))
+                return (T)Enum.Parse(typeof(T), @this, ignoreCase: ignoreCase);
+            return default(T);
+        }
     }
 }

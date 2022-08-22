@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
 
 namespace Tests.Abstractions
@@ -14,17 +15,51 @@ namespace Tests.Abstractions
             var regEx = new Regex(@$"{name}\((.*)\)", RegexOptions.Compiled);
             var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).ToArray();
             var result = tags.Any() ? tags.First().Groups[1].Value : null;
-            return (T)Convert.ChangeType(result, typeof(T));
+            var type = typeof(T);
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition())
+            {
+                if (string.IsNullOrWhiteSpace(result)) return default(T);
+                return (T)Convert.ChangeType(result, conversionType: Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
+            }
+                
+            return (T)Convert.ChangeType(result, type);
         }
-        
+
         public static IEnumerable<T> GetTagValues<T>(this string[] stringArray, string name)
         {
             var regEx = new Regex(@$"{name}\((.*)\)", RegexOptions.Compiled);
             var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).SelectMany(o => o.Groups[1].Value.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator)).ToArray();
-            var result = tags.Any() ? tags.Select(m=> (T)Convert.ChangeType(m, typeof(T))).ToArray() : null;
+            var result = tags.Any()
+                ? tags.Select(m =>
+                {
+                    var type = typeof(T);
+                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition())
+                    {
+                        if (string.IsNullOrWhiteSpace(m)) return default(T);
+                        return (T)Convert.ChangeType(m, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
+                    }
+                    return (T)Convert.ChangeType(m, type);
+                }).ToArray() : null;
             return result;
         }
         
+        public static T GetValue<T>(this Table table, string key, bool ignoreCase = true)
+        {
+            var stringComparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.Ordinal;
+            if (table.Rows.Any(m => m["Field"].Equals(key, stringComparison)))
+            {
+                var value = table.Rows.FirstOrDefault(m => m["Field"].Equals(key, stringComparison))?["Value"];
+                var type = typeof(T);
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition())
+                {
+                    if (string.IsNullOrWhiteSpace(value)) return default(T);
+                    return (T)Convert.ChangeType(value, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
+                }
+                return (T)Convert.ChangeType(value, type);                
+            }
+            return default(T);
+        }
+
         public static string GetAllContextInformation(this IAutomationContext @this)
         {
             var sb = new StringBuilder();
@@ -51,7 +86,7 @@ namespace Tests.Abstractions
 
             return sb.ToString();
         }
-        
+
         public static object GetAttributeFromAttributeLibrary(this IAutomationContext @this, string attributeKey, bool throwException = true)
         {
             if (@this.AttributeLibrary.TryGetValue(attributeKey, out var attributeObject))
