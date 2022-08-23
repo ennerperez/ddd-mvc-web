@@ -13,7 +13,7 @@ namespace Xunit.Framework
         }
 
         [DebuggerStepThrough]
-        private static void Fail(string message = "")
+        public static void Fail(string message = "")
         {
             Xunit.Assert.True(false, message);
         }
@@ -46,6 +46,13 @@ namespace SpecRunner.Framework
         [DebuggerStepThrough]
         public static void Fail(string message = "") 
         {
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(false, message);
+        }
+
+        [DebuggerStepThrough]
+        public static void Fail(Exception exception, bool stack = false)
+        {
+            var message = $"{exception.Message}{(stack? $"\r\n\r\n{exception.StackTrace}" : "")}";
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(false, message);
         }
 
