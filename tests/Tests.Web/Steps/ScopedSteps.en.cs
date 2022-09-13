@@ -1,9 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TechTalk.SpecFlow;
-using Xunit.Framework;
 
 namespace Tests.Web.Steps
 {

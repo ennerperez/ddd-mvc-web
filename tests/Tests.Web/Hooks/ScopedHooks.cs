@@ -1,5 +1,4 @@
 ﻿using TechTalk.SpecFlow;
-using Tests.Abstractions;
 using Tests.Abstractions.Interfaces;
 
 namespace Tests.Web.Hooks

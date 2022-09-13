@@ -219,6 +219,8 @@ namespace TechTalk.SpecFlow
         public static string EvaluateString(this string @this, int maxLenght = 10, string nullValue = null)
         {
             var result = @this;
+            if (string.IsNullOrWhiteSpace(@this)) @this = nullValue;
+
             if (!string.IsNullOrWhiteSpace(@this))
             {
                 if (@this.Equals("{Random}", StringComparison.InvariantCultureIgnoreCase))
