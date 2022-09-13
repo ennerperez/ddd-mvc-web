@@ -68,9 +68,9 @@ namespace Persistence
         /// <returns></returns>
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
-            //TODO: Make this possible
-            //services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
-            //services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            // TODO: Make this possible
+            // services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            // services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddFromAssembly(Assembly.GetExecutingAssembly());
 

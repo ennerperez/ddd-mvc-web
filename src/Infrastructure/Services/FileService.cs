@@ -214,7 +214,7 @@ namespace Infrastructure.Services
             return false;
         }
         
-        //private const int MaxByteArrayLength = 0x7FFFFFC7;
+        // private const int MaxByteArrayLength = 0x7FFFFFC7;
         private static Encoding s_UTF8NoBOM;
         private static Encoding UTF8NoBOM => s_UTF8NoBOM ?? (s_UTF8NoBOM = new UTF8Encoding(false, true));
 

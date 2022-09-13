@@ -282,7 +282,7 @@ namespace Microsoft.AspNetCore
             // {
             //     using (var ms = new MemoryStream())
             //     {
-            //         //TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+            //         // TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
             //         var bf = new BinaryFormatter();
             //         bf.Serialize(ms, value);
             //         session.Set(key, ms.ToArray());
@@ -294,7 +294,7 @@ namespace Microsoft.AspNetCore
             //     var data = session.Get(key);
             //     using (var ms = new MemoryStream(data))
             //     {
-            //         //TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+            //         // TODO: https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
             //         var bf = new BinaryFormatter();
             //         var result = (T)bf.Deserialize(ms);
             //         return result;

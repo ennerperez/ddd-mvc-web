@@ -158,7 +158,7 @@ namespace Web
 #else
                 Formatting = Formatting.None,
 #endif
-                //NullValueHandling = NullValueHandling.Ignore,
+                // NullValueHandling = NullValueHandling.Ignore,
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 DateTimeZoneHandling = DateTimeZoneHandling.Utc
@@ -170,7 +170,7 @@ namespace Web
 #else
                 option.SerializerSettings.Formatting = Formatting.None;
 #endif
-                //option.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                // option.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 option.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 option.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
@@ -367,7 +367,7 @@ namespace Web
                 }
                 else
                 {
-                    //Request for views fall here.
+                    // Request for views fall here.
                     context.Response.Headers.Append("Cache-Control", "no-cache");
                     context.Response.Headers.Append("Cache-Control", "private, no-store");
                 }
