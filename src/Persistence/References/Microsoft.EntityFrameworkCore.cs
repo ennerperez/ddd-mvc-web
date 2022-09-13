@@ -124,7 +124,7 @@ namespace Microsoft.EntityFrameworkCore
             var database = context.Database;
             var entityType = context.Model.FindEntityType(typeof(TEntity));
             var query = string.Empty;
-            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
+            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer") && entityType != null)
                 query = $"SET IDENTITY_INSERT [{entityType.GetSchema()}].[{entityType.GetTableName()}] {(enable ? "ON" : "OFF")};";
 
             if (!string.IsNullOrWhiteSpace(query))
