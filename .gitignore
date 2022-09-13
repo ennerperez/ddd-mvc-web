@@ -579,4 +579,5 @@ package-lock.json
 *.feature.cs
 
 # SCSS
-**/bootstrap*.css
+**/bootstrap.css
+**/bootstrap.min.css
