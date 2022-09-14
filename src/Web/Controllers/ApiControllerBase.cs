@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Business.Models;
 using Domain.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -93,7 +92,7 @@ namespace Web.Controllers
                 }
                 else if (selector.Body is MemberInitExpression)
                 {
-                    //TODO: Validate args
+                    // TODO: Validate args
                     // args = ((MemberInitExpression)selector.Body).NewExpression.Arguments.OfType<MemberExpression>().ToArray();
                     // parameter = NestedMember(args.First());
                 }

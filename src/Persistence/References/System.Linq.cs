@@ -24,7 +24,7 @@ namespace System.Linq
                         .ToArray();
                     if (args.Length == 0)
                     {
-                        //if (typeof(IEntity).IsAssignableFrom(typeof(TEntityType)) || typeof(IEntity<>).IsAssignableFrom(typeof(TEntityType)))
+                        // if (typeof(IEntity).IsAssignableFrom(typeof(TEntityType)) || typeof(IEntity<>).IsAssignableFrom(typeof(TEntityType)))
                         if (props.Any(m=> m.Name == "Id"))
                             args = new[] { new[] { props.First(m => m.Name == "Id").Name, "asc" } };
                         else
@@ -55,7 +55,7 @@ namespace System.Linq
             {
                 var arg = Expression.Parameter(typeof(T), "x");
                 var property = Expression.Property(arg, propertyName);
-                //return the property as object
+                // return the property as object
                 var conv = Expression.Convert(property, typeof(Te));
                 var exp = Expression.Lambda<Func<T, Te>>(conv, new ParameterExpression[] { arg });
                 return exp;
@@ -65,7 +65,7 @@ namespace System.Linq
             {
                 var arg = Expression.Parameter(typeof(T), "x");
                 var property = Expression.Property(arg, propertyInfo.Name);
-                //return the property as object
+                // return the property as object
                 var conv = Expression.Convert(property, typeof(string));
                 var exp = Expression.Lambda<Func<T, string>>(conv, new ParameterExpression[] { arg });
                 return exp;

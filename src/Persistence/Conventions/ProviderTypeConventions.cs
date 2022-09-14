@@ -73,7 +73,7 @@ namespace Persistence.Conventions
 
                     if (p.IsColumnNullable())
                         property.HasDefaultValue(null);
-                    //TODO: GUID from DB
+                    // TODO: GUID from DB
                     // else
                     //     property.HasDefaultValue(Guid.NewGuid());
                 }

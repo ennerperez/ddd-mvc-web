@@ -128,7 +128,7 @@ namespace Persistence.Configurations
         {
             e.ToTable("UsersRoles", IdentityConfiguration.Schema, true);
 
-            //e.Property(m => m.Id).ValueGeneratedOnAdd();
+            // e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Ignore(m => m.Id);
             e.HasKey(m => new { m.UserId, m.RoleId });
         }
@@ -145,7 +145,7 @@ namespace Persistence.Configurations
             e.Property(m => m.ProviderKey).HasMaxLength(Lengths.Memo);
             e.Property(m => m.ProviderDisplayName).HasMaxLength(Lengths.Description);
             
-            //e.Property(m => m.Id).ValueGeneratedOnAdd();
+            // e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Ignore(m => m.Id);
             e.HasKey(m => new { m.UserId, m.LoginProvider });
         }
@@ -162,7 +162,7 @@ namespace Persistence.Configurations
             e.Property(m => m.LoginProvider).HasMaxLength(Lengths.Memo);
             e.Property(m => m.Value).HasMaxLength(Lengths.Memo);
 
-            //e.Property(m => m.Id).ValueGeneratedOnAdd();
+            // e.Property(m => m.Id).ValueGeneratedOnAdd();
             e.Ignore(m => m.Id);
             e.HasKey(m => new { m.UserId, m.LoginProvider, m.Name });
         }

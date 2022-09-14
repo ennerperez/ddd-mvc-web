@@ -25,7 +25,7 @@ namespace Web
                 .AddCommandLine(args)
                 .Build();
 
-            //Initialize Logger
+            // Initialize Logger
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
                 .CreateLogger();
@@ -54,7 +54,7 @@ namespace Web
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseSerilog() //Uses Serilog instead of default .NET Logger
+                .UseSerilog() // Uses Serilog instead of default .NET Logger
                 .ConfigureServices(service => service.AddHostedService<SeedService>())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

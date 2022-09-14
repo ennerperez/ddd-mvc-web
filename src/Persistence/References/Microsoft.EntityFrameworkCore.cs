@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.EntityFrameworkCore
@@ -123,12 +124,21 @@ namespace Microsoft.EntityFrameworkCore
         {
             var database = context.Database;
             var entityType = context.Model.FindEntityType(typeof(TEntity));
-            var query = string.Empty;
-            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
-                query = $"SET IDENTITY_INSERT [{entityType.GetSchema()}].[{entityType.GetTableName()}] {(enable ? "ON" : "OFF")};";
 
-            if (!string.IsNullOrWhiteSpace(query))
-                await database.ExecuteSqlRawAsync(query, cancellationToken);
+            if (entityType != null)
+            {
+	            var keys = entityType.GetKeys();
+	            var isValueGenerated = keys.SelectMany(s => s.Properties).Any(m => m.ValueGenerated == ValueGenerated.OnAdd);
+	            if (isValueGenerated)
+	            {
+		            var query = string.Empty;
+		            if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
+			            query = $"SET IDENTITY_INSERT [{entityType.GetSchema()}].[{entityType.GetTableName()}] {(enable ? "ON" : "OFF")};";
+
+		            if (!string.IsNullOrWhiteSpace(query))
+			            await database.ExecuteSqlRawAsync(query, cancellationToken);
+	            }
+            }
         }
     }
 }
