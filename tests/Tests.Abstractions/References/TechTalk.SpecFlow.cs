@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using TechTalk.SpecFlow;
-using Tests.Abstractions.Interfaces;
 
-namespace Tests.Abstractions
+namespace TechTalk.SpecFlow
 {
     public static class Extensions
     {
-        public static T GetTagValue<T>(this string[] stringArray, string name)
+        public static T GetTagValue<T>(this FeatureInfo source, string name)
+        {
+            return source.Tags.GetTagValue<T>(name);
+        }
+
+        public static T GetTagValue<T>(this ScenarioInfo source, string name)
+        {
+            return source.Tags.GetTagValue<T>(name);
+        }
+
+        private static T GetTagValue<T>(this string[] stringArray, string name)
         {
             var type = typeof(T);
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
@@ -32,11 +39,21 @@ namespace Tests.Abstractions
                 if (string.IsNullOrWhiteSpace(result)) return default(T);
                 return (T)Convert.ChangeType(result, conversionType: Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
             }
-                
+
             return (T)Convert.ChangeType(result, type);
         }
 
-        public static IEnumerable<T> GetTagValues<T>(this string[] stringArray, string name)
+        public static IEnumerable<T> GetTagValues<T>(this FeatureInfo source, string name)
+        {
+            return source.Tags.GetTagValues<T>(name);
+        }
+
+        public static IEnumerable<T> GetTagValues<T>(this ScenarioInfo source, string name)
+        {
+            return source.Tags.GetTagValues<T>(name);
+        }
+
+        private static IEnumerable<T> GetTagValues<T>(this string[] stringArray, string name)
         {
             var type = typeof(T);
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
@@ -59,14 +76,15 @@ namespace Tests.Abstractions
                         if (string.IsNullOrWhiteSpace(m)) return default(T);
                         return (T)Convert.ChangeType(m, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
                     }
+
                     return (T)Convert.ChangeType(m, type);
                 }).ToArray()
                 : null;
 
             return result;
         }
-        
-        public static T GetValue<T>(this Table table, string key, bool ignoreCase = true)
+
+        public static T GetValue<T>(this Table table, string key, bool ignoreCase = true, string fieldColum = "Field", string valueColum = "Value")
         {
             var type = typeof(T);
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
@@ -80,21 +98,23 @@ namespace Tests.Abstractions
             }
 
             var stringComparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.Ordinal;
-            if (table.Rows.Any(m => m["Field"].Equals(key, stringComparison)))
+            if (table.Rows.Any(m => m[fieldColum].Equals(key, stringComparison)))
             {
-                var value = table.Rows.FirstOrDefault(m => m["Field"].Equals(key, stringComparison))?["Value"];
+                var value = table.Rows.FirstOrDefault(m => m[fieldColum].Equals(key, stringComparison))?[valueColum];
 
                 if (isNullable)
                 {
                     if (string.IsNullOrWhiteSpace(value)) return default(T);
                     return (T)Convert.ChangeType(value, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
                 }
-                return (T)Convert.ChangeType(value, type);                
+
+                return (T)Convert.ChangeType(value, type);
             }
+
             return default(T);
         }
 
-        public static object GetValue(this Table table, string key, Type type, bool ignoreCase = true)
+        public static object GetValue(this Table table, string key, Type type, bool ignoreCase = true, string fieldColum = "Field", string valueColum = "Value")
         {
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
 
@@ -107,9 +127,9 @@ namespace Tests.Abstractions
             }
 
             var stringComparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.Ordinal;
-            if (table.Rows.Any(m => m["Field"].Equals(key, stringComparison)))
+            if (table.Rows.Any(m => m[fieldColum].Equals(key, stringComparison)))
             {
-                var value = table.Rows.FirstOrDefault(m => m["Field"].Equals(key, stringComparison))?["Value"];
+                var value = table.Rows.FirstOrDefault(m => m[fieldColum].Equals(key, stringComparison))?[valueColum];
                 if (isNullable)
                 {
                     if (string.IsNullOrWhiteSpace(value)) return default;
@@ -122,12 +142,12 @@ namespace Tests.Abstractions
             return default;
         }
 
-        public static T CastTo<T>(this Table table, string column = "Field")
+        public static T CastTo<T>(this Table table, string fieldColum = "Field")
         {
             T result = Activator.CreateInstance<T>();
             var props = typeof(T).GetProperties().Where(m => m.CanWrite).ToArray();
             string[] fields;
-            if (!string.IsNullOrWhiteSpace(column)) fields = table.Rows.Select(m => m[column].ToLowerInvariant()).ToArray();
+            if (!string.IsNullOrWhiteSpace(fieldColum)) fields = table.Rows.Select(m => m[fieldColum].ToLowerInvariant()).ToArray();
             else fields = table.Rows.Select(m => m[0].ToLowerInvariant()).ToArray();
             var joint = props.Where(m => fields.Contains(m.Name.ToLowerInvariant())).ToArray();
             foreach (var prop in joint)
@@ -199,6 +219,8 @@ namespace Tests.Abstractions
         public static string EvaluateString(this string @this, int maxLenght = 10, string nullValue = null)
         {
             var result = @this;
+            if (string.IsNullOrWhiteSpace(@this)) @this = nullValue;
+
             if (!string.IsNullOrWhiteSpace(@this))
             {
                 if (@this.Equals("{Random}", StringComparison.InvariantCultureIgnoreCase))
@@ -213,55 +235,6 @@ namespace Tests.Abstractions
             }
 
             return result ?? nullValue;
-        }
-
-        public static string GetAllContextInformation(this IAutomationContext @this)
-        {
-            var sb = new StringBuilder();
-
-            sb.AppendLine($"AutomationType:\t{@this.AutomationType}");
-            sb.AppendLine($"Platform:\t{@this.PlatformTarget}");
-            sb.AppendLine($"Application:\t{@this.ApplicationTarget}");
-            sb.AppendLine($"Environment:\t{@this.EnvironmentTarget}");
-
-            sb.AppendLine($"TestPlan:\t{@this.TestPlanTarget}");
-            sb.AppendLine($"TestSuite:\t{@this.TestSuiteTarget}");
-            sb.AppendLine($"TestCase:\t{@this.TestCaseTarget}");
-
-            sb.AppendLine($"Priority:\t{@this.Priority}");
-            sb.AppendLine($"IsInitialized:\t{@this.IsInitialized}");
-
-            sb.AppendLine("\r\n\r\nAttribute Library Contents:\r\n");
-            foreach (var attributeKey in @this.AttributeLibrary.Keys)
-            {
-                @this.AttributeLibrary.TryGetValue(attributeKey, out var attributeObject);
-                var attributeValue = attributeObject?.ToString();
-                sb.AppendLine($"{attributeKey}:\t{attributeValue}");
-            }
-
-            return sb.ToString();
-        }
-
-        public static object GetAttributeFromAttributeLibrary(this IAutomationContext @this, string attributeKey, bool throwException = true)
-        {
-            if (@this.AttributeLibrary.TryGetValue(attributeKey, out var attributeObject))
-            {
-                return attributeObject;
-            }
-            else if (throwException)
-            {
-                throw new Exception($"The {attributeKey} Attribute Key is not defined anywhere within the Feature.");
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public static void SetAttributeInAttributeLibrary(this IAutomationContext @this, string attributeKey, object attributeObject)
-        {
-            @this.AttributeLibrary.Remove(attributeKey);
-            @this.AttributeLibrary.Add(attributeKey, attributeObject);
         }
     }
 }

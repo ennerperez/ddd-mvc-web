@@ -7,7 +7,6 @@ using Tests.Abstractions.Services;
 #if NUNIT
 using NUnit.Framework;
 #elif XUNIT
-using Xunit;
 #endif
 
 // ReSharper disable InconsistentNaming

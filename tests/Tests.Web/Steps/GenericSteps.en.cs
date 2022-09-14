@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using OpenQA.Selenium;
-using TechTalk.SpecFlow;
-using Tests.Abstractions.Interfaces;
+﻿using TechTalk.SpecFlow;
 
 namespace Tests.Web.Steps
 {

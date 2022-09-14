@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TechTalk.SpecFlow;
+﻿using TechTalk.SpecFlow;
 
 namespace Tests.Abstractions.Interfaces
 {
@@ -21,8 +20,6 @@ namespace Tests.Abstractions.Interfaces
         string TestSuiteTarget { get; set; }
         string TestPlanTarget { get; set; }
         string TestCaseTarget { get; set; }
-        
-        public Dictionary<string, object> AttributeLibrary { get; }
         
     }
 }

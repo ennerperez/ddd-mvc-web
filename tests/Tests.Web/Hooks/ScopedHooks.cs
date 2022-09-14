@@ -1,5 +1,4 @@
 ﻿using TechTalk.SpecFlow;
-using Tests.Abstractions;
 using Tests.Abstractions.Interfaces;
 
 namespace Tests.Web.Hooks
@@ -14,7 +13,7 @@ namespace Tests.Web.Hooks
         [BeforeFeature]
         public static void BeforeFeature(FeatureContext featureContext)
         {
-            var browser = featureContext.FeatureInfo.Tags.GetTagValue<string>("Browser");
+            var browser = featureContext.FeatureInfo.GetTagValue<string>("Browser");
             Program.LoadBrowserDriver(browser);
         }
     }
