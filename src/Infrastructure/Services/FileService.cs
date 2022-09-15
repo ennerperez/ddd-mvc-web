@@ -57,6 +57,7 @@ namespace Infrastructure.Services
             
         }
 
+        // ReSharper disable once UnusedMember.Local
         private string NormalizePath(string targetPath)
         {
             if (targetPath.StartsWith(@"app/") || targetPath.StartsWith(@"app\")) targetPath = targetPath.Substring(4);
@@ -104,6 +105,7 @@ namespace Infrastructure.Services
         private async Task InternalWriteAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = false)
             => await InternalWriteAllBytesAsync(path, encoding.GetBytes(contents), cancellationToken, overwrite);
 
+        // ReSharper disable once UnusedParameter.Local
         private async Task InternalWriteAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = true)
             => await InternalWriteAllTextAsync(path, string.Join(Environment.NewLine, contents), encoding, cancellationToken);
         

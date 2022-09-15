@@ -63,7 +63,8 @@ namespace Infrastructure.Services
 #endif
             if (useThread)
             {
-                var thread = new Task(async () =>
+	            // ReSharper disable once AsyncVoidLambda
+	            var thread = new Task(async () =>
                 {
                     try
                     {

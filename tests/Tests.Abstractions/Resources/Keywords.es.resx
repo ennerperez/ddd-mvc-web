@@ -44,4 +44,13 @@
   <data name="NotYetImplemented" xml:space="preserve">
     <value>NoImplementado</value>
   </data>
+	<data name="TestCase" xml:space="preserve">
+		<value>TestCase</value>
+	</data>
+	<data name="TestPlan" xml:space="preserve">
+		<value>TestPlan</value>
+	</data>
+	<data name="TestSuite" xml:space="preserve">
+		<value>TestSuite</value>
+	</data>
 </root>
