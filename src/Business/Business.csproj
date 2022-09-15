@@ -2,21 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>default</LangVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>false</Deterministic>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\.files\AssemblyInfo.General.cs">
-      <Link>Properties\AssemblyInfo.General.cs</Link>
-      <DependentUpon>AssemblyInfo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="..\.files\AssemblyInfo.Version.cs">
-      <Link>Properties\AssemblyInfo.Version.cs</Link>
-      <DependentUpon>AssemblyInfo.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<Import Project="..\.files\AssemblyInfo.props" />
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />

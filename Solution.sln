@@ -13,6 +13,7 @@ ProjectSection(SolutionItems) = preProject
 	build.cake = build.cake
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
+	src\.files\AssemblyInfo.props = src\.files\AssemblyInfo.props
 	src\.files\AssemblyInfo.General.tt = src\.files\AssemblyInfo.General.tt
 	src\.files\AssemblyInfo.Version.tt = src\.files\AssemblyInfo.Version.tt
 	src\.files\AssemblyInfo.General.cs = src\.files\AssemblyInfo.General.cs

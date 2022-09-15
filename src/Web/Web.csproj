@@ -4,21 +4,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>default</LangVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>false</Deterministic>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\.files\AssemblyInfo.General.cs">
-      <Link>Properties\AssemblyInfo.General.cs</Link>
-      <DependentUpon>AssemblyInfo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="..\.files\AssemblyInfo.Version.cs">
-      <Link>Properties\AssemblyInfo.Version.cs</Link>
-      <DependentUpon>AssemblyInfo.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<Import Project="..\.files\AssemblyInfo.props" />	
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
@@ -87,5 +78,5 @@
     <Content Remove="wwwroot\css\bootstrap.min.css" />
     <Content Remove="wwwroot\css\bootstrap.css.map" />
   </ItemGroup>
-  
+
 </Project>

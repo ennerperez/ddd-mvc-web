@@ -6,8 +6,8 @@
 
 [assembly: AssemblyCompany("Company")]
 [assembly: AssemblyProduct("Product")]
-[assembly: AssemblyCopyright("Copyright © {{Company}} {{year}}")]
+[assembly: AssemblyCopyright("Copyright © {{Company}} 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyConfiguration("")]
-	
+
