@@ -13,5 +13,5 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 
 <#+
-    int Year = DateTime.Now.Year;
+	int Year = DateTime.Now.Year;
 #>

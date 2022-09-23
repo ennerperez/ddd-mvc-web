@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		
+	<!-- General -->
+	<PropertyGroup>
+		<BuildConstants Condition="'$(BuildingByReSharper)' == 'true'">$(BuildConstants)USING_RESHARPER;</BuildConstants>
+	</PropertyGroup>
+	
+	<!-- Persistence -->
+  <PropertyGroup>
+    <BuildConstants Condition="'$(UsingSqlite)' == 'true'">$(BuildConstants)USING_SQLITE;</BuildConstants>
+    <BuildConstants Condition="'$(UsingSqlServer)' == 'true'">$(BuildConstants)USING_MSSQL;</BuildConstants>
+    <BuildConstants Condition="'$(UsingMariaDb)' == 'true'">$(BuildConstants)USING_MARIADB;</BuildConstants>
+    <BuildConstants Condition="'$(UsingMySql)' == 'true'">$(BuildConstants)USING_MYSQL;</BuildConstants>
+    <BuildConstants Condition="'$(UsingPostgreSql)' == 'true'">$(BuildConstants)USING_POSTGRESQL;</BuildConstants>
+    <BuildConstants Condition="'$(UsingOracle)' == 'true'">$(BuildConstants)USING_ORACLE;</BuildConstants>
+    <BuildConstants Condition="'$(EnableNonAsync)' == 'true'">$(BuildConstants)ENABLE_NONASYNC;</BuildConstants>
+    <BuildConstants Condition="'$(EnableBulk)' == 'true'">$(BuildConstants)ENABLE_BULK;</BuildConstants>
+    <BuildConstants Condition="'$(EnableSplit)' == 'true'">$(BuildConstants)ENABLE_SPLIT;</BuildConstants>
+  </PropertyGroup>
+
+	<!-- Infrastructure -->
+	<PropertyGroup>
+		<BuildConstants Condition="'$(UsingAzureBlobs)' == 'true'">$(BuildConstants)USING_BLOBS;</BuildConstants>
+		<BuildConstants Condition="'$(UsingAzureQueues)' == 'true'">$(BuildConstants)USING_QUEUES;</BuildConstants>
+		<BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
+		<BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
+	</PropertyGroup>
+	
+	<!-- Web -->
+	<PropertyGroup>
+		<BuildConstants Condition="'$(UsingNewtonsoft)' == 'true'">$(BuildConstants)USING_NEWTONSOFT;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
+		<BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
+		<BuildConstants Condition="'$(UsingInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSmartSchema)' == 'true'">$(BuildConstants)USING_SMARTSCHEMA;</BuildConstants>
+		<BuildConstants Condition="'$(EnableSassWatch)' == 'true'">$(BuildConstants)ENABLE_SASS_WATCH;</BuildConstants>
+		<BuildConstants Condition="'$(EnableBearer)' == 'true'">$(BuildConstants)ENABLE_BEARER;</BuildConstants>
+		<BuildConstants Condition="'$(EnableApiKey)' == 'true'">$(BuildConstants)ENABLE_APIKEY;</BuildConstants>
+		<BuildConstants Condition="'$(EnableOpenId)' == 'true'">$(BuildConstants)ENABLE_OPENID;</BuildConstants>
+		<BuildConstants Condition="'$(EnableAB2C)' == 'true'">$(BuildConstants)ENABLE_AB2C;</BuildConstants>
+		<BuildConstants Condition="'$(EnableLocalAB2C)' == 'true'">$(BuildConstants)ENABLE_LOCAL_AB2C;</BuildConstants>
+	</PropertyGroup>
+	
+	<!-- Testing -->
+	<PropertyGroup>
+		<BuildConstants Condition="'$(TestExecutionFramework)' == 'xUnit'">$(BuildConstants)XUNIT;</BuildConstants>
+		<BuildConstants Condition="'$(TestExecutionFramework)' == 'NUnit'">$(BuildConstants)NUNIT;</BuildConstants>
+	</PropertyGroup>
+
+</Project>

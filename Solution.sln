@@ -12,7 +12,6 @@ ProjectSection(SolutionItems) = preProject
 	package.json = package.json
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
-	src\.files\AssemblyInfo.props = src\.files\AssemblyInfo.props
 	src\.files\AssemblyInfo.General.tt = src\.files\AssemblyInfo.General.tt
 	src\.files\AssemblyInfo.Version.tt = src\.files\AssemblyInfo.Version.tt
 	src\.files\AssemblyInfo.General.cs = src\.files\AssemblyInfo.General.cs
@@ -54,6 +53,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure", "azure", "{458BF0DB-73C1-4FB3-BABB-4D3197029618}"
 	ProjectSection(SolutionItems) = preProject
 		.azure\workflows\build.yml = .azure\workflows\build.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{9077E14A-386B-4745-A14E-A16136BD8AB9}"
+	ProjectSection(SolutionItems) = preProject
+		src\.imports\AssemblyInfo.props = src\.imports\AssemblyInfo.props
+		src\.imports\Features.props = src\.imports\Features.props
+		src\.imports\Project.props = src\.imports\Project.props
+		src\.imports\Solution.targets = src\.imports\Solution.targets
+		src\.imports\Features.targets = src\.imports\Features.targets
+		src\.imports\Project.targets = src\.imports\Project.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", ".build\_build.csproj", "{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}"

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	
-	<PropertyGroup>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>false</Deterministic>
-	</PropertyGroup>
-
-	<ItemGroup>
+	<ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'false'">
 		<None Include="$(SolutionDir)\src\.files\AssemblyInfo.General.tt">
 	    <Link>Properties\AssemblyInfo.General.tt</Link>
 	    <Generator>TextTemplatingFileGenerator</Generator>
@@ -32,5 +27,9 @@
       <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
+	<ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'true'">
+		<None Remove="*\AssemblyInfo.*" />
+		<Compile Remove="*\AssemblyInfo.*" />
+	</ItemGroup>
 	
 </Project>
