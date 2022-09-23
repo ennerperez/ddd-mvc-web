@@ -7,6 +7,7 @@ using Business.Models;
 using Business.Requests.Identity;
 using Domain.Entities;
 using Domain.Entities.Identity;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,10 @@ namespace Web.Controllers.API
 
 				return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
 			}
+			catch (ValidationException v)
+			{
+				return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
+			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "{Message}", e.Message);
@@ -56,6 +61,10 @@ namespace Web.Controllers.API
 					var collection = await Mediator.SendWithRepository((new User()).Select(s => s), p => p.Id == id, null, null);
 
 					return new JsonResult(collection);
+				}
+				catch (ValidationException v)
+				{
+					return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
 				}
 				catch (Exception e)
 				{
@@ -77,6 +86,10 @@ namespace Web.Controllers.API
 					null, null, null, skip: ((page - 1) * size), take: size);
 				return new JsonResult(collection);
 			}
+			catch (ValidationException v)
+			{
+				return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
+			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "{Message}", e.Message);
@@ -95,6 +108,10 @@ namespace Web.Controllers.API
 			{
 				var result = await Mediator.Send(model);
 				return Created(Url.Content($"~/api/{nameof(User)}/{result}"), result);
+			}
+			catch (ValidationException v)
+			{
+				return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
 			}
 			catch (Exception e)
 			{
@@ -115,6 +132,10 @@ namespace Web.Controllers.API
 				await Mediator.Send(model);
 				return Ok(id);
 			}
+			catch (ValidationException v)
+			{
+				return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
+			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "{Message}", e.Message);
@@ -134,6 +155,10 @@ namespace Web.Controllers.API
 				await Mediator.Send(model);
 				return Ok(id);
 			}
+			catch (ValidationException v)
+			{
+				return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
+			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "{Message}", e.Message);
@@ -149,6 +174,10 @@ namespace Web.Controllers.API
 			{
 				await Mediator.Send(new DeleteUserRequest() { Id = id });
 				return Ok(id);
+			}
+			catch (ValidationException v)
+			{
+				return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
 			}
 			catch (Exception e)
 			{
