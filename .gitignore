@@ -26,7 +26,6 @@
 # Icon must end with two \r
 Icon
 
-
 # Thumbnails
 ._*
 
@@ -201,6 +200,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 [Bb]uild/
+[Oo]utput/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -489,8 +489,8 @@ __pycache__/
 *.pyc
 
 # Cake - Uncomment if you are using it
-tools/**
-!tools/packages.config
+#tools/**
+#!tools/packages.config
 
 # Tabs Studio
 *.tss

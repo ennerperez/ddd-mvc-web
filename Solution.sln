@@ -10,7 +10,6 @@ ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	.editoricon.png = .editoricon.png
 	package.json = package.json
-	build.cake = build.cake
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
 	src\.files\AssemblyInfo.props = src\.files\AssemblyInfo.props
@@ -57,12 +56,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure", "azure", "{458BF0DB
 		.azure\workflows\build.yml = .azure\workflows\build.yml
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", ".build\_build.csproj", "{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{2712CD35-9B5B-4E27-BEAF-46978336F0DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72CB5A30-A3C6-48AD-9ABC-F5094874734A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72CB5A30-A3C6-48AD-9ABC-F5094874734A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72CB5A30-A3C6-48AD-9ABC-F5094874734A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -86,15 +91,12 @@ Global
 		{293AB7D0-1FD6-48FD-B699-DAF5AD41EF31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{293AB7D0-1FD6-48FD-B699-DAF5AD41EF31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{293AB7D0-1FD6-48FD-B699-DAF5AD41EF31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{293AB7D0-1FD6-48FD-B699-DAF5AD41EF31}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A29A9B6-8767-43E5-A5F7-43352A6F51E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A29A9B6-8767-43E5-A5F7-43352A6F51E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A29A9B6-8767-43E5-A5F7-43352A6F51E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A29A9B6-8767-43E5-A5F7-43352A6F51E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D696D734-98A3-426D-A1D5-613DFB9400A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D696D734-98A3-426D-A1D5-613DFB9400A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D696D734-98A3-426D-A1D5-613DFB9400A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D696D734-98A3-426D-A1D5-613DFB9400A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{67CCD3D4-42C4-4769-BBDB-BA60099C6DCC} = {A3FE360B-E0E9-470A-B0A3-87E1B6E3B415}
@@ -107,5 +109,6 @@ Global
 		{D696D734-98A3-426D-A1D5-613DFB9400A4} = {D4673DF9-2E71-4450-8099-E05AA6DD6183}
 		{D5DD9FFE-68B1-49AD-84DB-8394731BCA7E} = {218BDA05-D55C-49DC-80F4-71B7AA3C07A2}
 		{458BF0DB-73C1-4FB3-BABB-4D3197029618} = {218BDA05-D55C-49DC-80F4-71B7AA3C07A2}
+		{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B} = {2712CD35-9B5B-4E27-BEAF-46978336F0DA}
 	EndGlobalSection
 EndGlobal
