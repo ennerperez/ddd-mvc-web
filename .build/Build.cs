@@ -72,7 +72,7 @@ class Build : NukeBuild
 		.Executes(() =>
 		{
 			if (!Directory.Exists(BuildDirectory)) Directory.CreateDirectory(BuildDirectory);
-			ZipFile.CreateFromDirectory(OutputDirectory, BuildDirectory / "Web.zip");
+			ZipFile.CreateFromDirectory(OutputDirectory, BuildDirectory / "Release.zip");
 			EnsureCleanDirectory(OutputDirectory);
 		});
 

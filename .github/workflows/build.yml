@@ -4,12 +4,18 @@ on:
   push:
     branches:
       - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+        
+env:
+  DOTNET_SDK_VERSION: '6.x'
 
 jobs:
+  
   build:
-
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,24 +25,46 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+          
+      - name: Setup EF
+        run: dotnet tool install --global dotnet-ef
+          
+      - name: Nuke
+        run: ./build.sh
 
-      - name: Cake Action
-        # You may pin to the exact commit or the version.
-        # uses: cake-build/cake-action@05afcd95441a78b3e4d375a72b62bde29c8c0f60
-        uses: cake-build/cake-action@v1.4.0
+      - name: Migration
+        run: dotnet ef migrations script -i --context DefaultContext -o build/Migrations.sql --project src/Persistence --startup-project src/Web
+
+      - name: Artifact
+        uses: actions/upload-artifact@v3
         with:
-          # The path of the Cake script to run.
-          script-path: # optional, default is build.cake
-          # The name of the task to execute. Note that this argument must be supported by the script.
-          target: # optional
-          # The verbosity level with which to run the script. Valid values are: Quiet, Minimal, Normal, Verbose or Diagnostic.
-          verbosity: # optional, default is Normal
-          # Tells Cake to do a dry run of the script.
-          dry-run: # optional, default is false
-          # Any custom parameters to pass to the script. Multiple parameters are defined on separate lines.
-          arguments: # optional
-          # The version of Cake to install. Either a specific version, "latest" (default) or "tool-manifest".
-          cake-version: # optional, default is latest
-          # Flag for if Cake modules should be installed/bootstrapped.
-          cake-bootstrap: # optional, default is false
+          name: artifact
+          path: |
+            build/Migrations.sql
+            build/Release.zip
+          if-no-files-found: error
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          draft: false
+          prerelease: false
+          bodyFile: CHANGELOG.md
+          artifacts: |
+            build/Migrations.sql
+            build/Release.zip
+            
+  deploy:
+    name: Deploy
+    needs: build
+    environment:
+      name: 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
