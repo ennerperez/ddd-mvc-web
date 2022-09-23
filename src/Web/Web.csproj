@@ -80,6 +80,9 @@
     <Content Update="http-client.private.env.json">
       <DependentUpon>http-client.http</DependentUpon>
     </Content>
+    <Content Include="..\..\package.json">
+      <Link>package.json</Link>
+    </Content>
 	</ItemGroup>
 
 </Project>

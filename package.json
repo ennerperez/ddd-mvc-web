@@ -4,9 +4,9 @@
 		"restore": "dotnet tool restore",
 		"build": "dotnet nuke",
 		"run": "dotnet run --project src/Web",
-		"migrate_initial": "powershell ./migrate.ps1 -name Initial",
-		"migrate_update": "powershell ./migrate.ps1 -update",
-		"migrate_rollback": "powershell ./migrate.ps1 -rollback",
-		"migrate_clear": "powershell ./migrate.ps1 -clear"
+		"migrate_initial": "powershell -ExecutionPolicy ByPass -NoProfile -File ./migrate.ps1 -name Initial",
+		"migrate_update": "powershell -ExecutionPolicy ByPass -NoProfile -File ./migrate.ps1 -update",
+		"migrate_rollback": "powershell -ExecutionPolicy ByPass -NoProfile -File ./migrate.ps1 -rollback",
+		"migrate_clear": "powershell -ExecutionPolicy ByPass -NoProfile -File ./migrate.ps1 -clear"
 	}
 }
