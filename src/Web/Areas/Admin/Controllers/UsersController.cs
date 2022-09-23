@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Area("Admin")]
-    public class UsersController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
+	[Authorize(Roles = "Admin")]
+	[Area("Admin")]
+	public class UsersController : Controller
+	{
+		public IActionResult Index()
+		{
+			return View();
+		}
+	}
 }

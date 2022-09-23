@@ -8,89 +8,89 @@ using Persistence.Interfaces;
 
 namespace Persistence
 {
-    public static class Extensions
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="optionsBuilder"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddPersistence(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
-        {
-            services.AddDbContext<DefaultContext>(optionsBuilder);
-            services.AddTransient<DbContext, DefaultContext>();
-            DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
-            
-            services.AddPersistence();
-            return services;
-        }
+	public static class Extensions
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="services"></param>
+		/// <param name="optionsBuilder"></param>
+		/// <returns></returns>
+		public static IServiceCollection AddPersistence(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
+		{
+			services.AddDbContext<DefaultContext>(optionsBuilder);
+			services.AddTransient<DbContext, DefaultContext>();
+			DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="optionsBuilder"></param>
-        /// <param name="configureOptions"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, Action<T> configureOptions = null)
-        {
-            services.AddDbContext<DefaultContext>(optionsBuilder);
-            services.AddTransient<DbContext, DefaultContext>();
-            DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
-            
-            services.AddPersistence(configureOptions);
-            return services;
-        }
+			services.AddPersistence();
+			return services;
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<T> configureOptions = null)
-        {
-            services.AddDbContext<DefaultContext>();
-            services.AddTransient<DbContext, DefaultContext>();
-            DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
-            
-            services.AddPersistence();
-            return services;
-        }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="services"></param>
+		/// <param name="optionsBuilder"></param>
+		/// <param name="configureOptions"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, Action<T> configureOptions = null)
+		{
+			services.AddDbContext<DefaultContext>(optionsBuilder);
+			services.AddTransient<DbContext, DefaultContext>();
+			DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddPersistence(this IServiceCollection services)
-        {
-            // TODO: Make this possible
-            // services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
-            // services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+			services.AddPersistence(configureOptions);
+			return services;
+		}
 
-            services.AddFromAssembly(Assembly.GetExecutingAssembly());
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="services"></param>
+		/// <param name="configureOptions"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<T> configureOptions = null)
+		{
+			services.AddDbContext<DefaultContext>();
+			services.AddTransient<DbContext, DefaultContext>();
+			DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
 
-            return services;
-        }
+			services.AddPersistence();
+			return services;
+		}
 
-        #region FromAssembly
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="services"></param>
+		/// <returns></returns>
+		public static IServiceCollection AddPersistence(this IServiceCollection services)
+		{
+			// TODO: Make this possible
+			// services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+			// services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-        private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
-        {
-            if (!assemblies.Any())
-                throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
+			services.AddFromAssembly(Assembly.GetExecutingAssembly());
 
-            var assembliesToScan = assemblies.Distinct().ToArray();
-            services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), assembliesToScan, false);
-            services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<>), assembliesToScan, false);
-        }
+			return services;
+		}
 
-        #endregion
+		#region FromAssembly
 
-        public static Func<DbContext> DbContext { get; set; }
-    }
+		private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
+		{
+			if (!assemblies.Any())
+				throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
+
+			var assembliesToScan = assemblies.Distinct().ToArray();
+			services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), assembliesToScan, false);
+			services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<>), assembliesToScan, false);
+		}
+
+		#endregion
+
+		public static Func<DbContext> DbContext { get; set; }
+	}
 }

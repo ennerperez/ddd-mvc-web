@@ -1,16 +1,16 @@
 [
-  {
-    "Id": 1,
-    "GivenName": "John",
-    "Surname": "Doe",
-    "UserName": "admin@solution.com",
-    "NormalizedUserName": "ADMIN@SOLUTION.COM",
-    "Email": "admin@solution.com",
-    "NormalizedEmail": "ADMIN@SOLUTION.COM",
-    "EmailConfirmed": true,
-    "PhoneNumber": "0000000000",
-    "PasswordHash": "AQAAAAEAACcQAAAAEPFwUioJUoQpfgahgvzvxGhIodOBGTbaHraaEPcQ2vw42OaA1WL7kHslc0fNe85HOw==",
-    "SecurityStamp": "7EMXZVVVSNGA4ZJT4BILN47OSHP4LMLH",
-    "ConcurrencyStamp": "ea37e2a4-28cb-41da-82c5-c441d65e53df"
-  }
+	{
+		"Id": 1,
+		"GivenName": "John",
+		"Surname": "Doe",
+		"UserName": "admin@solution.com",
+		"NormalizedUserName": "ADMIN@SOLUTION.COM",
+		"Email": "admin@solution.com",
+		"NormalizedEmail": "ADMIN@SOLUTION.COM",
+		"EmailConfirmed": true,
+		"PhoneNumber": "0000000000",
+		"PasswordHash": "AQAAAAEAACcQAAAAEPFwUioJUoQpfgahgvzvxGhIodOBGTbaHraaEPcQ2vw42OaA1WL7kHslc0fNe85HOw==",
+		"SecurityStamp": "7EMXZVVVSNGA4ZJT4BILN47OSHP4LMLH",
+		"ConcurrencyStamp": "ea37e2a4-28cb-41da-82c5-c441d65e53df"
+	}
 ]

@@ -1,27 +1,23 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TechTalk.SpecFlow;
-using Xunit.Framework;
 
 namespace Tests.Web.Steps
 {
     public partial class ScopedSteps
     {
-        [Given("I have a valid configuration")]
+        [Given("Tengo una configuraci[o|ó]n v[a|á]lida")]
         public Task GivenValidateConfigurationAsync()
         {
             return ValidateConfigurationAsync(nameof(GivenValidateConfigurationAsync));
         }
 
-        [When("I initialize the application")]
+        [When("Inicializo la aplicaci[o|ó]n")]
         public Task WhenInitializedApplicationAsync()
         {
             return InitializedApplicationAsync(nameof(WhenInitializedApplicationAsync));
         }
 
-        [Then("I should get a valid run")]
+        [Then("Tengo una ejecuci[o|ó]n v[a|á]lida")]
         public Task ThenGetValidRunAsync()
         {
             return GetValidRunAsync(nameof(ThenGetValidRunAsync));

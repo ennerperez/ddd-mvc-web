@@ -1,38 +1,38 @@
 ﻿@{
-    ViewData["Title"] = "Clients";
+	ViewData["Title"] = "Clients";
 }
 
 <partial name="Partials/_LoaderPartial"/>
 
 <div id="content" class="page" style="display: none;">
-    <div class="page-title py-1">
-        <h3 class="m-0 p-0">
-            <i class="fas fa-users"></i> @ViewData["Title"]
-        </h3>
-    </div>
-    <div class="page-content m-2">
-        <div class="row">
-            <div class="col">
-                <button type="button" class="btn btn-labeled btn-primary" name="btn-create">
-                    <span class="btn-label">
-                        <i class="fa fa-plus"></i>
-                    </span>Add
-                </button>
-                <table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
-                    <thead>
-                    <tr>
-                        <th>Identification</th>
-                        <th>Full Name</th>
-                        <th>Address</th>
-                        <th>Phone</th>
-                        <th>Category</th>
-                        <th data-printable="false" data-exportable="false" data-orderable="false" width="5%"></th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
+	<div class="page-title py-1">
+		<h3 class="m-0 p-0">
+			<i class="fas fa-users"></i> @ViewData["Title"]
+		</h3>
+	</div>
+	<div class="page-content m-2">
+		<div class="row">
+			<div class="col">
+				<button type="button" class="btn btn-labeled btn-primary" name="btn-create">
+					<span class="btn-label">
+						<i class="fa fa-plus"></i>
+					</span>Add
+				</button>
+				<table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
+					<thead>
+					<tr>
+						<th>Identification</th>
+						<th>Full Name</th>
+						<th>Address</th>
+						<th>Phone</th>
+						<th>Category</th>
+						<th data-printable="false" data-exportable="false" data-orderable="false" width="5%"></th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 <partial name="Editor"/>
@@ -42,19 +42,19 @@
 
 @section Scripts
 {
-    <environment include="development">
-        <script src="~/lib/jquery.mask/jquery.mask.js"></script>
-        <script src="~/js/editor.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="development">
-        <script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
-        <script src="~/js/editor.min.js" asp-append-version="true"></script>
-    </environment>
+	<environment include="development">
+		<script src="~/lib/jquery.mask/jquery.mask.js"></script>
+		<script src="~/js/editor.js" asp-append-version="true"></script>
+	</environment>
+	<environment exclude="development">
+		<script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
+		<script src="~/js/editor.min.js" asp-append-version="true"></script>
+	</environment>
 
-    <script>
+	<script>
             let tableMain = null;
             let editorMain = null;
-            let apiUrl = '@Url.Content("~/api/client")';
+            let apiUrl = '@Url.Content("~/")api/client';
             
             $(document).ready( function () {
                 

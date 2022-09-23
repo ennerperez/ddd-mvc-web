@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using OpenQA.Selenium;
-using TechTalk.SpecFlow;
-using Tests.Abstractions.Interfaces;
+﻿using TechTalk.SpecFlow;
 
 namespace Tests.Web.Steps
 {
@@ -33,13 +28,13 @@ namespace Tests.Web.Steps
             IFillInTheFollowingForm(table, nameof(EntoncesCompletoElSiguienteFormulario), "campo", "valor");
         }
 
-        [Given(@"Estoy en la pagina ""(.*)""")]
+        [Given(@"Estoy en la (p[a|á]gina|vista) ""(.*)""")]
         public void DadoEstoyEnLaPagina(string name)
         {
             IAmAtThePage(name, nameof(DadoEstoyEnLaPagina));
         }
 
-        [Then(@"Debería estar en la página ""(.*)""")]
+        [Then(@"Debería estar en la (p[a|á]gina|vista) ""(.*)""")]
         public void EntoncesDeberíaEstarEnLaPagina(string name)
         {
             IAmAtThePage(name, nameof(EntoncesDeberíaEstarEnLaPagina));

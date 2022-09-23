@@ -2,24 +2,24 @@
 
 namespace Tests.Abstractions.Interfaces
 {
-    public interface IAutomationContext : ISpecFlowContext
-    {
-        
-        string AutomationType { get; set; }
-        string PlatformTarget { get; set; }
-        string EnvironmentTarget { get; set; }
-        string ApplicationTarget { get; set; }
-        string Priority { get; set; }
+	public interface IAutomationContext : ISpecFlowContext
+	{
 
-        IAutomationConfiguration AutomationConfigurations { get; }
-        FeatureContext FeatureContext { get; }
-        ScenarioContext ScenarioContext { get; }
+		string AutomationType { get; set; }
+		string PlatformTarget { get; set; }
+		string EnvironmentTarget { get; set; }
+		string ApplicationTarget { get; set; }
+		string Priority { get; set; }
 
-        bool IsInitialized { get; set; }
+		IAutomationConfiguration AutomationConfigurations { get; }
+		FeatureContext FeatureContext { get; }
+		ScenarioContext ScenarioContext { get; }
 
-        string TestSuiteTarget { get; set; }
-        string TestPlanTarget { get; set; }
-        string TestCaseTarget { get; set; }
-        
-    }
+		bool IsInitialized { get; set; }
+
+		string TestSuiteTarget { get; set; }
+		string TestPlanTarget { get; set; }
+		string TestCaseTarget { get; set; }
+
+	}
 }

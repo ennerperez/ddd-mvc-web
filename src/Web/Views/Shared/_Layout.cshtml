@@ -1,19 +1,19 @@
 ﻿@{
-    Layout = "_Empty";
+	Layout = "_Empty";
 }
 
 @section Header{
-    @await RenderSectionAsync("Header", false)
+	@await RenderSectionAsync("Header", false)
 }
 
 @section Styles{
-    @await RenderSectionAsync("Styles", false)
+	@await RenderSectionAsync("Styles", false)
 }
 
 <partial name="_Header"/>
 
 <main role="main" id="main-content" class="container p-0">
-    @RenderBody()
+	@RenderBody()
 </main>
 
 <partial name="_Footer"/>
@@ -21,5 +21,5 @@
 <partial name="Components/Validation"/>
 
 @section Scripts{
-    @await RenderSectionAsync("Scripts", false)
+	@await RenderSectionAsync("Scripts", false)
 }

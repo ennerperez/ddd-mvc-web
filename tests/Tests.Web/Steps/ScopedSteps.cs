@@ -2,39 +2,41 @@
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
 
+// ReSharper disable UnusedParameter.Local
+
 namespace Tests.Web.Steps
 {
-    [Binding]
-    public partial class ScopedSteps
-    {
-        
-        // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
+	[Binding]
+	public partial class ScopedSteps
+	{
 
-        private readonly IAutomationConfiguration _automationConfiguration;
-        private readonly IAutomationContext _automationContext;
+		// For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
-        private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
+		private readonly IAutomationConfiguration _automationConfiguration;
+		private readonly IAutomationContext _automationContext;
 
-        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext)
-        {
-            _automationConfiguration = automationConfiguration;
-            _automationContext = automationContext;
-        }
-        
-        private Task ValidateConfigurationAsync(string method)
-        {
-            return Task.CompletedTask;
-        }
+		private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
-        private Task InitializedApplicationAsync(string method)
-        {
-            return Task.CompletedTask;
-        }
+		public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext)
+		{
+			_automationConfiguration = automationConfiguration;
+			_automationContext = automationContext;
+		}
 
-        private Task GetValidRunAsync(string method)
-        {
-            return Task.CompletedTask;
-        }
+		private Task ValidateConfigurationAsync(string method)
+		{
+			return Task.CompletedTask;
+		}
 
-    }
+		private Task InitializedApplicationAsync(string method)
+		{
+			return Task.CompletedTask;
+		}
+
+		private Task GetValidRunAsync(string method)
+		{
+			return Task.CompletedTask;
+		}
+
+	}
 }

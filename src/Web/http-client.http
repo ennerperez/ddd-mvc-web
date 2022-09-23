@@ -1,0 +1,281 @@
+### Read All Client
+GET {{url}}/api/Client/All
+X-Api-Key: {{apiKey}}
+
+### Read Client By Id
+GET {{url}}/api/Client/0
+X-Api-Key: {{apiKey}}
+
+### Read Client By Pages
+GET {{url}}/api/Client/Page/1?size=10
+X-Api-Key: {{apiKey}}
+
+### Update Client By Id
+PUT {{url}}/api/Client/0
+X-Api-Key: {{apiKey}}
+
+{
+  "id": 0,
+  "identification": "string",
+  "category": "string",
+  "fullName": "string",
+  "phoneNumber": "string",
+  "address": "string"
+}
+
+### Partial Update Client By Id
+PATCH {{url}}/api/Client/0
+X-Api-Key: {{apiKey}}
+
+{
+  "id": 0,
+  "identification": "string",
+  "category": "string",
+  "fullName": "string",
+  "phoneNumber": "string",
+  "address": "string"
+}
+
+### Delete Client By Id
+DELETE {{url}}/api/Client/0
+X-Api-Key: {{apiKey}}
+
+### Create Client
+POST {{url}}/api/Client
+X-Api-Key: {{apiKey}}
+
+{
+  "identification": "string",
+  "category": "string",
+  "fullName": "string",
+  "phoneNumber": "string",
+  "address": "string"
+}
+
+### Read Client By Table
+POST {{url}}/api/Client/Table
+X-Api-Key: {{apiKey}}
+
+{
+  "draw": 0,
+  "columns": [
+    {
+      "data": "string",
+      "name": "string",
+      "searchable": true,
+      "orderable": true,
+      "search": {
+        "value": "string",
+        "regex": true
+      }
+    }
+  ],
+  "order": [
+    {
+      "column": 0,
+      "dir": "string"
+    }
+  ],
+  "start": 0,
+  "length": 0,
+  "search": {
+    "value": "string",
+    "regex": true
+  },
+  "filters": [
+    {
+      "column": "string",
+      "value": "string"
+    }
+  ]
+}
+
+### Read All Setting
+GET {{url}}/api/Setting/All
+X-Api-Key: {{apiKey}}
+
+### Read Setting By Id
+GET {{url}}/api/Setting/0
+X-Api-Key: {{apiKey}}
+
+### Read Setting By Pages
+GET {{url}}/api/Setting/Page/1?size=10
+X-Api-Key: {{apiKey}}
+
+### Update Setting By Id
+PUT {{url}}/api/Setting/0
+X-Api-Key: {{apiKey}}
+
+{
+  "id": 0,
+  "key": "string",
+  "type": 0,
+  "value": "string"
+}
+
+### Partial Update Setting By Id
+PATCH {{url}}/api/Setting/0
+X-Api-Key: {{apiKey}}
+
+{
+  "id": 0,
+  "key": "string",
+  "type": 0,
+  "value": "string"
+}
+
+### Delete Setting By Id
+DELETE {{url}}/api/Setting/0
+X-Api-Key: {{apiKey}}
+
+### Create Setting
+POST {{url}}/api/Setting
+X-Api-Key: {{apiKey}}
+
+{
+  "key": "string",
+  "type": 0,
+  "value": "string"
+}
+
+### Read Setting By Table
+POST {{url}}/api/Setting/Table
+X-Api-Key: {{apiKey}}
+
+{
+  "draw": 0,
+  "columns": [
+    {
+      "data": "string",
+      "name": "string",
+      "searchable": true,
+      "orderable": true,
+      "search": {
+        "value": "string",
+        "regex": true
+      }
+    }
+  ],
+  "order": [
+    {
+      "column": 0,
+      "dir": "string"
+    }
+  ],
+  "start": 0,
+  "length": 0,
+  "search": {
+    "value": "string",
+    "regex": true
+  },
+  "filters": [
+    {
+      "column": "string",
+      "value": "string"
+    }
+  ]
+}
+
+### Read All User
+GET {{url}}/api/User/All
+X-Api-Key: {{apiKey}}
+
+### Read User By Id
+GET {{url}}/api/User/0
+X-Api-Key: {{apiKey}}
+
+### Read User By Pages
+GET {{url}}/api/User/Page/1?size=10
+X-Api-Key: {{apiKey}}
+
+### Update User By Id
+PUT {{url}}/api/User/0
+X-Api-Key: {{apiKey}}
+
+{
+  "id": 0,
+  "givenName": "string",
+  "surname": "string",
+  "userName": "string",
+  "email": "string",
+  "password": "string",
+  "emailConfirmed": true,
+  "phoneNumber": "string",
+  "phoneNumberConfirmed": true,
+  "twoFactorEnabled": true
+}
+
+### Partial Update User By Id
+PATCH {{url}}/api/User/0
+X-Api-Key: {{apiKey}}
+
+{
+  "id": 0,
+  "givenName": "string",
+  "surname": "string",
+  "userName": "string",
+  "email": "string",
+  "password": "string",
+  "emailConfirmed": true,
+  "phoneNumber": "string",
+  "phoneNumberConfirmed": true,
+  "twoFactorEnabled": true
+}
+
+### Delete User By Id
+DELETE {{url}}/api/User/0
+X-Api-Key: {{apiKey}}
+
+### Create User
+POST {{url}}/api/User
+X-Api-Key: {{apiKey}}
+
+{
+  "givenName": "string",
+  "surname": "string",
+  "userName": "string",
+  "email": "string",
+  "password": "string",
+  "emailConfirmed": true,
+  "phoneNumber": "string",
+  "phoneNumberConfirmed": true,
+  "twoFactorEnabled": true
+}
+
+### Read User By Table
+POST {{url}}/api/User/Table
+X-Api-Key: {{apiKey}}
+
+{
+  "draw": 0,
+  "columns": [
+    {
+      "data": "string",
+      "name": "string",
+      "searchable": true,
+      "orderable": true,
+      "search": {
+        "value": "string",
+        "regex": true
+      }
+    }
+  ],
+  "order": [
+    {
+      "column": 0,
+      "dir": "string"
+    }
+  ],
+  "start": 0,
+  "length": 0,
+  "search": {
+    "value": "string",
+    "regex": true
+  },
+  "filters": [
+    {
+      "column": "string",
+      "value": "string"
+    }
+  ]
+}

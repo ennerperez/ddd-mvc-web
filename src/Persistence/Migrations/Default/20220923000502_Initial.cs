@@ -115,6 +115,52 @@ namespace Persistence.Migrations.Default
                 });
 
             migrationBuilder.CreateTable(
+                name: "Budgets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false),
+                    ClientId = table.Column<int>(type: "INTEGER", nullable: true),
+                    State = table.Column<short>(type: "INTEGER", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Taxes = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ExpireAt = table.Column<DateTime>(type: "datetime", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Budgets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Budgets_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Budgets_Users_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Budgets_Users_DeletedById",
+                        column: x => x.DeletedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Budgets_Users_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UsersClaims",
                 columns: table => new
                 {
@@ -206,6 +252,52 @@ namespace Persistence.Migrations.Default
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_ClientId",
+                table: "Budgets",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_Code",
+                table: "Budgets",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_CreatedAt",
+                table: "Budgets",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_CreatedById",
+                table: "Budgets",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_DeletedById",
+                table: "Budgets",
+                column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_ExpireAt",
+                table: "Budgets",
+                column: "ExpireAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_ModifiedAt",
+                table: "Budgets",
+                column: "ModifiedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_ModifiedById",
+                table: "Budgets",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Budgets_State",
+                table: "Budgets",
+                column: "State");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_CreatedAt",
@@ -370,7 +462,7 @@ namespace Persistence.Migrations.Default
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "Budgets");
 
             migrationBuilder.DropTable(
                 name: "RolesClaims");
@@ -389,6 +481,9 @@ namespace Persistence.Migrations.Default
 
             migrationBuilder.DropTable(
                 name: "UsersTokens");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "Roles");

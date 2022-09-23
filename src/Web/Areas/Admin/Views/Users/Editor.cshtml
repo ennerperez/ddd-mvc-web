@@ -1,82 +1,116 @@
-﻿<!-- Modal -->
+﻿@using Domain.Entities.Identity
+@using Microsoft.EntityFrameworkCore
+
+@inject RoleManager<Role> RoleManager
+
+@{
+	var roles = await RoleManager.Roles.ToArrayAsync();
+	roles = roles.Where(m => User.IsInRole(m.Name)).ToArray();
+}
+
+<!-- Modal -->
 <div class="modal fade" id="modal-editor" tabindex="-1" aria-labelledby="modal-editor-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-editor-label">@ViewData["Title"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" data-field="id" id="id"/>
-                <div class="mb-3">
-                    <label for="givenName" class="form-label required">Given Name</label>
-                    <input id="givenName" class="form-control" required
-                           data-field="givenName"
-                           data-validate="true"
-                           data-feedback="Please enter a valid given name">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modal-editor-label">@ViewData["Title"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" data-field="id" id="id"/>
+				<div class="mb-3">
+					<label for="givenName" class="form-label required">Given Name</label>
+					<input id="givenName" class="form-control" required
+					       data-field="givenName"
+					       data-validate="true"
+					       data-feedback="Please enter a valid given name">
+				</div>
+				<div class="mb-3">
+					<label for="surName" class="form-label required">Sur Name</label>
+					<input id="surName" class="form-control" required
+					       data-field="surname"
+					       data-validate="true"
+					       data-feedback="Please enter a valid sur name">
+				</div>
+				<div class="mb-3">
+					<label for="userName" class="form-label">User Name</label>
+					<input id="userName" class="form-control" type="email"
+					       data-field="userName"
+					       data-validate="true"
+					       data-feedback="Please enter a valid userName">
+				</div>
+				<div class="mb-3">
+                	<label for="password" class="form-label">Password</label>
+                	<input id="password" class="form-control" type="password"
+                	       data-field="password"
+                	       data-validate="true"
+                	       data-feedback="Please enter a valid password">
                 </div>
-                <div class="mb-3">
-                    <label for="surName" class="form-label required">Sur Name</label>
-                    <input id="surName" class="form-control" required
-                           data-field="surname"
-                           data-validate="true"
-                           data-feedback="Please enter a valid sur name">
-                </div>
-                <div class="mb-3">
-                    <label for="userName" class="form-label">User Name</label>
-                    <input id="userName" class="form-control" type="email"
-                           data-field="userName"
-                           data-validate="true"
-                           data-feedback="Please enter a valid userName">
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input id="email" class="form-control" type="email"
-                           data-field="email"
-                           data-validate="true"
-                           data-feedback="Please enter a valid email">
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="emailConfirmed"
-                               data-field="emailConfirmed">
-                        <label class="form-check-label" for="emailConfirmed">
-                            Email confirmed
-                        </label>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="phoneNumber" class="form-label required">Phone Number</label>
-                    <input id="phoneNumber" class="form-control" required
-                           data-field="phoneNumber"
-                           data-validate="true"
-                           data-regex="^[0-9]{10,}$"
-                           data-feedback="Please enter a valid phone"
-                           data-mask="(000) 000-0000">
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="phoneNumberConfirmed"
-                               data-field="phoneNumberConfirmed">
-                        <label class="form-check-label" for="phoneNumberConfirmed">
-                            Phone confirmed
-                        </label>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="twoFactorEnabled"
-                               data-field="twoFactorEnabled">
-                        <label class="form-check-label" for="twoFactorEnabled">
-                            Two Factor
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button name="btn-save" type="button" class="btn btn-primary">Save</button>
-            </div>
-        </div>
-    </div>
+				<div class="mb-3">
+					<label for="email" class="form-label">Email</label>
+					<input id="email" class="form-control" type="email"
+					       data-field="email"
+					       data-validate="true"
+					       data-feedback="Please enter a valid email">
+				</div>
+				<div class="mb-3">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="emailConfirmed"
+						       data-field="emailConfirmed">
+						<label class="form-check-label" for="emailConfirmed">
+							Email confirmed
+						</label>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label for="phoneNumber" class="form-label required">Phone Number</label>
+					<input id="phoneNumber" class="form-control" required
+					       data-field="phoneNumber"
+					       data-validate="true"
+					       data-regex="^[0-9]{10,}$"
+					       data-feedback="Please enter a valid phone"
+					       data-mask="(000) 000-0000">
+				</div>
+				<div class="mb-3">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="phoneNumberConfirmed"
+						       data-field="phoneNumberConfirmed">
+						<label class="form-check-label" for="phoneNumberConfirmed">
+							Phone confirmed
+						</label>
+					</div>
+				</div>
+				<div class="mb-3">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="twoFactorEnabled"
+						       data-field="twoFactorEnabled">
+						<label class="form-check-label" for="twoFactorEnabled">
+							Two Factor
+						</label>
+					</div>
+				</div>
+				@if (roles.Any())
+				{
+					<div class="mb-4 mt-4">
+						<h6 class="mb-2">Roles</h6>
+						@for (int i = 0; i < roles.Length; i++)
+						{
+							var role = roles[i];
+							var inputId = $"role{i}";
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" id="@inputId" data-value="@role.Name" data-field="roles[@i]">
+								<label class="form-check-label" for="@inputId">
+									@role.Name
+								</label>
+							</div>
+						}
+					</div>
+				}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button name="btn-save" type="button" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+	</div>
 </div>

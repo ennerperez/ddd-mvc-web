@@ -8,26 +8,26 @@
  */
 
 html {
-    font-weight: 200;
-    height: 100vh;
-    margin: 0;
+	font-weight: 200;
+	height: 100vh;
+	margin: 0;
 }
 
 .swagger-ui .info {
-    margin-bottom: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .scheme-container {
-    background: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+	padding: 0 !important;
 }
 
 .swagger-title {
-    margin: 0 !important;
-    padding: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 .swagger-ui .topbar a {
-    max-width: 40px !important;
+	max-width: 40px !important;
 }

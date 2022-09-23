@@ -5,10 +5,10 @@ using Persistence.Contexts;
 
 namespace Persistence.Services.Identity
 {
-    public class UserRoleRepository : GenericRepository<UserRole>
-    {
-        public UserRoleRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
-        {
-        }
-    }
+	public class UserRoleRepository : GenericRepository<UserRole>
+	{
+		public UserRoleRepository(DefaultContext context, ILoggerFactory logger, IConfiguration configuration) : base(context, logger, configuration)
+		{
+		}
+	}
 }
