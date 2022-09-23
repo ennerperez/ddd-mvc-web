@@ -1,0 +1,12 @@
+// Configuration
+@import "../lib/bootstrap/scss/functions";
+@import "../lib/bootstrap/scss/variables";
+@import "../lib/bootstrap/scss/mixins";
+@import "../lib/bootstrap/scss/utilities";
+
+.required:after {
+  text-transform: uppercase;
+  content: " *";
+  font-size: $font-size-sm;
+  color: $red;
+}
