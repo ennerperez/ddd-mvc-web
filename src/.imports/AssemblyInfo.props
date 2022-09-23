@@ -2,25 +2,25 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	
 	<ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'false'">
-		<None Include="$(SolutionDir)\src\.files\AssemblyInfo.General.tt">
+		<None Include="$(_FilesDirectory)AssemblyInfo.General.tt">
 	    <Link>Properties\AssemblyInfo.General.tt</Link>
 	    <Generator>TextTemplatingFileGenerator</Generator>
 	    <LastGenOutput>AssemblyInfo.General.cs</LastGenOutput>
 	    <DependentUpon>AssemblyInfo.cs</DependentUpon>
 	  </None>
-	  <None Include="$(SolutionDir)\src\.files\AssemblyInfo.Version.tt">
+	  <None Include="$(_FilesDirectory)AssemblyInfo.Version.tt">
 	    <Link>Properties\AssemblyInfo.Version.tt</Link>
 	    <Generator>TextTemplatingFileGenerator</Generator>
 	    <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
 	    <DependentUpon>AssemblyInfo.cs</DependentUpon>
 	  </None>
-    <Compile Include="$(SolutionDir)\src\.files\AssemblyInfo.General.cs">
+    <Compile Include="$(_FilesDirectory)AssemblyInfo.General.cs">
       <Link>Properties\AssemblyInfo.General.cs</Link>
       <DependentUpon>AssemblyInfo.General.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Include="$(SolutionDir)\src\.files\AssemblyInfo.Version.cs">
+    <Compile Include="$(_FilesDirectory)AssemblyInfo.Version.cs">
       <Link>Properties\AssemblyInfo.Version.cs</Link>
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
       <DesignTime>True</DesignTime>

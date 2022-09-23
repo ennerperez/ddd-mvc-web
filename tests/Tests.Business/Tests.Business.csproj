@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="$(SolutionDir)src\.imports\Template.props" />
+	<Import Project="..\..\src\.imports\Template.props" />
 	<Import Condition="Exists('Options.props')" Project="Options.props" />
-	<Import Project="$(SolutionDir)src\.imports\Template.targets" />
+	<Import Project="..\..\src\.imports\Template.targets" />
 	<Import Condition="Exists('Options.targets')" Project="Options.targets" />
 
   <PropertyGroup>

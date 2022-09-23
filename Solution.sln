@@ -60,9 +60,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{90
 		src\.imports\AssemblyInfo.props = src\.imports\AssemblyInfo.props
 		src\.imports\Features.props = src\.imports\Features.props
 		src\.imports\Project.props = src\.imports\Project.props
-		src\.imports\Solution.targets = src\.imports\Solution.targets
 		src\.imports\Features.targets = src\.imports\Features.targets
 		src\.imports\Project.targets = src\.imports\Project.targets
+		src\.imports\Template.props = src\.imports\Template.props
+		src\.imports\Template.targets = src\.imports\Template.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", ".build\_build.csproj", "{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}"

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="$(SolutionDir)src\.imports\Template.props" />
+	<Import Project="..\.imports\Template.props" />
 	<Import Condition="Exists('Options.props')" Project="Options.props" />
-	<Import Project="$(SolutionDir)src\.imports\Template.targets" />
+	<Import Project="..\.imports\Template.targets" />
 	<Import Condition="Exists('Options.targets')" Project="Options.targets" />
 	
   <ItemGroup>
@@ -40,6 +40,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\Default" />
   </ItemGroup>
 	
   <Target Name="Contexts" BeforeTargets="CoreBuild" Outputs="%(Context.Identity)">
