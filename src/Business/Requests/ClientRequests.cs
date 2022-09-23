@@ -56,8 +56,8 @@ namespace Business.Requests
 			RuleFor(m => new { m.Identification })
 				.CustomAsync(async (m, v, c) =>
 				{
-					var identificationInUse = await repository.AnyAsync(p => p.Identification == m.Identification, c);
-					if (identificationInUse) v.AddFailure("Identification is already in use");
+					var isInUse = await repository.AnyAsync(p => p.Identification == m.Identification, c);
+					if (isInUse) v.AddFailure("Identification is already in use");
 				});
 		}
 	}
@@ -152,8 +152,8 @@ namespace Business.Requests
 			RuleFor(m => new { m.Id, m.Identification })
 				.CustomAsync(async (m, v, c) =>
 				{
-					var identificationInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
-					if (identificationInUse) v.AddFailure("Identification is already in use");
+					var isInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
+					if (isInUse) v.AddFailure("Identification is already in use");
 				});
 		}
 	}
@@ -206,8 +206,8 @@ namespace Business.Requests
 				{
 					if (m.Identification != null)
 					{
-						var identificationInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
-						if (identificationInUse) v.AddFailure("Identification is already in use");
+						var isInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
+						if (isInUse) v.AddFailure("Identification is already in use");
 					}
 				});
 		}

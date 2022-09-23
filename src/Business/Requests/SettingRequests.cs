@@ -52,8 +52,8 @@ namespace Business.Requests
 			RuleFor(m => new { m.Key })
 				.CustomAsync(async (m, v, c) =>
 				{
-					var keyInUse = await repository.AnyAsync(p => p.Key == m.Key, c);
-					if (keyInUse) v.AddFailure("Key is already in use");
+					var isInUse = await repository.AnyAsync(p => p.Key == m.Key, c);
+					if (isInUse) v.AddFailure("Key is already in use");
 				});
 		}
 	}
@@ -144,8 +144,8 @@ namespace Business.Requests
 			RuleFor(m => new { m.Id, m.Key })
 				.CustomAsync(async (m, v, c) =>
 				{
-					var keyInUse = await repository.AnyAsync(p => p.Key == m.Key && p.Id != m.Id, c);
-					if (keyInUse) v.AddFailure("Key is already in use");
+					var isInUse = await repository.AnyAsync(p => p.Key == m.Key && p.Id != m.Id, c);
+					if (isInUse) v.AddFailure("Key is already in use");
 				});
 		}
 	}
@@ -194,8 +194,8 @@ namespace Business.Requests
 				{
 					if (m.Key != null)
 					{
-						var keyInUse = await repository.AnyAsync(p => p.Key == m.Key && p.Id != m.Id, c);
-						if (keyInUse) v.AddFailure("Key is already in use");
+						var isInUse = await repository.AnyAsync(p => p.Key == m.Key && p.Id != m.Id, c);
+						if (isInUse) v.AddFailure("Key is already in use");
 					}
 				});
 		}

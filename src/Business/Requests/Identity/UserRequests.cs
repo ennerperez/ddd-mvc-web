@@ -90,8 +90,8 @@ namespace Business.Requests.Identity
 			RuleFor(m => new { m.Email })
 				.CustomAsync(async (m, v, c) =>
 				{
-					var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper(), c);
-					if (emailInUse) v.AddFailure("Email is already in use");
+					var isInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper(), c);
+					if (isInUse) v.AddFailure("Email is already in use");
 				});
 		}
 	}
@@ -233,8 +233,8 @@ namespace Business.Requests.Identity
 			RuleFor(m => new { m.Id, m.Email })
 				.CustomAsync(async (m, v, c) =>
 				{
-					var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
-					if (emailInUse) v.AddFailure("Email is already in use");
+					var isInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
+					if (isInUse) v.AddFailure("Email is already in use");
 				});
 		}
 	}
@@ -348,8 +348,8 @@ namespace Business.Requests.Identity
 				{
 					if (m.Email != null)
 					{
-						var emailInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
-						if (emailInUse) v.AddFailure("Email is already in use");
+						var isInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
+						if (isInUse) v.AddFailure("Email is already in use");
 					}
 				});
 		}
