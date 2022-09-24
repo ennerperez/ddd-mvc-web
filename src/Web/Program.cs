@@ -13,6 +13,7 @@ using Web.Services;
 
 namespace Web
 {
+	[DebuggerStepThrough]
 	public static class Program
 	{
 		public static void Main(string[] args)
