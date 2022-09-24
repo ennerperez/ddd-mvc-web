@@ -23,7 +23,7 @@ namespace Persistence.Migrations.Default
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Code")
@@ -60,13 +60,13 @@ namespace Persistence.Migrations.Default
                     b.Property<short>("State")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("Subtotal")
+                    b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("Taxes")
+                    b.Property<decimal>("Taxes")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("Total")
+                    b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -482,7 +482,8 @@ namespace Persistence.Migrations.Default
                     b.HasOne("Domain.Entities.Client", "Client")
                         .WithMany("Budgets")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Identity.User", "CreatedBy")
                         .WithMany()
