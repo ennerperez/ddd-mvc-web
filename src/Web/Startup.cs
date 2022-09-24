@@ -313,29 +313,28 @@ namespace Web
 #endif
 
 #if ENABLE_OPENID
-	        var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
-	        {
-		        options.ClientId = Configuration["OpenIdSettings:ClientId"];
-		        options.ClientSecret = Configuration["OpenIdSettings:ClientSecret"];
-		        options.Authority = Configuration["OpenIdSettings:Authority"];
-		        options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
-		        options.RequireHttpsMetadata = Configuration.GetValue<bool>("OpenIdSettings:RequireHttps");
-		        options.GetClaimsFromUserInfoEndpoint = true;
-		        //options.AuthenticationScheme = "oidc";
-		        options.SignInScheme = "Cookies";
-		        options.ResponseType = OpenIdConnectResponseType.IdToken;
-		        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-		        {
-			        // This sets the value of User.Identity.Name to users AD username
-			        NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName,
-			        RoleClaimType = System.Security.Claims.ClaimTypes.Role,
-			        AuthenticationType = "Cookies",
-			        ValidateIssuer = false
-		        };
-		        var scopes = new List<string>();
-		        Configuration.Bind("OpenIdSettings:Scopes",scopes);
-		        if (scopes.Any()) options.Scope.AddRange(scopes);
-	        });
+			var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
+			{
+				options.ClientId = Configuration["OpenIdSettings:ClientId"];
+				options.ClientSecret = Configuration["OpenIdSettings:ClientSecret"];
+				options.Authority = Configuration["OpenIdSettings:Authority"];
+				options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
+				options.RequireHttpsMetadata = Configuration.GetValue<bool>("OpenIdSettings:RequireHttps");
+				options.GetClaimsFromUserInfoEndpoint = true;
+				//options.AuthenticationScheme = "oidc";
+				options.SignInScheme = "Cookies";
+				options.ResponseType = OpenIdConnectResponseType.IdToken;
+				options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+				{
+					// This sets the value of User.Identity.Name to users AD username
+					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, RoleClaimType = System.Security.Claims.ClaimTypes.Role, AuthenticationType = "Cookies", ValidateIssuer = false
+				};
+				var scopes = new List<string>();
+				Configuration.Bind("OpenIdSettings:Scopes", scopes);
+				if (scopes.Any())
+					foreach (var item in scopes)
+						options.Scope.Add(item);
+			});
 
 #endif
 
@@ -350,7 +349,7 @@ namespace Web
 				.AddJwtBearer()
 #endif
 #if ENABLE_OPENID
-                .AddOpenIdConnect(openIdConnectOptions)
+				.AddOpenIdConnect(openIdConnectOptions)
 #endif
 #if USING_SMARTSCHEMA
 				.AddSmartScheme()
