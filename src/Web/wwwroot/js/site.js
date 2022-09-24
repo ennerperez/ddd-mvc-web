@@ -92,6 +92,25 @@ function rangeBadgeRender(input, defaultValue, values, texts, styles) {
 	return `<span class="float-center badge bg-${color} ${styles}">${value}</span>`;
 }
 
+function stateBadgeRender(input, values, styles) {
+	for (let i = 0; i < values.length; i++) {
+		let item = values[i];
+		let props = Object.getOwnPropertyNames(item);
+		for (let j = 0; j < props.length; j++) {
+			let subitem = item[props[j]];
+			let subprops = Object.getOwnPropertyNames(subitem);
+			for (let p = 0; p < subprops.length; p++) {
+				if (subprops[p] === input.toString()) {
+					let color = props[j];
+					let value = subitem[input];
+					return `<span class="float-center badge bg-${color} ${styles}">${value}</span>`;
+				}
+			}
+		}
+	}
+	return '';
+}
+
 function dateTimeRender(input, format = "DD/MM/YYYY", nullValue = '') {
 	return input !== null ? moment(input).format(format) : nullValue;
 }
