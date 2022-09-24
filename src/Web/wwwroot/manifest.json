@@ -1,5 +1,10 @@
 {
 	"name": "App",
+	"short_name": "App",
+	"start_url": ".",
+	"display": "standalone",
+	"background_color": "#fff",
+	"description": "A demo web app.",
 	"icons": [
 		{
 			"src": "\/android-icon-36x36.png",
