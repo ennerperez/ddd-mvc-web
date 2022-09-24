@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
 using Business.Exceptions;
@@ -40,7 +41,7 @@ namespace Business.Requests
 			entity.PhoneNumber = request.PhoneNumber;
 			entity.Address = request.Address;
 			entity.Category = request.Category;
-
+			
 			await _repository.CreateAsync(entity);
 
 			return entity.Id;
@@ -184,11 +185,11 @@ namespace Business.Requests
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Client), request.Id);
 
-			entity.Identification = request.Identification;
-			entity.FullName = request.FullName;
-			entity.Address = request.Address;
-			entity.PhoneNumber = request.PhoneNumber;
-			entity.Category = request.Category;
+			if (string.IsNullOrWhiteSpace(entity.Identification)) entity.Identification = request.Identification;
+			if (string.IsNullOrWhiteSpace(entity.FullName)) entity.FullName = request.FullName;
+			if (string.IsNullOrWhiteSpace(entity.Address)) entity.Address = request.Address;
+			if (string.IsNullOrWhiteSpace(entity.PhoneNumber)) entity.PhoneNumber = request.PhoneNumber;
+			if (string.IsNullOrWhiteSpace(entity.Category)) entity.Category = request.Category;
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 

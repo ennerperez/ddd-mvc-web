@@ -174,9 +174,9 @@ namespace Business.Requests
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
 
-			if (request.Key != null) entity.Key = request.Key;
+			if (string.IsNullOrWhiteSpace(request.Key)) entity.Key = request.Key;
 			if (request.Type != null) entity.Type = request.Type.Value;
-			if (request.Value != null) entity.Value = request.Value;
+			if (string.IsNullOrWhiteSpace(request.Value)) entity.Value = request.Value;
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
