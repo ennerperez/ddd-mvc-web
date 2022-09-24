@@ -1,0 +1,83 @@
+﻿@using Persistence.Interfaces
+@using Domain.Entities
+@inject IGenericRepository<Client> ClientRepository
+
+@{
+	var clients = await ClientRepository.ReadAsync(s => new { s.Id, s.FullName });
+}
+
+<!-- Modal -->
+<div class="modal fade" id="modal-editor" tabindex="-1" aria-labelledby="modal-editor-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modal-editor-label">@ViewData["Title"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" data-field="id" id="id"/>
+				<input type="hidden" data-field="state" id="state" />
+				<div class="mb-3">
+					<label for="code" class="form-label required">Code</label>
+					<input id="code" class="form-control" required
+					       data-field="code"
+					       data-validate="true"
+					       data-feedback="Please enter a valid code">
+				</div>
+				<div class="mb-3">
+                    <label for="client" class="form-label required">Client</label>
+					<select id="client" class="form-control" required
+					        data-field="clientId"
+					        data-validate="true"
+					        data-feedback="Please select a client">
+						@foreach (var item in clients)
+						{
+							<option value="@item.Id">@item.FullName</option>
+						}
+					</select>
+                </div>
+				<div class="mb-3">
+					<label for="subtotal" class="form-label required">Subtotal</label>
+					<input id="subtotal" class="form-control" type="number" min="1" step="any" required
+					       data-field="subtotal"
+					       data-validate="true"
+					       data-feedback="Please enter a valid value for subtotal">
+				</div>
+				<div class="mb-3">
+					<label for="taxes" class="form-label required">Taxes</label>
+					<input id="taxes" class="form-control" type="number" min="1" step="any" required
+					       data-field="taxes"
+					       data-validate="true"
+					       data-feedback="Please enter a valid value for taxes" />
+				</div>
+				<div class="mb-3">
+					<label for="total" class="form-label required">Total</label>
+					<input id="total" class="form-control disabled" type="number" min="1" step="any" required disabled
+					       data-field="total"
+					       data-feedback="Please enter a valid value for total" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button name="btn-save" type="button" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@using (Html.BeginScripts())
+{
+	<script>
+		let subtotal = document.getElementById("subtotal");
+		let taxes = document.getElementById("taxes");
+		subtotal.addEventListener('input', () => calcTotal());
+		taxes.addEventListener('input', () => calcTotal());
+		function calcTotal(){
+			let subtotal = document.getElementById("subtotal");
+			let subtotalVal = parseFloat(subtotal.value);
+			let taxes = document.getElementById("taxes");
+			let taxesVal = parseFloat(taxes.value);
+			total.value = (isNaN(subtotalVal)?0:subtotalVal)+(isNaN(taxesVal)?0:taxesVal);
+		}
+	</script>
+}

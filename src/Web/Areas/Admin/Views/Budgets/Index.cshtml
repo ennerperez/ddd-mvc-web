@@ -1,0 +1,234 @@
+﻿@using Microsoft.Extensions.Configuration
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Globalization
+@inject IConfiguration Configuration
+@{
+	ViewData["Title"] = "Budgets";
+	var currencyCulture = new CultureInfo(Configuration["CultureInfo:CurrencyCulture"]);
+	var currencyRegion = new RegionInfo(Configuration["CultureInfo:CurrencyCulture"]);
+}
+
+<partial name="Partials/_LoaderPartial"/>
+
+<div id="content" class="page" style="display: none;">
+	<div class="page-title py-1">
+		<h3 class="m-0 p-0">
+			<i class="fas fa-receipt"></i> @ViewData["Title"]
+		</h3>
+	</div>
+	<div class="page-content m-2">
+		<div class="row">
+			<div class="col">
+				<button type="button" class="btn btn-labeled btn-primary" name="btn-create">
+					<span class="btn-label">
+						<i class="fa fa-plus"></i>
+					</span>Add
+				</button>
+				<table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
+					<thead>
+					<tr>
+						<th>Code</th>
+						<th>Client</th>
+						<th>State</th>
+						<th>Total</th>
+						<th data-printable="false" data-exportable="false" data-orderable="false" width="5%"></th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<partial name="Editor"/>
+
+<partial name="Components/Datatables"/>
+<partial name="Components/Sweetalert"/>
+
+@section Scripts
+{
+	<environment include="development">
+		<script src="~/lib/jquery.mask/jquery.mask.js"></script>
+		<script src="~/js/editor.js" asp-append-version="true"></script>
+	</environment>
+	<environment exclude="development">
+		<script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
+		<script src="~/js/editor.min.js" asp-append-version="true"></script>
+	</environment>
+
+	<script>
+            let tableMain = null;
+            let editorMain = null;
+            let apiUrl = '@Url.Content("~/")api/budget';
+			
+			__editor_options.change_state = {
+				title: "Confirmation",
+				text: "Are you sure you want to change the state?",
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonText: "Yes",
+				cancelButtonText: "No"
+			};
+			
+			var formatter = new Intl.NumberFormat('@currencyCulture.Name', { style: 'currency', currency: '@currencyRegion.ISOCurrencySymbol' });
+            
+            $(document).ready( function () {
+                
+                tableMain = $('#table').DataTable({
+                    language: { url: __datatable_options.language },
+                    serverSide: true,
+                    processing: false,
+                    paging: true,
+                    pageLength: 50,
+                    responsive: { details: { renderer: responsiveRenderer }, },
+                    info: true,
+                    dom: 'lBfrtip',
+                    buttons: __datatable_buttons,
+                    search: {
+                        caseInsensitive: true
+                    },
+                    ajax: {
+                        url: `${apiUrl}/table`,
+                        headers: { RequestVerificationToken: __RequestVerificationToken },
+                        type: 'POST',
+                        contentType: "application/json",
+                        data: function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
+                    columns: [                  
+                        { name: "code", data: "code", render: function (data, type, row)
+							 {
+								 return `${data}<br /><small>${dateTimeRender(row["createdAt"])}</small>`;
+							 }
+						},
+                        { name: "client", data: null, render: function (data, type, row)
+                        	{
+								return `<span class="position-relative">${data.clientFullName}<br /><small>${data.clientIdentification}</small></span>`;
+                        	}
+						},
+                        { name: "state", data: "state", render: function (data, type, row)
+							{
+								let values = [
+									{'danger': {'-2':'Rejected'}},
+									{'info': {'-1':'Draft','1':'Created'}},
+									{'warning': {'0':'Unknown'}},
+									{'success': {'2':'Accepted'}} 
+								];
+								return stateBadgeRender(data, values);
+							}
+						},
+						{ name: "total", data: null, render: function (data, type, row)
+							{
+								return `<span class="position-relative"><small>Subtotal: ${formatter.format(data.subtotal)}<br />Taxes: ${formatter.format(data.taxes)}<br /><b>Total: ${formatter.format(data.total)}</b></small></span>`;
+							}
+						},
+                        { className: "text-center", data: null, render: function (data, type, row) 
+                            {
+								let state = data.state;
+                                return `<div class="dropdown">
+                                            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Actions">
+                                                <i class="fas fa-bolt"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+												${state === -1 ? '<button type="button" class="dropdown-item" name="btn-send">Send</button>' : ""}
+												${state === 1 ? '<button type="button" class="dropdown-item text-success" name="btn-accept">Accept</button>' : ""}
+												${state === 1 ? '<button type="button" class="dropdown-item text-danger" name="btn-reject">Reject</button>' : ""}
+                                                <button type="button" class="dropdown-item" name="btn-edit">Edit</button>
+                                                <button type="button" class="dropdown-item text-danger" name="btn-delete">Delete</button>
+                                            </div>
+                                        </div>`;
+                            }
+                        }
+                                            
+                    ],
+                    lengthMenu: __datatable_options.lengthMenu,
+                    initComplete: function () {
+                        
+                        $("[name='btn-create']").appendTo($('.dt-buttons'));
+                        
+                        tableMain.on('draw', reHandle);
+						tableMain.on('draw', reHandleExtended);
+						
+                        reHandle();
+						reHandleExtended();
+                        
+                        // Search Delay
+                        doSearchDelay(tableMain);
+                        
+                        // UI Fix
+                        UIFix(tableMain);
+                        
+                        hideLoader();
+
+                    }
+                });
+                editorMain = new bootstrap.Modal(document.getElementById('modal-editor'));
+                setEditor(tableMain, editorMain, apiUrl);
+            });
+			
+			function reHandleExtended() {
+            	$("[name='btn-send']").each(function () {
+            		$(this).off("click", sendRecord).on("click", sendRecord);
+            	});
+            	$("[name='btn-accept']").each(function () {
+            		$(this).off("click", acceptRecord).on("click", acceptRecord);
+            	});
+            	$("[name='btn-reject']").each(function () {
+            		$(this).off("click", rejectRecord).on("click", rejectRecord);
+            	});
+            }
+			
+			function sendRecord(){
+				let btn = $(this);
+				let row = btn.closest("tr");
+				let data = __editor_table.rows(row).data()[0];
+				let id = data['id'];
+				let model = { id: id, state: 1 }; 
+				patchRecord(model,__editor_options.change_state);
+			}
+			function acceptRecord(){
+				let btn = $(this);
+				let row = btn.closest("tr");
+				let data = __editor_table.rows(row).data()[0];
+				let id = data['id'];
+				let model = { id: id, state: 2 }; 
+				patchRecord(model,__editor_options.change_state);
+			}
+			function rejectRecord(){
+				let btn = $(this);
+				let row = btn.closest("tr");
+				let data = __editor_table.rows(row).data()[0];
+				let id = data['id'];
+				let model = { id: id, state: -2 }; 
+				patchRecord(model,__editor_options.change_state);
+			}
+			
+			function patchRecord(model,question) {
+            	swal.fire(question).then((result) => {
+            		if (result.value) {
+            			let method = 'PATCH';
+            			let url = `${__editor_api_url}/${model.id}`;
+            			$.ajax({
+            				url: url,
+            				headers: {RequestVerificationToken: __RequestVerificationToken},
+            				contentType: "application/json; charset=utf-8",
+            				data: JSON.stringify(model),
+            				type: method,
+            				success: function () {
+            					__editor_table.ajax.reload(reHandle);
+            					Toast.fire(__editor_options.success);
+            				},
+            				error: function (e) {
+            					let text = "";
+            					if (e.hasOwnProperty("responseJSON")) text = e.responseJSON.detail;
+            					__editor_options.error.text = text;
+            					Toast.fire(__editor_options.error);
+            				}
+            			});
+            		}
+            	});
+            }
+            
+    </script>
+}

@@ -16,14 +16,14 @@ namespace Domain.Entities
 
 		public string Code { get; set; }
 		
-		public int? ClientId { get; set; }
+		public int ClientId { get; set; }
 		public Client Client { get; set; }
 
 		public States State { get; set; }
 
-		public decimal? Subtotal { get; set; }
-		public decimal? Taxes { get; set; }
-		public decimal? Total { get; set; }
+		public decimal Subtotal { get; set; }
+		public decimal Taxes { get; set; }
+		public decimal Total { get; set; }
 		
 		public DateTime? ExpireAt { get; set; }
 		public bool IsDeleted { get; set; }

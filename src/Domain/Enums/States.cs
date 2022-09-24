@@ -5,7 +5,7 @@
 		Rejected = -2,
 		Draft = -1,
 		Unknown = 0,
-		Accepted = 1,
-		Completed = 2,
+		Created = 1,
+		Accepted = 2
 	}
 }
