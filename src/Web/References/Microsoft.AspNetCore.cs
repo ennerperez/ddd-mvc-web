@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,7 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#if ENABLE_AB2C
+#if ENABLE_AB2C && !ENABLE_OPENID
 using Microsoft.Identity.Web;
 #endif
 
@@ -33,7 +34,11 @@ namespace Microsoft.AspNetCore
 	{
 		public sealed class SmartScheme
 		{
-			public const string AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme
+
+			public const string AuthenticationScheme = DefaultScheme
+#if !ENABLE_OPENID
+													   + "," + CookieAuthenticationDefaults.AuthenticationScheme
+#endif
 #if ENABLE_APIKEY
 			                                           + "," + ApiKeyAuthenticationDefaults.AuthenticationScheme
 #endif
@@ -41,9 +46,9 @@ namespace Microsoft.AspNetCore
 			                                           + "," + JwtBearerDefaults.AuthenticationScheme
 #endif
 #if ENABLE_OPENID
-                                                       + "," + OpenIdConnectDefaults.AuthenticationScheme
+			                                           + "," + OpenIdConnectDefaults.AuthenticationScheme
 #endif
-			                                           + "," + DefaultScheme + "," + "Identity.Application";
+			                                           + "," + "Identity.Application";
 
 			public const string DefaultScheme = "SmartScheme";
 		}
@@ -214,11 +219,11 @@ namespace Microsoft.AspNetCore
 			{
 				return authenticationBuilder;
 			}
-#if ENABLE_AB2C
-            public static MicrosoftIdentityWebAppAuthenticationBuilder Close(this MicrosoftIdentityWebAppAuthenticationBuilder authenticationBuilder)
-            {
-                return authenticationBuilder;
-            }
+#if ENABLE_AB2C && !ENABLE_OPENID
+			public static MicrosoftIdentityWebAppAuthenticationBuilder Close(this MicrosoftIdentityWebAppAuthenticationBuilder authenticationBuilder)
+			{
+				return authenticationBuilder;
+			}
 #endif
 
 			public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
@@ -421,7 +426,17 @@ namespace Microsoft.AspNetCore
 					var pageList = GetPageList(_viewContext.HttpContext);
 					pageList.Add(_blockWriter.ToString());
 
-					if (!PageList.ContainsKey(_key)) PageList.Add(_key, new Queue<string>());
+					if (!PageList.ContainsKey(_key))
+					{
+						try
+						{
+							PageList.Add(_key, new Queue<string>());
+						}
+						catch (Exception e)
+						{
+							Debug.WriteLine(e);
+						}
+					}
 					if (PageList.ContainsKey(_key))
 						foreach (var item in pageList)
 							PageList[_key].Enqueue(item);

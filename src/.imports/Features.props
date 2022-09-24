@@ -40,7 +40,7 @@
 		<EnableApiKey>true</EnableApiKey>
 		<EnableOpenId>false</EnableOpenId>
 		<EnableAB2C>false</EnableAB2C>
-		<EnableLocalAB2C>false</EnableLocalAB2C>
+		<EnableTokenValidation>true</EnableTokenValidation>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Testing">

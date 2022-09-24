@@ -23,12 +23,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 #if ENABLE_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-#endif
-#if ENABLE_AB2C
-using Microsoft.Identity.Web;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using System.Security.Claims;
 using System.Threading.Tasks;
+#endif
+#if ENABLE_AB2C && !ENABLE_OPENID
+using Microsoft.Identity.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
+using System.Security.Claims;
+using System.Threading.Tasks;
 #endif
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -315,33 +320,56 @@ namespace Web
 #if ENABLE_OPENID
 			var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
 			{
-				options.ClientId = Configuration["OpenIdSettings:ClientId"];
-				options.ClientSecret = Configuration["OpenIdSettings:ClientSecret"];
-				options.Authority = Configuration["OpenIdSettings:Authority"];
+				Configuration.Bind("OpenIdSettings", options);
+				
+#if ENABLE_TOKEN_VALIDATION
+				options.Events.OnTokenValidated = OpenId_OnTokenValidated;
+#endif
 				options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
-				options.RequireHttpsMetadata = Configuration.GetValue<bool>("OpenIdSettings:RequireHttps");
-				options.GetClaimsFromUserInfoEndpoint = true;
-				//options.AuthenticationScheme = "oidc";
-				options.SignInScheme = "Cookies";
-				options.ResponseType = OpenIdConnectResponseType.IdToken;
 				options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 				{
 					// This sets the value of User.Identity.Name to users AD username
-					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, RoleClaimType = System.Security.Claims.ClaimTypes.Role, AuthenticationType = "Cookies", ValidateIssuer = false
+					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, 
+					RoleClaimType = System.Security.Claims.ClaimTypes.Role, 
+					AuthenticationType = "Cookies", 
+					ValidateIssuer = false
 				};
 				var scopes = new List<string>();
-				Configuration.Bind("OpenIdSettings:Scopes", scopes);
+				Configuration.Bind("OpenIdSettings:Scope", scopes);
 				if (scopes.Any())
+				{
+					options.Scope.Clear();
 					foreach (var item in scopes)
 						options.Scope.Add(item);
+				}
+				options.Events.OnSignedOutCallbackRedirect = context =>
+				{
+					context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
+					context.HandleResponse();
+					return Task.FromResult(true);
+				};
 			});
-
 #endif
-
+			
+#if ENABLE_AB2C && !ENABLE_OPENID
+			var ab2cConnectOptions = new Action<MicrosoftIdentityOptions>(options =>
+			{
+				Configuration.Bind("AzureSettings:AdB2C", options);
+				
+#if ENABLE_TOKEN_VALIDATION
+				options.Events.OnTokenValidated = AB2C_OnTokenValidated;
+#endif
+				options.Events.OnSignedOutCallbackRedirect = context =>
+				{
+					context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
+					context.HandleResponse();
+					return Task.FromResult(true);
+				};
+			});
+#endif
+			
 			services.AddAuthentication()
-#if !ENABLE_AB2C
 				.AddCookie()
-#endif
 #if ENABLE_APIKEY
 				.AddApiKey()
 #endif
@@ -354,20 +382,8 @@ namespace Web
 #if USING_SMARTSCHEMA
 				.AddSmartScheme()
 #endif
-#if ENABLE_AB2C
-                .AddMicrosoftIdentityWebApp(options =>
-                {
-	                Configuration.Bind("AzureSettings:AdB2C", options);
-#if ENABLE_LOCAL_AB2C
-	                options.Events.OnTokenValidated = OnTokenValidated;
-#endif
-	                options.Events.OnSignedOutCallbackRedirect = context =>
-	                {
-		                context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
-		                context.HandleResponse();
-		                return Task.FromResult(true);
-	                };
-                })
+#if ENABLE_AB2C && !ENABLE_OPENID
+                .AddMicrosoftIdentityWebApp(ab2cConnectOptions)
 #endif
 				.Close();
 
@@ -375,8 +391,38 @@ namespace Web
 
 		}
 
-#if ENABLE_AB2C && ENABLE_LOCAL_AB2C
-        private async Task OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
+#if ENABLE_OPENID && ENABLE_TOKEN_VALIDATION
+		private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
+		{
+			if (context.Principal != null && context.Principal.Identity != null)
+			{
+				var cllist = context.Principal.Claims.GroupBy(m => m.Type).Select(m => m.FirstOrDefault()).ToList();
+				var claims = cllist.ToDictionary(k => k.Type, v => v.Value);
+				var emails = claims["name"];
+
+				//var userManager = Program.Host.Services.GetService<UserManager<Buyer>>();
+				var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
+				if (userManager != null)
+				{
+					var user = await userManager.Users.FirstOrDefaultAsync(m => m.Email == emails);
+					if (user == null)
+					{
+						var ph = new PasswordHasher<User>();
+						user = new User() { NormalizedUserName = claims["name"].ToUpper(), UserName = claims["nickname"], Email = claims["name"], EmailConfirmed = claims["email_verified"] == "true" };
+#if DEBUG
+						user.PasswordHash = ph.HashPassword(user, $"Admin{DateTime.Now.Year}**");
+#endif
+						await userManager.CreateAsync(user);
+						await userManager.AddClaimsAsync(user, claims.Select(m => new Claim(m.Key, m.Value)));
+					}
+					//TODO: What if user exists?, update metadata from OpenID
+				}
+			}
+		}
+#endif
+		
+#if ENABLE_AB2C && !ENABLE_OPENID && ENABLE_TOKEN_VALIDATION
+        private async Task AB2C_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
         {
             if (context.Principal != null && context.Principal.Identity != null)
             {
@@ -422,7 +468,7 @@ namespace Web
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseMigrationsEndPoint();
-#if ENABLE_AB2C
+#if ENABLE_AB2C || ENABLE_OPENID
                 IdentityModelEventSource.ShowPII = true;
 #endif
 			}

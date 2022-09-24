@@ -40,7 +40,7 @@
 		<BuildConstants Condition="'$(EnableApiKey)' == 'true'">$(BuildConstants)ENABLE_APIKEY;</BuildConstants>
 		<BuildConstants Condition="'$(EnableOpenId)' == 'true'">$(BuildConstants)ENABLE_OPENID;</BuildConstants>
 		<BuildConstants Condition="'$(EnableAB2C)' == 'true'">$(BuildConstants)ENABLE_AB2C;</BuildConstants>
-		<BuildConstants Condition="'$(EnableLocalAB2C)' == 'true'">$(BuildConstants)ENABLE_LOCAL_AB2C;</BuildConstants>
+		<BuildConstants Condition="'$(EnableTokenValidation)' == 'true'">$(BuildConstants)ENABLE_TOKEN_VALIDATION;</BuildConstants>
 	</PropertyGroup>
 	
 	<!-- Testing -->
