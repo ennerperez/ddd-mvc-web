@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore
 #if ENABLE_OPENID
                                                        + "," + OpenIdConnectDefaults.AuthenticationScheme
 #endif
-			                                           + "," + DefaultScheme;
+			                                           + "," + DefaultScheme + "," + "Identity.Application";
 
 			public const string DefaultScheme = "SmartScheme";
 		}
@@ -312,30 +312,6 @@ namespace Microsoft.AspNetCore
 				}
 
 				return null;
-			}
-		}
-	}
-
-	namespace Identity
-	{
-		public static class Extensions
-		{
-			public static T GetUserId<T>(this ClaimsPrincipal principal) where T : struct
-			{
-				var value = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (value != null)
-					return (T)Convert.ChangeType(value, typeof(T));
-				return default;
-			}
-
-			public static string GetUserId(this ClaimsPrincipal principal) => principal.FindFirstValue(ClaimTypes.NameIdentifier);
-
-			public static string GetUserFullName(this ClaimsPrincipal principal)
-			{
-				var displayName = string.Join(' ', new[] { principal.FindFirstValue(ClaimTypes.GivenName), principal.FindFirstValue(ClaimTypes.Surname) });
-				if (string.IsNullOrWhiteSpace(displayName)) displayName = principal.FindFirstValue(ClaimTypes.Name);
-				if (string.IsNullOrWhiteSpace(displayName)) displayName = "N/A";
-				return displayName;
 			}
 		}
 	}

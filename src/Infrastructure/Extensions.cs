@@ -60,6 +60,7 @@ namespace Infrastructure
 
 			var assembliesToScan = assemblies.Distinct().ToArray();
 			services.ConnectImplementationsToTypesClosing(typeof(IDocumentService<>), assembliesToScan, false);
+			services.ConnectImplementationsToTypesClosing(typeof(IIdentityService), assembliesToScan, false);
 		}
 
 		#endregion

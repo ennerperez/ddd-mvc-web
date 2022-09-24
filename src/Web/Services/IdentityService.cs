@@ -1,20 +1,25 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Domain.Entities.Identity;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Business.Services
+namespace Web.Services
 {
 	public class IdentityService : IIdentityService
 	{
 		private readonly UserManager<User> _userManager;
+		private readonly IHttpContextAccessor _contextAccesor;
+		public ClaimsPrincipal User => _contextAccesor.HttpContext?.User;
 
-		public IdentityService(UserManager<User> userManager)
+		public IdentityService(UserManager<User> userManager, IHttpContextAccessor contextAccesor)
 		{
 			_userManager = userManager;
+			_contextAccesor = contextAccesor;
 		}
 
 		public async Task<string> GetUserNameAsync(string userId)
@@ -40,14 +45,13 @@ namespace Business.Services
 			return user != null && await _userManager.IsInRoleAsync(user, role);
 		}
 
-
 		public async Task<Result> DeleteUserAsync(string userId)
 		{
 			var user = _userManager.Users.SingleOrDefault(u => u.Id == int.Parse(userId));
 
 			return user != null ? await DeleteUserAsync(user) : Result.Success();
 		}
-
+		
 		public async Task<Result> DeleteUserAsync(User user)
 		{
 			var result = await _userManager.DeleteAsync(user);

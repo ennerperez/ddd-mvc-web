@@ -8,6 +8,7 @@ using Business;
 using Domain;
 using Domain.Entities.Identity;
 using Infrastructure;
+using Infrastructure.Interfaces;
 #if USING_QUESTPDF
 using Infrastructure.Services;
 #endif
@@ -41,6 +42,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
+using Web.Services;
 
 #if USING_NEWTONSOFT
 using Microsoft.AspNetCore.Mvc;
@@ -135,6 +137,8 @@ namespace Web
 					DefaultContext.UseDbEngine(options, Configuration);
 				})
 				.AddBusiness();
+
+			services.AddScoped<IIdentityService, IdentityService>();
 
 			services
 				.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -243,6 +247,7 @@ namespace Web
 				options.LoginPath = "/Identity/Account/Login";
 				options.LogoutPath = "/Identity/Account/Login";
 				options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
 				options.Cookie = new CookieBuilder
 				{
 					IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
