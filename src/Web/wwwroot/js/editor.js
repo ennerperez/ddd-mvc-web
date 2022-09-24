@@ -286,7 +286,7 @@ function deleteRecord() {
 	let btn = $(this);
 	let row = btn.closest("tr");
 	let data = __editor_table.rows(row).data()[0];
-	let id = parseInt(data['id']);
+	let id = data['id'];
 	swal.fire(__editor_options.delete).then((result) => {
 		if (result.value) {
 			let method = 'DELETE';
