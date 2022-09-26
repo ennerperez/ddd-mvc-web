@@ -3,11 +3,11 @@
 
 	<PropertyGroup Label="Databases">
 		<UsingSqlite>true</UsingSqlite>
-		<UsingSqlServer>true</UsingSqlServer>
-		<UsingMariaDb>true</UsingMariaDb>
-		<UsingMySql>true</UsingMySql>
-		<UsingPostgreSql>true</UsingPostgreSql>
-		<UsingOracle>true</UsingOracle>
+		<UsingSqlServer>false</UsingSqlServer>
+		<UsingMariaDb>false</UsingMariaDb>
+		<UsingMySql>false</UsingMySql>
+		<UsingPostgreSql>false</UsingPostgreSql>
+		<UsingOracle>false</UsingOracle>
 	</PropertyGroup>
 
 	<ItemGroup Label="Contexts">
@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<PropertyGroup Label="Azure">
+		<UsingAzureApplicationInsights>true</UsingAzureApplicationInsights>
 		<UsingAzureBlobs>false</UsingAzureBlobs>
 		<UsingAzureQueues>false</UsingAzureQueues>
 		<UsingAzureTables>false</UsingAzureTables>
@@ -23,24 +24,29 @@
 
 	<PropertyGroup Label="Services">
 		<UsingQuestPDF>true</UsingQuestPDF>
-		<UsingNewtonsoft>true</UsingNewtonsoft>
-		<UsingSwagger>true</UsingSwagger>
-		<UsingLocalization>true</UsingLocalization>
-		<UsingInsights>true</UsingInsights>
-		<UsingSass>true</UsingSass>
-		<UsingSmartSchema>true</UsingSmartSchema>
+		<UsingNewtonsoft>false</UsingNewtonsoft>
+		<UsingSwagger>false</UsingSwagger>
+		<UsingLocalization>false</UsingLocalization>
+		<UsingSass>false</UsingSass>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Auth">
+		<UsingSmartSchema>false</UsingSmartSchema>
+		<UsingBearer>false</UsingBearer>
+		<UsingApiKey>false</UsingApiKey>
+		<UsingOpenId>false</UsingOpenId>
+		<UsingAB2C>false</UsingAB2C>
+		<UsingAuth0>false</UsingAuth0>		
 	</PropertyGroup>
 
 	<PropertyGroup Label="Options">
-		<EnableNonAsync>true</EnableNonAsync>
-		<EnableBulk>true</EnableBulk>
-		<EnableSplit>true</EnableSplit>
-		<EnableSassWatch>true</EnableSassWatch>
-		<EnableBearer>true</EnableBearer>
-		<EnableApiKey>true</EnableApiKey>
-		<EnableOpenId>false</EnableOpenId>
-		<EnableAB2C>false</EnableAB2C>
-		<EnableTokenValidation>true</EnableTokenValidation>
+		<EnableNonAsync>false</EnableNonAsync>
+		<EnableBulk>false</EnableBulk>
+		<EnableSplit>false</EnableSplit>
+		<EnableSassWatch>false</EnableSassWatch>
+
+		<EnableDatadog>true</EnableDatadog>
+		<EnableTokenValidation>false</EnableTokenValidation>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Testing">
