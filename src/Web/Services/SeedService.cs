@@ -30,9 +30,10 @@ namespace Web.Services
 
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
+#if USING_DATABASE_PROVIDER
 			using (var scope = _scopeFactory.CreateScope())
 			{
-				var context = scope.ServiceProvider.GetService<DefaultContext>();
+				DbContext context = scope.ServiceProvider.GetService<DefaultContext>();
 				context.Initialize();
 				if (context == null || !await context.Database.CanConnectAsync(cancellationToken)) return;
 
@@ -54,7 +55,7 @@ namespace Web.Services
 					_logger.LogError(e, "{Message}", e.Message);
 				}
 			}
-
+#endif
 			await StopAsync(cancellationToken);
 		}
 

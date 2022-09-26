@@ -1,40 +1,18 @@
+// ReSharper disable RedundantUsingDirective
 // #define SESSION_TEST
 
 using System;
 using System.Linq;
 using System.IO.Compression;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Business;
 using Domain;
 using Domain.Entities.Identity;
 using Infrastructure;
 using Infrastructure.Interfaces;
-#if USING_QUESTPDF
-using Infrastructure.Services;
-#endif
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-#if ENABLE_APIKEY
-using Microsoft.AspNetCore.Authentication.ApiKey;
-#endif
-#if ENABLE_BEARER
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-#endif
-#if ENABLE_OPENID
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Logging;
-using System.Security.Claims;
-using System.Threading.Tasks;
-#endif
-#if ENABLE_AB2C && !ENABLE_OPENID
-using Microsoft.Identity.Web;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Logging;
-using System.Security.Claims;
-using System.Threading.Tasks;
-#endif
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -49,17 +27,40 @@ using Persistence;
 using Persistence.Contexts;
 using Web.Services;
 
+#if USING_QUESTPDF
+using Infrastructure.Services;
+#endif
+#if ENABLE_APIKEY
+using Microsoft.AspNetCore.Authentication.ApiKey;
+#endif
+#if ENABLE_BEARER
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
+#if ENABLE_OPENID
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+#endif
+#if ENABLE_AUTH0
+using Auth0.AspNetCore.Authentication;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
+#endif
+#if ENABLE_TOKEN_VALIDATION
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
+#endif
+#if ENABLE_AB2C && !ENABLE_OPENID
+using Microsoft.Identity.Web;
+#endif
 #if USING_NEWTONSOFT
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 #endif
-
 #if USING_SWAGGER
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 #endif
-
 #if USING_LOCALIZATION
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
@@ -143,7 +144,7 @@ namespace Web
 				})
 				.AddBusiness();
 
-			services.AddScoped<IIdentityService, IdentityService>();
+			//services.AddScoped<IIdentityService, IdentityService>();
 
 			services
 				.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -257,7 +258,9 @@ namespace Web
 				{
 					IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
 				};
+#if USING_SWAGGER
 				options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
+#endif
 			});
 
 			services.ConfigureApplicationCookie(cookieOptions);
@@ -308,6 +311,21 @@ namespace Web
 				c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
 #endif
+// #if ENABLE_AUTH0
+// 				var auth0SecurityScheme = new OpenApiSecurityScheme
+// 				{
+// 					Name = "Auth0 Authentication",
+// 					Scheme = Auth0Constants.AuthenticationScheme,
+// 					BearerFormat = "JWT",
+// 					In = ParameterLocation.Header,
+// 					Type = SecuritySchemeType.OAuth2,
+// 					Description = "Put **_ONLY_** your JWT Bearer token",
+// 					Reference = new OpenApiReference { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
+// 				};
+// 				
+// 				c.AddSecurityDefinition(auth0SecurityScheme.Reference.Id, auth0SecurityScheme);
+// 				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { auth0SecurityScheme, Array.Empty<string>() } });
+// #endif
 				c.ResolveConflictingActions(apiDescription => apiDescription.First());
 				c.CustomSchemaIds(type => type.ToString());
 				c.EnableAnnotations();
@@ -335,7 +353,7 @@ namespace Web
 					ValidateIssuer = false
 				};
 				var scopes = new List<string>();
-				Configuration.Bind("OpenIdSettings:Scope", scopes);
+				Configuration.Bind("OpenIdSettings:Scopes", scopes);
 				if (scopes.Any())
 				{
 					options.Scope.Clear();
@@ -350,7 +368,7 @@ namespace Web
 				};
 			});
 #endif
-			
+
 #if ENABLE_AB2C && !ENABLE_OPENID
 			var ab2cConnectOptions = new Action<MicrosoftIdentityOptions>(options =>
 			{
@@ -367,9 +385,14 @@ namespace Web
 				};
 			});
 #endif
-			
+
 			services.AddAuthentication()
+#if !ENABLE_AUTH0
 				.AddCookie()
+#endif
+#if USING_SMARTSCHEMA
+				.AddSmartScheme()
+#endif
 #if ENABLE_APIKEY
 				.AddApiKey()
 #endif
@@ -379,8 +402,19 @@ namespace Web
 #if ENABLE_OPENID
 				.AddOpenIdConnect(openIdConnectOptions)
 #endif
-#if USING_SMARTSCHEMA
-				.AddSmartScheme()
+#if ENABLE_AUTH0
+				.AddAuth0WebAppAuthentication(options => {
+					Configuration.Bind("Auth0Settings", options);
+					var scopes = new List<string>();
+					Configuration.Bind("Auth0Settings:Scopes", scopes);
+					if (scopes.Any())
+						options.Scope = string.Join(" ", scopes);
+				})
+				.WithAccessToken(options =>
+				{
+					options.Audience = Configuration["Auth0Settings:Audience"];
+					options.UseRefreshTokens = Configuration.GetValue<bool>("Auth0Settings:UseRefreshTokens");
+				})
 #endif
 #if ENABLE_AB2C && !ENABLE_OPENID
                 .AddMicrosoftIdentityWebApp(ab2cConnectOptions)
@@ -391,7 +425,7 @@ namespace Web
 
 		}
 
-#if ENABLE_OPENID && ENABLE_TOKEN_VALIDATION
+#if (ENABLE_OPENID) && ENABLE_TOKEN_VALIDATION
 		private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
 		{
 			if (context.Principal != null && context.Principal.Identity != null)
@@ -420,7 +454,7 @@ namespace Web
 			}
 		}
 #endif
-		
+
 #if ENABLE_AB2C && !ENABLE_OPENID && ENABLE_TOKEN_VALIDATION
         private async Task AB2C_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
         {
@@ -468,7 +502,7 @@ namespace Web
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseMigrationsEndPoint();
-#if ENABLE_AB2C || ENABLE_OPENID
+#if ENABLE_TOKEN_VALIDATION
                 IdentityModelEventSource.ShowPII = true;
 #endif
 			}
@@ -564,6 +598,11 @@ namespace Web
 
 						c.DocumentTitle = swaggerDocumentTitle;
 						c.RoutePrefix = swaggerRoutePrefix;
+						
+#if ENABLE_AUTH0
+						c.OAuthClientId(Configuration["Auth0Settings:ClientId"]);
+						c.OAuthClientSecret(Configuration["Auth0Settings:ClientSecret"]);
+#endif
 
 						c.DefaultModelsExpandDepth(-1);
 

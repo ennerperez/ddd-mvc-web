@@ -30,8 +30,22 @@ namespace Infrastructure
 		public static IServiceCollection AddInfrastructure(this IServiceCollection services)
 		{
 			services.AddTransient<IEmailService, SmtpService>();
-			services.AddFromAssembly(Assembly.GetExecutingAssembly());
 
+			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
+			var types = assemblies.SelectMany(m => m.GetTypes()).ToArray();
+			
+			var identityServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IIdentityService).IsAssignableFrom(m));
+			if (identityServiceType != null)
+				services.AddTransient(typeof(IIdentityService), identityServiceType);
+			
+			var documentServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IDocumentService).IsAssignableFrom(m));
+			if (documentServiceType != null)
+				services.AddTransient(typeof(IDocumentService), documentServiceType);
+			
+			var documentServiceType2 = types.FirstOrDefault(m=> m.IsClass && typeof(IDocumentService<IDocument>).IsAssignableFrom(m));
+			if (documentServiceType2 != null)
+				services.AddTransient(typeof(IDocumentService<IDocument>), documentServiceType2);
+			
 			services.AddHttpClient();
 
 #if USING_BLOBS
@@ -48,21 +62,5 @@ namespace Infrastructure
 #endif
 			return services;
 		}
-
-		#region FromAssembly
-
-		private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
-		{
-			if (!assemblies.Any())
-			{
-				throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
-			}
-
-			var assembliesToScan = assemblies.Distinct().ToArray();
-			services.ConnectImplementationsToTypesClosing(typeof(IDocumentService<>), assembliesToScan, false);
-			services.ConnectImplementationsToTypesClosing(typeof(IIdentityService), assembliesToScan, false);
-		}
-
-		#endregion
 	}
 }

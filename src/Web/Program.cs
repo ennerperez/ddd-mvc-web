@@ -1,13 +1,9 @@
 using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-
-#if USING_SASS && ENABLE_SASS_WATCH
-using System.Diagnostics;
-#endif
-
 using Microsoft.Extensions.DependencyInjection;
 using Web.Services;
 

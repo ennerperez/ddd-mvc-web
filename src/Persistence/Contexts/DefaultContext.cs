@@ -13,10 +13,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions=Microsoft.EntityFrameworkCore.DbContextOptions;
 
-#if DEBUG
-using System.IO;
-#endif
-
 #if SQLITE && USING_SQLITE
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
@@ -73,17 +69,20 @@ namespace Persistence.Contexts
 		{
 			optionsBuilder.EnableDetailedErrors();
 			optionsBuilder.EnableSensitiveDataLogging();
+#if HAS_DATABASE_PROVIDER
 			if (_options == null)
 			{
+				var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 				var config = new ConfigurationBuilder()
 					.SetBasePath(Directory.GetCurrentDirectory())
 					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-					.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+					.AddJsonFile($"appsettings.{environmentName}.json", true, true)
 					.AddEnvironmentVariables()
 					.Build();
 
 				UseDbEngine(optionsBuilder, config);
 			}
+#endif
 		}
 #endif
 
@@ -99,9 +98,11 @@ namespace Persistence.Contexts
 		{
 #pragma warning disable 168
 #pragma warning disable 219
+#if USING_DATABASE_PROVIDER
 			var migrationsHistoryTableName = "__EFMigrationsHistory";
 			var connectionString = config.GetConnectionString(nameof(DefaultContext));
 			DbConnectionStringBuilder csb;
+#endif
 #pragma warning restore 219
 #pragma warning restore 168
 #if SQLITE && USING_SQLITE

@@ -136,6 +136,7 @@
 												${state === 1 ? '<button type="button" class="dropdown-item text-danger" name="btn-reject">Reject</button>' : ""}
                                                 <button type="button" class="dropdown-item" name="btn-edit">Edit</button>
                                                 <button type="button" class="dropdown-item text-danger" name="btn-delete">Delete</button>
+												<button type="button" class="dropdown-item" data-format="pdf" name="btn-export">Export as PDF</button>
                                             </div>
                                         </div>`;
                             }
@@ -177,6 +178,9 @@
             	$("[name='btn-reject']").each(function () {
             		$(this).off("click", rejectRecord).on("click", rejectRecord);
             	});
+				$("[name='btn-export']").each(function () {
+					$(this).off("click", exportRecord).on("click", exportRecord);
+				});
             }
 			
 			function sendRecord(){
@@ -202,6 +206,31 @@
 				let id = data['id'];
 				let model = { id: id, state: -2 }; 
 				patchRecord(model,__editor_options.change_state);
+			}
+			function exportRecord(){
+				let btn = $(this);
+				let row = btn.closest("tr");
+				let data = __editor_table.rows(row).data()[0];
+				let id = data['id'];
+				let format = $(btn).data("format");
+				@{
+					var url = Url.Action("Export");
+				}
+				fetch(`@url/${id}?format=${format}`)
+                  .then(resp => resp.blob())
+                  .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    // the filename you want
+                    //a.download = 'todo-1.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    Toast.fire(__editor_options.success);
+                  })
+                  .catch(() => Toast.fire(__editor_options.error));
 			}
 			
 			function patchRecord(model,question) {

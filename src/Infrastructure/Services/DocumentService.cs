@@ -1,10 +1,11 @@
-﻿#if USING_QUESTPDF
-using System;
+﻿using System;
 using System.IO;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
+
+#if USING_QUESTPDF
 using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
+#endif
 
 namespace Infrastructure.Services
 {
@@ -17,36 +18,41 @@ namespace Infrastructure.Services
 			_configuration = configuration;
 		}
 
-		public T ComposePdf<T>(object model = null) where T : IDocument
+		public T Compose<T>(object model = null) where T : IDocument
 		{
-			var instance = (T)Activator.CreateInstance(typeof(T), _configuration, model);
+			var instance = (T)Activator.CreateInstance(typeof(T), model);
 			return instance;
 		}
 
-		public byte[] GeneratePdf<T>(object model = null) where T : IDocument
+		public byte[] Generate<T>(T instance, string format) where T : IDocument
 		{
-			var instance = ComposePdf<T>(model);
 			if (instance == null) return null;
 
-			var data = instance.GeneratePdf();
+			byte[] data = Array.Empty<byte>();
+
+#if USING_QUESTPDF
+			if (format.Equals("pdf", StringComparison.InvariantCultureIgnoreCase))
+				if (instance is QuestPDF.Infrastructure.IDocument)
+					data = (instance as QuestPDF.Infrastructure.IDocument).GeneratePdf();
+#endif
 #if DEBUG
-			var tempFile = Path.ChangeExtension(Path.GetTempFileName(), ".pdf");
+			var tempFile = Path.ChangeExtension(Path.GetTempFileName(), $".{format}");
 			File.WriteAllBytes(tempFile, data);
-			Console.WriteLine($"[DocumentService]: Temporal document generated in: {tempFile}");
+			Console.WriteLine($"[{this.GetType().Name}]: Temporal document generated in: {tempFile}");
 #endif
 			return data;
 		}
-
 		public static void RegisterFonts(string path, string format = "ttf")
 		{
-			if (!Directory.Exists(path))
-				return;
-
-			var fonts = Directory.GetFiles(path, $"*.{format}");
-			foreach (var font in fonts)
-				using (var fs = File.OpenRead(font))
-					QuestPDF.Drawing.FontManager.RegisterFont(fs);
+#if USING_QUESTPDF
+			if (Directory.Exists(path))
+			{
+				var fonts = Directory.GetFiles(path, $"*.{format}");
+				foreach (var font in fonts)
+					using (var fs = File.OpenRead(font))
+						QuestPDF.Drawing.FontManager.RegisterFont(fs);
+			}
+#endif
 		}
 	}
 }
-#endif

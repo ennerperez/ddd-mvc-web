@@ -26,19 +26,6 @@ namespace MediatR
 			return SendWithRepository<TEntity, int, TResult>(@this, selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
 		}
 
-		public static Task<dynamic[]> SendWithRepository<TEntity, TKey>(this ISender @this,
-			Expression<Func<TEntity, dynamic>> selector,
-			Expression<Func<TEntity, bool>> predicate,
-			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy,
-			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include,
-			int? skip = 0, int? take = null,
-			bool disableTracking = false,
-			bool ignoreQueryFilters = false,
-			bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
-		{
-			return SendWithRepository<TEntity, TKey, dynamic>(@this, selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
-		}
-
 		public static async Task<TResult[]> SendWithRepository<TEntity, TKey, TResult>(this ISender @this,
 			Expression<Func<TEntity, TResult>> selector,
 			Expression<Func<TEntity, bool>> predicate,
@@ -78,19 +65,6 @@ namespace MediatR
 			bool includeDeleted = false) where TEntity : class, IEntity<int>
 		{
 			return SendWithPage<TEntity, int, TResult>(@this, selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
-		}
-		
-		public static Task<PaginatedList<dynamic>> SendWithPage<TEntity, TKey>(this ISender @this,
-			Expression<Func<TEntity, dynamic>> selector,
-			Expression<Func<TEntity, bool>> predicate,
-			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy,
-			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include,
-			int? skip = 0, int? take = null,
-			bool disableTracking = false,
-			bool ignoreQueryFilters = false,
-			bool includeDeleted = false) where TEntity : class, IEntity<TKey>  where TKey : struct, IComparable<TKey>, IEquatable<TKey>
-		{
-			return SendWithPage<TEntity, TKey, dynamic>(@this, selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
 		}
 
 		public static async Task<PaginatedList<TResult>> SendWithPage<TEntity, TKey, TResult>(this ISender @this,

@@ -1,9 +1,31 @@
 ﻿namespace Infrastructure.Interfaces
 {
-	public interface IDocumentService<TDocument>
+	public interface IDocument<T>
 	{
-		T ComposePdf<T>(object model = null) where T : TDocument;
+		string Title { get; set; }
+		string FileName { get; set; }
+		T Model { get; }
+	}
 
-		byte[] GeneratePdf<T>(object model = null) where T : TDocument;
+	public interface IDocument: IDocument<object>
+	{
+	}
+	
+#if USING_QUESTPDF
+	public interface IPdfDocument : IDocument, QuestPDF.Infrastructure.IDocument
+	{
+	}
+#endif
+
+	public interface IDocumentService : IDocumentService<IDocument>
+	{
+	}
+
+	public interface IDocumentService<TDocument> where TDocument : IDocument
+	{
+		T Compose<T>(object model = null) where T : TDocument;
+
+		byte[] Generate<T>(T instance, string format) where T : TDocument;
+	
 	}
 }

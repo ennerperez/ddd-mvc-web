@@ -31,7 +31,7 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				var collection = await Mediator.SendWithRepository<Budget, Guid>((new Budget()).Select(s => (object)new { s.Id }), null, null, null);
+				var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s =>s), null, null, null);
 				if (collection == null || !collection.Any())
 					return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Budget>() });
 
