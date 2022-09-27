@@ -44,8 +44,7 @@
 		<EnableBulk>false</EnableBulk>
 		<EnableSplit>false</EnableSplit>
 		<EnableSassWatch>false</EnableSassWatch>
-
-		<EnableDatadog>true</EnableDatadog>
+		<EnableDatadog>false</EnableDatadog>
 		<EnableTokenValidation>false</EnableTokenValidation>
 	</PropertyGroup>
 
