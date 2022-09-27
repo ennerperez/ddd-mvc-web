@@ -40,7 +40,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #endif
-#if ENABLE_AUTH0
+#if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 #endif
@@ -311,7 +311,7 @@ namespace Web
 				c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
 #endif
-// #if ENABLE_AUTH0
+// #if USING_AUTH0
 // 				var auth0SecurityScheme = new OpenApiSecurityScheme
 // 				{
 // 					Name = "Auth0 Authentication",
@@ -387,7 +387,7 @@ namespace Web
 #endif
 
 			services.AddAuthentication()
-#if !ENABLE_AUTH0
+#if !USING_AUTH0
 				.AddCookie()
 #endif
 #if USING_SMARTSCHEMA
@@ -402,7 +402,7 @@ namespace Web
 #if ENABLE_OPENID
 				.AddOpenIdConnect(openIdConnectOptions)
 #endif
-#if ENABLE_AUTH0
+#if USING_AUTH0
 				.AddAuth0WebAppAuthentication(options => {
 					Configuration.Bind("Auth0Settings", options);
 					var scopes = new List<string>();
@@ -599,7 +599,7 @@ namespace Web
 						c.DocumentTitle = swaggerDocumentTitle;
 						c.RoutePrefix = swaggerRoutePrefix;
 						
-#if ENABLE_AUTH0
+#if USING_AUTH0
 						c.OAuthClientId(Configuration["Auth0Settings:ClientId"]);
 						c.OAuthClientSecret(Configuration["Auth0Settings:ClientSecret"]);
 #endif

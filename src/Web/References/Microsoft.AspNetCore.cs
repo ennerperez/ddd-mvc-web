@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 #if ENABLE_AB2C && !ENABLE_OPENID
 using Microsoft.Identity.Web;
 #endif
-#if ENABLE_AUTH0
+#if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
 #endif
 
@@ -51,7 +51,7 @@ namespace Microsoft.AspNetCore
 #if ENABLE_OPENID
 			                                           + "," + OpenIdConnectDefaults.AuthenticationScheme
 #endif
-#if ENABLE_AUTH0
+#if USING_AUTH0
 			                                           + "," + "Auth0" //BUG: Auth0Constants.AuthenticationScheme it's not a constant
 #endif
 			                                           + "," + "Identity.Application";
@@ -231,7 +231,7 @@ namespace Microsoft.AspNetCore
 				return authenticationBuilder;
 			}
 #endif
-#if ENABLE_AUTH0
+#if USING_AUTH0
 			public static Auth0WebAppWithAccessTokenAuthenticationBuilder Close(this Auth0WebAppWithAccessTokenAuthenticationBuilder authenticationBuilder )
 			{
 				return authenticationBuilder;
