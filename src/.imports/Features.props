@@ -16,35 +16,36 @@
 
 	<PropertyGroup Label="Azure">
 		<UsingAzureApplicationInsights>true</UsingAzureApplicationInsights>
-		<UsingAzureBlobs>false</UsingAzureBlobs>
-		<UsingAzureQueues>false</UsingAzureQueues>
-		<UsingAzureTables>false</UsingAzureTables>
-		<UsingAzureKeyVault>false</UsingAzureKeyVault>
+		<UsingAzureBlobs>true</UsingAzureBlobs>
+		<UsingAzureQueues>true</UsingAzureQueues>
+		<UsingAzureTables>true</UsingAzureTables>
+		<UsingAzureKeyVault>true</UsingAzureKeyVault>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Services">
 		<UsingQuestPDF>true</UsingQuestPDF>
-		<UsingNewtonsoft>false</UsingNewtonsoft>
-		<UsingSwagger>false</UsingSwagger>
-		<UsingLocalization>false</UsingLocalization>
-		<UsingSass>false</UsingSass>
+		<UsingNewtonsoft>true</UsingNewtonsoft>
+		<UsingSwagger>true</UsingSwagger>
+		<UsingLocalization>true</UsingLocalization>
+		<UsingSass>true</UsingSass>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Auth">
-		<UsingSmartSchema>false</UsingSmartSchema>
-		<UsingBearer>false</UsingBearer>
+		<UsingCookies>true</UsingCookies>
 		<UsingApiKey>false</UsingApiKey>
+		<UsingBearer>false</UsingBearer>
 		<UsingOpenId>false</UsingOpenId>
 		<UsingAB2C>false</UsingAB2C>
-		<UsingAuth0>false</UsingAuth0>		
+		<UsingAuth0>false</UsingAuth0>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Options">
-		<EnableNonAsync>false</EnableNonAsync>
-		<EnableBulk>false</EnableBulk>
-		<EnableSplit>false</EnableSplit>
-		<EnableSassWatch>false</EnableSassWatch>
+		<EnableNonAsync>true</EnableNonAsync>
+		<EnableBulk>true</EnableBulk>
+		<EnableSplit>true</EnableSplit>
+		<EnableSassWatch>true</EnableSassWatch>
 		<EnableDatadog>false</EnableDatadog>
+		<EnableSmartSchema>false</EnableSmartSchema>
 		<EnableTokenValidation>false</EnableTokenValidation>
 	</PropertyGroup>
 
