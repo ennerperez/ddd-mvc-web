@@ -6,13 +6,14 @@ using System.Linq;
 using System.IO.Compression;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Business;
 using Domain;
 using Domain.Entities.Identity;
 using Infrastructure;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +27,7 @@ using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
 using Web.Services;
+using SameSiteMode=Microsoft.AspNetCore.Http.SameSiteMode;
 
 #if USING_QUESTPDF
 using Infrastructure.Services;
@@ -35,6 +37,9 @@ using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
 #if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
+#if USING_COOKIES
+using Microsoft.AspNetCore.Authentication.Cookies;
 #endif
 #if USING_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -46,7 +51,6 @@ using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 #endif
 #if ENABLE_TOKEN_VALIDATION
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 #endif
@@ -118,6 +122,14 @@ namespace Web
 			services.AddApplicationInsightsTelemetry(options =>
 			{
 				options.ConnectionString = Configuration["AzureSettings:ApplicationInsights:ConnectionString"];
+			});
+#endif
+
+#if USING_COOKIES
+			services.Configure<CookiePolicyOptions>(options =>
+			{
+				options.CheckConsentNeeded = _ => true;
+				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 #endif
 
@@ -244,6 +256,16 @@ namespace Web
 			services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
 			services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.SmallestSize; });
 
+			var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
+			{
+				options.Cookie = new CookieBuilder()
+				{
+					Name = $"{Name.Replace(" ", ".")}.AntiforgeryCookie", 
+					Expiration = AntiforgeryExpiration
+				};
+			});
+				
+#if USING_COOKIES
 			var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
 			{
 				options.ExpireTimeSpan = TimeSpan.FromHours(1);
@@ -256,7 +278,7 @@ namespace Web
 
 				options.Cookie = new CookieBuilder
 				{
-					IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
+					Name = $"{Name.Replace(" ", ".")}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
 				};
 #if USING_SWAGGER
 				options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -264,6 +286,7 @@ namespace Web
 			});
 
 			services.ConfigureApplicationCookie(cookieOptions);
+#endif
 
 #if USING_NEWTONSOFT
 			services.AddRazorPages()
@@ -386,11 +409,13 @@ namespace Web
 			});
 #endif
 
+			services.AddAntiforgery(antiforgeryOptions);
+
 			services.AddAuthentication()
-#if !USING_AUTH0
+#if !USING_AUTH0 && USING_COOKIES
 				.AddCookie()
 #endif
-#if USING_SMARTSCHEMA
+#if ENABLE_SMARTSCHEMA
 				.AddSmartScheme()
 #endif
 #if USING_APIKEY
@@ -598,7 +623,7 @@ namespace Web
 
 						c.DocumentTitle = swaggerDocumentTitle;
 						c.RoutePrefix = swaggerRoutePrefix;
-						
+
 #if USING_AUTH0
 						c.OAuthClientId(Configuration["Auth0Settings:ClientId"]);
 						c.OAuthClientSecret(Configuration["Auth0Settings:ClientSecret"]);

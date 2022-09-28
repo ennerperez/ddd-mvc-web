@@ -21,9 +21,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Web;
 #if USING_AB2C && USING_OPENID
 using Microsoft.Identity.Web;
 #endif
+
 #if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
 #endif
@@ -31,31 +33,55 @@ using Auth0.AspNetCore.Authentication;
 #pragma warning disable 618
 // ReSharper disable CheckNamespace
 
+namespace Auth0.AspNetCore.Authentication
+{
+	public sealed class Auth0Defaults
+	{
+		//BUG: Auth0Constants.AuthenticationScheme it's not a constant
+		public const string AuthenticationScheme = "Auth0";
+	}
+}
+
 namespace Microsoft.AspNetCore
 {
+	namespace Authorization
+	{
+		public class SmartAuthorizeAttribute : AuthorizeAttribute
+		{
+			private string[] _schemes = new string[]
+			{
+				"Identity.Application",
+#if !USING_OPENID && USING_COOKIES
+				CookieAuthenticationDefaults.AuthenticationScheme,
+#endif
+#if USING_APIKEY
+				ApiKeyAuthenticationDefaults.AuthenticationScheme,
+#endif
+#if USING_BEARER
+				JwtBearerDefaults.AuthenticationScheme,
+#endif
+#if USING_OPENID
+				OpenIdConnectDefaults.AuthenticationScheme,
+#endif
+#if USING_AUTH0
+				Auth0Defaults.AuthenticationScheme,
+#endif
+#if ENABLE_SMARTSCHEMA
+				SmartScheme.DefaultScheme,
+#endif
+			};
+
+			public SmartAuthorizeAttribute() : base()
+			{
+				AuthenticationSchemes = string.Join(",", _schemes);
+			}
+		}
+
+	}
 	namespace Authentication
 	{
 		public sealed class SmartScheme
 		{
-
-			public const string AuthenticationScheme = DefaultScheme
-#if !USING_OPENID
-													   + "," + CookieAuthenticationDefaults.AuthenticationScheme
-#endif
-#if USING_APIKEY
-			                                           + "," + ApiKeyAuthenticationDefaults.AuthenticationScheme
-#endif
-#if USING_BEARER
-			                                           + "," + JwtBearerDefaults.AuthenticationScheme
-#endif
-#if USING_OPENID
-			                                           + "," + OpenIdConnectDefaults.AuthenticationScheme
-#endif
-#if USING_AUTH0
-			                                           + "," + "Auth0" //BUG: Auth0Constants.AuthenticationScheme it's not a constant
-#endif
-			                                           + "," + "Identity.Application";
-
 			public const string DefaultScheme = "SmartScheme";
 		}
 
@@ -232,11 +258,11 @@ namespace Microsoft.AspNetCore
 			}
 #endif
 #if USING_AUTH0
-			public static Auth0WebAppWithAccessTokenAuthenticationBuilder Close(this Auth0WebAppWithAccessTokenAuthenticationBuilder authenticationBuilder )
+			public static Auth0WebAppWithAccessTokenAuthenticationBuilder Close(this Auth0WebAppWithAccessTokenAuthenticationBuilder authenticationBuilder)
 			{
 				return authenticationBuilder;
 			}
-			#endif
+#endif
 
 			public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
 			{

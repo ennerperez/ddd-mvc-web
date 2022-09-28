@@ -14,19 +14,11 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
 
-#if USING_SMARTSCHEMA
-using Microsoft.AspNetCore.Authentication;
-#endif
-
 // ReSharper disable RedundantCast
 
 namespace Web.Controllers
 {
-#if !USING_SMARTSCHEMA
-    [Authorize]
-#else
-	[Authorize(AuthenticationSchemes = SmartScheme.AuthenticationScheme)]
-#endif
+	[SmartAuthorize]
 	[Route("api/[controller]")]
 	[ApiController]
 	public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>

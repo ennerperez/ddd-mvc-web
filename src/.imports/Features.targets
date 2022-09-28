@@ -37,9 +37,10 @@
 		<BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
 		<BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
 		<BuildConstants Condition="'$(EnableSassWatch)' == 'true'">$(BuildConstants)ENABLE_SASS_WATCH;</BuildConstants>
-		<BuildConstants Condition="'$(UsingSmartSchema)' == 'true'">$(BuildConstants)USING_SMARTSCHEMA;</BuildConstants>
-		<BuildConstants Condition="'$(UsingBearer)' == 'true'">$(BuildConstants)USING_BEARER;</BuildConstants>
+		<BuildConstants Condition="'$(EnableSmartSchema)' == 'true'">$(BuildConstants)ENABLE_SMARTSCHEMA;</BuildConstants>
+		<BuildConstants Condition="'$(UsingCookies)' == 'true'">$(BuildConstants)USING_COOKIES;</BuildConstants>
 		<BuildConstants Condition="'$(UsingApiKey)' == 'true'">$(BuildConstants)USING_APIKEY;</BuildConstants>
+		<BuildConstants Condition="'$(UsingBearer)' == 'true'">$(BuildConstants)USING_BEARER;</BuildConstants>
 		<BuildConstants Condition="'$(UsingOpenId)' == 'true'">$(BuildConstants)USING_OPENID;</BuildConstants>
 		<BuildConstants Condition="'$(UsingAB2C)' == 'true'">$(BuildConstants)USING_AB2C;</BuildConstants>
 		<BuildConstants Condition="'$(UsingAuth0)' == 'true'">$(BuildConstants)USING_AUTH0;</BuildConstants>
