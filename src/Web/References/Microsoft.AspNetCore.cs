@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#if ENABLE_AB2C && !ENABLE_OPENID
+#if USING_AB2C && USING_OPENID
 using Microsoft.Identity.Web;
 #endif
 #if USING_AUTH0
@@ -39,16 +39,16 @@ namespace Microsoft.AspNetCore
 		{
 
 			public const string AuthenticationScheme = DefaultScheme
-#if !ENABLE_OPENID
+#if !USING_OPENID
 													   + "," + CookieAuthenticationDefaults.AuthenticationScheme
 #endif
-#if ENABLE_APIKEY
+#if USING_APIKEY
 			                                           + "," + ApiKeyAuthenticationDefaults.AuthenticationScheme
 #endif
-#if ENABLE_BEARER
+#if USING_BEARER
 			                                           + "," + JwtBearerDefaults.AuthenticationScheme
 #endif
-#if ENABLE_OPENID
+#if USING_OPENID
 			                                           + "," + OpenIdConnectDefaults.AuthenticationScheme
 #endif
 #if USING_AUTH0
@@ -225,7 +225,7 @@ namespace Microsoft.AspNetCore
 			{
 				return authenticationBuilder;
 			}
-#if ENABLE_AB2C && !ENABLE_OPENID
+#if USING_AB2C && !USING_OPENID
 			public static MicrosoftIdentityWebAppAuthenticationBuilder Close(this MicrosoftIdentityWebAppAuthenticationBuilder authenticationBuilder)
 			{
 				return authenticationBuilder;

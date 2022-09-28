@@ -30,13 +30,13 @@ using Web.Services;
 #if USING_QUESTPDF
 using Infrastructure.Services;
 #endif
-#if ENABLE_APIKEY
+#if USING_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
-#if ENABLE_BEARER
+#if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
-#if ENABLE_OPENID
+#if USING_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #endif
@@ -50,7 +50,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 #endif
-#if ENABLE_AB2C && !ENABLE_OPENID
+#if USING_AB2C && !USING_OPENID
 using Microsoft.Identity.Web;
 #endif
 #if USING_NEWTONSOFT
@@ -282,7 +282,7 @@ namespace Web
 					c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = $"{version}" });
 				c.DocInclusionPredicate((_, _) => true);
 
-#if ENABLE_APIKEY
+#if USING_APIKEY
 				var apiKeySecurityScheme = new OpenApiSecurityScheme
 				{
 					Scheme = ApiKeyAuthenticationDefaults.AuthenticationScheme,
@@ -296,7 +296,7 @@ namespace Web
 				c.AddSecurityDefinition(apiKeySecurityScheme.Reference.Id, apiKeySecurityScheme);
 				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { apiKeySecurityScheme, Array.Empty<string>() } });
 #endif
-#if ENABLE_BEARER
+#if USING_BEARER
 				var jwtSecurityScheme = new OpenApiSecurityScheme
 				{
 					Scheme = JwtBearerDefaults.AuthenticationScheme,
@@ -335,7 +335,7 @@ namespace Web
 #endif
 #endif
 
-#if ENABLE_OPENID
+#if USING_OPENID
 			var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
 			{
 				Configuration.Bind("OpenIdSettings", options);
@@ -369,7 +369,7 @@ namespace Web
 			});
 #endif
 
-#if ENABLE_AB2C && !ENABLE_OPENID
+#if USING_AB2C && !USING_OPENID
 			var ab2cConnectOptions = new Action<MicrosoftIdentityOptions>(options =>
 			{
 				Configuration.Bind("AzureSettings:AdB2C", options);
@@ -393,13 +393,13 @@ namespace Web
 #if USING_SMARTSCHEMA
 				.AddSmartScheme()
 #endif
-#if ENABLE_APIKEY
+#if USING_APIKEY
 				.AddApiKey()
 #endif
-#if ENABLE_BEARER
+#if USING_BEARER
 				.AddJwtBearer()
 #endif
-#if ENABLE_OPENID
+#if USING_OPENID
 				.AddOpenIdConnect(openIdConnectOptions)
 #endif
 #if USING_AUTH0
@@ -416,7 +416,7 @@ namespace Web
 					options.UseRefreshTokens = Configuration.GetValue<bool>("Auth0Settings:UseRefreshTokens");
 				})
 #endif
-#if ENABLE_AB2C && !ENABLE_OPENID
+#if USING_AB2C && !USING_OPENID
                 .AddMicrosoftIdentityWebApp(ab2cConnectOptions)
 #endif
 				.Close();
@@ -425,7 +425,7 @@ namespace Web
 
 		}
 
-#if (ENABLE_OPENID) && ENABLE_TOKEN_VALIDATION
+#if (USING_OPENID) && ENABLE_TOKEN_VALIDATION
 		private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
 		{
 			if (context.Principal != null && context.Principal.Identity != null)
@@ -455,7 +455,7 @@ namespace Web
 		}
 #endif
 
-#if ENABLE_AB2C && !ENABLE_OPENID && ENABLE_TOKEN_VALIDATION
+#if USING_AB2C && !USING_OPENID && ENABLE_TOKEN_VALIDATION
         private async Task AB2C_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
         {
             if (context.Principal != null && context.Principal.Identity != null)
