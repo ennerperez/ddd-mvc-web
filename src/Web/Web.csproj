@@ -62,6 +62,7 @@
     <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.4.0" />
     <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.55.0" />
 		<PackageReference Condition="'$(EnableDatadog)' == 'true'" Include="Serilog.Sinks.Datadog.Logs" Version="0.3.7" />
+		<PackageReference Condition="'$(EnableNewRelic)' == 'true'" Include="Serilog.Sinks.NewRelic.Logs" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>

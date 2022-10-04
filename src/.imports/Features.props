@@ -45,6 +45,7 @@
 		<EnableSplit>true</EnableSplit>
 		<EnableSassWatch>true</EnableSassWatch>
 		<EnableDatadog>false</EnableDatadog>
+		<EnableNewRelic>false</EnableNewRelic>
 		<EnableSmartSchema>false</EnableSmartSchema>
 		<EnableTokenValidation>false</EnableTokenValidation>
 	</PropertyGroup>
