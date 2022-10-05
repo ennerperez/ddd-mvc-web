@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO.Compression;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using Business;
 using Domain;
@@ -94,14 +95,12 @@ namespace Web
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
-			Name = configuration["AppSettings:Name"];
 #if USING_LOCALIZATION
 			SupportedCultures = configuration.GetSection("CultureInfo:SupportedCultures").Get<string[]>().Select(m => new CultureInfo(m)).ToArray();
 			CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"]);
 #endif
 		}
 
-		internal static string Name { get; private set; }
 		internal IConfiguration Configuration { get; private set; }
 
 #if USING_LOCALIZATION
@@ -258,13 +257,9 @@ namespace Web
 
 			var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
 			{
-				options.Cookie = new CookieBuilder()
-				{
-					Name = $"{Name.Replace(" ", ".")}.AntiforgeryCookie", 
-					Expiration = AntiforgeryExpiration
-				};
+				options.Cookie = new CookieBuilder() { Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration };
 			});
-				
+
 #if USING_COOKIES
 			var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
 			{
@@ -278,7 +273,7 @@ namespace Web
 
 				options.Cookie = new CookieBuilder
 				{
-					Name = $"{Name.Replace(" ", ".")}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
+					Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
 				};
 #if USING_SWAGGER
 				options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -302,7 +297,7 @@ namespace Web
 				var versions = new List<string>();
 				Configuration.Bind("SwaggerSettings:Versions", versions);
 				foreach (var version in versions)
-					c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Name}", Description = $"{Name} API", Version = $"{version}" });
+					c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}" });
 				c.DocInclusionPredicate((_, _) => true);
 
 #if USING_APIKEY
@@ -588,13 +583,13 @@ namespace Web
 #if USING_SWAGGER
 
 			// Enable middleware to serve generated Swagger as a JSON endpoint.
-			app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Name.ToLower()}.json"; });
+			app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Program.Name.Normalize(false, false, true)}.json"; });
 
 			if (Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
 			{
 				var uiEngine = Configuration["SwaggerSettings:UIEngine"];
 				var swaggerRoutePrefix = Configuration["SwaggerSettings:RoutePrefix"];
-				var swaggerDocumentTitle = Configuration["SwaggerSettings:DocumentTitle"];
+				var swaggerDocumentTitle = Configuration["SwaggerSettings:DocumentTitle"] ?? Program.Name;
 				var versions = new List<string>();
 				Configuration.Bind("SwaggerSettings:Versions", versions);
 
@@ -607,7 +602,7 @@ namespace Web
 						c.DocumentTitle = swaggerDocumentTitle;
 						c.RoutePrefix = swaggerRoutePrefix;
 						var version = versions.LastOrDefault();
-						c.SpecUrl($"{version}/{Name.ToLower()}.json");
+						c.SpecUrl($"{version}/{Program.Name.Normalize(false, false, true)}.json");
 
 						c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
 					});
@@ -619,7 +614,7 @@ namespace Web
 					app.UseSwaggerUI(c =>
 					{
 						foreach (var version in versions)
-							c.SwaggerEndpoint($"{version}/{Name.ToLower()}.json", $"{swaggerDocumentTitle} {version}");
+							c.SwaggerEndpoint($"{version}/{Program.Name.Normalize(false, false, true)}.json", $"{swaggerDocumentTitle} {version}");
 
 						c.DocumentTitle = swaggerDocumentTitle;
 						c.RoutePrefix = swaggerRoutePrefix;

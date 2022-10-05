@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 // ReSharper disable once CheckNamespace
 namespace System.Text
@@ -56,6 +57,23 @@ namespace System.Text
 			foreach (var item in oldValues)
 				result = result.Replace(item, newValues);
 			return result;
+		}
+
+		public static string Normalize(this string @this, bool specialsChars = true, bool upperCase = false, bool lowerCase = false)
+		{
+			if (!specialsChars)
+			{
+				var reg = new Regex("[*'\",_&#^@]", RegexOptions.Compiled);
+				@this = reg.Replace(@this, string.Empty);
+				reg = new Regex("[ ]");
+				@this = reg.Replace(@this, "-");
+			}
+			if (upperCase)
+				@this = @this.ToUpper();
+			else if (lowerCase)
+				@this = @this.ToLower();
+
+			return @this;
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace Web
 	[DebuggerStepThrough]
 	public static class Program
 	{
+		internal static string Name { get; private set; }
 		public static void Main(string[] args)
 		{
 			var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -22,9 +23,12 @@ namespace Web
 				.AddCommandLine(args)
 				.Build();
 
+			Name = config["AppSettings:Name"];
+
 			// Initialize Logger
 			Log.Logger = new LoggerConfiguration()
 				.ReadFrom.Configuration(config)
+				.Enrich.WithProperty("Application", Name)
 				.CreateLogger();
 
 #if USING_SASS && ENABLE_SASS_WATCH
