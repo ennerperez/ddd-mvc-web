@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Web;
+
 #if USING_AB2C && USING_OPENID
 using Microsoft.Identity.Web;
 #endif
@@ -71,7 +71,7 @@ namespace Microsoft.AspNetCore
 #endif
 			};
 
-			public SmartAuthorizeAttribute() : base()
+			public SmartAuthorizeAttribute()
 			{
 				AuthenticationSchemes = string.Join(",", _schemes);
 			}

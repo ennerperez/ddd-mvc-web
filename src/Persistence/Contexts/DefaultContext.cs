@@ -24,7 +24,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Persistence.Contexts
 {
-	public sealed class DefaultContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
+	public class DefaultContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
 	{
 		private readonly DbContextOptions _options;
 

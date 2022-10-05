@@ -11,6 +11,7 @@ namespace Infrastructure.Services
 {
 	public class DocumentService : IDocumentService<IDocument>
 	{
+		// ReSharper disable once NotAccessedField.Local
 		private readonly IConfiguration _configuration;
 
 		public DocumentService(IConfiguration configuration)
