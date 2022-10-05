@@ -255,6 +255,9 @@ csharp_space_between_square_brackets = false
 csharp_prefer_braces = true : silent
 csharp_preserve_single_line_statements = true
 
+# IDE0160: Convert to block-scoped namespace
+csharp_style_namespace_declarations = block_scoped:error
+
 # Markdown & text code style settings:
 [*.{md,txt}]
 indent_size = 4
