@@ -1,4 +1,5 @@
 ﻿using Tests.Abstractions.Interfaces;
+// ReSharper disable NotAccessedField.Local
 
 namespace Tests.Abstractions.Steps
 {

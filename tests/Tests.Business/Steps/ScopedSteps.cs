@@ -3,6 +3,7 @@ using MediatR;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Services;
+// ReSharper disable NotAccessedField.Local
 
 // ReSharper disable UnusedParameter.Local
 
@@ -24,6 +25,7 @@ namespace Tests.Business.Steps
 		private readonly IAutomationContext _automationContext;
 		private readonly ISender _mediator;
 
+		// ReSharper disable once UnusedMember.Local
 		private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
 		protected readonly LoremIpsumService _loremIpsumService;

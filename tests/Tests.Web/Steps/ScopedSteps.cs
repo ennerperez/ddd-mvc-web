@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+// ReSharper disable NotAccessedField.Local
 
 // ReSharper disable UnusedParameter.Local
 
@@ -15,6 +16,7 @@ namespace Tests.Web.Steps
 		private readonly IAutomationConfiguration _automationConfiguration;
 		private readonly IAutomationContext _automationContext;
 
+		// ReSharper disable once UnusedMember.Local
 		private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
 		public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext)

@@ -4,6 +4,7 @@ using System.Threading;
 using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+// ReSharper disable NotAccessedField.Local
 
 // ReSharper disable UnusedParameter.Local
 
