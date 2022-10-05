@@ -48,7 +48,6 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #endif
 #if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
-using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 #endif
 #if ENABLE_TOKEN_VALIDATION
 using System.Security.Claims;
