@@ -113,8 +113,20 @@ namespace Persistence.Contexts
 			optionsBuilder.UseSqlite(csb.ConnectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
 #elif MSSQL && USING_MSSQL
             optionsBuilder.UseSqlServer(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
-#elif (MYSQL && USING_MYSQL ) || (MARIADB && USING_MARIADB)
-            var serverVersion = ServerVersion.AutoDetect(connectionString);
+#elif (MYSQL && USING_MYSQL) || (MARIADB && USING_MARIADB)
+#if USING_MARIADB
+			var serverVersion = ServerVersion.Parse("10.6");
+#elif USING_MYSQL
+			var serverVersion = ServerVersion.Parse("8.0");
+#endif
+			try
+			{
+				serverVersion = ServerVersion.AutoDetect(connectionString);
+			}
+			catch (Exception)
+			{
+				// ignore
+			}
             optionsBuilder.UseMySql(connectionString, serverVersion, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
 #elif POSTGRESQL && USING_POSTGRESQL
             optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
