@@ -6,48 +6,63 @@ using System.Linq;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
-using Tests.Web;
 
-#if XUNIT
-namespace Xunit.Framework
+namespace Test.Framework.Extended
 {
+	[DebuggerStepThrough]
 	internal static class Assert
 	{
+#if XUNIT
+		public static void Result(bool value, string message = "")
+		{
+			Xunit.Assert.True(!value, message);
+		}
 		public static void Fail(string message = "")
 		{
 			Xunit.Assert.True(false, message);
 		}
-
+		public static void Fail(Exception exception, bool stack = false)
+		{
+			var message = $"{exception.Message}{(stack ? $"\r\n\r\n{exception.StackTrace}" : "")}";
+			Fail(message);
+		}
 		public static void Pass(string message = "")
 		{
 			Xunit.Assert.True(true, message);
 		}
-	}
-}
-#elif SPECRUN
-namespace SpecRunner.Framework
-{
-    internal static class Assert
-    {
-        public static void Fail(string message = "") 
+#else
+        [DebuggerStepThrough]
+        public static void Result(bool value, string message = "")
         {
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(false, message);
+            if (value) Pass(message);
+            else Fail(message);
         }
-        public static void Pass(string message = "") 
-        {
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(true, message);
-        }
-    }
-}
-#endif
 
-// ReSharper disable once CheckNamespace
-namespace Tests
-{
+        [DebuggerStepThrough]
+        public static void Fail(string message = "")
+        {
+            NUnit.Framework.Assert.Fail(message);
+        }
+
+        [DebuggerStepThrough]
+        public static void Fail(Exception exception, bool stack = false)
+        {
+            var message = $"{exception.Message}{(stack ? $"\r\n\r\n{exception.StackTrace}" : "")}";
+            Fail(message);
+        }
+
+        [DebuggerStepThrough]
+        public static void Pass(string message = "")
+        {
+            NUnit.Framework.Assert.Pass(message);
+        }
+#endif
+	}
+
 	[DebuggerStepThrough]
-	public static class Extensions
+	public static class WebDriver
 	{
-		private static string AccessibilityId => Program.SpecFlowConfiguration.AccessibilityTag ?? "data-accessibility-id";
+		private static string AccessibilityId { get; set; } = "data-accessibility-id";
 
 		public static IWebElement FindElementBy(this IWebDriver @this, By by) => @this.FindElement(by);
 		public static IWebElement FindElementByAccessibilityId(this IWebDriver @this, string selector) => @this.FindElement(By.CssSelector($"[{AccessibilityId}='{selector}']"));

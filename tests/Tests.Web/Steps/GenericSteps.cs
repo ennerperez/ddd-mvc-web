@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using OpenQA.Selenium;
 using TechTalk.SpecFlow;
+using Test.Framework.Extended;
 using Tests.Abstractions.Interfaces;
 // ReSharper disable NotAccessedField.Local
 
