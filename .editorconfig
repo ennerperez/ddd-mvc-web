@@ -31,7 +31,7 @@ end_of_line = lf
 indent_size = 2
 
 # Dotnet code style settings:
-[*.{cs,vb}]
+[*.{cs,vb,tt}]
 
 # Microsoft .NET properties
 dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity : none
