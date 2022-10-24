@@ -12,10 +12,6 @@ ProjectSection(SolutionItems) = preProject
 	package.json = package.json
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
-	src\.files\AssemblyInfo.General.tt = src\.files\AssemblyInfo.General.tt
-	src\.files\AssemblyInfo.Version.tt = src\.files\AssemblyInfo.Version.tt
-	src\.files\AssemblyInfo.General.cs = src\.files\AssemblyInfo.General.cs
-	src\.files\AssemblyInfo.Version.cs = src\.files\AssemblyInfo.Version.cs
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{72CB5A30-A3C6-48AD-9ABC-F5094874734A}"

@@ -10,12 +10,12 @@ output=
 
 for i in "$@"; do
     case $1 in
-        -c|--context) context="$2"; shift ;;
-        -n|--name) name="$2"; shift ;;
-        -c|--clear) clear=true ;;
-        -u|--update) update=true ;;
-        -r|--rollback) rollback=true ;;
-        -o|--output) output="$2"; break ;;
+        -x|-context|--context) context="$2"; shift ;;
+        -n|-name|--name) name="$2"; shift ;;
+        -c|-clear|--clear) clear=true ;;
+        -u|-update|--update) update=true ;;
+        -r|-rollback|--rollback) rollback=true ;;
+        -o|-output|--output) output="$2"; break ;;
     esac
     shift
 done
@@ -27,7 +27,7 @@ if [[ "$clear" == true ]]; then
     if [[ -d "src/Persistence/Migrations/${context}" ]]; then
         rm -r -f "src/Persistence/Migrations/${context}"
     fi
-else 
+else
     if [[ "$rollback" == true ]]; then
         dotnet ef migrations remove --force --context ${context_name}  --project src/Persistence --startup-project src/${startup}
     fi

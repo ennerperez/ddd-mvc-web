@@ -7,7 +7,7 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("Company")]
 [assembly: AssemblyProduct("Product")]
-[assembly: AssemblyCopyright("Copyright © {{Company}} <#= this._year #>")]
+[assembly: AssemblyCopyright("Copyright © <#= _year #>")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyConfiguration("")]
