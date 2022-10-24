@@ -32,9 +32,7 @@ namespace Tests.Business.Hooks
 			if (context != null)
 			{
 				context.Database.EnsureDeleted();
-				if (context.Database.ProviderName != null && !context.Database.ProviderName.EndsWith("Sqlite"))
-					context.Database.EnsureCreated();
-				context.Database.Migrate();
+				context.Initialize();
 			}
 		}
 	}

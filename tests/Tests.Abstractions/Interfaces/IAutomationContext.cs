@@ -2,7 +2,7 @@
 
 namespace Tests.Abstractions.Interfaces
 {
-	public interface IAutomationContext : ISpecFlowContext
+	public interface IAutomationContext : ISpecFlowContext, IAttributeLibrary
 	{
 
 		string AutomationType { get; set; }

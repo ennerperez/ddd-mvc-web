@@ -31,12 +31,12 @@ namespace Business.Requests
 	public class CreateBudgetRequestHandler : IRequestHandler<CreateBudgetRequest, Guid>
 	{
 		private readonly IGenericRepository<Budget, Guid> _repository;
-		private readonly IIdentityService _identityService;
+		private readonly IUserAccessorService _userAccessorService;
 
-		public CreateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IIdentityService identityService)
+		public CreateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
 		{
 			_repository = repository;
-			_identityService = identityService;
+			_userAccessorService = userAccessorService;
 		}
 
 		public async Task<Guid> Handle(CreateBudgetRequest request, CancellationToken cancellationToken)
@@ -49,7 +49,7 @@ namespace Business.Requests
 			entity.Taxes = request.Taxes;
 			entity.Total = request.Total;
 
-			entity.CreatedById = int.Parse(_identityService.User.GetUserId());
+			entity.CreatedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId());
 
 			await _repository.CreateAsync(entity);
 
@@ -138,12 +138,12 @@ namespace Business.Requests
 	public class UpdateBudgetRequestHandler : IRequestHandler<UpdateBudgetRequest>
 	{
 		private readonly IGenericRepository<Budget, Guid> _repository;
-		private readonly IIdentityService _identityService;
+		private readonly IUserAccessorService _userAccessorService;
 
-		public UpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IIdentityService identityService)
+		public UpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
 		{
 			_repository = repository;
-			_identityService = identityService;
+			_userAccessorService = userAccessorService;
 		}
 
 		public async Task<Unit> Handle(UpdateBudgetRequest request, CancellationToken cancellationToken)
@@ -159,7 +159,7 @@ namespace Business.Requests
 			entity.Total = request.Total;
 
 			entity.ModifiedAt = DateTime.Now;
-			entity.ModifiedById = int.Parse(_identityService.User.GetUserId());
+			entity.ModifiedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId());
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
@@ -207,12 +207,12 @@ namespace Business.Requests
 	public class PartialUpdateBudgetRequestHandler : IRequestHandler<PartialUpdateBudgetRequest>
 	{
 		private readonly IGenericRepository<Budget, Guid> _repository;
-		private readonly IIdentityService _identityService;
+		private readonly IUserAccessorService _userAccessorService;
 
-		public PartialUpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IIdentityService identityService)
+		public PartialUpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
 		{
 			_repository = repository;
-			_identityService = identityService;
+			_userAccessorService = userAccessorService;
 		}
 
 		public async Task<Unit> Handle(PartialUpdateBudgetRequest request, CancellationToken cancellationToken)
@@ -228,7 +228,7 @@ namespace Business.Requests
 			if (request.Total != null) entity.Total = request.Total.Value;
 
 			entity.ModifiedAt = DateTime.Now;
-			entity.ModifiedById = int.Parse(_identityService.User.GetUserId());
+			entity.ModifiedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId());
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
@@ -272,12 +272,12 @@ namespace Business.Requests
 	public class DeleteBudgetRequestHandler : IRequestHandler<DeleteBudgetRequest>
 	{
 		private readonly IGenericRepository<Budget, Guid> _repository;
-		private readonly IIdentityService _identityService;
+		private readonly IUserAccessorService _userAccessorService;
 
-		public DeleteBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IIdentityService identityService)
+		public DeleteBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
 		{
 			_repository = repository;
-			_identityService = identityService;
+			_userAccessorService = userAccessorService;
 		}
 
 		public async Task<Unit> Handle(DeleteBudgetRequest request, CancellationToken cancellationToken)
@@ -292,10 +292,10 @@ namespace Business.Requests
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
 			entity.DeletedAt = DateTime.Now;
-			var userId = _identityService.User.GetUserId();
-			int.TryParse(userId, out int _deletedById);
-			if (_deletedById != 0)
-				entity.DeletedById = _deletedById;
+			var userId = (_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId();
+			int.TryParse(userId, out var deletedById);
+			if (deletedById != 0)
+				entity.DeletedById = deletedById;
 			await _repository.UpdateAsync(entity);
 
 			return Unit.Value;

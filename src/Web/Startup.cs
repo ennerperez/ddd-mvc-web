@@ -154,8 +154,6 @@ namespace Web
 				})
 				.AddBusiness();
 
-			//services.AddScoped<IIdentityService, IdentityService>();
-
 			services
 				.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
 				.AddRoles<Role>()
@@ -339,7 +337,7 @@ namespace Web
 // 					Description = "Put **_ONLY_** your JWT Bearer token",
 // 					Reference = new OpenApiReference { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
 // 				};
-// 				
+//
 // 				c.AddSecurityDefinition(auth0SecurityScheme.Reference.Id, auth0SecurityScheme);
 // 				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { auth0SecurityScheme, Array.Empty<string>() } });
 // #endif
@@ -356,7 +354,7 @@ namespace Web
 			var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
 			{
 				Configuration.Bind("OpenIdSettings", options);
-				
+
 #if ENABLE_TOKEN_VALIDATION
 				options.Events.OnTokenValidated = OpenId_OnTokenValidated;
 #endif
@@ -364,9 +362,9 @@ namespace Web
 				options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 				{
 					// This sets the value of User.Identity.Name to users AD username
-					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, 
-					RoleClaimType = System.Security.Claims.ClaimTypes.Role, 
-					AuthenticationType = "Cookies", 
+					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName,
+					RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+					AuthenticationType = "Cookies",
 					ValidateIssuer = false
 				};
 				var scopes = new List<string>();
@@ -390,7 +388,7 @@ namespace Web
 			var ab2cConnectOptions = new Action<MicrosoftIdentityOptions>(options =>
 			{
 				Configuration.Bind("AzureSettings:AdB2C", options);
-				
+
 #if ENABLE_TOKEN_VALIDATION
 				options.Events.OnTokenValidated = AB2C_OnTokenValidated;
 #endif

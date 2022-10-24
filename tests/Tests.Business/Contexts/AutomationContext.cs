@@ -5,7 +5,7 @@ using Tests.Abstractions.Interfaces;
 
 namespace Tests.Business.Contexts
 {
-	public class AutomationContext : IAutomationContext, IAttributeLibrary
+	public class AutomationContext : IAutomationContext
 	{
 		public AutomationContext(IAutomationConfiguration automationConfigurations, FeatureContext featureContext, ScenarioContext scenarioContext)
 		{

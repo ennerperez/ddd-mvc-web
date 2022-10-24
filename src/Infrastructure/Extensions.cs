@@ -10,7 +10,7 @@ namespace Infrastructure
 	public static class Extensions
 	{
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="configureOptions"></param>
@@ -23,7 +23,7 @@ namespace Infrastructure
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <returns></returns>
@@ -33,19 +33,19 @@ namespace Infrastructure
 
 			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
 			var types = assemblies.SelectMany(m => m.GetTypes()).ToArray();
-			
-			var identityServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IIdentityService).IsAssignableFrom(m));
-			if (identityServiceType != null)
-				services.AddTransient(typeof(IIdentityService), identityServiceType);
-			
+
+			var userAccessorServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IUserAccessorService).IsAssignableFrom(m));
+			if (userAccessorServiceType != null)
+				services.AddTransient(typeof(IUserAccessorService), userAccessorServiceType);
+
 			var documentServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IDocumentService).IsAssignableFrom(m));
 			if (documentServiceType != null)
 				services.AddTransient(typeof(IDocumentService), documentServiceType);
-			
+
 			var documentServiceType2 = types.FirstOrDefault(m=> m.IsClass && typeof(IDocumentService<IDocument>).IsAssignableFrom(m));
 			if (documentServiceType2 != null)
 				services.AddTransient(typeof(IDocumentService<IDocument>), documentServiceType2);
-			
+
 			services.AddHttpClient();
 
 #if USING_BLOBS

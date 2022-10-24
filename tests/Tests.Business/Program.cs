@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Business;
 using Domain;
 using Infrastructure;
+using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,7 @@ using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Services;
 using Tests.Abstractions.Settings;
 using Tests.Business.Contexts;
+using Tests.Business.Services;
 using ILogger=Microsoft.Extensions.Logging.ILogger;
 
 namespace Tests.Business
