@@ -12,8 +12,8 @@ namespace MediatR
 {
 	public static class ISenderExtensions
 	{
-		
-		public static Task<TResult[]> SendWithRepository<TEntity, TResult>(this ISender @this,
+
+		public static async Task<TResult[]> SendWithRepository<TEntity, TResult>(this ISender @this,
 			Expression<Func<TEntity, TResult>> selector,
 			Expression<Func<TEntity, bool>> predicate,
 			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy,
@@ -23,7 +23,22 @@ namespace MediatR
 			bool ignoreQueryFilters = false,
 			bool includeDeleted = false) where TEntity : class, IEntity<int>
 		{
-			return SendWithRepository<TEntity, int, TResult>(@this, selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
+			var request = new GenericRequest<TEntity, TResult>()
+			{
+				Selector = selector,
+				Predicate = predicate,
+				OrderBy = orderBy,
+				Include = include,
+				Skip = skip,
+				Take = take,
+				DisableTracking = disableTracking,
+				IgnoreQueryFilters = ignoreQueryFilters,
+				IncludeDeleted = includeDeleted
+			};
+
+			var result = await @this.Send(request);
+			if (result != null) return result;
+			return null;
 		}
 
 		public static async Task<TResult[]> SendWithRepository<TEntity, TKey, TResult>(this ISender @this,
