@@ -97,6 +97,13 @@ namespace Persistence.Services
 			CancellationToken cancellationToken = default)
 		{
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking) query = query.AsNoTracking();
 			if (include != null) query = include(query);
 			if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
@@ -104,7 +111,6 @@ namespace Persistence.Services
 
 			if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
 				query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
-
 
 			var stprop = _dbSet.EntityType.GetProperties()
 				.FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
@@ -191,6 +197,13 @@ namespace Persistence.Services
 				expression = Expression.Lambda<Func<TEntity, bool>>(searchPredicate, parameter);
 
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking) query = query.AsNoTracking();
 			if (include != null) query = include(query);
 			if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
@@ -425,6 +438,13 @@ namespace Persistence.Services
 			CancellationToken cancellationToken = default)
 		{
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking)
 				query = query.AsNoTracking();
 			if (include != null)
@@ -452,6 +472,13 @@ namespace Persistence.Services
 			CancellationToken cancellationToken = default)
 		{
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking)
 				query = query.AsNoTracking();
 			if (include != null)
@@ -482,6 +509,13 @@ namespace Persistence.Services
 			bool includeDeleted = false)
 		{
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking) query = query.AsNoTracking();
 			if (include != null) query = include(query);
 			if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
@@ -574,6 +608,13 @@ namespace Persistence.Services
 				expression = Expression.Lambda<Func<TEntity, bool>>(searchPredicate, parameter);
 
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking) query = query.AsNoTracking();
 			if (include != null) query = include(query);
 			if (ignoreQueryFilters) query = query.IgnoreQueryFilters();
@@ -805,6 +846,13 @@ namespace Persistence.Services
 			bool includeDeleted = false)
 		{
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking)
 				query = query.AsNoTracking();
 			if (include != null)
@@ -816,6 +864,7 @@ namespace Persistence.Services
 
 			if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && !includeDeleted)
 				query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
+
 
 			var result = orderBy != null ? orderBy(query).Select(selector) : query.Select(selector);
 			return result.FirstOrDefault();
@@ -831,6 +880,13 @@ namespace Persistence.Services
 			bool includeDeleted = false)
 		{
 			IQueryable<TEntity> query = _dbSet;
+
+			if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				include = (this as IDefaultRepository<TEntity>)?.DefaultInclude;
+
+			if (orderBy == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
+				orderBy = (this as IDefaultRepository<TEntity>)?.DefaultOrderBy;
+
 			if (disableTracking)
 				query = query.AsNoTracking();
 			if (include != null)
