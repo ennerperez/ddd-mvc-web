@@ -10,9 +10,9 @@ namespace Microsoft.Extensions
 {
 	namespace DependencyInjection
 	{
-		internal static class DependencyInjectionExtensions
+		public static class DependencyInjectionExtensions
 		{
-			internal static void ConnectImplementationsToTypesClosing(this IServiceCollection services, Type openRequestInterface, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)
+			public static void ConnectImplementationsToTypesClosing(this IServiceCollection services, Type openRequestInterface, IEnumerable<Assembly> assembliesToScan, bool addIfAlreadyExists)
 			{
 				var concretions = new List<Type>();
 				var interfaces = new List<Type>();
