@@ -97,12 +97,8 @@ namespace Tests.Business
 						return Container.GetRequiredService<DefaultContext>();
 					};
 				})
-				.AddBusiness();
-
-			Services.AddScoped<IAutomationConfiguration, SpecFlowConfiguration>();
-			Services.AddScoped<IAutomationContext, AutomationContext>();
-			Services.AddSingleton<IStepHelper, StepsHelper>();
-			Services.AddSingleton<LoremIpsumService>();
+				.AddBusiness()
+				.AddTests();
 
 			Container = Services.BuildServiceProvider();
 			var factory = Container.GetService<ILoggerFactory>();

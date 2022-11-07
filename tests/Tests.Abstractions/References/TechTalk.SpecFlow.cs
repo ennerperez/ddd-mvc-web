@@ -223,14 +223,42 @@ namespace TechTalk.SpecFlow
 
 			if (!string.IsNullOrWhiteSpace(@this))
 			{
-				if (@this.Equals("{Random}", StringComparison.InvariantCultureIgnoreCase))
+				var randomRegex = new Regex(@"\{(Random)\:?(\d+)?\}", RegexOptions.Compiled);
+				var matchRandomRegex = randomRegex.Match(@this);
+				if (matchRandomRegex.Success)
 				{
+					if (!string.IsNullOrWhiteSpace(matchRandomRegex.Groups[2].Value))
+					{
+						maxLenght = int.Parse(matchRandomRegex.Groups[2].Value);
+					}
 					var value = Guid.NewGuid().ToString().Replace("-", "");
 					result = value.Substring(0, Math.Min(value.Length, maxLenght));
+					return result;
 				}
-				else if (@this.Equals("{Guid}", StringComparison.InvariantCultureIgnoreCase))
+
+				var guidRegex = new Regex(@"\{(Guid)\}", RegexOptions.Compiled);
+				var matchGuidRegex = randomRegex.Match(@this);
+				if (matchGuidRegex.Success)
 				{
 					result = Guid.NewGuid().ToString();
+					return result;
+				}
+
+				var rangeRegex = new Regex(@"\{\[(.*)\]\}", RegexOptions.Compiled);
+				var rangeRegexMatch = rangeRegex.Match(@this);
+				if (rangeRegexMatch.Success)
+				{
+					var values = rangeRegexMatch.Groups[1].Value.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+					if (values.Length > 1)
+					{
+						var rnd = new Random();
+						var index = rnd.Next(-1, values.Length + 1);
+						if (index < 0) index = 0;
+						if (index > values.Length - 1) index = values.Length - 1;
+						result = values[index];
+					}
+					else
+						result = values[0];
 				}
 			}
 
