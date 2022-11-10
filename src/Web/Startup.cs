@@ -151,7 +151,7 @@ namespace Web
 				.AddPersistence(options =>
 				{
 					DefaultContext.UseDbEngine(options, Configuration);
-				})
+				}, ServiceLifetime.Transient)
 				.AddBusiness();
 
 			services
