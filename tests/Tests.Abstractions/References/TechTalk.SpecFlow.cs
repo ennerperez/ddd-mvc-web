@@ -170,13 +170,13 @@ namespace TechTalk.SpecFlow
 			return result;
 		}
 
-		public static string Evaluate(this string @this)
+		public static string Evaluate(this string @this, int maxLenght = 10, string nullValue = "")
 		{
-			return @this.Evaluate<string>();
+			return @this.Evaluate<string>(maxLenght, nullValue);
 		}
-		public static T Evaluate<T>(this string @this)
+		public static T Evaluate<T>(this string @this, int maxLenght = 10, T nullValue = default)
 		{
-			if (string.IsNullOrWhiteSpace(@this)) return default;
+			if (string.IsNullOrWhiteSpace(@this)) return nullValue;
 
 			var randomRegex = new Regex(@"\{(Random)\:?(\d+)?\}", RegexOptions.Compiled);
 			var matchRandomRegex = randomRegex.Match(@this);
@@ -473,7 +473,7 @@ namespace TechTalk.SpecFlow
 				var result = string.Empty;
 				if (matchRandomRegex.Success)
 				{
-					var maxLenght = 10;
+					//var maxLenght = 10;
 					if (!string.IsNullOrWhiteSpace(matchRandomRegex.Groups[2].Value))
 						maxLenght = int.Parse(matchRandomRegex.Groups[2].Value);
 					var value = Guid.NewGuid().ToString().Replace("-", "");
@@ -547,7 +547,7 @@ namespace TechTalk.SpecFlow
 				return (T)Convert.ChangeType(result, typeof(T));
 			}
 
-			return default;
+			return nullValue;
 		}
 
 	}
