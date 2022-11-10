@@ -170,7 +170,7 @@ namespace TechTalk.SpecFlow
 			return result;
 		}
 
-		public static DateTime? EvaluateDate(this string @this)
+		public static DateTime? EvaluateDate(this string @this, DateTime? nullValue = null)
 		{
 			DateTime? result = null;
 			if (!string.IsNullOrWhiteSpace(@this))
@@ -181,16 +181,14 @@ namespace TechTalk.SpecFlow
 				else if (@this.Equals("{Tomorrow}", StringComparison.InvariantCultureIgnoreCase)) return DateTime.Today.AddDays(1);
 				else if (@this.Equals("{Yesterday}", StringComparison.InvariantCultureIgnoreCase)) return DateTime.Today.AddDays(-1);
 
-				//TODO: Include futures dates
 				//TODO: Translate keywords
-				var regex = new Regex(@"\{([0-9]{1,})([y,m,d])(Ago)}", RegexOptions.Compiled);
+				var regex = new Regex(@"\{([0-9]{1,})([y,m,d])(Ago|Ahead)}", RegexOptions.Compiled);
 				var match = regex.Match(@this);
 				if (match.Success)
 				{
 					var amount = int.Parse(match.Groups[1].Value);
 					var interval = match.Groups[2].Value;
-					//var direction = birthMatch.Groups[3].Value;
-					var direction = -1;
+					var direction = match.Groups[3].Value == "Ago" ? -1 : 1;
 					switch (interval)
 					{
 						case "y":
@@ -213,7 +211,12 @@ namespace TechTalk.SpecFlow
 				}
 			}
 
-			return result;
+			if (result != null)
+			{
+				return (DateTime)result;
+			}
+
+			return nullValue;
 		}
 
 		public static string EvaluateString(this string @this, int maxLenght = 10, string nullValue = null)
@@ -237,7 +240,7 @@ namespace TechTalk.SpecFlow
 				}
 
 				var guidRegex = new Regex(@"\{(Guid)\}", RegexOptions.Compiled);
-				var matchGuidRegex = randomRegex.Match(@this);
+				var matchGuidRegex = guidRegex.Match(@this);
 				if (matchGuidRegex.Success)
 				{
 					result = Guid.NewGuid().ToString();
