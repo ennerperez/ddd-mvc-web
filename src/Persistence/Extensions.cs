@@ -11,15 +11,27 @@ namespace Persistence
 	public static class Extensions
 	{
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="optionsBuilder"></param>
+		/// <param name="serviceLifetime"></param>
 		/// <returns></returns>
-		public static IServiceCollection AddPersistence(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
+		public static IServiceCollection AddPersistence(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
 		{
-			services.AddDbContext<DefaultContext>(optionsBuilder);
-			services.AddTransient<DbContext, DefaultContext>();
+			services.AddDbContext<DefaultContext>(optionsBuilder,serviceLifetime);
+			switch (serviceLifetime)
+			{
+				case ServiceLifetime.Transient:
+					services.AddTransient<DbContext, DefaultContext>();
+					break;
+				case ServiceLifetime.Singleton:
+					services.AddSingleton<DbContext, DefaultContext>();
+					break;
+				default:
+					services.AddScoped<DbContext, DefaultContext>();
+					break;
+			}
 			DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
 
 			services.AddPersistence();
@@ -27,17 +39,29 @@ namespace Persistence
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="optionsBuilder"></param>
 		/// <param name="configureOptions"></param>
+		/// <param name="serviceLifetime"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, Action<T> configureOptions = null)
+		public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, Action<T> configureOptions = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
 		{
-			services.AddDbContext<DefaultContext>(optionsBuilder);
-			services.AddTransient<DbContext, DefaultContext>();
+			services.AddDbContext<DefaultContext>(optionsBuilder,serviceLifetime);
+			switch (serviceLifetime)
+			{
+				case ServiceLifetime.Transient:
+					services.AddTransient<DbContext, DefaultContext>();
+					break;
+				case ServiceLifetime.Singleton:
+					services.AddSingleton<DbContext, DefaultContext>();
+					break;
+				default:
+					services.AddScoped<DbContext, DefaultContext>();
+					break;
+			}
 			DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
 
 			services.AddPersistence(configureOptions);
@@ -45,16 +69,28 @@ namespace Persistence
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="configureOptions"></param>
+		/// <param name="serviceLifetime"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<T> configureOptions = null)
+		public static IServiceCollection AddPersistence<T>(this IServiceCollection services, Action<T> configureOptions = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
 		{
-			services.AddDbContext<DefaultContext>();
-			services.AddTransient<DbContext, DefaultContext>();
+			services.AddDbContext<DefaultContext>(serviceLifetime);
+			switch (serviceLifetime)
+			{
+				case ServiceLifetime.Transient:
+					services.AddTransient<DbContext, DefaultContext>();
+					break;
+				case ServiceLifetime.Singleton:
+					services.AddSingleton<DbContext, DefaultContext>();
+					break;
+				default:
+					services.AddScoped<DbContext, DefaultContext>();
+					break;
+			}
 			DbContext = () => services.BuildServiceProvider().GetRequiredService<DefaultContext>();
 
 			services.AddPersistence();
@@ -62,7 +98,7 @@ namespace Persistence
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <returns></returns>
