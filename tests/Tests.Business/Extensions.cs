@@ -22,7 +22,7 @@ namespace Tests.Business
 			services.AddSingleton<IStepHelper, StepsHelper>();
 			services.AddSingleton<LoremIpsumService>();
 
-			services.AddSingleton<ITestService, ClientService>();
+			services.AddSingleton<ITestService, ClientTestService>();
 
 			return services;
 		}

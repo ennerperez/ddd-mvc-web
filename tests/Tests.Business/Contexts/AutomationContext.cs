@@ -12,6 +12,7 @@ namespace Tests.Business.Contexts
 			FeatureContext = featureContext;
 			ScenarioContext = scenarioContext;
 			AutomationConfigurations = automationConfigurations;
+			Exceptions = new List<Exception>();
 		}
 
 		#region Tags
