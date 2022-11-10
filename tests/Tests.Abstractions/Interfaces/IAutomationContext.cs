@@ -1,4 +1,6 @@
-﻿using TechTalk.SpecFlow;
+﻿using System;
+using System.Collections.Generic;
+using TechTalk.SpecFlow;
 
 namespace Tests.Abstractions.Interfaces
 {
@@ -14,6 +16,8 @@ namespace Tests.Abstractions.Interfaces
 		IAutomationConfiguration AutomationConfigurations { get; }
 		FeatureContext FeatureContext { get; }
 		ScenarioContext ScenarioContext { get; }
+
+		List<Exception> Exceptions { get; }
 
 		bool IsInitialized { get; set; }
 

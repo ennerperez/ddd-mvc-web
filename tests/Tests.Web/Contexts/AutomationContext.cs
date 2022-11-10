@@ -38,6 +38,7 @@ namespace Tests.Web.Contexts
 		public IAutomationConfiguration AutomationConfigurations { get; }
 		public FeatureContext FeatureContext { get; }
 		public ScenarioContext ScenarioContext { get; }
+		public List<Exception> Exceptions { get; }
 		public bool IsInitialized { get; set; }
 
 		public Dictionary<string, object> AttributeLibrary { get; } = new();
