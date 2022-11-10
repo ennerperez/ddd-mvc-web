@@ -23,12 +23,10 @@ namespace Tests.Business.Steps
 
 		private readonly IAutomationConfiguration _automationConfiguration;
 		private readonly IAutomationContext _automationContext;
-
+		protected readonly LoremIpsumService _loremIpsumService;
 
 		// ReSharper disable once UnusedMember.Local
 		private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
-
-		protected readonly LoremIpsumService _loremIpsumService;
 
 		public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, LoremIpsumService loremIpsumService)
 		{
@@ -69,7 +67,7 @@ namespace Tests.Business.Steps
 			try
 			{
 				var service = Program.Container.GetServices(typeof(ITestService))
-					.FirstOrDefault(s=> s != null && s.GetType().Name.Equals($"{type}Service", StringComparison.InvariantCultureIgnoreCase));
+					.FirstOrDefault(s=> s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
 				if (service == null) throw new NullException("Unable to find an instance for the required service");
 
 				var methodName = operation switch
