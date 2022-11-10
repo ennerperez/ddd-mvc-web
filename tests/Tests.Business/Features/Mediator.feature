@@ -1,7 +1,7 @@
 ﻿@TestCase(TE01)
 @Environment(development)
 @RestoreDatabase
-Feature: Operations
+Feature: Mediator
 
 	@TestCode(TE01-001)
 	Scenario: Client Operations

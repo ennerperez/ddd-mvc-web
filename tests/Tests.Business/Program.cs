@@ -96,7 +96,7 @@ namespace Tests.Business
 					{
 						return Container.GetRequiredService<DefaultContext>();
 					};
-				})
+				}, ServiceLifetime.Transient)
 				.AddBusiness()
 				.AddTests();
 
