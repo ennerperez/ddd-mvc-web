@@ -98,6 +98,17 @@ namespace System
 
 		#endregion
 
+		#region NextShort
+
+		public static short NextShort(this Random @this, short minValue, short maxValue)
+		{
+			var value = @this.Next(minValue, maxValue);
+			if (value < short.MinValue) value = short.MinValue;
+			else if (value > short.MaxValue) value = short.MaxValue;
+			return (short)value;
+		}
+
+		#endregion
 
 		public static T AsEnum<T>(this string @this, bool ignoreCase = true)
 		{
