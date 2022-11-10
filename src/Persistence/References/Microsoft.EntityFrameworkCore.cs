@@ -34,10 +34,7 @@ namespace Microsoft.EntityFrameworkCore
 
 		public static void Initialize(this DbContext context)
 		{
-			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
-				context.Database.EnsureCreated();
-			else
-				context.Database.Migrate();
+			context.Database.Migrate();
 		}
 
 		public static async Task TruncateAsync(this DbContext context, bool reseed = true, CancellationToken cancellationToken = default)
@@ -51,7 +48,7 @@ namespace Microsoft.EntityFrameworkCore
 					var q1 = $"DBCC CHECKIDENT ('[{m.GetSchema()}].[{m.GetTableName()}]', RESEED, 0);";
 					if (!reseed) q1 = string.Empty;
 					var q0 = $"TRUNCATE TABLE [{m.GetSchema()}].[{m.GetTableName()}];";
-					return string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+					return string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}).ToArray());
 			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
 				query = string.Join(Environment.NewLine, entityTypes.Select(m =>
@@ -59,7 +56,7 @@ namespace Microsoft.EntityFrameworkCore
 					var q1 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{m.GetTableName()}';";
 					if (!reseed) q1 = string.Empty;
 					var q0 = $"DELETE FROM {m.GetTableName()};";
-					return string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+					return string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}).ToArray());
 
 			if (!string.IsNullOrWhiteSpace(query))
@@ -82,7 +79,7 @@ namespace Microsoft.EntityFrameworkCore
 					var q0 = $"DBCC CHECKIDENT ('[{entityType.GetSchema()}].[{entityType.GetTableName()}]', RESEED, 0);";
 					if (!reseed) q0 = string.Empty;
 					var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
-					query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+					query = string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}
 			}
 			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
@@ -92,7 +89,7 @@ namespace Microsoft.EntityFrameworkCore
 					var q0 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{entityType.GetTableName()}';";
 					if (!reseed) q0 = string.Empty;
 					var q1 = $"DELETE FROM {entityType.GetTableName()};";
-					query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+					query = string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}
 			}
 
@@ -129,7 +126,7 @@ namespace Microsoft.EntityFrameworkCore
 			{
 				var keys = entityType.GetKeys();
 				var types = keys.Select(m => m.GetKeyType());
-				var isValueGenerated = keys.SelectMany(s => s.Properties).Any(m => m.ValueGenerated == ValueGenerated.OnAdd && !types.Any(m=> m == typeof(Guid)));
+				var isValueGenerated = keys.SelectMany(s => s.Properties).Any(m => m.ValueGenerated == ValueGenerated.OnAdd && !types.Any(m => m == typeof(Guid)));
 				if (isValueGenerated)
 				{
 					var query = string.Empty;
