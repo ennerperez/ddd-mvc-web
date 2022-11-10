@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
@@ -26,13 +27,18 @@ namespace Tests.Business.Hooks
 				RestoreDatabase();
 		}
 
+		private static bool s_isRestoring;
 		private static void RestoreDatabase()
 		{
+			while (s_isRestoring)
+				Thread.Sleep(1000);
+			s_isRestoring = true;
 			var context = Persistence.Extensions.DbContext();
 			if (context != null)
 			{
 				context.Database.EnsureDeleted();
 				context.Initialize();
+				s_isRestoring = false;
 			}
 		}
 	}
