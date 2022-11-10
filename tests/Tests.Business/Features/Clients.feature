@@ -1,10 +1,10 @@
 ﻿@TestCase(TE01)
 @Environment(development)
 @RestoreDatabase
-Feature: Mediator
+Feature: Clients
 
 	@TestCode(TE01-001)
-	Scenario: Client Operations
+	Scenario: Basic Operations
 		Given a client with the following data
 		  | Field           | Value    |
 		  | Identification  | {Random} |
