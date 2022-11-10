@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,11 +44,11 @@ namespace Tests.Business.Steps
 			foreach (var row in table.Rows)
 			{
 				row["Field"] = row["Field"].Replace(" ", string.Empty);
-				row["Value"] = row["Value"].EvaluateString();
+				row["Value"] = row["Value"].Evaluate();
 			}
 			_automationContext.SetAttributeInAttributeLibrary("this", type);
 			_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), table);
-
+			Assert.Pass();
 			return Task.CompletedTask;
 		}
 
@@ -56,24 +58,48 @@ namespace Tests.Business.Steps
 		{
 			if (type == "this")
 				type = _automationContext.GetAttributeFromAttributeLibrary(type, false).ToString();
-			var table = (Table)_automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}".ToLower());
-			await GivenManipulateEntityAsync(type, operation, table);
+
+			if (_automationContext.Exceptions.Any())
+			{
+				var i = 0;
+				var exceptions = _automationContext.Exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray();
+				Assert.Fail(new AllException(_automationContext.Exceptions.Count, errors: exceptions));
+			}
+			else
+			{
+				var result = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), false);
+				if (result != null && result.GetType() == typeof(Table))
+				{
+					await GivenManipulateEntityAsync(type, operation, (Table)result);
+					Assert.Pass();
+				}
+				else if (result != null && (result.GetType().IsAssignableTo(typeof(IEnumerable))) && ((result as IEnumerable).ToDynamicArray().Length == 0))
+				{
+					Assert.Fail(new EmptyException((result as IEnumerable)));
+				}
+				else
+				{
+					Assert.Pass();
+				}
+			}
 		}
 
-		[Given(@"the (.*) (?:must|should|will) be (created|updated|deleted) (?:using|with) the following (?:data|information)")]
+		[Given(@"the (.*) (?:must|should|will) be (created|updated|partially updated|deleted) (?:using|with) the following (?:data|information)")]
 		public async Task GivenManipulateEntityAsync(string type, string operation, Table table)
 		{
 			_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), table);
 			try
 			{
-				var service = Program.Container.GetServices(typeof(ITestService))
-					.FirstOrDefault(s=> s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
+				var service = (ITestService)Program.Container.GetServices(typeof(ITestService))
+					.FirstOrDefault(s => s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
 				if (service == null) throw new NullException("Unable to find an instance for the required service");
+				service.AutomationContext = _automationContext;
 
 				var methodName = operation switch
 				{
 					"created" => $"CreateAsync",
 					"updated" => $"UpdateAsync",
+					"partially updated" => $"PartialUpdateAsync",
 					"deleted" => $"DeleteAsync",
 					_ => throw new ArgumentException("Method is not allowed")
 				};
