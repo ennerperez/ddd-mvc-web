@@ -38,7 +38,7 @@ namespace Tests.Business.Steps
 		}
 
 		[Given(@"(?:a|an) (.*) (?:using|with) the following (?:data|information)")]
-		[Given(@"the following (.*) (data|information)")]
+		[Given(@"the following (.*) (?:data|information)")]
 		public Task GivenSetEntityAsync(string type, Table table)
 		{
 			foreach (var row in table.Rows)
@@ -87,10 +87,18 @@ namespace Tests.Business.Steps
 		[Given(@"the (.*) (?:must|should|will) be (created|updated|partially updated|deleted) (?:using|with) the following (?:data|information)")]
 		public async Task GivenManipulateEntityAsync(string type, string operation, Table table)
 		{
+			foreach (var row in table.Rows)
+			{
+				row["Field"] = row["Field"].Replace(" ", string.Empty);
+				row["Value"] = row["Value"].Evaluate();
+			}
 			_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), table);
 			try
 			{
-				var service = (ITestService)Program.Container.GetServices(typeof(ITestService))
+				var serviceType = Assembly.GetExecutingAssembly().DefinedTypes.FirstOrDefault(m=> m.Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
+				var serviceInterface = serviceType?.ImplementedInterfaces.FirstOrDefault();
+				if (serviceInterface == null) throw new NullException("Unable to find the interface for the required service");
+				var service = (ITestService)Program.Container.GetServices(serviceInterface)
 					.FirstOrDefault(s => s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
 				if (service == null) throw new NullException("Unable to find an instance for the required service");
 				service.AutomationContext = _automationContext;

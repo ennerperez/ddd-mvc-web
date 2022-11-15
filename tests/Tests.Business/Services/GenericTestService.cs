@@ -8,7 +8,7 @@ using Tests.Business.Interfaces;
 
 namespace Tests.Business.Services
 {
-	public abstract class GenericTestService : ITestService
+	public abstract class GenericTestService<TEntity> : ITestService<TEntity>
 	{
 
 		public IAutomationContext AutomationContext
@@ -28,6 +28,7 @@ namespace Tests.Business.Services
 		protected string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
 		public abstract Task CreateAsync(Table table);
+		public abstract Task<TEntity> ReadAsync(Table table);
 		public abstract Task UpdateAsync(Table table);
 		public abstract Task PartialUpdateAsync(Table table);
 		public abstract Task DeleteAsync(Table table);

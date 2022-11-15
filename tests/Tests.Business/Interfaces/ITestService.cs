@@ -12,4 +12,9 @@ namespace Tests.Business.Interfaces
 		Task PartialUpdateAsync(Table table);
 		Task DeleteAsync(Table table);
 	}
+
+	public interface ITestService<TEntity> : ITestService
+	{
+		Task<TEntity> ReadAsync(Table table);
+	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Entities;
+using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Helpers;
 using Tests.Abstractions.Interfaces;
@@ -22,7 +23,7 @@ namespace Tests.Business
 			services.AddSingleton<IStepHelper, StepsHelper>();
 			services.AddSingleton<LoremIpsumService>();
 
-			services.AddSingleton<ITestService, ClientTestService>();
+			services.AddSingleton<ITestService<Client>, ClientTestService>();
 
 			return services;
 		}

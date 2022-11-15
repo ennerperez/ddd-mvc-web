@@ -9,7 +9,7 @@ using Tests.Business.Interfaces;
 
 namespace Tests.Business.Services
 {
-	public class ClientTestService : GenericTestService, ITestService
+	public class ClientTestService : GenericTestService<Client>, ITestService<Client>
 	{
 
 		private string type = nameof(Client);
@@ -22,6 +22,11 @@ namespace Tests.Business.Services
 		public override async Task CreateAsync(Table table)
 		{
 			await ExecuteAsync<CreateClientRequest>(type, table);
+		}
+
+		public override Task<Client> ReadAsync(Table table)
+		{
+			throw new NotImplementedException();
 		}
 		public override async Task UpdateAsync(Table table)
 		{
