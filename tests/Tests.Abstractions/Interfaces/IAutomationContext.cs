@@ -17,7 +17,9 @@ namespace Tests.Abstractions.Interfaces
 		FeatureContext FeatureContext { get; }
 		ScenarioContext ScenarioContext { get; }
 
-		List<Exception> Exceptions { get; }
+		void AddException(Exception e);
+		bool HasExceptions();
+		IEnumerable<Exception> GetExceptions();
 
 		bool IsInitialized { get; set; }
 

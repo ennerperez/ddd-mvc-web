@@ -40,7 +40,7 @@ namespace Tests.Business.Services
 					if (lstMatch.Success)
 					{
 						var prop = lstMatch.Groups[1].Value;
-						var propValue = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}_{prop}".ToLower(), throwException: false);
+						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{type}_{prop}".ToLower(), throwException: false);
 						entity.Id = int.Parse(propValue.ToString() ?? string.Empty);
 					}
 				}
@@ -60,7 +60,7 @@ namespace Tests.Business.Services
 					if (lstMatch.Success)
 					{
 						var prop = lstMatch.Groups[1].Value;
-						var propValue = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}_{prop}".ToLower(), throwException: false);
+						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{type}_{prop}".ToLower(), throwException: false);
 						entity.Id = int.Parse(propValue.ToString() ?? string.Empty);
 					}
 				}
@@ -79,7 +79,7 @@ namespace Tests.Business.Services
 					if (lstMatch.Success)
 					{
 						var prop = lstMatch.Groups[1].Value;
-						var propValue = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}_{prop}".ToLower(), throwException: false);
+						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{type}_{prop}".ToLower(), throwException: false);
 						entity.Id = int.Parse(propValue.ToString() ?? string.Empty);
 					}
 				}

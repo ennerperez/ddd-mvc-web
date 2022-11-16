@@ -25,7 +25,7 @@ namespace Tests.Business.Services
 			Mediator = mediator;
 		}
 
-		protected string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
+		protected string ScenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
 		public abstract Task CreateAsync(Table table);
 		public abstract Task<TEntity> ReadAsync(Table table);
@@ -51,7 +51,7 @@ namespace Tests.Business.Services
 				// else if (response == null) throw ex;
 				if (response == null) throw ex;
 				if (response.GetType() != typeof(Unit))
-					_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}_id".ToLower(), response);
+					_automationContext.SetAttribute($"{ScenarioCode}_{type}_id".ToLower(), response);
 			}
 			catch (NotImplementedException)
 			{
@@ -59,14 +59,14 @@ namespace Tests.Business.Services
 			}
 			catch (Exception e)
 			{
-				_automationContext.Exceptions.Add(e);
+				_automationContext.AddException(e);
 			}
 
 			entities.Add(entity);
 
 			if (entities.Count >= 1)
 			{
-				_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), entities);
+				_automationContext.SetAttribute($"{ScenarioCode}_{type}".ToLower(), entities);
 			}
 		}
 	}

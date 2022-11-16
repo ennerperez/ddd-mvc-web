@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+using Xunit.Sdk;
 
 namespace Tests.Business.Contexts
 {
@@ -12,7 +14,6 @@ namespace Tests.Business.Contexts
 			FeatureContext = featureContext;
 			ScenarioContext = scenarioContext;
 			AutomationConfigurations = automationConfigurations;
-			Exceptions = new List<Exception>();
 		}
 
 		#region Tags
@@ -36,13 +37,32 @@ namespace Tests.Business.Contexts
 		public FeatureContext FeatureContext { get; }
 		public ScenarioContext ScenarioContext { get; }
 
-		public List<Exception> Exceptions { get; }
 		public bool IsInitialized { get; set; }
 
-		public Dictionary<string, object> AttributeLibrary { get; } = new();
-		public object GetAttributeFromAttributeLibrary(string attributeKey, bool throwException = true)
+		private Dictionary<string, object> _attributeLibrary;
+
+		#region Exceptions
+
+		private List<Exception> _exceptions;
+		public IEnumerable<Exception> GetExceptions()
 		{
-			if (AttributeLibrary.TryGetValue(attributeKey, out var attributeObject))
+			return _exceptions?.ToArray();
+		}
+		public void AddException(Exception e)
+		{
+			if (_exceptions == null) _exceptions = new List<Exception>();
+			_exceptions.Add(e);
+		}
+		public bool HasExceptions()
+		{
+			return _exceptions?.Any() ?? false;
+		}
+
+		#endregion
+		public object GetAttribute(string attributeKey, bool throwException = true)
+		{
+			if (_attributeLibrary == null) return null;
+			if (_attributeLibrary.TryGetValue(attributeKey, out var attributeObject))
 			{
 				return attributeObject;
 			}
@@ -56,12 +76,24 @@ namespace Tests.Business.Contexts
 			}
 		}
 
-		public void SetAttributeInAttributeLibrary(string attributeKey, object attributeObject)
+		public void SetAttribute(string attributeKey, object attributeObject)
 		{
-			AttributeLibrary.Remove(attributeKey);
-			AttributeLibrary.Add(attributeKey, attributeObject);
+			if (_attributeLibrary == null) _attributeLibrary = new Dictionary<string, object>();
+			_attributeLibrary.Remove(attributeKey);
+			_attributeLibrary.Add(attributeKey, attributeObject);
 		}
 
-		public Exception TestError { get; } = null;
+		public Exception TestError
+		{
+			get
+			{
+				if (_exceptions?.Any() ?? false)
+				{
+					var i = 0;
+					return new AllException(_exceptions.Count, _exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray());
+				}
+				return null;
+			}
+		}
 	}
 }

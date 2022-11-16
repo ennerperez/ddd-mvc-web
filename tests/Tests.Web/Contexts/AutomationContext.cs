@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+using Xunit.Sdk;
 
 namespace Tests.Web.Contexts
 {
@@ -14,7 +16,6 @@ namespace Tests.Web.Contexts
 			FeatureContext = featureContext;
 			ScenarioContext = scenarioContext;
 			AutomationConfigurations = automationConfigurations;
-			Exceptions = new List<Exception>();
 		}
 
 		#region Tags
@@ -39,14 +40,33 @@ namespace Tests.Web.Contexts
 		public IAutomationConfiguration AutomationConfigurations { get; }
 		public FeatureContext FeatureContext { get; }
 		public ScenarioContext ScenarioContext { get; }
-		public List<Exception> Exceptions { get; }
+
+		#region Exceptions
+
+		private List<Exception> _exceptions;
+		public IEnumerable<Exception> GetExceptions()
+		{
+			return _exceptions?.ToArray();
+		}
+		public void AddException(Exception e)
+		{
+			if (_exceptions == null) _exceptions = new List<Exception>();
+			_exceptions.Add(e);
+		}
+		public bool HasExceptions()
+		{
+			return _exceptions?.Any() ?? false;
+		}
+
+		#endregion
 		public bool IsInitialized { get; set; }
 
-		public Dictionary<string, object> AttributeLibrary { get; } = new();
+		private Dictionary<string, object> _attributeLibrary;
 
-		public object GetAttributeFromAttributeLibrary(string attributeKey, bool throwException = true)
+		public object GetAttribute(string attributeKey, bool throwException = true)
 		{
-			if (AttributeLibrary.TryGetValue(attributeKey, out var attributeObject))
+			if (_attributeLibrary == null) return null;
+			if (_attributeLibrary.TryGetValue(attributeKey, out var attributeObject))
 			{
 				return attributeObject;
 			}
@@ -60,12 +80,24 @@ namespace Tests.Web.Contexts
 			}
 		}
 
-		public void SetAttributeInAttributeLibrary(string attributeKey, object attributeObject)
+		public void SetAttribute(string attributeKey, object attributeObject)
 		{
-			AttributeLibrary.Remove(attributeKey);
-			AttributeLibrary.Add(attributeKey, attributeObject);
+			if (_attributeLibrary == null) _attributeLibrary = new Dictionary<string, object>();
+			_attributeLibrary.Remove(attributeKey);
+			_attributeLibrary.Add(attributeKey, attributeObject);
 		}
 
-		public Exception TestError { get; } = null;
+		public Exception TestError
+		{
+			get
+			{
+				if (_exceptions?.Any() ?? false)
+				{
+					var i = 0;
+					return new AllException(_exceptions.Count, _exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray());
+				}
+				return null;
+			}
+		}
 	}
 }

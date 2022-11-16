@@ -48,21 +48,21 @@ namespace Tests.Business.Steps
 				row["Field"] = row["Field"].Replace(" ", string.Empty);
 				row["Value"] = row["Value"].Evaluate();
 			}
-			_automationContext.SetAttributeInAttributeLibrary("this", type);
-			_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), table);
+			_automationContext.SetAttribute("this", type);
+			_automationContext.SetAttribute($"{_scenarioCode}_{type}".ToLower(), table);
 			Assert.Pass();
 			return Task.CompletedTask;
 		}
 
-		[Then(@"the (.*) (?:must|should|will) (not )?be successfully (created|updated|partially updated|deleted)")]
-		[Then(@"(this|it) (?:must|should|will) (not )?be successfully (created|updated|partially updated|deleted)")]
+		[Then(@"the (.*) (?:must|should|will) (.*)?be successfully (created|updated|partially updated|deleted)")]
+		[Then(@"(this|it) (?:must|should|will) (.*)?be successfully (created|updated|partially updated|deleted)")]
 		public async Task ThenOperationResultAsync(string type, string denied, string operation)
 		{
 			var isDenied = !string.IsNullOrWhiteSpace(denied);
 			if (type == "this")
-				type = _automationContext.GetAttributeFromAttributeLibrary(type, false).ToString();
+				type = _automationContext.GetAttribute(type, false).ToString();
 
-			var result = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), false);
+			var result = _automationContext.GetAttribute($"{_scenarioCode}_{type}".ToLower(), false);
 			if (result != null && result.GetType() == typeof(Table))
 			{
 				await GivenManipulateEntityAsync(type, denied, operation, (Table)result);
@@ -82,14 +82,12 @@ namespace Tests.Business.Steps
 					Assert.Pass();
 			}
 
-			var i = 0;
-			var exceptions = _automationContext.Exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray();
-			if ((isDenied && exceptions.Any()) || (!isDenied && !exceptions.Any()))
+			if ((isDenied && _automationContext.TestError != null) || (!isDenied && _automationContext.TestError == null))
 				Assert.Pass();
-			else if (isDenied && !exceptions.Any())
+			else if (isDenied && _automationContext.TestError == null)
 				Assert.Fail(new Exception("A result was returned when none was expected"));
-			else if (!isDenied && exceptions.Any())
-				Assert.Fail(new AllException(_automationContext.Exceptions.Count, errors: exceptions));
+			else if (!isDenied && _automationContext.TestError != null)
+				Assert.Fail(_automationContext.TestError);
 
 		}
 
@@ -102,7 +100,7 @@ namespace Tests.Business.Steps
 				row["Field"] = row["Field"].Replace(" ", string.Empty);
 				row["Value"] = row["Value"].Evaluate();
 			}
-			_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), table);
+			_automationContext.SetAttribute($"{_scenarioCode}_{type}".ToLower(), table);
 			try
 			{
 				var serviceType = Assembly.GetExecutingAssembly().DefinedTypes.FirstOrDefault(m => m.Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));

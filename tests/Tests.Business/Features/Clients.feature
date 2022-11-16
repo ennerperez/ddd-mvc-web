@@ -24,3 +24,15 @@ Feature: Clients
 		  | Field | Value     |
 		  | Id    | {Last:Id} |
 		Then this should be successfully deleted
+
+  @TestCode(TE01-002)
+  Scenario: Basic Denied Operations
+	  Given a client with the following data
+	    | Field          | Value    |
+	    | Identification | {Random} |
+	    | Full Name      | {Random}     |
+	    | Gender         | {M,F}        |
+	    | Address        | {Random:100} |
+	    | Phone Number   | {Random:7}   |
+	    | Category       | {Random:10}  |
+	  Then this should be successfully created
