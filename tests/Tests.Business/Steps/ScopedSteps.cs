@@ -37,6 +37,8 @@ namespace Tests.Business.Steps
 			_loremIpsumService = loremIpsumService;
 		}
 
+		#region New Methods
+
 		[Given(@"(?:a|an) (.*) (?:using|with) the following (?:data|information)")]
 		[Given(@"the following (.*) (?:data|information)")]
 		public Task GivenSetEntityAsync(string type, Table table)
@@ -52,41 +54,49 @@ namespace Tests.Business.Steps
 			return Task.CompletedTask;
 		}
 
-		[Then(@"the (.*) (?:must|should|will) be successfully (created|updated|partially updated|deleted)")]
-		[Then(@"(this|it) (?:must|should|will) be successfully (created|updated|partially updated|deleted)")]
-		public async Task ThenOperationResultAsync(string type, string operation)
+		[Then(@"the (.*) (?:must|should|will) (not )?be successfully (created|updated|partially updated|deleted)")]
+		[Then(@"(this|it) (?:must|should|will) (not )?be successfully (created|updated|partially updated|deleted)")]
+		public async Task ThenOperationResultAsync(string type, string denied, string operation)
 		{
+			var isDenied = !string.IsNullOrWhiteSpace(denied);
 			if (type == "this")
 				type = _automationContext.GetAttributeFromAttributeLibrary(type, false).ToString();
 
-			if (_automationContext.Exceptions.Any())
+			var result = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), false);
+			if (result != null && result.GetType() == typeof(Table))
 			{
-				var i = 0;
-				var exceptions = _automationContext.Exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray();
-				Assert.Fail(new AllException(_automationContext.Exceptions.Count, errors: exceptions));
+				await GivenManipulateEntityAsync(type, denied, operation, (Table)result);
 			}
-			else
+			else if (result != null && (result.GetType().IsAssignableTo(typeof(IEnumerable))) && ((result as IEnumerable).ToDynamicArray().Length == 0))
 			{
-				var result = _automationContext.GetAttributeFromAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), false);
-				if (result != null && result.GetType() == typeof(Table))
-				{
-					await GivenManipulateEntityAsync(type, operation, (Table)result);
+				if (isDenied)
 					Assert.Pass();
-				}
-				else if (result != null && (result.GetType().IsAssignableTo(typeof(IEnumerable))) && ((result as IEnumerable).ToDynamicArray().Length == 0))
-				{
-					Assert.Fail(new EmptyException((result as IEnumerable)));
-				}
 				else
-				{
-					Assert.Pass();
-				}
+					Assert.Fail(new EmptyException((result as IEnumerable)));
 			}
+			else if (result != null)
+			{
+				if (isDenied)
+					Assert.Fail(new EmptyException(new[] {result}));
+				else
+					Assert.Pass();
+			}
+
+			var i = 0;
+			var exceptions = _automationContext.Exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray();
+			if ((isDenied && exceptions.Any()) || (!isDenied && !exceptions.Any()))
+				Assert.Pass();
+			else if (isDenied && !exceptions.Any())
+				Assert.Fail(new Exception("A result was returned when none was expected"));
+			else if (!isDenied && exceptions.Any())
+				Assert.Fail(new AllException(_automationContext.Exceptions.Count, errors: exceptions));
+
 		}
 
-		[Given(@"the (.*) (?:must|should|will) be (created|updated|partially updated|deleted) (?:using|with) the following (?:data|information)")]
-		public async Task GivenManipulateEntityAsync(string type, string operation, Table table)
+		[Given(@"the (.*) (?:must|should|will) (not )?be (created|updated|partially updated|deleted) (?:using|with) the following (?:data|information)")]
+		public async Task GivenManipulateEntityAsync(string type, string denied, string operation, Table table)
 		{
+			var isDenied = !string.IsNullOrWhiteSpace(denied);
 			foreach (var row in table.Rows)
 			{
 				row["Field"] = row["Field"].Replace(" ", string.Empty);
@@ -95,7 +105,7 @@ namespace Tests.Business.Steps
 			_automationContext.SetAttributeInAttributeLibrary($"{_scenarioCode}_{type}".ToLower(), table);
 			try
 			{
-				var serviceType = Assembly.GetExecutingAssembly().DefinedTypes.FirstOrDefault(m=> m.Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
+				var serviceType = Assembly.GetExecutingAssembly().DefinedTypes.FirstOrDefault(m => m.Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
 				var serviceInterface = serviceType?.ImplementedInterfaces.FirstOrDefault();
 				if (serviceInterface == null) throw new NullException("Unable to find the interface for the required service");
 				var service = (ITestService)Program.Container.GetServices(serviceInterface)
@@ -116,6 +126,7 @@ namespace Tests.Business.Steps
 				dynamic awaitable = method?.Invoke(service, new object[] {table});
 				if (awaitable == null) throw new NullException(methodName);
 				await awaitable;
+
 				Assert.Pass();
 			}
 			catch (NotImplementedException)
@@ -124,9 +135,14 @@ namespace Tests.Business.Steps
 			}
 			catch (Exception e)
 			{
-				Assert.Fail(e);
+				if (isDenied)
+					Assert.Pass();
+				else
+					Assert.Fail(e);
 			}
 		}
+
+		#endregion
 
 	}
 }
