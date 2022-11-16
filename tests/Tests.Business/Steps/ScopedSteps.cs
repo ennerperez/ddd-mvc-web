@@ -54,8 +54,8 @@ namespace Tests.Business.Steps
 			return Task.CompletedTask;
 		}
 
-		[Then(@"the (.*) (?:must|should|will) (.*)?be successfully (created|updated|partially updated|deleted)")]
-		[Then(@"(this|it) (?:must|should|will) (.*)?be successfully (created|updated|partially updated|deleted)")]
+		[Then(@"the (.*) (?:must|should|will) (not )?be successfully (created|updated|partially updated|deleted)")]
+		[Then(@"(this|it) (?:must|should|will) (not )?be successfully (created|updated|partially updated|deleted)")]
 		public async Task ThenOperationResultAsync(string type, string denied, string operation)
 		{
 			var isDenied = !string.IsNullOrWhiteSpace(denied);
