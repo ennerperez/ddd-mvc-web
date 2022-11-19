@@ -183,7 +183,7 @@ namespace TechTalk.SpecFlow
 
 			if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
 			{
-				DateTime? result = null;
+				object result = null;
 
 				//TODO: Translate keywords
 				if (@this.Equals("{Now}", StringComparison.InvariantCultureIgnoreCase))
@@ -285,11 +285,11 @@ namespace TechTalk.SpecFlow
 				}
 
 				if (result != null)
-					return (T)Convert.ChangeType(result, typeof(T));
+					return (T)result;
 			}
 			else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
 			{
-				int? result = null;
+				object result = null;
 				if (matchRandomRegex.Success)
 				{
 					var rnd = new Random();
@@ -326,11 +326,11 @@ namespace TechTalk.SpecFlow
 					return (T)Convert.ChangeType(pasedData, typeof(T));
 				}
 
-				return (T)Convert.ChangeType(result, typeof(T));
+				return (T)result;
 			}
 			else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
 			{
-				long? result = null;
+				object result = null;
 				if (matchRandomRegex.Success)
 				{
 					var rnd = new Random();
@@ -367,11 +367,11 @@ namespace TechTalk.SpecFlow
 					return (T)Convert.ChangeType(pasedData, typeof(T));
 				}
 
-				return (T)Convert.ChangeType(result, typeof(T));
+				return (T)result;
 			}
 			else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
 			{
-				short? result = null;
+				object result = null;
 				if (matchRandomRegex.Success)
 				{
 					var rnd = new Random();
@@ -408,11 +408,11 @@ namespace TechTalk.SpecFlow
 					return (T)Convert.ChangeType(pasedData, typeof(T));
 				}
 
-				return (T)Convert.ChangeType(result, typeof(T));
+				return (T)result;
 			}
 			else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
 			{
-				decimal? result = null;
+				object result = null;
 				if (matchRandomRegex.Success)
 				{
 					var rnd = new Random();
@@ -449,11 +449,11 @@ namespace TechTalk.SpecFlow
 					return (T)Convert.ChangeType(pasedData, typeof(T));
 				}
 
-				return (T)Convert.ChangeType(result, typeof(T));
+				return (T)result;
 			}
 			else if (typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?))
 			{
-				Guid? result = null;
+				object result = null;
 				if (matchRandomRegex.Success)
 					result = Guid.NewGuid();
 
@@ -466,7 +466,7 @@ namespace TechTalk.SpecFlow
 				}
 
 				if (result != null)
-					return (T)Convert.ChangeType(result, typeof(T));
+					return (T)result;
 			}
 			else if (typeof(T) == typeof(string))
 			{
@@ -511,11 +511,12 @@ namespace TechTalk.SpecFlow
 				}
 				if (result == string.Empty)
 					result = @this;
+
 				return (T)Convert.ChangeType(result, typeof(T));
 			}
 			else if (typeof(T) == typeof(char) || typeof(T) == typeof(char?))
 			{
-				char? result = null;
+				object result = null;
 				if (matchRandomRegex.Success)
 				{
 					var value = Guid.NewGuid().ToString().Replace("-", "");
@@ -544,7 +545,7 @@ namespace TechTalk.SpecFlow
 				if (result == null)
 					result = (char)Convert.ChangeType(@this, typeof(T));
 
-				return (T)Convert.ChangeType(result, typeof(T));
+				return (T)result;
 			}
 
 			return nullValue;
