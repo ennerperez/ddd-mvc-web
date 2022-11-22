@@ -74,9 +74,9 @@
             "enum": [
               "Clean",
               "Compile",
+              "Pack",
               "Publish",
-              "Restore",
-              "Zip"
+              "Restore"
             ]
           }
         },
@@ -92,9 +92,9 @@
             "enum": [
               "Clean",
               "Compile",
+              "Pack",
               "Publish",
-              "Restore",
-              "Zip"
+              "Restore"
             ]
           }
         },

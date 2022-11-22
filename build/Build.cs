@@ -7,6 +7,7 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+
 // ReSharper disable UnusedMember.Local
 
 class Build : NukeBuild
@@ -16,17 +17,18 @@ class Build : NukeBuild
 	///   - JetBrains Rider            https://nuke.build/rider
 	///   - Microsoft VisualStudio     https://nuke.build/visualstudio
 	///   - Microsoft VSCode           https://nuke.build/vscode
-	public static int Main() => Execute<Build>(x => x.Compile);
+	public static int Main() => Execute<Build>(x => x.Pack);
 
 	[Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-	readonly Configuration Configuration = Configuration.Release; // IsLocalBuild ? Configuration.Debug : Configuration.Release;
+	readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
 	[Solution] readonly Solution Solution;
 
 	AbsolutePath SourceDirectory => RootDirectory / "src";
 	AbsolutePath TestsDirectory => RootDirectory / "tests";
-	AbsolutePath OutputDirectory => RootDirectory / "output";
-	AbsolutePath BuildDirectory => RootDirectory / "build";
+
+	AbsolutePath PublishDirectory => RootDirectory / "publish";
+	AbsolutePath ArtifactsDirectory => RootDirectory / "output";
 
 	Target Clean => _ => _
 		.Before(Restore)
@@ -34,8 +36,8 @@ class Build : NukeBuild
 		{
 			SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
 			TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-			EnsureCleanDirectory(OutputDirectory);
-			EnsureCleanDirectory(BuildDirectory);
+			EnsureCleanDirectory(PublishDirectory);
+			EnsureCleanDirectory(ArtifactsDirectory);
 		});
 
 	Target Restore => _ => _
@@ -61,20 +63,18 @@ class Build : NukeBuild
 		.Executes(() =>
 		{
 			DotNetPublish(s => s
-				.SetProject(Solution)
+				.SetProject(Solution.GetProject("Web"))
 				.SetConfiguration(Configuration)
-				.SetOutput(OutputDirectory)
+				.SetOutput(PublishDirectory)
 				.EnableNoRestore()
 				.EnableNoBuild());
 		});
 
-	Target Zip => _ => _
+	Target Pack => _ => _
 		.DependsOn(Publish)
 		.Executes(() =>
 		{
-			if (!Directory.Exists(BuildDirectory)) Directory.CreateDirectory(BuildDirectory);
-			ZipFile.CreateFromDirectory(OutputDirectory, BuildDirectory / "Release.zip");
-			EnsureCleanDirectory(OutputDirectory);
+			ZipFile.CreateFromDirectory(PublishDirectory, ArtifactsDirectory / "Release.zip");
 		});
 
 }
