@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Web.Services;
 
 namespace Web
@@ -26,9 +27,9 @@ namespace Web
 			Name = config["AppSettings:Name"];
 
 			// Initialize Logger
-			Log.Logger = new LoggerConfiguration()
+			var logger = Log.Logger = new LoggerConfiguration()
 				.ReadFrom.Configuration(config)
-				.Enrich.WithProperty("Application", Name)
+				.Enrich.WithProperty("ApplicationName", Name)
 				.CreateLogger();
 
 #if USING_SASS && ENABLE_SASS_WATCH
@@ -40,7 +41,13 @@ namespace Web
 			try
 			{
 				Log.Information("Application Starting");
-				CreateHostBuilder(args).Build().Run();
+				var host = CreateHostBuilder(args);
+				host.ConfigureLogging(s =>
+				{
+					s.ClearProviders();
+					s.AddSerilog(logger);
+				});
+				host.Build().Run();
 			}
 			catch (Exception ex)
 			{
@@ -56,7 +63,10 @@ namespace Web
 		private static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
 				.UseSerilog()// Uses Serilog instead of default .NET Logger
-				.ConfigureServices(service => service.AddHostedService<SeedService>())
+				.ConfigureServices(service =>
+				{
+					service.AddHostedService<SeedService>();
+				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
 					webBuilder.UseStartup<Startup>();

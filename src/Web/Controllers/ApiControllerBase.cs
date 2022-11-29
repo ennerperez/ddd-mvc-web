@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Business.Models;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +29,9 @@ namespace Web.Controllers
 		protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
 		protected readonly IGenericRepository<TEntity, TKey> Repository;
+
+		protected bool IsAdmin => User.IsInRole(Roles.Admin);
+		protected int UserId => User.GetUserId<int>();
 
 		public ApiControllerBase(IGenericRepository<TEntity, TKey> repository)
 		{
