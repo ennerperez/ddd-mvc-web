@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tests.Abstractions.Settings;
 using TechTalk.SpecFlow;
 
 namespace Tests.Abstractions.Interfaces
@@ -13,7 +14,9 @@ namespace Tests.Abstractions.Interfaces
 		string ApplicationTarget { get; set; }
 		string Priority { get; set; }
 
-		IAutomationConfiguration AutomationConfigurations { get; }
+		IAutomationConfiguration AutomationConfiguration { get; }
+		ScreenshotConfiguration ScreenshotConfiguration { get; }
+
 		FeatureContext FeatureContext { get; }
 		ScenarioContext ScenarioContext { get; }
 
@@ -26,6 +29,9 @@ namespace Tests.Abstractions.Interfaces
 		string TestSuiteTarget { get; set; }
 		string TestPlanTarget { get; set; }
 		string TestCaseTarget { get; set; }
+
+		string CurrentPage { get; set; }
+		Stack<string> NavigationStack { get; }
 
 	}
 }

@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+using Tests.Abstractions.Settings;
 using Xunit.Sdk;
 
 namespace Tests.Business.Contexts
 {
 	public class AutomationContext : IAutomationContext
 	{
-		public AutomationContext(IAutomationConfiguration automationConfigurations, FeatureContext featureContext, ScenarioContext scenarioContext)
+		public AutomationContext(IConfiguration configuration,IAutomationConfiguration automationConfiguration, FeatureContext featureContext, ScenarioContext scenarioContext)
 		{
 			FeatureContext = featureContext;
 			ScenarioContext = scenarioContext;
-			AutomationConfigurations = automationConfigurations;
+			AutomationConfiguration = automationConfiguration;
+			NavigationStack = new Stack<string>();
+			ScreenshotConfiguration = new ScreenshotConfiguration();
+			configuration.Bind("ScreenshotSettings", ScreenshotConfiguration);
 		}
 
 		#region Tags
@@ -33,7 +38,11 @@ namespace Tests.Business.Contexts
 
 		#endregion
 
-		public IAutomationConfiguration AutomationConfigurations { get; }
+		public string CurrentPage { get; set; }
+		public Stack<string> NavigationStack { get; }
+
+		public IAutomationConfiguration AutomationConfiguration { get; }
+		public ScreenshotConfiguration ScreenshotConfiguration { get; }
 		public FeatureContext FeatureContext { get; }
 		public ScenarioContext ScenarioContext { get; }
 
@@ -59,6 +68,7 @@ namespace Tests.Business.Contexts
 		}
 
 		#endregion
+
 		public object GetAttribute(string attributeKey, bool throwException = true)
 		{
 			if (_attributeLibrary == null) return null;

@@ -13,12 +13,32 @@
   <ItemGroup>
     <PackageReference Include="Flurl" Version="3.0.6" />
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
-    <PackageReference Include="Selenium.Support" Version="4.4.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="106.0.5249.2100" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
-    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.3.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.0" />
   </ItemGroup>
+
+	<!-- WebDriver -->
+	<ItemGroup>
+		<PackageReference Include="Selenium.Support" Version="4.6.0" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.6.0" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="107.0.5304.6200" />
+		<PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.32.0" />
+		<PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.6.0" />
+	</ItemGroup>
+
+	<!-- Serilog -->
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.12.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+		<PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
+		<PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="5.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
 
   <ItemGroup Label="NUnit" Condition="'$(TestExecutionFramework)' == 'NUnit'">
     <PackageReference Include="nunit" Version="3.13.3" />
@@ -48,6 +68,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>specflow.json</DependentUpon>
     </Content>
+    <None Remove="Definitions\Global.ini" />
+    <Content Include="Definitions\Global.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup Label="Specflow">
@@ -72,27 +96,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>specflow.Timeouts.json</DependentUpon>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup Label="EN" Condition="'$(DefaultLanguage)' == 'EN'">
-    <Compile Update="Steps\GenericSteps.en.cs">
-      <DependentUpon>GenericSteps.cs</DependentUpon>
-    </Compile>
-    <Compile Remove="Steps\GenericSteps.es.cs" />
-    <Compile Update="Steps\ScopedSteps.en.cs">
-      <DependentUpon>ScopedSteps.cs</DependentUpon>
-    </Compile>
-    <Compile Remove="Steps\ScopedSteps.es.cs" />
-  </ItemGroup>
-  <ItemGroup Label="ES" Condition="'$(DefaultLanguage)' == 'ES'">
-    <Compile Update="Steps\GenericSteps.es.cs">
-      <DependentUpon>GenericSteps.cs</DependentUpon>
-    </Compile>
-    <Compile Remove="Steps\GenericSteps.en.cs" />
-    <Compile Update="Steps\ScopedSteps.es.cs">
-      <DependentUpon>ScopedSteps.cs</DependentUpon>
-    </Compile>
-    <Compile Remove="Steps\ScopedSteps.en.cs" />
   </ItemGroup>
 
   <ItemGroup>

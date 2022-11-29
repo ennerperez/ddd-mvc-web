@@ -4,7 +4,7 @@
 		"traceSuccessfulSteps": true
 	},
 	"generator": {
-		"allowDebugGeneratedFiles": true
+		"allowDebugGeneratedFiles": false
 	},
 	"bindingCulture": {
 		"language": "en"

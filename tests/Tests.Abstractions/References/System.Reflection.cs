@@ -1,5 +1,9 @@
 ﻿// ReSharper disable once CheckNamespace
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+
 namespace System.Reflection
 {
 	public class ResourceHelper
@@ -35,6 +39,24 @@ namespace System.Reflection
 				return (T)property.GetValue(null, null);
 			}
 			return default(T);
+		}
+
+	}
+
+	public static class Extensions
+	{
+		public static IEnumerable<MethodInfo> GetExtensionMethods(this Type extendedType, Assembly assembly = null)
+		{
+			if (assembly == null) assembly = extendedType.Assembly;
+
+			var query = from type in assembly.GetTypes()
+				where type.IsSealed && !type.IsGenericType && !type.IsNested
+				from method in type.GetMethods(BindingFlags.Static
+				                               | BindingFlags.Public | BindingFlags.NonPublic)
+				where method.IsDefined(typeof(ExtensionAttribute), false)
+				where method.GetParameters()[0].ParameterType == extendedType
+				select method;
+			return query;
 		}
 	}
 }

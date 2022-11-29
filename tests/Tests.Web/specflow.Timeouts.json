@@ -10,6 +10,7 @@
 		"AfterScreenshot": 0,
 		"BeforeRecording": 0,
 		"AfterRecording": 0,
-		"MaxAttempts": 20
+		"MaxAttempts": 20,
+		"Timeout": 30000
 	}
 }

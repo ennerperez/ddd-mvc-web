@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+using TechTalk.SpecFlow;
 
 namespace Tests.Abstractions.Helpers
 {
 	public class StepsHelper : IStepHelper
 	{
-		private readonly IAutomationContext _automationContext;
-		private readonly IAutomationConfiguration _automationConfigurations;
+		protected readonly IAutomationContext _automationContext;
+		protected readonly IAutomationConfiguration _automationConfigurations;
 
 		public IAutomationContext AutomationContext => _automationContext;
 		public IAutomationConfiguration AutomationConfigurations => _automationConfigurations;
@@ -157,5 +157,11 @@ namespace Tests.Abstractions.Helpers
 				AutomationContext.IsInitialized = true;
 			}
 		}
+
+		public virtual void CaptureTakeScreenshot(object driver, string method = "", bool trace = false)
+		{
+			throw new NotImplementedException();
+		}
+
 	}
 }
