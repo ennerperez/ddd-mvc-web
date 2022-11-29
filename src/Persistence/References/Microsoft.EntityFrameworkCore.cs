@@ -11,8 +11,17 @@ namespace Microsoft.EntityFrameworkCore
 {
 	public static class RelationalEntityTypeBuilderExtensions
 	{
-		public static EntityTypeBuilder<TEntity> ToTable<TEntity>([NotNull] this EntityTypeBuilder<TEntity> entityTypeBuilder, string name, string schema, bool auto) where TEntity : class
+		public static EntityTypeBuilder<TEntity> ToTable<TEntity>([NotNull] this EntityTypeBuilder<TEntity> entityTypeBuilder, string name = "", string schema = "", bool auto = true) where TEntity : class
 		{
+			if (string.IsNullOrWhiteSpace(name)) name = nameof(TEntity);
+			if (!auto) return entityTypeBuilder.ToTable(name, schema);
+			return string.IsNullOrEmpty(schema) ? entityTypeBuilder.ToTable(name) : entityTypeBuilder.ToTable(name, schema);
+		}
+
+		public static EntityTypeBuilder<TEntity> ToTable<TEntity>([NotNull] this EntityTypeBuilder<TEntity> entityTypeBuilder, string name = "", string schema = "", string prefix = "", bool auto = true) where TEntity : class
+		{
+			if (string.IsNullOrWhiteSpace(name)) name = nameof(TEntity);
+			if (!string.IsNullOrWhiteSpace(prefix)) name = $"{prefix}_{name}";
 			if (!auto) return entityTypeBuilder.ToTable(name, schema);
 			return string.IsNullOrEmpty(schema) ? entityTypeBuilder.ToTable(name) : entityTypeBuilder.ToTable(name, schema);
 		}

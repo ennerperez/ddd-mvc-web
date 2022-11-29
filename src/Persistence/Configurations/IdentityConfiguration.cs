@@ -9,6 +9,7 @@ namespace Persistence.Configurations
 	internal static class IdentityConfiguration
 	{
 		internal static string Schema => DefaultContext.HasSchema ? Schemas.Identity : string.Empty;
+		internal static string Prefix => !DefaultContext.HasSchema ? Schemas.Identity : string.Empty;
 	}
 
 	[DbContext(typeof(DefaultContext))]
@@ -16,7 +17,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Role> e)
 		{
-			e.ToTable("Roles", IdentityConfiguration.Schema, true);
+			e.ToTable("Roles", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 
@@ -45,7 +46,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<RoleClaim> e)
 		{
-			e.ToTable("RolesClaims", IdentityConfiguration.Schema, true);
+			e.ToTable("RolesClaims", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 
@@ -61,7 +62,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<User> e)
 		{
-			e.ToTable("Users", IdentityConfiguration.Schema, true);
+			e.ToTable("Users", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 
@@ -110,7 +111,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<UserClaim> e)
 		{
-			e.ToTable("UsersClaims", IdentityConfiguration.Schema, true);
+			e.ToTable("UsersClaims", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			e.Property(m => m.ClaimType).HasMaxLength(Lengths.Url);
 			e.Property(m => m.ClaimValue).HasMaxLength(Lengths.Memo);
@@ -126,7 +127,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<UserRole> e)
 		{
-			e.ToTable("UsersRoles", IdentityConfiguration.Schema, true);
+			e.ToTable("UsersRoles", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			// e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Ignore(m => m.Id);
@@ -139,7 +140,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<UserLogin> e)
 		{
-			e.ToTable("UsersLogins", IdentityConfiguration.Schema, true);
+			e.ToTable("UsersLogins", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			e.Property(m => m.LoginProvider).HasMaxLength(Lengths.Memo);
 			e.Property(m => m.ProviderKey).HasMaxLength(Lengths.Memo);
@@ -156,7 +157,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<UserToken> e)
 		{
-			e.ToTable("UsersTokens", IdentityConfiguration.Schema, true);
+			e.ToTable("UsersTokens", IdentityConfiguration.Schema, IdentityConfiguration.Prefix);
 
 			e.Property(m => m.Name).HasMaxLength(Lengths.Memo);
 			e.Property(m => m.LoginProvider).HasMaxLength(Lengths.Memo);

@@ -10,6 +10,7 @@ namespace Persistence.Configurations
 	internal static class DefaultConfiguration
 	{
 		internal static string Schema => DefaultContext.HasSchema ? Schemas.Default : string.Empty;
+		internal static string Prefix => !DefaultContext.HasSchema ? Schemas.Default : string.Empty;
 	}
 
 	[DbContext(typeof(DefaultContext))]
@@ -17,7 +18,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Setting> e)
 		{
-			e.ToTable("Settings", DefaultConfiguration.Schema, true);
+			e.ToTable("Settings", DefaultConfiguration.Schema, DefaultConfiguration.Prefix);
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Property(m => m.Key).HasMaxLength(Lengths.Code).IsRequired();
@@ -32,7 +33,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Client> e)
 		{
-			e.ToTable("Clients", DefaultConfiguration.Schema, true);
+			e.ToTable("Clients", DefaultConfiguration.Schema, DefaultConfiguration.Prefix);
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Property(m => m.Identification).HasMaxLength(Lengths.Code).IsRequired();
@@ -52,7 +53,7 @@ namespace Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Budget> e)
 		{
-			e.ToTable("Budgets", DefaultConfiguration.Schema, true);
+			e.ToTable("Budgets", DefaultConfiguration.Schema, DefaultConfiguration.Prefix);
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Property(m => m.Code).HasMaxLength(Lengths.Code).IsRequired();
