@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using Serilog;
+// using Serilog;
 using SolidToken.SpecFlow.DependencyInjection;
 using Tests.Abstractions.Helpers;
 using Tests.Abstractions.Interfaces;
@@ -64,10 +64,10 @@ namespace Tests.Web
 				.AddEnvironmentVariables()
 				.Build();
 
-			//Initialize Logger
-			Log.Logger = new LoggerConfiguration()
-				.ReadFrom.Configuration(Configuration)
-				.CreateLogger();
+			// //Initialize Logger
+			// Log.Logger = new LoggerConfiguration()
+			// 	.ReadFrom.Configuration(Configuration)
+			// 	.CreateLogger();
 
 			// Language
 			var language = Configuration.GetValue<string>("language:feature") ?? "en";
@@ -83,7 +83,7 @@ namespace Tests.Web
 			Services.AddLogging(builder =>
 			{
 				builder.SetMinimumLevel(LogLevel.Information);
-				builder.AddSerilog();
+				// builder.AddSerilog();
 			}).AddOptions();
 
 			Services.AddScoped<IAutomationConfiguration, SpecFlowConfiguration>();

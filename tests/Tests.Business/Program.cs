@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Persistence;
 using Persistence.Contexts;
-using Serilog;
+// using Serilog;
 using SolidToken.SpecFlow.DependencyInjection;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Helpers;
@@ -67,10 +67,10 @@ namespace Tests.Business
 				.AddEnvironmentVariables()
 				.Build();
 
-			// Initialize Logger
-			Log.Logger = new LoggerConfiguration()
-				.ReadFrom.Configuration(Configuration)
-				.CreateLogger();
+			// // Initialize Logger
+			// Log.Logger = new LoggerConfiguration()
+			// 	.ReadFrom.Configuration(Configuration)
+			// 	.CreateLogger();
 
 			// Language
 			var language = Configuration.GetValue<string>("language:feature") ?? "en";
@@ -83,7 +83,7 @@ namespace Tests.Business
 			Services.AddLogging(builder =>
 			{
 				builder.SetMinimumLevel(LogLevel.Information);
-				builder.AddSerilog();
+				// builder.AddSerilog();
 			}).AddOptions();
 
 			Services
