@@ -8,6 +8,11 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if USING_TABLES
+using Azure;
+using Azure.Data.Tables;
+using Infrastructure.Interfaces;
+#endif
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -104,16 +109,16 @@ namespace Microsoft.AspNetCore
 
 			public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
 			{
-				private readonly IGetApiKeyQuery _getApiKeyQuery;
+				private readonly IApiKeyProvider _apiKeyProvider;
 
 				public ApiKeyAuthenticationHandler(
 					IOptionsMonitor<ApiKeyAuthenticationOptions> options,
 					ILoggerFactory logger,
 					UrlEncoder encoder,
 					ISystemClock clock,
-					IGetApiKeyQuery getApiKeyQuery) : base(options, logger, encoder, clock)
+					IApiKeyProvider apiKeyProvider) : base(options, logger, encoder, clock)
 				{
-					_getApiKeyQuery = getApiKeyQuery ?? throw new ArgumentNullException(nameof(getApiKeyQuery));
+					_apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
 				}
 
 				protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -124,16 +129,17 @@ namespace Microsoft.AspNetCore
 
 					if (apiKeyHeaderValues.Count == 0 || string.IsNullOrWhiteSpace(providedApiKey)) return AuthenticateResult.NoResult();
 
-					var existingApiKey = await _getApiKeyQuery.Execute(providedApiKey);
+					var existingApiKey = await _apiKeyProvider.Execute(providedApiKey);
 
 					if (existingApiKey != null)
 					{
-						var claims = new List<Claim> { new Claim(ClaimTypes.Name, existingApiKey.Owner) };
+						var claims = new List<Claim> {new Claim(ClaimTypes.Name, existingApiKey.Owner)};
 
-						claims.AddRange(existingApiKey.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+						if (existingApiKey.Roles != null)
+							claims.AddRange(existingApiKey.Roles.Split("|").Select(role => new Claim(ClaimTypes.Role, role)));
 
 						var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
-						var identities = new List<ClaimsIdentity> { identity };
+						var identities = new List<ClaimsIdentity> {identity};
 						var principal = new ClaimsPrincipal(identities);
 						var ticket = new AuthenticationTicket(principal, Options.Scheme);
 
@@ -158,38 +164,60 @@ namespace Microsoft.AspNetCore
 				}
 			}
 
-			public interface IGetApiKeyQuery
+			public interface IApiKeyProvider
 			{
 				Task<ApiKey> Execute(string providedApiKey);
 			}
 
 			public class ApiKey
+#if USING_TABLES
+				: ITableEntity
+#endif
 			{
-				public ApiKey(int id, string owner, string key, DateTime created, IReadOnlyCollection<string> roles)
+				public ApiKey()
+				{
+
+				}
+
+				public ApiKey(int id, string owner, string key, bool active, string roles) : this()
 				{
 					Id = id;
 					Owner = owner ?? throw new ArgumentNullException(nameof(owner));
 					Key = key ?? throw new ArgumentNullException(nameof(key));
-					Created = created;
+					Active = active;
 					Roles = roles ?? throw new ArgumentNullException(nameof(roles));
 				}
 
-				public int Id { get; }
-				public string Owner { get; }
-				public string Key { get; }
-				public DateTime Created { get; }
-				public IReadOnlyCollection<string> Roles { get; }
+				public int Id { get; set; }
+				public string Owner { get; set; }
+				public string Key { get; set; }
+				public string Roles { get; set; }
+
+				public bool Active { get; set; }
+
+#if USING_TABLES
+
+				#region ITableEntity
+
+				public string PartitionKey { get; set; }
+				public string RowKey { get; set; }
+				public DateTimeOffset? Timestamp { get; set; }
+				public ETag ETag { get; set; }
+
+				#endregion
+
+#endif
 			}
 
-			public class StaticApiKeyQuery : IGetApiKeyQuery
+			public class AppSettingsApiKeyProvider : IApiKeyProvider
 			{
 				private readonly IDictionary<string, ApiKey> _apiKeys;
 
-				public StaticApiKeyQuery(IConfiguration configuration)
+				public AppSettingsApiKeyProvider(IConfiguration configuration)
 				{
 					var existingApiKeys = new List<ApiKey>();
 					var apilocal = configuration.GetSection("AppSettings")?["ApiKey"];
-					var apikey = new ApiKey(1, configuration["AppSettings:Name"], apilocal, DateTime.Now, new[] { "general" });
+					var apikey = new ApiKey(1, configuration["AppSettings:Name"], apilocal, true, "General");
 					existingApiKeys.Add(apikey);
 
 					_apiKeys = existingApiKeys.ToDictionary(x => x.Key, x => x);
@@ -201,6 +229,23 @@ namespace Microsoft.AspNetCore
 					return Task.FromResult(key);
 				}
 			}
+
+#if USING_TABLES
+			public class TableServiceApiKeyProvider : IApiKeyProvider
+			{
+				private readonly ITableService _tableService;
+				public TableServiceApiKeyProvider(ITableService tableService)
+				{
+					_tableService = tableService;
+				}
+				public async Task<ApiKey> Execute(string providedApiKey)
+				{
+					var apiKey = await _tableService.ReadAllAsync<ApiKey>(p => p.Active && p.Key == providedApiKey, null);
+					return apiKey.FirstOrDefault();
+				}
+			}
+#endif
+
 		}
 
 		namespace Cookies
@@ -264,9 +309,9 @@ namespace Microsoft.AspNetCore
 			}
 #endif
 
-			public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null)
+			public static AuthenticationBuilder AddApiKey<T>(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null) where T : IApiKeyProvider
 			{
-				authenticationBuilder.Services.AddTransient<IGetApiKeyQuery, StaticApiKeyQuery>();
+				authenticationBuilder.Services.AddSingleton(typeof(IApiKeyProvider), typeof(T));
 				return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
 			}
 

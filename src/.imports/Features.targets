@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-		
+
 	<!-- General -->
 	<PropertyGroup>
 		<BuildConstants Condition="'$(BuildingByReSharper)' == 'true'">$(BuildConstants)USING_RESHARPER;</BuildConstants>
 	</PropertyGroup>
-	
+
 	<!-- Persistence -->
   <PropertyGroup>
   	<BuildConstants Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">$(BuildConstants)USING_DATABASE_PROVIDER;</BuildConstants>
@@ -27,7 +27,7 @@
 		<BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
 		<BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
 	</PropertyGroup>
-	
+
 	<!-- Web -->
 	<PropertyGroup>
 		<BuildConstants Condition="'$(UsingAzureApplicationInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
@@ -45,8 +45,9 @@
 		<BuildConstants Condition="'$(UsingAB2C)' == 'true'">$(BuildConstants)USING_AB2C;</BuildConstants>
 		<BuildConstants Condition="'$(UsingAuth0)' == 'true'">$(BuildConstants)USING_AUTH0;</BuildConstants>
 		<BuildConstants Condition="'$(EnableTokenValidation)' == 'true'">$(BuildConstants)ENABLE_TOKEN_VALIDATION;</BuildConstants>
+		<BuildConstants Condition="'$(UsingAzureTables)' == 'true' AND '$(EnableApiKeyTables)' == 'true'">$(BuildConstants)ENABLE_APIKEY_TABLES;</BuildConstants>
 	</PropertyGroup>
-	
+
 	<!-- Testing -->
 	<PropertyGroup>
 		<BuildConstants Condition="'$(TestExecutionFramework)' == 'xUnit'">$(BuildConstants)XUNIT;</BuildConstants>

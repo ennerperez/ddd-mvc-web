@@ -246,7 +246,7 @@ namespace Web
 				config.EnableForHttps = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection");
 				config.Providers.Add<BrotliCompressionProvider>();
 				config.Providers.Add<GzipCompressionProvider>();
-				config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml", "text/css", "text/javascript" });
+				config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {"image/svg+xml", "text/css", "text/javascript"});
 			});
 
 			services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
@@ -254,7 +254,7 @@ namespace Web
 
 			var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
 			{
-				options.Cookie = new CookieBuilder() { Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration };
+				options.Cookie = new CookieBuilder() {Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration};
 			});
 
 #if USING_COOKIES
@@ -294,7 +294,7 @@ namespace Web
 				var versions = new List<string>();
 				Configuration.Bind("SwaggerSettings:Versions", versions);
 				foreach (var version in versions)
-					c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}" });
+					c.SwaggerDoc(version, new OpenApiInfo {Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}"});
 				c.DocInclusionPredicate((_, _) => true);
 
 #if USING_APIKEY
@@ -305,11 +305,11 @@ namespace Web
 					In = ParameterLocation.Header,
 					Type = SecuritySchemeType.ApiKey,
 					Description = "Put **_ONLY_** your API Key",
-					Reference = new OpenApiReference { Id = ApiKeyAuthenticationDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
+					Reference = new OpenApiReference {Id = ApiKeyAuthenticationDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme}
 				};
 
 				c.AddSecurityDefinition(apiKeySecurityScheme.Reference.Id, apiKeySecurityScheme);
-				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { apiKeySecurityScheme, Array.Empty<string>() } });
+				c.AddSecurityRequirement(new OpenApiSecurityRequirement {{apiKeySecurityScheme, Array.Empty<string>()}});
 #endif
 #if USING_BEARER
 				var jwtSecurityScheme = new OpenApiSecurityScheme
@@ -411,7 +411,11 @@ namespace Web
 				.AddSmartScheme()
 #endif
 #if USING_APIKEY
-				.AddApiKey()
+#if ENABLE_APIKEY_TABLES
+				.AddApiKey<TableServiceApiKeyProvider>()
+#else
+				.AddApiKey<AppSettingsApiKeyProvider>()
+#endif
 #endif
 #if USING_BEARER
 				.AddJwtBearer()
@@ -420,7 +424,8 @@ namespace Web
 				.AddOpenIdConnect(openIdConnectOptions)
 #endif
 #if USING_AUTH0
-				.AddAuth0WebAppAuthentication(options => {
+				.AddAuth0WebAppAuthentication(options =>
+				{
 					Configuration.Bind("Auth0Settings", options);
 					var scopes = new List<string>();
 					Configuration.Bind("Auth0Settings:Scopes", scopes);
@@ -505,7 +510,7 @@ namespace Web
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			
+
 			if (!string.IsNullOrWhiteSpace(Configuration["AppSettings:PathBase"]))
 			{
 				app.UsePathBase($"/{Configuration["AppSettings:PathBase"]}");
@@ -635,7 +640,7 @@ namespace Web
 
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
+				app.UseForwardedHeaders(new ForwardedHeadersOptions {ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto});
 			}
 
 			app.UseAuthentication();
