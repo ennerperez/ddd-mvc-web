@@ -12,6 +12,10 @@ ProjectSection(SolutionItems) = preProject
 	package.json = package.json
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
+	global.json = global.json
+	build.cmd = build.cmd
+	build.ps1 = build.ps1
+	build.sh = build.sh
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{72CB5A30-A3C6-48AD-9ABC-F5094874734A}"

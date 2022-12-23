@@ -74,7 +74,9 @@
             "enum": [
               "Clean",
               "Compile",
+              "Migrate",
               "Pack",
+              "Prepare",
               "Publish",
               "Restore"
             ]
@@ -92,7 +94,9 @@
             "enum": [
               "Clean",
               "Compile",
+              "Migrate",
               "Pack",
+              "Prepare",
               "Publish",
               "Restore"
             ]
