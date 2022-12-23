@@ -195,6 +195,7 @@ class Build : NukeBuild
 		.Executes(() =>
 		{
 			CopyFile($"{PublishDirectory}/Migrations/DefaultContext.sql", $"{ArtifactsDirectory}/Migrations/DefaultContext.sql");
+			CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Results");
 			foreach (var project in PublishProjects)
 			{
 				ZipFile.CreateFromDirectory($"{PublishDirectory}/{project}", $"{ArtifactsDirectory}/{project}.zip");
