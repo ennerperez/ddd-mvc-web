@@ -1,11 +1,9 @@
-﻿// Variables
-@import "variables";
-
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
 html {
   font-weight: 200;
   height: 100vh;
   margin: 0;
-  font-family: $font-family-sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .swagger-ui .info {
@@ -26,3 +24,5 @@ html {
 .swagger-ui .topbar a {
   max-width: 40px !important;
 }
+
+/*# sourceMappingURL=swagger.css.map */

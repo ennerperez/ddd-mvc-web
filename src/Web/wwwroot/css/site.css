@@ -1,0 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
+.required:after {
+  text-transform: uppercase;
+  content: " *";
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+/*# sourceMappingURL=site.css.map */

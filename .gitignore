@@ -571,16 +571,15 @@ archives
 package-lock.json
 *.private.env.json
 
-#Extras
+# Extras
 **/Data
 
 # SpecFlow
 *.feature.cs
 
-# SCSS
-**/bootstrap.css
-**/bootstrap.min.css
-**/site.css
-**/site.min.css
-**/swagger.css
-**/swagger.min.css
+# Azurite
+*azurite*.json
+
+# Nuke Build
+.nuke/temp
+output

@@ -1,12 +1,8 @@
-// Configuration
-//@import "../lib/bootstrap/scss/mixins/banner";
-//@include bsBanner("");
+// Variables
+@import "variables";
 
 @import "../lib/bootstrap/scss/functions";
 @import "../lib/bootstrap/scss/variables";
-//@import "../lib/bootstrap/scss/maps";
-//@import "../lib/bootstrap/scss/mixins";
-//@import "../lib/bootstrap/scss/utilities";
 
 .required:after {
   text-transform: uppercase;
