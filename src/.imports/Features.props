@@ -35,7 +35,6 @@
 		<UsingApiKey>false</UsingApiKey>
 		<UsingBearer>false</UsingBearer>
 		<UsingOpenId>false</UsingOpenId>
-		<UsingAB2C>false</UsingAB2C>
 		<UsingAuth0>false</UsingAuth0>
 	</PropertyGroup>
 

@@ -27,10 +27,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-#if USING_AB2C && USING_OPENID
-using Microsoft.Identity.Web;
-#endif
-
 #if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
 #endif
@@ -296,12 +292,6 @@ namespace Microsoft.AspNetCore
 			{
 				return authenticationBuilder;
 			}
-#if USING_AB2C && !USING_OPENID
-			public static MicrosoftIdentityWebAppAuthenticationBuilder Close(this MicrosoftIdentityWebAppAuthenticationBuilder authenticationBuilder)
-			{
-				return authenticationBuilder;
-			}
-#endif
 #if USING_AUTH0
 			public static Auth0WebAppWithAccessTokenAuthenticationBuilder Close(this Auth0WebAppWithAccessTokenAuthenticationBuilder authenticationBuilder)
 			{

@@ -54,9 +54,6 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 #endif
-#if USING_AB2C && !USING_OPENID
-using Microsoft.Identity.Web;
-#endif
 #if USING_NEWTONSOFT
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -96,7 +93,7 @@ namespace Web
 			Configuration = configuration;
 #if USING_LOCALIZATION
 			SupportedCultures = configuration.GetSection("CultureInfo:SupportedCultures").Get<string[]>().Select(m => new CultureInfo(m)).ToArray();
-			CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"]);
+			CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"] ?? "en-US");
 #endif
 		}
 
@@ -384,23 +381,6 @@ namespace Web
 			});
 #endif
 
-#if USING_AB2C && !USING_OPENID
-			var ab2cConnectOptions = new Action<MicrosoftIdentityOptions>(options =>
-			{
-				Configuration.Bind("AzureSettings:AdB2C", options);
-
-#if ENABLE_TOKEN_VALIDATION
-				options.Events.OnTokenValidated = AB2C_OnTokenValidated;
-#endif
-				options.Events.OnSignedOutCallbackRedirect = context =>
-				{
-					context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
-					context.HandleResponse();
-					return Task.FromResult(true);
-				};
-			});
-#endif
-
 			services.AddAntiforgery(antiforgeryOptions);
 
 			services.AddAuthentication()
@@ -438,9 +418,6 @@ namespace Web
 					options.UseRefreshTokens = Configuration.GetValue<bool>("Auth0Settings:UseRefreshTokens");
 				})
 #endif
-#if USING_AB2C && !USING_OPENID
-                .AddMicrosoftIdentityWebApp(ab2cConnectOptions)
-#endif
 				.Close();
 
 			services.AddAuthorization();
@@ -475,36 +452,6 @@ namespace Web
 				}
 			}
 		}
-#endif
-
-#if USING_AB2C && !USING_OPENID && ENABLE_TOKEN_VALIDATION
-        private async Task AB2C_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
-        {
-            if (context.Principal != null && context.Principal.Identity != null)
-            {
-                var cllist = context.Principal.Claims.GroupBy(m => m.Type).Select(m => m.FirstOrDefault()).ToList();
-                var claims = cllist.ToDictionary(k => k.Type, v => v.Value);
-                var emails = claims["emails"];
-
-                //var userManager = Program.Host.Services.GetService<UserManager<Buyer>>();
-                var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
-                if (userManager != null)
-                {
-                    var user = await userManager.Users.FirstOrDefaultAsync(m => m.Email == emails);
-                    if (user == null)
-                    {
-                        var ph = new PasswordHasher<User>();
-                        user = new User() { NormalizedUserName = claims["emails"].ToUpper(), UserName = claims["emails"], Email = claims["emails"], EmailConfirmed = true };
-#if DEBUG
-                        user.PasswordHash = ph.HashPassword(user, $"Admin{DateTime.Now.Year}**");
-#endif
-                        await userManager.CreateAsync(user);
-                        await userManager.AddClaimsAsync(user, claims.Select(m => new Claim(m.Key, m.Value)));
-                    }
-                    //TODO: What if user exists?, update metadata from B2C
-                }
-            }
-        }
 #endif
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
