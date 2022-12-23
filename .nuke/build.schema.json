@@ -78,7 +78,8 @@
               "Pack",
               "Prepare",
               "Publish",
-              "Restore"
+              "Restore",
+              "Test"
             ]
           }
         },
@@ -98,7 +99,8 @@
               "Pack",
               "Prepare",
               "Publish",
-              "Restore"
+              "Restore",
+              "Test"
             ]
           }
         },

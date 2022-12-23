@@ -38,12 +38,13 @@ class Build : NukeBuild
 
 	AbsolutePath PublishDirectory => RootDirectory / "publish";
 	AbsolutePath ArtifactsDirectory => RootDirectory / "output";
+	AbsolutePath TestResultsDirectory => RootDirectory / "testresults";
 
 	Version _version = new Version("1.0.0.0");
 	string _hash = string.Empty;
 
 	string[] PublishProjects = new[] {"Web"};
-	//string[] TestProjects = new[] {"Test.Business"};
+	string[] TestsProjects = new[] {"Tests.Business"};
 
 	Target Prepare => _ => _
 		.Before(Compile)
@@ -127,8 +128,30 @@ class Build : NukeBuild
 				.EnableNoRestore());
 		});
 
-	Target Migrate => _ => _
+	Target Test => _ => _
 		.DependsOn(Compile)
+		.Executes(() =>
+		{
+			var testCombinations =
+				from project in TestsProjects.Select(m => Solution.GetProject(m))
+				from framework in project.GetTargetFrameworks()
+				select new {project, framework};
+
+			DotNetTest(s => s
+				.EnableNoRestore()
+				.EnableNoBuild()
+				.SetConfiguration(Configuration)
+				.When(true, _ => _
+					.SetLoggers("trx")
+					.SetResultsDirectory(TestResultsDirectory))
+				.CombineWith(testCombinations, configurator: (_, v) => _
+					.SetProjectFile(v.project.Path)
+					.SetFramework(v.framework)));
+
+		});
+
+	Target Migrate => _ => _
+		.DependsOn(Test)
 		.Executes(() =>
 		{
 			var context = "Default";
@@ -145,6 +168,7 @@ class Build : NukeBuild
 		});
 
 	Target Publish => _ => _
+		.DependsOn(Test)
 		.DependsOn(Migrate)
 		.DependsOn(Compile)
 		.DependsOn(Clean)

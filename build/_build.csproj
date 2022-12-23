@@ -8,11 +8,14 @@
 		<NukeRootDirectory>..</NukeRootDirectory>
 		<NukeScriptDirectory>..</NukeScriptDirectory>
 		<NukeTelemetryVersion>1</NukeTelemetryVersion>
+		<TestExecutionFramework>XUnit</TestExecutionFramework>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Nuke.Common" Version="6.3.0" />
 		<PackageReference Include="EFCore.Nuke" Version="1.0.0" />
+		<PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit.ConsoleRunner" Version="3.16.0" ExcludeAssets="all" />
+		<PackageReference Condition="'$(TestExecutionFramework)' == 'XUnit'" Include="xunit.runner.console" Version="2.4.2" ExcludeAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
