@@ -141,6 +141,7 @@ namespace Web
 #endif
 
 			services.AddHttpContextAccessor();
+			services.AddTransient<IUserAccessorService, UserAccessorService>();
 
 			services
 				.AddDomain()

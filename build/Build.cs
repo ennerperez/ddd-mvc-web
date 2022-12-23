@@ -11,11 +11,11 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.DotNet.EF;
 using Nuke.Common.Tools.DotNet.EF.Commands;
+using static Nuke.Common.Tools.DotNet.EF.Tasks;
 using Nuke.Common.Utilities.Collections;
 using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
 // ReSharper disable UnusedMember.Local
 
@@ -145,6 +145,7 @@ class Build : NukeBuild
 		});
 
 	Target Publish => _ => _
+		.DependsOn(Migrate)
 		.DependsOn(Compile)
 		.DependsOn(Clean)
 		.Executes(() =>
