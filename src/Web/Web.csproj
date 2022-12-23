@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+		<PackageReference Include="BuildBundlerMinifierPlus" Version="5.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.1" />
