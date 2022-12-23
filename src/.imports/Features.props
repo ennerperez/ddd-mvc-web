@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+	<PropertyGroup Label="General">
+		<UsingAssemblyInfoTemplate>false</UsingAssemblyInfoTemplate>
+	</PropertyGroup>
+
 	<PropertyGroup Label="Databases">
 		<UsingSqlite>true</UsingSqlite>
-		<UsingSqlServer>false</UsingSqlServer>
-		<UsingMariaDb>false</UsingMariaDb>
-		<UsingMySql>false</UsingMySql>
-		<UsingPostgreSql>false</UsingPostgreSql>
-		<UsingOracle>false</UsingOracle>
+		<UsingSqlServer>true</UsingSqlServer>
+		<UsingMariaDb>true</UsingMariaDb>
+		<UsingMySql>true</UsingMySql>
+		<UsingPostgreSql>true</UsingPostgreSql>
+		<UsingOracle>true</UsingOracle>
 	</PropertyGroup>
 
 	<ItemGroup Label="Contexts">
@@ -32,27 +36,30 @@
 
 	<PropertyGroup Label="Auth">
 		<UsingCookies>true</UsingCookies>
-		<UsingApiKey>false</UsingApiKey>
-		<UsingBearer>false</UsingBearer>
-		<UsingOpenId>false</UsingOpenId>
-		<UsingAuth0>false</UsingAuth0>
+		<UsingApiKey>true</UsingApiKey>
+		<UsingBearer>true</UsingBearer>
+		<UsingOpenId>true</UsingOpenId>
+		<UsingAuth0>true</UsingAuth0>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Options">
 		<EnableNonAsync>true</EnableNonAsync>
-		<EnableBulk>true</EnableBulk>
+		<!--<EnableBulk>true</EnableBulk>-->
 		<EnableSplit>true</EnableSplit>
 		<EnableSassWatch>true</EnableSassWatch>
-		<EnableDatadog>false</EnableDatadog>
-		<EnableNewRelic>false</EnableNewRelic>
-		<EnableSmartSchema>false</EnableSmartSchema>
-		<EnableApiKeyTables>false</EnableApiKeyTables>
-		<EnableTokenValidation>false</EnableTokenValidation>
+		<EnableDatadog>true</EnableDatadog>
+		<EnableNewRelic>true</EnableNewRelic>
+		<EnableSmartSchema>true</EnableSmartSchema>
+		<EnableApiKeyTables>true</EnableApiKeyTables>
+		<EnableTokenValidation>true</EnableTokenValidation>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Testing">
 		<TestExecutionFramework>xUnit</TestExecutionFramework>
 		<DefaultLanguage>EN</DefaultLanguage>
+		<EnableChromeDriver>true</EnableChromeDriver>
+		<EnableGeckoDriver>true</EnableGeckoDriver>
+		<EnableIEDriver>true</EnableIEDriver>
 	</PropertyGroup>
 
 </Project>

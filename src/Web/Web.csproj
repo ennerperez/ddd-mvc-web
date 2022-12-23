@@ -5,80 +5,97 @@
 	<Import Project="..\.imports\Template.targets" />
 	<Import Condition="Exists('Options.targets')" Project="Options.targets" />
 
-  <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.25.10" />
-    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
-    <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
-    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
-  <!--https://github.com/dotnet/aspnetcore/issues/16862-->
-  <!--https://github.com/dotnet/Scaffolding/issues/1714-->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <ResolveStaticWebAssetsInputsDependsOn>RemoveIdentityAssets</ResolveStaticWebAssetsInputsDependsOn>
-  </PropertyGroup>
-  <Target Name="RemoveIdentityAssets" Condition=" '$(Configuration)' == 'Release' ">
-    <ItemGroup>
-      <StaticWebAsset Remove="@(StaticWebAsset)" Condition="%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'" />
-    </ItemGroup>
-  </Target>
+	<ItemGroup>
+		<ProjectReference Include="..\Business\Business.csproj" />
+	</ItemGroup>
 
-  <ItemGroup Label="ConditionalReferences">
+	<ItemGroup>
+		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
+		<PackageReference Include="Microsoft.Identity.Web.UI" Version="1.25.10" />
+		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.1" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
+	</ItemGroup>
+
+	<ItemGroup Label="Serilog">
+		<PackageReference Include="Serilog" Version="2.12.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+		<PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+
+	<!--https://github.com/dotnet/aspnetcore/issues/16862-->
+	<!--https://github.com/dotnet/Scaffolding/issues/1714-->
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<ResolveStaticWebAssetsInputsDependsOn>RemoveIdentityAssets</ResolveStaticWebAssetsInputsDependsOn>
+	</PropertyGroup>
+	<Target Name="RemoveIdentityAssets" Condition=" '$(Configuration)' == 'Release' ">
+		<ItemGroup>
+			<StaticWebAsset Remove="@(StaticWebAsset)" Condition="%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'" />
+		</ItemGroup>
+	</Target>
+
+	<ItemGroup Label="ConditionalReferences">
 		<PackageReference Condition="'$(UsingAzureApplicationInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
-    <PackageReference Condition="'$(UsingBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
-    <PackageReference Condition="'$(UsingOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.0" />
+		<PackageReference Condition="'$(UsingBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
+		<PackageReference Condition="'$(UsingOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.1" />
 		<PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.AspNetCore.Authentication" Version="1.0.4" />
-    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.0" />
-    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
-    <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
-    <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization.Routing" Version="2.2.0" />
-    <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.2.0" />
-    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
-    <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.4.0" />
-    <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.56.1" />
+		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
+		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
+		<PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
+		<PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization.Routing" Version="2.2.0" />
+		<PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.2.0" />
+		<PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
+		<PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.4.0" />
+		<PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.57.1" />
 		<PackageReference Condition="'$(EnableDatadog)' == 'true'" Include="Serilog.Sinks.Datadog.Logs" Version="0.4.0" />
 		<PackageReference Condition="'$(EnableNewRelic)' == 'true'" Include="Serilog.Sinks.NewRelic.Logs" Version="1.2.0" />
-  </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Business\Business.csproj" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(UsingSass)' == 'false'">
+		<Content Remove="wwwroot\scss\**" />
+		<Content Remove="wwwroot\css\bootstrap.css" />
+		<Content Remove="wwwroot\css\bootstrap.min.css" />
+		<Content Remove="wwwroot\css\bootstrap.css.map" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(UsingSass)' == 'false'">
-    <Content Remove="wwwroot\scss\**" />
-    <Content Remove="wwwroot\css\bootstrap.css" />
-    <Content Remove="wwwroot\css\bootstrap.min.css" />
-    <Content Remove="wwwroot\css\bootstrap.css.map" />
-  </ItemGroup>
-		
+	<ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<DependentUpon>appsettings.json</DependentUpon>
+		</Content>
+	</ItemGroup>
+
 	<ItemGroup>
 		<Content Update="http-client.env.json">
-      <DependentUpon>http-client.http</DependentUpon>
-    </Content>
-    <Content Update="http-client.private.env.json">
-      <DependentUpon>http-client.http</DependentUpon>
-    </Content>
-    <Content Include="..\..\package.json">
-      <Link>package.json</Link>
-    </Content>
+			<DependentUpon>http-client.http</DependentUpon>
+		</Content>
+		<Content Update="http-client.private.env.json">
+			<DependentUpon>http-client.http</DependentUpon>
+		</Content>
+		<Content Include="..\..\package.json">
+			<Link>package.json</Link>
+		</Content>
 	</ItemGroup>
 
 </Project>

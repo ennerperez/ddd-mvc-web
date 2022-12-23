@@ -1,4 +1,6 @@
-﻿namespace Persistence
+﻿// ReSharper disable InconsistentNaming
+
+namespace Persistence
 {
 	public static class Lengths
 	{

@@ -49,7 +49,7 @@ namespace Web.Areas.Admin.Reports
 			var record = (dynamic)Model;
 			page.Header().Element(container =>
 			{
-				
+
 				container.Row(row =>
 				{
 					row.RelativeItem().Column(column =>
@@ -131,7 +131,7 @@ namespace Web.Areas.Admin.Reports
 
 					foreach (var item in ((IEnumerable)Model))
 					{
-						table.Cell().Element(CellStyle).Text(index).FontSize(fontSizeContent);
+						table.Cell().Element(CellStyle).Text(index.ToString()).FontSize(fontSizeContent);
 						foreach (var prop in props)
 						{
 							var value = prop.GetValue(item)?.ToString();

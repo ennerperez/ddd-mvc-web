@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers.API
 {
-  [ApiController]
-  [Route("[controller]")]
-  [ApiExplorerSettings(GroupName = "v1")]
   [AllowAnonymous]
+  [ApiExplorerSettings(GroupName = "v1")]
   public class SystemController : ControllerBase
   {
     [HttpGet("Health")]

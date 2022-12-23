@@ -3,7 +3,7 @@
 	"defaultProvider": "cdnjs",
 	"libraries": [
 		{
-			"library": "jquery@3.6.1",
+			"library": "jquery@3.6.3",
 			"destination": "wwwroot/lib/jquery"
 		},
 		{
@@ -11,7 +11,7 @@
 			"destination": "wwwroot/lib/popper.js"
 		},
 		{
-			"library": "bootstrap@5.2.2",
+			"library": "bootstrap@5.2.3",
 			"destination": "wwwroot/lib/bootstrap"
 		},
 		{
