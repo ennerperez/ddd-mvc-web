@@ -2,34 +2,42 @@ name: Build
 
 on:
   push:
-    branches:
-      - master
     tags:
       - 'v*'
   workflow_dispatch:
 
-env:
-  DOTNET_SDK_VERSION: '6.x'
+#env:
+#  DOTNET_SDK_VERSION_LTS: '6.x'
+#  DOTNET_SDK_VERSION_STS: '7.0.100'
 
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
-          fetch-depth: 0
+          fetch-depth: 3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+      #      - name: Setup .NET SDK (LTS)
+      #        uses: actions/setup-dotnet@v3
+      #        with:
+      #          dotnet-version: ${{ env.DOTNET_SDK_VERSION_LTS }}
 
-      - name: Setup EF
-        run: dotnet tool install --global dotnet-ef
+      #      - name: Setup .NET SDK (STS)
+      #        uses: actions/setup-dotnet@v3
+      #        with:
+      #          dotnet-version: ${{ env.DOTNET_SDK_VERSION_STS }}
+
+      #      - name: Cache
+      #        uses: actions/cache@v3
+      #        with:
+      #          path: |
+      #            .nuke/temp
+      #            ~/.nuget/packages
+      #          key: ${{ runner.os }}-${{ hashFiles('global.json', 'source/**/*.csproj') }}
 
       - name: Permissions
         run: chmod +x build.sh
@@ -39,17 +47,33 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Migration
-        run: dotnet ef migrations script -i --context DefaultContext -o build/Migrations.sql --project src/Persistence --startup-project src/Web
+      - name: Packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: |
+            output/*.nupkg
+          if-no-files-found: warn
 
       - name: Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
           path: |
-            build/Migrations.sql
-            build/Release.zip
-          if-no-files-found: error
+            output/*.zip
+          if-no-files-found: warn
+
+  deploy:
+    name: Deploy
+    needs: Build
+    environment:
+      name: 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts
 
       - name: Release
         uses: ncipollo/release-action@v1
@@ -58,19 +82,6 @@ jobs:
         with:
           draft: false
           prerelease: false
-          bodyFile: CHANGELOG.md
           artifacts: |
-            build/Migrations.sql
-            build/Release.zip
-
-  deploy:
-    name: Deploy
-    needs: build
-    environment:
-      name: 'Production'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: artifacts
+            *.nupkg
+            *.zip
