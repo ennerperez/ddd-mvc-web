@@ -196,7 +196,7 @@ namespace Web.Controllers.API
 				t.Code,
 				//Client = new { t.ClientId, ClientFullName = t.Client.FullName, ClientIdentification = t.Client.Identification },
 				t.ClientId, ClientFullName = t.Client.FullName, ClientIdentification = t.Client.Identification,
-				t.State,
+				State = t.Status,
 				t.Subtotal,
 				t.Taxes,
 				t.Total,

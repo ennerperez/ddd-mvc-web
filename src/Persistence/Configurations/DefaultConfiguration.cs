@@ -57,10 +57,10 @@ namespace Persistence.Configurations
 
 			e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Property(m => m.Code).HasMaxLength(Lengths.Code).IsRequired();
-			e.Property(m => m.State).IsRequired();
+			e.Property(m => m.Status).IsRequired();
 
 			e.HasIndex(m => m.Code).IsUnique();
-			e.HasIndex(m => m.State);
+			e.HasIndex(m => m.Status);
 			e.HasIndex(m => m.ExpireAt);
 		}
 	}

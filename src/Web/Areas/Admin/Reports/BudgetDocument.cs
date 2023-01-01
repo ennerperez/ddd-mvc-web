@@ -80,7 +80,7 @@ namespace Web.Areas.Admin.Reports
 						row.RelativeItem().PaddingTop(8).Column(colum =>
 						{
 							colum.Item().Text($"Client: {record.Client}");
-							colum.Item().Text($"State: {record.State}");
+							colum.Item().Text($"Status: {record.State}");
 						});
 					});
 			});

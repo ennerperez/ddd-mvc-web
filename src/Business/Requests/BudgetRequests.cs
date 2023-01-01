@@ -128,7 +128,7 @@ namespace Business.Requests
 		public string Code { get; set; }
 
 		public int ClientId { get; set; }
-		public States State { get; set; }
+		public Status Status { get; set; }
 
 		public decimal Subtotal { get; set; }
 		public decimal Taxes { get; set; }
@@ -153,7 +153,7 @@ namespace Business.Requests
 
 			entity.Code = request.Code;
 			entity.ClientId = request.ClientId;
-			entity.State = request.State;
+			entity.Status = request.Status;
 			entity.Subtotal = request.Subtotal;
 			entity.Taxes = request.Taxes;
 			entity.Total = request.Total;
@@ -197,7 +197,7 @@ namespace Business.Requests
 		public string Code { get; set; }
 
 		public int? ClientId { get; set; }
-		public States? State { get; set; }
+		public Status? Status { get; set; }
 
 		public decimal? Subtotal { get; set; }
 		public decimal? Taxes { get; set; }
@@ -222,7 +222,7 @@ namespace Business.Requests
 
 			if (request.Code != null) entity.Code = request.Code;
 			if (request.ClientId != null) entity.ClientId = request.ClientId.Value;
-			if (request.State != null) entity.State = request.State.Value;
+			if (request.Status != null) entity.Status = request.Status.Value;
 			if (request.Subtotal != null) entity.Subtotal = request.Subtotal.Value;
 			if (request.Taxes != null) entity.Taxes = request.Taxes.Value;
 			if (request.Total != null) entity.Total = request.Total.Value;

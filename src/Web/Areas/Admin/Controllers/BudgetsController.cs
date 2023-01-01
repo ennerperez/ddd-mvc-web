@@ -36,7 +36,7 @@ namespace Web.Areas.Admin.Controllers
 				{
 					s.Code,
 					Client = s.Client.FullName,
-					s.State,
+					s.Status,
 					s.Subtotal,
 					s.Taxes,
 					s.Total,
@@ -51,7 +51,7 @@ namespace Web.Areas.Admin.Controllers
 				{
 					s.Code,
 					Client = s.Client.FullName,
-					s.State,
+					s.Status,
 					s.Subtotal,
 					s.Taxes,
 					s.Total,

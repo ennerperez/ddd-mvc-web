@@ -10,35 +10,35 @@ namespace Domain.Entities
 		public Budget()
 		{
 			CreatedAt = DateTime.Now;
-			State = States.Draft;
+			Status = Enums.Status.Draft;
 		}
 		public Guid Id { get; set; }
 
 		public string Code { get; set; }
-		
+
 		public int ClientId { get; set; }
 		public Client Client { get; set; }
 
-		public States State { get; set; }
+		public Status Status { get; set; }
 
 		public decimal Subtotal { get; set; }
 		public decimal Taxes { get; set; }
 		public decimal Total { get; set; }
-		
+
 		public DateTime? ExpireAt { get; set; }
 		public bool IsDeleted { get; set; }
-		
+
 		public int? CreatedById { get; set; }
 		public User CreatedBy { get; set; }
 		public DateTime CreatedAt { get; set; }
-		
+
 		public int? ModifiedById { get; set; }
 		public User ModifiedBy { get; set; }
 		public DateTime? ModifiedAt { get; set; }
-		
+
 		public User DeletedBy { get; set; }
 		public int? DeletedById { get; set; }
 		public DateTime? DeletedAt { get; set; }
-		
+
 	}
 }
