@@ -484,6 +484,8 @@ namespace Web
 				app.UseHsts();
 			}
 
+			app.UseStatusCodePagesWithReExecute("/Default/Error/{0}");
+
 			if (Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"))
 			{
 				app.UseHttpsRedirection();

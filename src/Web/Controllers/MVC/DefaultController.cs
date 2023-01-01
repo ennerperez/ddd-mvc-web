@@ -31,17 +31,19 @@ namespace Web.Controllers.MVC
 			return View();
 		}
 
-		[Route("Error")]
+		[Route("Error/{code:int?}")]
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
+		public IActionResult Error(int code = 0)
 		{
 			_logger.LogError("{TraceIdentifier}", HttpContext.TraceIdentifier);
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+			var model = new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier};
+			if (code != 0) return View($"Errors/{code}", model);
+			return View(model);
 		}
 
-		[Route("About")]
+		[Route("Health")]
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult About()
+		public IActionResult Health()
 		{
 			var domain = Assembly.GetAssembly(typeof(Domain.Extensions));
 			var infrastructure = Assembly.GetAssembly(typeof(Infrastructure.Extensions));
