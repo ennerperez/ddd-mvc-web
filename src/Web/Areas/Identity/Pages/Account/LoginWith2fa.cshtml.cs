@@ -13,7 +13,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Web.Areas.Identity.Pages.Account
 {
-    public class LoginWith2faModel : PageModel
+	// ReSharper disable once InconsistentNaming
+	public class LoginWith2faModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;

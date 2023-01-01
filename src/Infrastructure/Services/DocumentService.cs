@@ -39,7 +39,7 @@ namespace Infrastructure.Services
 #if DEBUG
 			var tempFile = Path.ChangeExtension(Path.GetTempFileName(), $".{format}");
 			File.WriteAllBytes(tempFile, data);
-			Console.WriteLine($"[{this.GetType().Name}]: Temporal document generated in: {tempFile}");
+			Console.WriteLine($"[{GetType().Name}]: Temporal document generated in: {tempFile}");
 #endif
 			return data;
 		}

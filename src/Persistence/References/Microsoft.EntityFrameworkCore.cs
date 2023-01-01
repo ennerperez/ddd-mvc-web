@@ -133,9 +133,9 @@ namespace Microsoft.EntityFrameworkCore
 
 			if (entityType != null)
 			{
-				var keys = entityType.GetKeys();
+				var keys = entityType.GetKeys().ToArray();
 				var types = keys.Select(m => m.GetKeyType());
-				var isValueGenerated = keys.SelectMany(s => s.Properties).Any(m => m.ValueGenerated == ValueGenerated.OnAdd && !types.Any(m => m == typeof(Guid)));
+				var isValueGenerated = keys.SelectMany(s => s.Properties).Any(m => m.ValueGenerated == ValueGenerated.OnAdd && !types.Any(s => s == typeof(Guid)));
 				if (isValueGenerated)
 				{
 					var query = string.Empty;

@@ -108,7 +108,7 @@ namespace Web.Controllers.MVC
 					Color = "#4052b6",
 				});
 
-			var assemblies = this.GetType().Assembly.GetReferencedAssemblies();
+			var assemblies = GetType().Assembly.GetReferencedAssemblies();
 
 			foreach (var item in assemblies)
 			{

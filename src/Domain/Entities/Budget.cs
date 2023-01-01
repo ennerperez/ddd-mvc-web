@@ -10,7 +10,7 @@ namespace Domain.Entities
 		public Budget()
 		{
 			CreatedAt = DateTime.Now;
-			Status = Enums.Status.Draft;
+			Status = Status.Draft;
 		}
 		public Guid Id { get; set; }
 
