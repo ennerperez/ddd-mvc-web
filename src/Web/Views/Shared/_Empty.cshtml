@@ -14,6 +14,8 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>@Configuration["AppSettings:Name"] - @ViewData["Title"]</title>
+	
+	<partial name="Partials/_SeoPartial"/>
 
 	<partial name="Partials/_FaviconPartial"/>
 
@@ -22,7 +24,7 @@
         function isIE() {
           let ua = navigator.userAgent;
           /* MSIE used to detect old browsers and Trident used to newer ones*/
-          return ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1; 
+          return ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
         }
         /* Create an alert to show if the browser is IE or not */
         if (isIE()){

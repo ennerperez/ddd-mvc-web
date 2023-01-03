@@ -1,6 +1,6 @@
 ## This is a directory/file filter for WinMerge
 name: ddd-mvc-web
-desc: 
+desc:
 
 ## This is an inclusive (loose) filter
 ## (it lets through everything not specified)
@@ -53,3 +53,7 @@ d: \\\.idea$
 d: \\Web\\Logs$
 d: \\src\\template$
 d: \\src\\Web\\wwwroot\\lib$
+d: \\testresults$
+d: \\.nuke\\temp$
+d: \\output$
+d: \\publish$
