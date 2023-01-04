@@ -10,7 +10,6 @@ using Web.Services;
 
 namespace Web
 {
-	[DebuggerStepThrough]
 	public static class Program
 	{
 		internal static string Name { get; private set; }
