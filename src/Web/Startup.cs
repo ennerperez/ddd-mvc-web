@@ -318,11 +318,11 @@ namespace Web
 					In = ParameterLocation.Header,
 					Type = SecuritySchemeType.Http,
 					Description = "Put **_ONLY_** your JWT Bearer token",
-					Reference = new OpenApiReference { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
+					Reference = new OpenApiReference {Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme}
 				};
 
 				c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
+				c.AddSecurityRequirement(new OpenApiSecurityRequirement {{jwtSecurityScheme, Array.Empty<string>()}});
 #endif
 // #if USING_AUTH0
 // 				var auth0SecurityScheme = new OpenApiSecurityScheme
@@ -360,10 +360,7 @@ namespace Web
 				options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 				{
 					// This sets the value of User.Identity.Name to users AD username
-					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName,
-					RoleClaimType = System.Security.Claims.ClaimTypes.Role,
-					AuthenticationType = "Cookies",
-					ValidateIssuer = false
+					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, RoleClaimType = System.Security.Claims.ClaimTypes.Role, AuthenticationType = "Cookies", ValidateIssuer = false
 				};
 				var scopes = new List<string>();
 				Configuration.Bind("OpenIdSettings:Scopes", scopes);
@@ -442,7 +439,7 @@ namespace Web
 					if (user == null)
 					{
 						var ph = new PasswordHasher<User>();
-						user = new User() { NormalizedUserName = claims["name"].ToUpper(), UserName = claims["nickname"], Email = claims["name"], EmailConfirmed = claims["email_verified"] == "true" };
+						user = new User() {NormalizedUserName = claims["name"].ToUpper(), UserName = claims["nickname"], Email = claims["name"], EmailConfirmed = claims["email_verified"] == "true"};
 #if DEBUG
 						user.PasswordHash = ph.HashPassword(user, $"Admin{DateTime.Now.Year}**");
 #endif
@@ -474,7 +471,7 @@ namespace Web
 				app.UseDeveloperExceptionPage();
 				app.UseMigrationsEndPoint();
 #if ENABLE_TOKEN_VALIDATION
-                IdentityModelEventSource.ShowPII = true;
+				IdentityModelEventSource.ShowPII = true;
 #endif
 			}
 			else
