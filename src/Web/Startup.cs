@@ -491,6 +491,10 @@ namespace Web
 				app.UseHttpsRedirection();
 			}
 
+#if USING_COOKIES
+			app.UseCookiePolicy();
+#endif
+
 #if USING_LOCALIZATION
 			app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
 #endif
