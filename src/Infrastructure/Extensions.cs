@@ -50,6 +50,8 @@ namespace Infrastructure
 
 #if USING_BLOBS
 			services.AddTransient<IFileService, FileService>();
+#else
+			services.AddSingleton<IFileService>(new FileSystemService() {ContainerName = "Data", CreateIfNotExists = true});
 #endif
 #if USING_QUEUES
 			services.AddTransient<IQueueService, QueueService>();
