@@ -55,6 +55,10 @@ namespace Persistence.Interfaces
 			CancellationToken cancellationToken = default);
 		Task UpdateAsync(TEntity entity,
 			CancellationToken cancellationToken = default);
+
+		Task DeleteAsync(TEntity entity,
+			CancellationToken cancellationToken = default);
+
 		Task DeleteAsync(object key,
 			CancellationToken cancellationToken = default);
 
@@ -115,6 +119,7 @@ namespace Persistence.Interfaces
 		void Create(TEntity entity);
 		void CreateOrUpdate(TEntity entity);
 		void Update(TEntity entity);
+		void Delete(TEntity entity);
 		void Delete(object key);
 
 		// * //

@@ -417,6 +417,30 @@ namespace Persistence.Services
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 
+		public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+		{
+			if (entity != null)
+			{
+				if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+				{
+					// ReSharper disable once SuspiciousTypeConversion.Global
+					if (!((ISoftDelete)entity).IsDeleted)
+					{
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).IsDeleted = true;
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).DeletedAt = DateTime.Now;
+					}
+
+					await UpdateAsync(entity, cancellationToken);
+					return;
+				}
+			}
+
+			_dbSet.Remove(entity);
+			await _dbContext.SaveChangesAsync(cancellationToken);
+		}
+
 		public virtual async Task CreateOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
 		{
 			if (entity.Id.Equals(default))
@@ -798,7 +822,29 @@ namespace Persistence.Services
 			_dbSet.Update(entity);
 			_dbContext.SaveChanges();
 		}
+		public virtual void Delete(TEntity entity)
+		{
+			if (entity != null)
+			{
+				if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+				{
+					// ReSharper disable once SuspiciousTypeConversion.Global
+					if (!((ISoftDelete)entity).IsDeleted)
+					{
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).IsDeleted = true;
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).DeletedAt = DateTime.Now;
+					}
 
+					Update(entity);
+					return;
+				}
+			}
+
+			_dbContext.Remove(entity);
+			_dbContext.SaveChanges();
+		}
 		public virtual void Delete(object key)
 		{
 			var entity = _dbSet.Find(key);
