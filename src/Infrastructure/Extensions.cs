@@ -38,15 +38,9 @@ namespace Infrastructure
 			if (userAccessorServiceType != null)
 				services.AddTransient(typeof(IUserAccessorService), userAccessorServiceType);
 
-			var documentServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IDocumentService).IsAssignableFrom(m));
-			if (documentServiceType != null)
-				services.AddTransient(typeof(IDocumentService), documentServiceType);
-
-			var documentServiceType2 = types.FirstOrDefault(m=> m.IsClass && typeof(IDocumentService<IDocument>).IsAssignableFrom(m));
-			if (documentServiceType2 != null)
-				services.AddTransient(typeof(IDocumentService<IDocument>), documentServiceType2);
-
 			services.AddHttpClient();
+
+			services.AddTransient<IDocumentService, DocumentService>();
 
 #if USING_BLOBS
 			services.AddTransient<IFileService, FileService>();

@@ -9,7 +9,7 @@ using QuestPDF.Fluent;
 
 namespace Infrastructure.Services
 {
-	public class DocumentService : IDocumentService<IDocument>
+	public class DocumentService : IDocumentService
 	{
 		// ReSharper disable once NotAccessedField.Local
 		private readonly IConfiguration _configuration;
@@ -29,7 +29,7 @@ namespace Infrastructure.Services
 		{
 			if (instance == null) return null;
 
-			byte[] data = Array.Empty<byte>();
+			var data = Array.Empty<byte>();
 
 #if USING_QUESTPDF
 			if (format.Equals("pdf", StringComparison.InvariantCultureIgnoreCase))
