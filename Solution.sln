@@ -64,7 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{90
 		src\.imports\Template.targets = src\.imports\Template.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", ".build\_build.csproj", "{612B31CC-2D6D-44D6-9063-4FD8BF6BCC9B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{2712CD35-9B5B-4E27-BEAF-46978336F0DA}"
 EndProject

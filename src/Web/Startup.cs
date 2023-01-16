@@ -109,7 +109,7 @@ namespace Web
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-#if USING_SASS && ENABLE_SASS_WATCH
+#if USING_SASS && DEBUG
 			services.AddSassCompiler();
 #endif
 #if USING_INSIGHTS
