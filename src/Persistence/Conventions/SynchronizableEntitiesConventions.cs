@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace Persistence.Conventions
 {
-	internal static class SincronizableEntitiesConventions
+	internal static class SynchronizableEntitiesConventions
 	{
-		public static void AddSincronizableEntitiesConventions<T>(this ModelBuilder modelBuilder, string provider)
+		public static void AddSynchronizableEntitiesConventions<T>(this ModelBuilder modelBuilder, string provider)
 		{
 			var items = modelBuilder.Model.GetEntityTypes();
 			foreach (var t in items)

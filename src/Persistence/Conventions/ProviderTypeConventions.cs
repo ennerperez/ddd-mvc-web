@@ -15,7 +15,7 @@ namespace Persistence.Conventions
 		public ProviderTypeOptions()
 		{
 			DecimalConfig = new Dictionary<int, string[]>();
-			Exclude = new[] { "Identity" };
+			Exclude = new[] {"Identity"};
 			UseDateTime = true;
 		}
 
@@ -38,11 +38,11 @@ namespace Persistence.Conventions
 			var options = new ProviderTypeOptions();
 			optionsAction?.Invoke(options);
 
-			options.Exclude ??= new string[0];
+			options.Exclude ??= Array.Empty<string>();
 
 			// Fix datetime offset support for integration tests
 			// See: https://blog.dangl.me/archive/handling-datetimeoffset-in-sqlite-with-entity-framework-core/
-			if (new[] { "Sqlite" }.Contains(options.Provider))
+			if (new[] {"Sqlite"}.Contains(options.Provider))
 			{
 				// SQLite does not have proper support for DateTimeOffset via Entity Framework Domain, see the limitations
 				// here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
@@ -70,12 +70,28 @@ namespace Persistence.Conventions
 				foreach (var p in guidProperties)
 				{
 					var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
-
 					if (p.IsColumnNullable())
 						property.HasDefaultValue(null);
-					// TODO: GUID from DB
-					// else
-					//     property.HasDefaultValue(Guid.NewGuid());
+				}
+
+				//TODO: Sqlite Temporal Patch
+				// SQLite does not have proper support for DateTimeOffset via Entity Framework Core, see the limitations
+				// here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
+				// To work around this, when the Sqlite database provider is used, all model properties of type DateTimeOffset
+				// use the DateTimeOffsetToBinaryConverter
+				// Based on: https://github.com/aspnet/EntityFrameworkCore/issues/10784#issuecomment-415769754
+				// This only supports millisecond precision, but should be sufficient for most use cases.
+				foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+				{
+					var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+
+					foreach (var property in properties)
+					{
+						modelBuilder
+							.Entity(entityType.Name)
+							.Property(property.Name)
+							.HasConversion<double>();
+					}
 				}
 			}
 
@@ -106,7 +122,7 @@ namespace Persistence.Conventions
 				}
 				else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
 				{
-					if (options.UseDateTime || (new[] { "Sqlite" }.Contains(options.Provider)))
+					if (options.UseDateTime || (new[] {"Sqlite"}.Contains(options.Provider)))
 					{
 						p.SetColumnType("datetime");
 						columnType = p.GetColumnType();
@@ -118,11 +134,11 @@ namespace Persistence.Conventions
 					var maxValue = p.GetMaxLength();
 					var max = maxValue.HasValue ? maxValue.ToString() : "max";
 
-					if (new[] { "MySql", "MariaDB" }.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
+					if (new[] {"MySql", "MariaDB"}.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
 						p.SetColumnType(max == "max" ? $"longtext" : $"text");
-					else if (new[] { "Sqlite" }.Contains(options.Provider))
+					else if (new[] {"Sqlite"}.Contains(options.Provider))
 						p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
-					else if (new[] { "PostgreSQL" }.Contains(options.Provider))
+					else if (new[] {"PostgreSQL"}.Contains(options.Provider))
 						p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
 					else
 						p.SetColumnType($"varchar({max})");
@@ -132,7 +148,7 @@ namespace Persistence.Conventions
 				}
 
 				// See: https://stackoverflow.com/questions/8746207/1071-specified-key-was-too-long-max-key-length-is-1000-bytes
-				if (new[] { "MySql", "MariaDB" }.Contains(options.Provider) && p.GetMaxLength() > 255)
+				if (new[] {"MySql", "MariaDB"}.Contains(options.Provider) && p.GetMaxLength() > 255)
 					p.SetMaxLength(255);
 			}
 

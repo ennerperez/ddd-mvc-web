@@ -9,7 +9,6 @@ ProjectSection(SolutionItems) = preProject
 	LICENSE = LICENSE
 	README.md = README.md
 	.editoricon.png = .editoricon.png
-	package.json = package.json
 	migrate.ps1 = migrate.ps1
 	migrate.sh = migrate.sh
 	global.json = global.json

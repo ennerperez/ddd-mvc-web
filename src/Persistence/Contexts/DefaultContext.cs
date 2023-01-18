@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions=Microsoft.EntityFrameworkCore.DbContextOptions;
 
+#if DEBUG && HAS_DATABASE_PROVIDER
+using System.IO;
+#endif
+
 #if SQLITE && USING_SQLITE
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
@@ -61,16 +65,16 @@ namespace Persistence.Contexts
 				m.UseDateTime = false;
 			});
 			modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
-			modelBuilder.AddSincronizableEntitiesConventions<ISyncronizable>(ProviderName);
+			modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>(ProviderName);
 		}
 
 #if DEBUG
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.EnableDetailedErrors();
-			optionsBuilder.EnableSensitiveDataLogging();
+			optionsBuilder?.EnableDetailedErrors();
+			optionsBuilder?.EnableSensitiveDataLogging();
 #if HAS_DATABASE_PROVIDER
-			if (_options == null)
+			if (optionsBuilder == null)
 			{
 				var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 				var config = new ConfigurationBuilder()

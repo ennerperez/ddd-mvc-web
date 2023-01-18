@@ -31,6 +31,7 @@ using Web.Services;
 using SameSiteMode=Microsoft.AspNetCore.Http.SameSiteMode;
 
 #if USING_QUESTPDF
+using System.IO;
 using Infrastructure.Services;
 #endif
 #if USING_APIKEY
@@ -598,7 +599,7 @@ namespace Web
 			app.UseAuthorization();
 
 #if USING_QUESTPDF
-			DocumentService.RegisterFonts("wwwroot/fonts");
+			DocumentService.RegisterFonts(Path.Combine("wwwroot", "fonts"));
 #endif
 
 			app.UseEndpoints(endpoints =>
