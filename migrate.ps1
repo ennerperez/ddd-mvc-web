@@ -9,7 +9,7 @@
     [string]$output
   )
 
-  $context_name = "$context" + "Context";
+  $context_name = "$context";
 
   if ($clear)
   {

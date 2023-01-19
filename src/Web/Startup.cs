@@ -147,10 +147,10 @@ namespace Web
 			services
 				.AddDomain()
 				.AddInfrastructure()
-				.AddPersistence(options =>
-				{
-					DefaultContext.UseDbEngine(options, Configuration);
-				}, ServiceLifetime.Transient)
+				.AddPersistence(options => 
+					DefaultContext.UseDbEngine(options,Configuration),
+					Configuration["AppSettings:DbProvider"],
+					ServiceLifetime.Transient)
 				.AddBusiness();
 
 			services

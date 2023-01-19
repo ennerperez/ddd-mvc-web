@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
@@ -30,6 +31,9 @@ class Build : NukeBuild
 
 	[Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
 	readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+	[Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)")]
+	public string Environment= IsLocalBuild ? "Development" : "Production";
 
 	[Solution] readonly Solution Solution;
 
@@ -151,19 +155,25 @@ class Build : NukeBuild
 		});
 
 	Target Migrate => _ => _
-		.DependsOn(Test)
 		.Executes(() =>
 		{
-			var context = "Default";
 			var persistence = Solution.GetProject("Persistence")?.Path;
 			var startup = Solution.GetProject("Web")?.Path;
-			var migrations = Path.Combine(PublishDirectory, path2: "Migrations", $"{context}Context.sql");
+			var startupPath = Solution.GetProject("Web")?.Directory??string.Empty;
 
-			DotNetEf(_ => new MigrationsSettings(Migrations.Script)
-				.SetContext($"{context}Context")
-				.SetOutput(migrations)
+			var config = new ConfigurationBuilder()
+				.AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
+				.AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
+				.Build();
+
+			var provider = config["AppSettings:DbProvider"]??string.Empty;;
+
+			DotNetEf(_ => new MigrationsSettings(Migrations.Add)
+				.SetName(DateTime.Now.Ticks.ToString())
+				.SetContext($"{provider}")
 				.SetProjectFile(Solution.GetProject(persistence))
 				.SetStartupProjectFile(Solution.GetProject(startup))
+				.SetOutputDir(Path.Combine("Migrations",$"{provider}"))
 				.EnableNoBuild());
 		});
 
@@ -201,5 +211,4 @@ class Build : NukeBuild
 				ZipFile.CreateFromDirectory($"{PublishDirectory}/{project}", $"{ArtifactsDirectory}/{project}.zip");
 			}
 		});
-
 }

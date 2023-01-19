@@ -14,10 +14,6 @@
 		<UsingOracle>true</UsingOracle>
 	</PropertyGroup>
 
-	<ItemGroup Label="Contexts">
-		<Context Include="DefaultContext" Engine="SQLITE" />
-	</ItemGroup>
-
 	<PropertyGroup Label="Azure">
 		<UsingAzureApplicationInsights>true</UsingAzureApplicationInsights>
 		<UsingAzureBlobs>true</UsingAzureBlobs>

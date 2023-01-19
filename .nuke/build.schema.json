@@ -18,6 +18,10 @@
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
         },
+        "Environment": {
+          "type": "string",
+          "description": "Environment to build - Default is 'Development' (local) or 'Production' (server)"
+        },
         "Help": {
           "type": "boolean",
           "description": "Shows the help text for this build assembly"

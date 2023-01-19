@@ -53,9 +53,25 @@
 		<PackageReference Condition="$(UsingMariaDb) == 'true' OR '$(UsingMySql)' == 'true'" Include="EFCore.BulkExtensions.PostgreSql" Version="6.6.4" />
 		<PackageReference Condition="$(UsingPostgreSql) == 'true'" Include="EFCore.BulkExtensions.MySql" Version="6.6.4" />
 	</ItemGroup>
-
-	<Target Name="Contexts" BeforeTargets="CoreBuild" Outputs="%(Context.Identity)">
-		<ReplaceFileText InputFilename="$(ProjectDir)/Contexts/%(Context.Identity).cs" OutputFilename="$(ProjectDir)/Contexts/%(Context.Identity).cs" MatchExpression="\#define .*" ReplacementText="#define %(Engine)" />
-	</Target>
+	<ItemGroup>
+	  <Folder Include="Migrations" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Contexts\DefaultContext.Sqlite.cs">
+	    <DependentUpon>DefaultContext.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="Contexts\DefaultContext.MySql.cs">
+	    <DependentUpon>DefaultContext.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="Contexts\DefaultContext.Oracle.cs">
+	    <DependentUpon>DefaultContext.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="Contexts\DefaultContext.PostgreSql.cs">
+	    <DependentUpon>DefaultContext.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="Contexts\DefaultContext.SqlServer.cs">
+	    <DependentUpon>DefaultContext.cs</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 
 </Project>

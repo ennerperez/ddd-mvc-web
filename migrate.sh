@@ -20,7 +20,7 @@ for i in "$@"; do
     shift
 done
 
-context_name="${context}Context"
+context_name="${context}"
 
 if [[ "$clear" == true ]]; then
     dotnet ef database drop -f --context ${context_name} --project src/Persistence --startup-project src/${startup}

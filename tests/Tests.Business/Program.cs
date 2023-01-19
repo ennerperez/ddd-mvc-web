@@ -83,13 +83,9 @@ namespace Tests.Business
 				.AddDomain()
 				.AddInfrastructure()
 				.AddPersistence(options =>
-				{
-					DefaultContext.UseDbEngine(options, Configuration);
-					Persistence.Extensions.DbContext = () =>
-					{
-						return Container.GetRequiredService<DefaultContext>();
-					};
-				}, ServiceLifetime.Transient)
+						DefaultContext.UseDbEngine(options,Configuration),
+					Configuration["AppSettings:DbProvider"],
+					ServiceLifetime.Transient)
 				.AddBusiness()
 				.AddTests();
 
