@@ -4,9 +4,11 @@ using System;
 using System.Data.Common;
 using System.Linq;
 using Domain.Entities;
-using Domain.Entities.Identity;
 using Domain.Interfaces;
+#if USING_IDENTITY
+using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+#endif
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using DbContextOptions=Microsoft.EntityFrameworkCore.DbContextOptions;
@@ -26,7 +28,12 @@ using Microsoft.Data.Sqlite;
 
 namespace Persistence.Contexts
 {
-	public partial class DefaultContext
+	public partial class DefaultContext :
+#if USING_IDENTITY
+		IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
+#else
+		DbContext
+#endif
 	{
 		private readonly DbContextOptions _options;
 
@@ -125,6 +132,8 @@ namespace Persistence.Contexts
 					optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName, Schemas.Migration));
 					break;
 #endif
+				default:
+					break;
 			}
 		}
 	}

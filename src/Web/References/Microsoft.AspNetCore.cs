@@ -574,6 +574,16 @@ namespace Microsoft.AspNetCore
                 return false;
 #endif
 			}
+
+			public static bool UsingIdentity(this IHtmlHelper htmlHelper)
+			{
+#if USING_IDENTITY
+				return true;
+#else
+				return false;
+#endif
+			}
+
 		}
 
 		namespace Rendering

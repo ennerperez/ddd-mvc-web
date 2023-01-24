@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup Label="General">
-		<UsingAssemblyInfoTemplate>false</UsingAssemblyInfoTemplate>
+		<UsingAssemblyInfoTemplate>true</UsingAssemblyInfoTemplate>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Databases">
@@ -31,6 +31,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Label="Auth">
+		<UsingIdentity>true</UsingIdentity>
 		<UsingCookies>true</UsingCookies>
 		<UsingApiKey>true</UsingApiKey>
 		<UsingBearer>true</UsingBearer>
@@ -40,7 +41,7 @@
 
 	<PropertyGroup Label="Options">
 		<EnableNonAsync>true</EnableNonAsync>
-		<!--<EnableBulk>true</EnableBulk>-->
+		<EnableBulk>true</EnableBulk>
 		<EnableSplit>true</EnableSplit>
 		<EnableSassWatch>true</EnableSassWatch>
 		<EnableDatadog>true</EnableDatadog>

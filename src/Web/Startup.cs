@@ -10,7 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Business;
 using Domain;
+#if USING_IDENTITY
 using Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+#endif
 using Infrastructure;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
@@ -19,7 +22,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -147,12 +149,13 @@ namespace Web
 			services
 				.AddDomain()
 				.AddInfrastructure()
-				.AddPersistence(options => 
+				.AddPersistence(options =>
 					DefaultContext.UseDbEngine(options,Configuration),
 					Configuration["AppSettings:DbProvider"],
 					ServiceLifetime.Transient)
 				.AddBusiness();
 
+#if USING_IDENTITY
 			services
 				.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
 				.AddRoles<Role>()
@@ -180,6 +183,7 @@ namespace Web
 				options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 				options.User.RequireUniqueEmail = true;
 			});
+#endif
 
 #if USING_NEWTONSOFT
 			JsonConvert.DefaultSettings = () => new JsonSerializerSettings

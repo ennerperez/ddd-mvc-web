@@ -6,7 +6,7 @@ namespace Domain
 	public static class Extensions
 	{
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <typeparam name="TInterface"></typeparam>
@@ -21,7 +21,7 @@ namespace Domain
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="configureOptions"></param>
@@ -34,7 +34,7 @@ namespace Domain
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <returns></returns>

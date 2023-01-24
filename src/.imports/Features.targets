@@ -38,6 +38,7 @@
 		<BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
 		<BuildConstants Condition="'$(EnableSassWatch)' == 'true'">$(BuildConstants)ENABLE_SASS_WATCH;</BuildConstants>
 		<BuildConstants Condition="'$(EnableSmartSchema)' == 'true'">$(BuildConstants)ENABLE_SMARTSCHEMA;</BuildConstants>
+		<BuildConstants Condition="'$(UsingIdentity)' == 'true'">$(BuildConstants)USING_IDENTITY;</BuildConstants>
 		<BuildConstants Condition="'$(UsingCookies)' == 'true'">$(BuildConstants)USING_COOKIES;</BuildConstants>
 		<BuildConstants Condition="'$(UsingApiKey)' == 'true'">$(BuildConstants)USING_APIKEY;</BuildConstants>
 		<BuildConstants Condition="'$(UsingBearer)' == 'true'">$(BuildConstants)USING_BEARER;</BuildConstants>

@@ -3,14 +3,13 @@ using Persistence.Conventions;
 using System;
 using System.Linq;
 using Domain.Entities;
-using Domain.Entities.Identity;
 using Domain.Interfaces;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Persistence.Contexts
 {
-	public partial class DefaultContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
+	public partial class DefaultContext
 	{
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

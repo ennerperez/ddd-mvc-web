@@ -15,11 +15,7 @@ namespace Tests.Business.Services
 
 		public UserAccessorService()
 		{
-			_testUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
-			{
-				new Claim(ClaimTypes.Name, "TestUser"),
-				new Claim(ClaimTypes.NameIdentifier, 1.ToString()),
-			}));
+			_testUser = new ClaimsPrincipal(new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, "TestUser"), new Claim(ClaimTypes.NameIdentifier, 1.ToString()),}));
 		}
 
 		public IPrincipal GetActiveUser()
@@ -27,9 +23,11 @@ namespace Tests.Business.Services
 			return _testUser;
 		}
 
+#if USING_IDENTITY
 		public string FindFirstValue(string claimType)
 		{
 			return _testUser.FindFirstValue(claimType);
 		}
+#endif
 	}
 }

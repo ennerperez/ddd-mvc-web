@@ -9,10 +9,16 @@
 @section Styles{
 	@await RenderSectionAsync("Styles", false)
 }
+@if (Html.UsingIdentity())
+{
+	<partial name="_Header.Identity"/>
+}
+else
+{
+	<partial name="_Header"/>
+}
 
-<partial name="_Header"/>
-
-<main role="main" id="main-content" class="container p-0">
+<main role="main" id="main-content" class="container p-0 pt-4">
 	@RenderBody()
 
 </main>

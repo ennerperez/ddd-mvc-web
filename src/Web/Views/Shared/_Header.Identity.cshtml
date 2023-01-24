@@ -1,6 +1,11 @@
+﻿@using Domain.Entities.Identity
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@inject SignInManager<User> SignInManager
 @inject IConfiguration Configuration
 
-<hader class="pb-4">
+<header class="pb-4">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
 		<div class="container-fluid">
 			<a class="navbar-brand" asp-area="" asp-controller="Default" asp-action="Index">
@@ -21,20 +26,24 @@
 					@if (User.IsInRole("Admin"))
 					{
 						<li class="nav-item">
+							<a class="nav-link" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link" asp-area="Admin" asp-controller="Clients" asp-action="Index">Clients</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" asp-area="Admin" asp-controller="Budgets" asp-action="Index">Budgets</a>
 						</li>
 					}
-					@if (Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
+					@if (SignInManager.IsSignedIn(User) && Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
 					{
 						<li class="nav-item">
 							<a class="nav-link" href="~/api">API</a>
 						</li>
 					}
 				</ul>
+				<partial name="_LoginPartial"/>
 			</div>
 		</div>
 	</nav>
-</hader>
+</header>

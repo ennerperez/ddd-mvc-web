@@ -204,7 +204,7 @@ class Build : NukeBuild
 		.DependsOn(Publish)
 		.Executes(() =>
 		{
-			CopyFile($"{PublishDirectory}/Migrations/DefaultContext.sql", $"{ArtifactsDirectory}/Migrations/DefaultContext.sql");
+			CopyDirectoryRecursively($"{PublishDirectory}/Migrations", $"{ArtifactsDirectory}/Migrations");
 			CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Results");
 			foreach (var project in PublishProjects)
 			{

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="..\.imports\Template.props"/>
-	<Import Condition="Exists('Options.props')" Project="Options.props"/>
-	<Import Project="..\.imports\Template.targets"/>
-	<Import Condition="Exists('Options.targets')" Project="Options.targets"/>
+	<Import Project="..\.imports\Template.props" />
+	<Import Condition="Exists('Options.props')" Project="Options.props" />
+	<Import Project="..\.imports\Template.targets" />
+	<Import Condition="Exists('Options.targets')" Project="Options.targets" />
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<DebugSymbols>true</DebugSymbols>
@@ -11,16 +11,22 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Domain\Domain.csproj"/>
-		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
-		<ProjectReference Include="..\Persistence\Persistence.csproj"/>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+		<ProjectReference Include="..\Persistence\Persistence.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="11.4.0"/>
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0"/>
-		<PackageReference Include="MediatR" Version="11.1.0"/>
-		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+		<PackageReference Include="FluentValidation" Version="11.4.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
+		<PackageReference Include="MediatR" Version="11.1.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(UsingIdentity)' == 'false'">
+	  <Compile Remove="Requests\Identity\**" />
+	  <EmbeddedResource Remove="Requests\Identity\**" />
+	  <None Remove="Requests\Identity\**" />
 	</ItemGroup>
 
 </Project>

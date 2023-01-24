@@ -5,8 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+#if USING_DATABASE_PROVIDER && USING_IDENTITY
 using Domain.Entities;
 using Domain.Entities.Identity;
+#endif
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

@@ -1,5 +1,7 @@
 ﻿using System;
+#if USING_IDENTITY
 using Domain.Entities.Identity;
+#endif
 using Domain.Enums;
 using Domain.Interfaces;
 
@@ -29,16 +31,21 @@ namespace Domain.Entities
 		public bool IsDeleted { get; set; }
 
 		public int? CreatedById { get; set; }
-		public User CreatedBy { get; set; }
+
 		public DateTime CreatedAt { get; set; }
 
 		public int? ModifiedById { get; set; }
-		public User ModifiedBy { get; set; }
+
 		public DateTime? ModifiedAt { get; set; }
 
-		public User DeletedBy { get; set; }
 		public int? DeletedById { get; set; }
 		public DateTime? DeletedAt { get; set; }
+
+#if USING_IDENTITY
+		public User CreatedBy { get; set; }
+		public User ModifiedBy { get; set; }
+		public User DeletedBy { get; set; }
+#endif
 
 	}
 }
