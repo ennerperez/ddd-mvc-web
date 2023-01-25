@@ -8,55 +8,55 @@
 	<PropertyGroup Label="Databases">
 		<UsingSqlite>true</UsingSqlite>
 		<UsingSqlServer>true</UsingSqlServer>
-		<UsingMariaDb>true</UsingMariaDb>
-		<UsingMySql>true</UsingMySql>
-		<UsingPostgreSql>true</UsingPostgreSql>
-		<UsingOracle>true</UsingOracle>
+		<UsingMariaDb>false</UsingMariaDb>
+		<UsingMySql>false</UsingMySql>
+		<UsingPostgreSql>false</UsingPostgreSql>
+		<UsingOracle>false</UsingOracle>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Azure">
-		<UsingAzureApplicationInsights>true</UsingAzureApplicationInsights>
-		<UsingAzureBlobs>true</UsingAzureBlobs>
-		<UsingAzureQueues>true</UsingAzureQueues>
-		<UsingAzureTables>true</UsingAzureTables>
-		<UsingAzureKeyVault>true</UsingAzureKeyVault>
+		<UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
+		<UsingAzureBlobs>false</UsingAzureBlobs>
+		<UsingAzureQueues>false</UsingAzureQueues>
+		<UsingAzureTables>false</UsingAzureTables>
+		<UsingAzureKeyVault>false</UsingAzureKeyVault>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Services">
 		<UsingQuestPDF>true</UsingQuestPDF>
 		<UsingNewtonsoft>true</UsingNewtonsoft>
 		<UsingSwagger>true</UsingSwagger>
-		<UsingLocalization>true</UsingLocalization>
+		<UsingLocalization>false</UsingLocalization>
 		<UsingSass>true</UsingSass>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Auth">
 		<UsingIdentity>true</UsingIdentity>
 		<UsingCookies>true</UsingCookies>
-		<UsingApiKey>true</UsingApiKey>
-		<UsingBearer>true</UsingBearer>
-		<UsingOpenId>true</UsingOpenId>
-		<UsingAuth0>true</UsingAuth0>
+		<UsingApiKey>false</UsingApiKey>
+		<UsingBearer>false</UsingBearer>
+		<UsingOpenId>false</UsingOpenId>
+		<UsingAuth0>false</UsingAuth0>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Options">
-		<EnableNonAsync>true</EnableNonAsync>
+		<EnableNonAsync>false</EnableNonAsync>
 		<EnableBulk>true</EnableBulk>
 		<EnableSplit>true</EnableSplit>
 		<EnableSassWatch>true</EnableSassWatch>
-		<EnableDatadog>true</EnableDatadog>
-		<EnableNewRelic>true</EnableNewRelic>
-		<EnableSmartSchema>true</EnableSmartSchema>
-		<EnableApiKeyTables>true</EnableApiKeyTables>
-		<EnableTokenValidation>true</EnableTokenValidation>
+		<EnableDatadog>false</EnableDatadog>
+		<EnableNewRelic>false</EnableNewRelic>
+		<EnableSmartSchema>false</EnableSmartSchema>
+		<EnableApiKeyTables>false</EnableApiKeyTables>
+		<EnableTokenValidation>false</EnableTokenValidation>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Testing">
 		<TestExecutionFramework>xUnit</TestExecutionFramework>
 		<DefaultLanguage>EN</DefaultLanguage>
-		<EnableChromeDriver>true</EnableChromeDriver>
-		<EnableGeckoDriver>true</EnableGeckoDriver>
-		<EnableIEDriver>true</EnableIEDriver>
+		<EnableChromeDriver>false</EnableChromeDriver>
+		<EnableGeckoDriver>false</EnableGeckoDriver>
+		<EnableIEDriver>false</EnableIEDriver>
 	</PropertyGroup>
 
 </Project>
