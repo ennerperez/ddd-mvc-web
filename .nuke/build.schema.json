@@ -78,13 +78,16 @@
             "enum": [
               "Clean",
               "Compile",
-              "Migrate",
+              "DatabaseClear",
+              "DatabaseUpdate",
+              "MigrationAdd",
+              "MigrationOutput",
+              "MigrationRemove",
               "Pack",
               "Prepare",
               "Publish",
               "Restore",
-              "Test",
-              "Update"
+              "Test"
             ]
           }
         },
@@ -100,13 +103,16 @@
             "enum": [
               "Clean",
               "Compile",
-              "Migrate",
+              "DatabaseClear",
+              "DatabaseUpdate",
+              "MigrationAdd",
+              "MigrationOutput",
+              "MigrationRemove",
               "Pack",
               "Prepare",
               "Publish",
               "Restore",
-              "Test",
-              "Update"
+              "Test"
             ]
           }
         },

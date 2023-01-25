@@ -13,7 +13,6 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.DotNet.EF;
 using Nuke.Common.Tools.DotNet.EF.Commands;
-using static Nuke.Common.Tools.DotNet.EF.Tasks;
 using Nuke.Common.Utilities.Collections;
 using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
@@ -21,7 +20,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 // ReSharper disable UnusedMember.Local
 
-class Build : NukeBuild
+partial class Build : NukeBuild
 {
 	/// Support plugins are available for:
 	///   - JetBrains ReSharper        https://nuke.build/resharper
@@ -155,74 +154,8 @@ class Build : NukeBuild
 
 		});
 
-	Target Migrate => _ => _
-		.Executes(() =>
-		{
-			var persistence = Solution.GetProject("Persistence")?.Path;
-			var startup = Solution.GetProject("Web")?.Path;
-			var startupPath = Solution.GetProject("Web")?.Directory ?? string.Empty;
-
-			var config = new ConfigurationBuilder()
-				.AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
-				.AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
-				.Build();
-
-			var connectionStrings = new Dictionary<string, string>();
-			config.Bind("ConnectionStrings", connectionStrings);
-
-			var combinations = from item in connectionStrings
-				let split = item.Key.Split(".")
-				let context = split.First()
-				let provider = split.Last()
-				select new {Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value};
-
-			foreach (var item in combinations)
-			{
-				DotNetEf(_ => new MigrationsSettings(Migrations.Add)
-					.EnableNoBuild()
-					.SetProjectFile(Solution.GetProject(persistence))
-					.SetStartupProjectFile(Solution.GetProject(startup))
-					.SetName(DateTime.Now.Ticks.ToString())
-					.SetContext(item.Context)
-					.SetOutputDir(Path.Combine("Migrations", item.Name, item.Provider))
-				);
-			}
-		});
-
-	Target Update => _ => _
-		.Executes(() =>
-		{
-			var persistence = Solution.GetProject("Persistence")?.Path;
-			var startup = Solution.GetProject("Web")?.Path;
-			var startupPath = Solution.GetProject("Web")?.Directory ?? string.Empty;
-
-			var config = new ConfigurationBuilder()
-				.AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
-				.AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
-				.Build();
-
-			var connectionStrings = new Dictionary<string, string>();
-			config.Bind("ConnectionStrings", connectionStrings);
-
-			var combinations = from item in connectionStrings
-				let split = item.Key.Split(".")
-				let context = split.First()
-				let provider = split.Last()
-				select new {Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value};
-
-			foreach (var item in combinations)
-			{
-				DotNetEf(_ => new DatabaseSettings(Database.Update)
-					.SetProjectFile(Solution.GetProject(persistence))
-					.SetStartupProjectFile(Solution.GetProject(startup))
-					.SetContext(item.Context)
-				);
-			}
-		});
-
 	Target Publish => _ => _
 		.DependsOn(Test)
-		.DependsOn(Migrate)
 		.DependsOn(Compile)
 		.DependsOn(Clean)
 		.Executes(() =>
