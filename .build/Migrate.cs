@@ -102,7 +102,7 @@ partial class Build
 
 			foreach (var item in combinations)
 			{
-				var fileName = Path.Combine(Solution.GetProject(persistence)?.Directory ?? "", "Scripts", item.Name, item.Provider, $"{DateTime.Now:yyyyMMdd}.sql");
+				var fileName = Path.Combine(Solution.GetProject(persistence)?.Directory ?? string.Empty, "Scripts", item.Name, item.Provider, $"{DateTime.Now:yyyyMMdd}.sql");
 				if (File.Exists(fileName)) File.Delete(fileName);
 				DotNetEf(_ => new MigrationsSettings(Migrations.Script)
 					.SetProjectFile(Solution.GetProject(persistence))

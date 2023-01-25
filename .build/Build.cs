@@ -178,9 +178,11 @@ partial class Build : NukeBuild
 
 	Target Pack => _ => _
 		.DependsOn(Publish)
+		.DependsOn(MigrationOutput)
 		.Executes(() =>
 		{
-			CopyDirectoryRecursively($"{PublishDirectory}/Migrations", $"{ArtifactsDirectory}/Migrations");
+			var persistence = Solution.GetProject("Persistence")?.Path;
+			CopyDirectoryRecursively($"{Solution.GetProject(persistence)?.Directory ?? string.Empty}/Scripts", $"{ArtifactsDirectory}/Scripts");
 			CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Results");
 			foreach (var project in PublishProjects)
 			{
