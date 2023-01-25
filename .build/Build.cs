@@ -113,6 +113,7 @@ partial class Build : NukeBuild
 			EnsureCleanDirectory(PublishDirectory);
 			EnsureCleanDirectory(ArtifactsDirectory);
 			EnsureCleanDirectory(TestResultsDirectory);
+			EnsureCleanDirectory(ScriptsDirectory);
 		});
 
 	Target Restore => _ => _
@@ -216,10 +217,14 @@ partial class Build : NukeBuild
 		.Executes(() =>
 		{
 			CopyDirectoryRecursively(ScriptsDirectory, $"{ArtifactsDirectory}/Scripts");
-			CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Results");
+			CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Tests");
 			foreach (var project in PublishProjects)
 			{
 				ZipFile.CreateFromDirectory($"{PublishDirectory}/{project}", $"{ArtifactsDirectory}/{project}.zip");
 			}
+			EnsureCleanDirectory(PublishDirectory);
+			EnsureCleanDirectory(TestResultsDirectory);
+			EnsureCleanDirectory(ScriptsDirectory);
+			Log.Information($"Output: {ArtifactsDirectory}");
 		});
 }

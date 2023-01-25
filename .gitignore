@@ -345,9 +345,6 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
-# Click-Once directory
-publish/
-
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
@@ -572,7 +569,7 @@ package-lock.json
 *.private.env.json
 
 # Extras
-**/Data
+**/[Dd]ata
 
 # SpecFlow
 *.feature.cs
@@ -582,4 +579,8 @@ package-lock.json
 
 # Nuke Build
 .nuke/temp
-output
+
+# Build Folders
+[Pp]ublish
+[Oo]utput
+[Ss]cripts
