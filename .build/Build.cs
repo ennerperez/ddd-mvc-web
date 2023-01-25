@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -33,7 +34,7 @@ class Build : NukeBuild
 	readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
 	[Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)")]
-	public string Environment= IsLocalBuild ? "Development" : "Production";
+	public string Environment = IsLocalBuild ? "Development" : "Production";
 
 	[Solution] readonly Solution Solution;
 
@@ -159,22 +160,64 @@ class Build : NukeBuild
 		{
 			var persistence = Solution.GetProject("Persistence")?.Path;
 			var startup = Solution.GetProject("Web")?.Path;
-			var startupPath = Solution.GetProject("Web")?.Directory??string.Empty;
+			var startupPath = Solution.GetProject("Web")?.Directory ?? string.Empty;
 
 			var config = new ConfigurationBuilder()
 				.AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
 				.AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
 				.Build();
 
-			var provider = config["AppSettings:DbProvider"]??string.Empty;;
+			var connectionStrings = new Dictionary<string, string>();
+			config.Bind("ConnectionStrings", connectionStrings);
 
-			DotNetEf(_ => new MigrationsSettings(Migrations.Add)
-				.SetName(DateTime.Now.Ticks.ToString())
-				.SetContext($"{provider}")
-				.SetProjectFile(Solution.GetProject(persistence))
-				.SetStartupProjectFile(Solution.GetProject(startup))
-				.SetOutputDir(Path.Combine("Migrations",$"{provider}"))
-				.EnableNoBuild());
+			var combinations = from item in connectionStrings
+				let split = item.Key.Split(".")
+				let context = split.First()
+				let provider = split.Last()
+				select new {Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value};
+
+			foreach (var item in combinations)
+			{
+				DotNetEf(_ => new MigrationsSettings(Migrations.Add)
+					.EnableNoBuild()
+					.SetProjectFile(Solution.GetProject(persistence))
+					.SetStartupProjectFile(Solution.GetProject(startup))
+					.SetName(DateTime.Now.Ticks.ToString())
+					.SetContext(item.Context)
+					.SetOutputDir(Path.Combine("Migrations", item.Name, item.Provider))
+				);
+			}
+		});
+
+	Target Update => _ => _
+		.Executes(() =>
+		{
+			var persistence = Solution.GetProject("Persistence")?.Path;
+			var startup = Solution.GetProject("Web")?.Path;
+			var startupPath = Solution.GetProject("Web")?.Directory ?? string.Empty;
+
+			var config = new ConfigurationBuilder()
+				.AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
+				.AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
+				.Build();
+
+			var connectionStrings = new Dictionary<string, string>();
+			config.Bind("ConnectionStrings", connectionStrings);
+
+			var combinations = from item in connectionStrings
+				let split = item.Key.Split(".")
+				let context = split.First()
+				let provider = split.Last()
+				select new {Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value};
+
+			foreach (var item in combinations)
+			{
+				DotNetEf(_ => new DatabaseSettings(Database.Update)
+					.SetProjectFile(Solution.GetProject(persistence))
+					.SetStartupProjectFile(Solution.GetProject(startup))
+					.SetContext(item.Context)
+				);
+			}
 		});
 
 	Target Publish => _ => _
