@@ -83,7 +83,8 @@ namespace Tests.Business
 			Services
 				.AddDomain()
 				.AddInfrastructure()
-				.AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration, Providers.Sqlite), ServiceLifetime.Transient)
+				.AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
+				.AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
 				.AddBusiness()
 				.AddTests();
 
