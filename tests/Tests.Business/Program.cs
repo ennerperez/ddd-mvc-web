@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Business;
 using Domain;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -82,10 +83,7 @@ namespace Tests.Business
 			Services
 				.AddDomain()
 				.AddInfrastructure()
-				.AddPersistence(options =>
-						DefaultContext.UseDbEngine(options,Configuration),
-					Configuration["AppSettings:DbProvider"],
-					ServiceLifetime.Transient)
+				.AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration, Providers.Sqlite), ServiceLifetime.Transient)
 				.AddBusiness()
 				.AddTests();
 

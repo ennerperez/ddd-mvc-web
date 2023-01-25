@@ -36,8 +36,9 @@ namespace Web.Controllers.MVC
 		public IActionResult Error(int code = 0)
 		{
 			_logger.LogError("{TraceIdentifier}", HttpContext.TraceIdentifier);
-			var model = new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier};
-			if (code != 0) return View($"Errors/{code}", model);
+			var model = new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Code = code};
+			if (code != 0)
+				return View($"Errors/{code.ToString().Substring(0, 1)}0x", model);
 			return View(model);
 		}
 
@@ -112,7 +113,7 @@ namespace Web.Controllers.MVC
 
 			foreach (var item in assemblies)
 			{
-				var model = new AboutViewModel() { Name = item.Name, Version = item.Version, Dependency = true, };
+				var model = new AboutViewModel() {Name = item.Name, Version = item.Version, Dependency = true,};
 				if (!models.Any(m => m.Name == model.Name))
 					models.Add(model);
 			}

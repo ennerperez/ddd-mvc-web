@@ -1,39 +1,26 @@
-using Microsoft.EntityFrameworkCore;
-using Persistence.Conventions;
 using System;
 using System.Linq;
-using Domain.Entities;
+using Domain.Entities.Cache;
 using Domain.Interfaces;
-#if USING_IDENTITY
-using Domain.Entities.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-#endif
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-
-#if DEBUG && HAS_DATABASE_PROVIDER
-using System.IO;
-#endif
-
+using Persistence.Conventions;
 
 namespace Persistence.Contexts
 {
-	public partial class DefaultContext :
-#if USING_IDENTITY
-		IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
-#else
-		DbContext
-#endif
+	public class CacheContext : DbContext
 	{
-		public DefaultContext()
+		public CacheContext()
 		{
 		}
 
-		public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
+		public CacheContext(DbContextOptions<CacheContext> options) : base(options)
 		{
 		}
 
 		private static string ProviderName { get; set; }
 		internal static bool HasSchema => DbContextExtensions.HasSchema(ProviderName);
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
@@ -80,11 +67,8 @@ namespace Persistence.Contexts
 
 		#region DbSet
 
-		public DbSet<Setting> Settings { get; set; }
-		public DbSet<Client> Clients { get; set; }
-		public DbSet<Budget> Budgets { get; set; }
+		public DbSet<Country> Countries { get; set; }
 
 		#endregion DbSet
-
 	}
 }

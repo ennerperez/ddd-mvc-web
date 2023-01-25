@@ -42,7 +42,7 @@ namespace Persistence.Conventions
 
 			// Fix datetime offset support for integration tests
 			// See: https://blog.dangl.me/archive/handling-datetimeoffset-in-sqlite-with-entity-framework-core/
-			if (new[] {"Sqlite"}.Contains(options.Provider))
+			if (new[] {Providers.Sqlite}.Contains(options.Provider))
 			{
 				// SQLite does not have proper support for DateTimeOffset via Entity Framework Domain, see the limitations
 				// here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
@@ -122,7 +122,7 @@ namespace Persistence.Conventions
 				}
 				else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
 				{
-					if (options.UseDateTime || (new[] {"Sqlite"}.Contains(options.Provider)))
+					if (options.UseDateTime || (new[] {Providers.Sqlite}.Contains(options.Provider)))
 					{
 						p.SetColumnType("datetime");
 						columnType = p.GetColumnType();
@@ -134,11 +134,11 @@ namespace Persistence.Conventions
 					var maxValue = p.GetMaxLength();
 					var max = maxValue.HasValue ? maxValue.ToString() : "max";
 
-					if (new[] {"MySql", "MariaDB"}.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
+					if (new[] {Providers.MySql, Providers.MariaDb}.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
 						p.SetColumnType(max == "max" ? $"longtext" : $"text");
-					else if (new[] {"Sqlite"}.Contains(options.Provider))
+					else if (new[] {Providers.Sqlite}.Contains(options.Provider))
 						p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
-					else if (new[] {"PostgreSQL"}.Contains(options.Provider))
+					else if (new[] {Providers.PostgreSql}.Contains(options.Provider))
 						p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
 					else
 						p.SetColumnType($"varchar({max})");
@@ -148,7 +148,7 @@ namespace Persistence.Conventions
 				}
 
 				// See: https://stackoverflow.com/questions/8746207/1071-specified-key-was-too-long-max-key-length-is-1000-bytes
-				if (new[] {"MySql", "MariaDB"}.Contains(options.Provider) && p.GetMaxLength() > 255)
+				if (new[] {Providers.MySql, Providers.MariaDb}.Contains(options.Provider) && p.GetMaxLength() > 255)
 					p.SetMaxLength(255);
 			}
 

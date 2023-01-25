@@ -59,7 +59,7 @@ namespace Persistence.Services
 					var prop = typeof(TEntity).GetProperty("IsDeleted");
 					var type = prop?.PropertyType;
 					var constant = Expression.Constant(false);
-					var methodInfo = type?.GetMethod("Equals", new[] { type });
+					var methodInfo = type?.GetMethod("Equals", new[] {type});
 					var member = Expression.Property(predicate.Parameters[0], prop);
 					var callExp = Expression.Call(member, methodInfo, constant);
 					var body = Expression.AndAlso(callExp, predicate.Body);
@@ -175,10 +175,10 @@ namespace Persistence.Services
 						if (value != null && value != type.GetDefault())
 						{
 							constant = Expression.Constant(value);
-							var methods = new[] { "Contains", "Equals", "CompareTo" };
+							var methods = new[] {"Contains", "Equals", "CompareTo"};
 							foreach (var method in methods)
 							{
-								var methodInfo = type.GetMethod(method, new[] { type });
+								var methodInfo = type.GetMethod(method, new[] {type});
 								if (methodInfo != null)
 								{
 									var member = item;
@@ -249,7 +249,7 @@ namespace Persistence.Services
 			return await _dbSet.AnyAsync(cancellationToken);
 		}
 
-		public virtual async Task CreateAsync(params TEntity[] entities)
+		public virtual async Task CreateAsync(TEntity[] entities, CancellationToken cancellationToken = default)
 		{
 #if ENABLE_BULK
 			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
@@ -258,7 +258,7 @@ namespace Persistence.Services
 #if ENABLE_SPLIT
 				if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
 				{
-					await _dbSet.AddRangeAsync(entities);
+					await _dbSet.AddRangeAsync(entities, cancellationToken);
 				}
 				else
 				{
@@ -266,24 +266,29 @@ namespace Persistence.Services
 					var parts = entities.Split(size);
 					foreach (var item in parts)
 					{
-						await _dbSet.AddRangeAsync(item);
-						await _dbContext.SaveChangesAsync();
+						await _dbSet.AddRangeAsync(item, cancellationToken);
+						await _dbContext.SaveChangesAsync(cancellationToken);
 					}
 
 					return;
 				}
 #else
-                await _dbSet.AddRangeAsync(entities);
+                await _dbSet.AddRangeAsync(entities, cancellationToken);
 #endif
 			}
 #if ENABLE_BULK
 			else
-				await _dbContext.BulkInsertAsync(entities);
+				await _dbContext.BulkInsertAsync(entities, cancellationToken: cancellationToken);
 #endif
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.SaveChangesAsync(cancellationToken);
+		}
+		public virtual async Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+		{
+			await _dbSet.AddAsync(entity, cancellationToken);
+			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 
-		public virtual async Task UpdateAsync(params TEntity[] entities)
+		public virtual async Task UpdateAsync(TEntity[] entities, CancellationToken cancellationToken = default)
 		{
 #if ENABLE_BULK
 			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
@@ -301,7 +306,7 @@ namespace Persistence.Services
 					foreach (var item in parts)
 					{
 						_dbSet.UpdateRange(item);
-						await _dbContext.SaveChangesAsync();
+						await _dbContext.SaveChangesAsync(cancellationToken);
 					}
 
 					return;
@@ -312,20 +317,50 @@ namespace Persistence.Services
 			}
 #if ENABLE_BULK
 			else
-				await _dbContext.BulkUpdateAsync(entities);
+				await _dbContext.BulkUpdateAsync(entities, cancellationToken: cancellationToken);
 #endif
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.SaveChangesAsync(cancellationToken);
+		}
+		public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+		{
+			_dbSet.Update(entity);
+			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 
-		public virtual async Task DeleteAsync(params object[] keys)
+
+		public virtual async Task CreateOrUpdateAsync(TEntity[] entities, CancellationToken cancellationToken = default)
 		{
-			var list = new List<TEntity>();
-			foreach (var item in keys)
+#if ENABLE_BULK
+			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
+#endif
+				foreach (var item in entities)
+				{
+					if (item.Id.Equals(default))
+						await CreateAsync(item, cancellationToken);
+					else
+						await UpdateAsync(item, cancellationToken);
+				}
+#if ENABLE_BULK
+			else
 			{
-				var entity = await _dbSet.FindAsync(item);
-				if (entity != null)
-					list.Add(entity);
+				await _dbContext.BulkUpdateAsync(entities.Where(m => !m.Id.Equals(default)).ToArray(), cancellationToken: cancellationToken);
+				await _dbContext.BulkInsertAsync(entities.Where(m => m.Id.Equals(default)).ToArray(), cancellationToken: cancellationToken);
+				await _dbContext.SaveChangesAsync(cancellationToken);
 			}
+#endif
+		}
+		public virtual async Task CreateOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+		{
+			if (entity.Id.Equals(default))
+				await CreateAsync(entity, cancellationToken);
+			else
+				await UpdateAsync(entity, cancellationToken);
+		}
+
+
+		public virtual async Task DeleteAsync(TEntity[] entities, CancellationToken cancellationToken = default)
+		{
+			var list = entities.ToList();
 
 			if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
 			{
@@ -342,81 +377,21 @@ namespace Persistence.Services
 					}
 				}
 
-				await UpdateAsync(list.ToArray());
+				await UpdateAsync(list.ToArray(), cancellationToken);
 				return;
 			}
 
 #if ENABLE_BULK
-			if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
+			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
 				_dbSet.RemoveRange(list);
 #if ENABLE_BULK
 			else
-				await _dbContext.BulkDeleteAsync(list);
+				await _dbContext.BulkDeleteAsync(list, cancellationToken: cancellationToken);
 #endif
 
-			await _dbContext.SaveChangesAsync();
-		}
-
-		public virtual async Task CreateOrUpdateAsync(params TEntity[] entities)
-		{
-#if ENABLE_BULK
-			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
-#endif
-				foreach (var item in entities)
-				{
-					if (item.Id.Equals(default))
-						await CreateAsync(item);
-					else
-						await UpdateAsync(item);
-				}
-#if ENABLE_BULK
-			else
-			{
-				await _dbContext.BulkUpdateAsync(entities.Where(m => !m.Id.Equals(default)).ToArray());
-				await _dbContext.BulkInsertAsync(entities.Where(m => m.Id.Equals(default)).ToArray());
-				await _dbContext.SaveChangesAsync();
-			}
-#endif
-		}
-
-		public virtual async Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
-		{
-			await _dbSet.AddAsync(entity, cancellationToken);
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
-
-		public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
-		{
-			_dbSet.Update(entity);
-			await _dbContext.SaveChangesAsync(cancellationToken);
-		}
-
-		public virtual async Task DeleteAsync(object key, CancellationToken cancellationToken = default)
-		{
-			var entity = await _dbSet.FindAsync(key);
-			if (entity != null)
-			{
-				if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
-				{
-					// ReSharper disable once SuspiciousTypeConversion.Global
-					if (!((ISoftDelete)entity).IsDeleted)
-					{
-						// ReSharper disable once SuspiciousTypeConversion.Global
-						((ISoftDelete)entity).IsDeleted = true;
-						// ReSharper disable once SuspiciousTypeConversion.Global
-						((ISoftDelete)entity).DeletedAt = DateTime.Now;
-					}
-
-					await UpdateAsync(entity, cancellationToken);
-					return;
-				}
-			}
-
-			_dbSet.Remove(entity);
-			await _dbContext.SaveChangesAsync(cancellationToken);
-		}
-
 		public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
 		{
 			if (entity != null)
@@ -441,12 +416,69 @@ namespace Persistence.Services
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 
-		public virtual async Task CreateOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+		public virtual async Task DeleteAsync<T>(T[] keys, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>
 		{
-			if (entity.Id.Equals(default))
-				await CreateAsync(entity, cancellationToken);
+			var list = new List<TEntity>();
+			foreach (var item in keys)
+			{
+				var entity = await _dbSet.FindAsync(item, cancellationToken);
+				if (entity != null)
+					list.Add(entity);
+			}
+
+			if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+			{
+				// ReSharper disable once SuspiciousTypeConversion.Global
+				foreach (var entity in list.Cast<ISoftDelete>())
+				{
+					// ReSharper disable once SuspiciousTypeConversion.Global
+					if (entity != null && !((ISoftDelete)entity).IsDeleted)
+					{
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).IsDeleted = true;
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).DeletedAt = DateTime.Now;
+					}
+				}
+
+				await UpdateAsync(list.ToArray(), cancellationToken);
+				return;
+			}
+
+#if ENABLE_BULK
+			if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
+#endif
+				_dbSet.RemoveRange(list);
+#if ENABLE_BULK
 			else
-				await UpdateAsync(entity, cancellationToken);
+				await _dbContext.BulkDeleteAsync(list, cancellationToken: cancellationToken);
+#endif
+
+			await _dbContext.SaveChangesAsync(cancellationToken);
+		}
+		public virtual async Task DeleteAsync<T>(T key, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>
+		{
+			var entity = await _dbSet.FindAsync(key);
+			if (entity != null)
+			{
+				if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+				{
+					// ReSharper disable once SuspiciousTypeConversion.Global
+					if (!((ISoftDelete)entity).IsDeleted)
+					{
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).IsDeleted = true;
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).DeletedAt = DateTime.Now;
+					}
+
+					await UpdateAsync(entity, cancellationToken);
+					return;
+				}
+			}
+
+			_dbSet.Remove(entity);
+			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 
 		// * //
@@ -610,10 +642,10 @@ namespace Persistence.Services
 						if (value != null && value != type.GetDefault())
 						{
 							constant = Expression.Constant(value);
-							var methods = new[] { "Contains", "Equals", "CompareTo" };
+							var methods = new[] {"Contains", "Equals", "CompareTo"};
 							foreach (var method in methods)
 							{
-								var methodInfo = type.GetMethod(method, new[] { type });
+								var methodInfo = type.GetMethod(method, new[] {type});
 								if (methodInfo != null)
 								{
 									var member = item;
@@ -715,6 +747,12 @@ namespace Persistence.Services
 
 			_dbContext.SaveChanges();
 		}
+		public virtual void Create(TEntity entity)
+		{
+			_dbSet.Add(entity);
+			_dbContext.SaveChanges();
+		}
+
 		public virtual void Update(params TEntity[] entities)
 		{
 #if ENABLE_BULK
@@ -749,8 +787,100 @@ namespace Persistence.Services
 
 			_dbContext.SaveChanges();
 		}
+		public virtual void Update(TEntity entity)
+		{
+			_dbSet.Update(entity);
+			_dbContext.SaveChanges();
+		}
 
-		public virtual void Delete(params object[] keys)
+		public virtual void CreateOrUpdate(params TEntity[] entities)
+		{
+#if ENABLE_BULK
+			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
+#endif
+				foreach (var item in entities)
+				{
+					if (item.Id.Equals(default))
+						Create(item);
+					else
+						Update(item);
+				}
+#if ENABLE_BULK
+			else
+			{
+				_dbContext.BulkUpdate(entities.Where(m => !m.Id.Equals(default)).ToArray());
+				_dbContext.BulkInsert(entities.Where(m => m.Id.Equals(default)).ToArray());
+				_dbContext.SaveChanges();
+			}
+#endif
+		}
+		public virtual void CreateOrUpdate(TEntity entity)
+		{
+			if (entity.Id.Equals(default))
+				Create(entity);
+			else
+				Update(entity);
+		}
+
+		public virtual void Delete(TEntity[] entities)
+		{
+			var list = entities.ToList();
+
+			if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+			{
+				// ReSharper disable once SuspiciousTypeConversion.Global
+				foreach (var entity in list.Cast<ISoftDelete>())
+				{
+					// ReSharper disable once SuspiciousTypeConversion.Global
+					if (entity != null && !((ISoftDelete)entity).IsDeleted)
+					{
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).IsDeleted = true;
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).DeletedAt = DateTime.Now;
+					}
+				}
+
+				Update(list.ToArray());
+				return;
+			}
+
+#if ENABLE_BULK
+			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
+#endif
+				_dbSet.RemoveRange(list);
+#if ENABLE_BULK
+			else
+				_dbContext.BulkDelete(list);
+#endif
+
+			_dbContext.SaveChanges();
+		}
+		public virtual void Delete(TEntity entity)
+		{
+			if (entity != null)
+			{
+				if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+				{
+					// ReSharper disable once SuspiciousTypeConversion.Global
+					if (!((ISoftDelete)entity).IsDeleted)
+					{
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).IsDeleted = true;
+						// ReSharper disable once SuspiciousTypeConversion.Global
+						((ISoftDelete)entity).DeletedAt = DateTime.Now;
+					}
+
+					Update(entity);
+					return;
+				}
+			}
+
+			_dbContext.Remove(entity);
+			_dbContext.SaveChanges();
+		}
+
+		public virtual void Delete<T>(T[] keys)  where T : struct, IComparable<T>, IEquatable<T>
 		{
 			var list = new List<TEntity>();
 			foreach (var item in keys)
@@ -790,62 +920,7 @@ namespace Persistence.Services
 
 			_dbContext.SaveChanges();
 		}
-
-		public virtual void CreateOrUpdate(params TEntity[] entities)
-		{
-#if ENABLE_BULK
-			if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
-#endif
-				foreach (var item in entities)
-				{
-					if (item.Id.Equals(default))
-						Create(item);
-					else
-						Update(item);
-				}
-#if ENABLE_BULK
-			else
-			{
-				_dbContext.BulkUpdate(entities.Where(m => !m.Id.Equals(default)).ToArray());
-				_dbContext.BulkInsert(entities.Where(m => m.Id.Equals(default)).ToArray());
-				_dbContext.SaveChanges();
-			}
-#endif
-		}
-		public virtual void Create(TEntity entity)
-		{
-			_dbSet.Add(entity);
-			_dbContext.SaveChanges();
-		}
-		public virtual void Update(TEntity entity)
-		{
-			_dbSet.Update(entity);
-			_dbContext.SaveChanges();
-		}
-		public virtual void Delete(TEntity entity)
-		{
-			if (entity != null)
-			{
-				if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
-				{
-					// ReSharper disable once SuspiciousTypeConversion.Global
-					if (!((ISoftDelete)entity).IsDeleted)
-					{
-						// ReSharper disable once SuspiciousTypeConversion.Global
-						((ISoftDelete)entity).IsDeleted = true;
-						// ReSharper disable once SuspiciousTypeConversion.Global
-						((ISoftDelete)entity).DeletedAt = DateTime.Now;
-					}
-
-					Update(entity);
-					return;
-				}
-			}
-
-			_dbContext.Remove(entity);
-			_dbContext.SaveChanges();
-		}
-		public virtual void Delete(object key)
+		public virtual void Delete<T>(T key) where T : struct, IComparable<T>, IEquatable<T>
 		{
 			var entity = _dbSet.Find(key);
 			if (entity != null)
@@ -868,14 +943,6 @@ namespace Persistence.Services
 
 			_dbContext.Remove(entity);
 			_dbContext.SaveChanges();
-		}
-
-		public virtual void CreateOrUpdate(TEntity entity)
-		{
-			if (entity.Id.Equals(default))
-				Create(entity);
-			else
-				Update(entity);
 		}
 
 

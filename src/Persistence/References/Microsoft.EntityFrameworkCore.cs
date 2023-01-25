@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
+using Persistence;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.EntityFrameworkCore
@@ -51,7 +58,7 @@ namespace Microsoft.EntityFrameworkCore
 			var database = context.Database;
 			var entityTypes = context.Model.GetEntityTypes().ToArray();
 			var query = string.Empty;
-			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
+			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.SqlServer))
 				query = string.Join(Environment.NewLine, entityTypes.Select(m =>
 				{
 					var q1 = $"DBCC CHECKIDENT ('[{m.GetSchema()}].[{m.GetTableName()}]', RESEED, 0);";
@@ -59,7 +66,7 @@ namespace Microsoft.EntityFrameworkCore
 					var q0 = $"TRUNCATE TABLE [{m.GetSchema()}].[{m.GetTableName()}];";
 					return string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}).ToArray());
-			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
+			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.Sqlite))
 				query = string.Join(Environment.NewLine, entityTypes.Select(m =>
 				{
 					var q1 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{m.GetTableName()}';";
@@ -81,7 +88,7 @@ namespace Microsoft.EntityFrameworkCore
 			var database = context.Database;
 			var entityType = context.Model.FindEntityType(typeof(TEntity));
 			var query = string.Empty;
-			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
+			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.SqlServer))
 			{
 				if (entityType != null)
 				{
@@ -91,7 +98,7 @@ namespace Microsoft.EntityFrameworkCore
 					query = string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}
 			}
-			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("Sqlite"))
+			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.Sqlite))
 			{
 				if (entityType != null)
 				{
@@ -139,12 +146,101 @@ namespace Microsoft.EntityFrameworkCore
 				if (isValueGenerated)
 				{
 					var query = string.Empty;
-					if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith("SqlServer"))
+					if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.SqlServer))
 						query = $"SET IDENTITY_INSERT [{entityType.GetSchema()}].[{entityType.GetTableName()}] {(enable ? "ON" : "OFF")};";
 
 					if (!string.IsNullOrWhiteSpace(query))
 						await database.ExecuteSqlRawAsync(query, cancellationToken);
 				}
+			}
+		}
+
+		public static bool HasSchema(this DbContext context)
+		{
+			var providerName = context.Database.ProviderName?.Split('.').Last();
+			return HasSchema(providerName);
+		}
+		public static bool HasSchema(string providerName)
+		{
+			return !(new[] { Providers.Sqlite, Providers.MySql }).Contains(providerName);
+		}
+
+		public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string providerName = "")
+		{
+			var contextName = optionsBuilder.Options.ContextType.Name.Split(".").First();
+
+			if (string.IsNullOrWhiteSpace(providerName))
+			{
+				var connectionStrings = new Dictionary<string, string>();
+				config.Bind("ConnectionStrings",connectionStrings);
+				connectionStrings = connectionStrings
+					.Where(m => m.Key.StartsWith(contextName))
+					.ToDictionary(k => k.Key, v => v.Value);
+				if (connectionStrings.Count == 0)
+					throw new InvalidDataException($"Unable to found a connection string for {contextName}");
+				if (connectionStrings.Count != 1)
+					throw new InvalidDataException($"The context {contextName} has more than one connection string");
+
+				providerName = connectionStrings.First().Key.Split(".").Last();
+			}
+			var connectionString = config.GetConnectionString($"{contextName}.{providerName}");
+
+#pragma warning disable 168
+#pragma warning disable 219
+#if USING_DATABASE_PROVIDER
+			const string MigrationsHistoryTableName = "__EFMigrationsHistory";
+			if (string.IsNullOrWhiteSpace(connectionString))
+				connectionString = config.GetConnectionString(contextName);
+#endif
+			switch (providerName)
+			{
+#if USING_SQLITE
+				case Providers.Sqlite:
+#pragma warning restore 219
+#pragma warning restore 168
+					DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder() { ConnectionString = connectionString };
+					var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(data source ?= ?)(.*)(;?)").Groups[2].Value;
+					var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
+					csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);
+					optionsBuilder.UseSqlite(csb.ConnectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName));
+					break;
+#endif
+#if USING_MSSQL
+				case Providers.SqlServer:
+					optionsBuilder.UseSqlServer(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
+					break;
+#endif
+#if (USING_MYSQL) || (USING_MARIADB)
+				case Providers.MariaDb:
+				case Providers.MySql:
+#if USING_MARIADB
+					var serverVersion = ServerVersion.Parse("10.6");
+#elif USING_MYSQL
+					var serverVersion = ServerVersion.Parse("8.0");
+#endif
+					try
+					{
+						serverVersion = ServerVersion.AutoDetect(connectionString);
+					}
+					catch (Exception)
+					{
+						// ignore
+					}
+					optionsBuilder.UseMySql(connectionString, serverVersion, x => x.MigrationsHistoryTable(MigrationsHistoryTableName));
+					break;
+#endif
+#if USING_POSTGRESQL
+				case Providers.PostgreSql:
+					optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
+					break;
+#endif
+#if USING_ORACLE
+				case Providers.Oracle:
+					optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
+					break;
+#endif
+				default:
+					break;
 			}
 		}
 	}

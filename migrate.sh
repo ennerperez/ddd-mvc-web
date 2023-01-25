@@ -1,6 +1,7 @@
 #!/bin/bash
 
 context="Default"
+provider="Sqlite"
 name=
 clear=false
 update=false
@@ -20,12 +21,12 @@ for i in "$@"; do
     shift
 done
 
-context_name="${context}"
+context_name="${provider}"
 
 if [[ "$clear" == true ]]; then
     dotnet ef database drop -f --context ${context_name} --project src/Persistence --startup-project src/${startup}
-    if [[ -d "src/Persistence/Migrations/${context}" ]]; then
-        rm -r -f "src/Persistence/Migrations/${context}"
+    if [[ -d "src/Persistence/Migrations/${context}/${provider}" ]]; then
+        rm -r -f "src/Persistence/Migrations/${context}/${provider}"
     fi
 else
     if [[ "$rollback" == true ]]; then
@@ -36,11 +37,11 @@ fi
 if [[ "$output" != "" ]]; then
     now=$(date '+%Y%m%d')
     script_name="${now}_${context}Context_${output}"
-    dotnet ef migrations script -i --context ${context_name} -o src/Persistence/Migrations/${context}/Scripts/$script_name.sql  --project src/Persistence --startup-project src/${startup}
+    dotnet ef migrations script -i --context ${context_name} -o src/Persistence/Migrations/${context}/${provider}/Scripts/$script_name.sql  --project src/Persistence --startup-project src/${startup}
     echo "Done: ${script_name}"
 else
     if [[ "$name" != "" ]]; then
-        dotnet ef migrations add ${name} -o "Migrations/${context}" --context ${context_name}  --project src/Persistence --startup-project src/${startup}
+        dotnet ef migrations add ${name} -o "Migrations/${context}/${provider}" --context ${context_name}  --project src/Persistence --startup-project src/${startup}
         if [[ "$update" == true ]]; then
             dotnet ef database update ${name} --context ${context_name} --project src/Persistence --startup-project src/${startup}
         fi

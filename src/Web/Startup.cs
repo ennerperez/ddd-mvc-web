@@ -149,10 +149,8 @@ namespace Web
 			services
 				.AddDomain()
 				.AddInfrastructure()
-				.AddPersistence(options =>
-					DefaultContext.UseDbEngine(options,Configuration),
-					Configuration["AppSettings:DbProvider"],
-					ServiceLifetime.Transient)
+				.AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
+				.AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
 				.AddBusiness();
 
 #if USING_IDENTITY

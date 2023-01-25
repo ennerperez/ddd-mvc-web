@@ -38,29 +38,23 @@ namespace Persistence.Interfaces
 			bool includeDeleted = false,
 			CancellationToken cancellationToken = default);
 
-		Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null,
-			CancellationToken cancellationToken = default);
-		Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null,
-			CancellationToken cancellationToken = default);
-		Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null,
-			CancellationToken cancellationToken = default);
-		Task CreateAsync(params TEntity[] entity);
-		Task CreateOrUpdateAsync(params TEntity[] entity);
-		Task UpdateAsync(params TEntity[] entity);
-		Task DeleteAsync(params object[] key);
+		Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null, CancellationToken cancellationToken = default);
+		Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null, CancellationToken cancellationToken = default);
+		Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null, CancellationToken cancellationToken = default);
 
-		Task CreateAsync(TEntity entity,
-			CancellationToken cancellationToken = default);
-		Task CreateOrUpdateAsync(TEntity entity,
-			CancellationToken cancellationToken = default);
-		Task UpdateAsync(TEntity entity,
-			CancellationToken cancellationToken = default);
+		Task CreateAsync(TEntity[] entities, CancellationToken cancellationToken = default);
+		Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-		Task DeleteAsync(TEntity entity,
-			CancellationToken cancellationToken = default);
+		Task UpdateAsync(TEntity[] entities, CancellationToken cancellationToken = default);
+		Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-		Task DeleteAsync(object key,
-			CancellationToken cancellationToken = default);
+		Task CreateOrUpdateAsync(TEntity[] entities, CancellationToken cancellationToken = default);
+		Task CreateOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
+
+		Task DeleteAsync(TEntity[] entities, CancellationToken cancellationToken = default);
+		Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
+		Task DeleteAsync<T>(T[] keys, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>;
+		Task DeleteAsync<T>(T key, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>;
 
 		// * //
 
@@ -73,7 +67,6 @@ namespace Persistence.Interfaces
 			bool ignoreQueryFilters = false,
 			bool includeDeleted = false,
 			CancellationToken cancellationToken = default);
-
 
 		Task<TResult> LastOrDefaultAsync<TResult>(
 			Expression<Func<TEntity, TResult>> selector = null,
@@ -111,16 +104,16 @@ namespace Persistence.Interfaces
 		long LongCount(Expression<Func<TEntity, bool>> predicate = null);
 		bool Any(Expression<Func<TEntity, bool>> predicate = null);
 
-		void Create(params TEntity[] entity);
-		void CreateOrUpdate(params TEntity[] entity);
-		void Update(params TEntity[] entity);
-		void Delete(params object[] key);
-
+		void Create(params TEntity[] entities);
 		void Create(TEntity entity);
-		void CreateOrUpdate(TEntity entity);
+		void Update(params TEntity[] entities);
 		void Update(TEntity entity);
+		void CreateOrUpdate(params TEntity[] entities);
+		void CreateOrUpdate(TEntity entity);
+		void Delete<T>(T[] keys) where T : struct, IComparable<T>, IEquatable<T>;
+		void Delete<T>(T key) where T : struct, IComparable<T>, IEquatable<T>;
+		void Delete(TEntity[] entities);
 		void Delete(TEntity entity);
-		void Delete(object key);
 
 		// * //
 

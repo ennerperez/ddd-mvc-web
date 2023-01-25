@@ -289,7 +289,8 @@ namespace Business.Requests
 				entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Code == request.Code, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Budget), request.Id);
 
-			await _repository.DeleteAsync(request.Id, cancellationToken);
+			if (request.Id != null)
+				await _repository.DeleteAsync(request.Id.Value, cancellationToken);
 
 			entity.DeletedAt = DateTime.Now;
 			var userId = (_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId();
