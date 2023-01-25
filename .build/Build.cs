@@ -17,6 +17,7 @@ using Nuke.Common.Utilities.Collections;
 using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
 // ReSharper disable UnusedMember.Local
 
@@ -43,6 +44,7 @@ partial class Build : NukeBuild
 	AbsolutePath PublishDirectory => RootDirectory / "publish";
 	AbsolutePath ArtifactsDirectory => RootDirectory / "output";
 	AbsolutePath TestResultsDirectory => RootDirectory / "testresults";
+	AbsolutePath ScriptsDirectory => RootDirectory / "scripts";
 
 	Version _version = new Version("1.0.0.0");
 	string _hash = string.Empty;
@@ -110,6 +112,7 @@ partial class Build : NukeBuild
 			TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
 			EnsureCleanDirectory(PublishDirectory);
 			EnsureCleanDirectory(ArtifactsDirectory);
+			EnsureCleanDirectory(TestResultsDirectory);
 		});
 
 	Target Restore => _ => _
@@ -160,6 +163,38 @@ partial class Build : NukeBuild
 		.DependsOn(Clean)
 		.Executes(() =>
 		{
+
+			var persistence = Solution.GetProject("Persistence")?.Path;
+			var startup = Solution.GetProject("Web")?.Path;
+			var startupPath = Solution.GetProject("Web")?.Directory ?? string.Empty;
+
+			var config = new ConfigurationBuilder()
+				.AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
+				.AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
+				.Build();
+
+			var connectionStrings = new Dictionary<string, string>();
+			config.Bind("ConnectionStrings", connectionStrings);
+
+			var combinations = from item in connectionStrings
+				let split = item.Key.Split(".")
+				let context = split.First()
+				let provider = split.Last()
+				where provider != "Sqlite"
+				select new {Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value};
+
+			foreach (var item in combinations)
+			{
+				var fileName = Path.Combine(ScriptsDirectory, $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.sql");
+				if (File.Exists(fileName)) File.Delete(fileName);
+				DotNetEf(_ => new MigrationsSettings(Migrations.Script)
+					.SetProjectFile(Solution.GetProject(persistence))
+					.SetStartupProjectFile(Solution.GetProject(startup))
+					.SetContext(item.Context)
+					.SetOutput(fileName)
+				);
+			}
+
 			var publishCombinations =
 				from project in PublishProjects.Select(m => Solution.GetProject(m))
 				from framework in project.GetTargetFrameworks()
@@ -178,11 +213,9 @@ partial class Build : NukeBuild
 
 	Target Pack => _ => _
 		.DependsOn(Publish)
-		.DependsOn(MigrationOutput)
 		.Executes(() =>
 		{
-			var persistence = Solution.GetProject("Persistence")?.Path;
-			CopyDirectoryRecursively($"{Solution.GetProject(persistence)?.Directory ?? string.Empty}/Scripts", $"{ArtifactsDirectory}/Scripts");
+			CopyDirectoryRecursively(ScriptsDirectory, $"{ArtifactsDirectory}/Scripts");
 			CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Results");
 			foreach (var project in PublishProjects)
 			{
