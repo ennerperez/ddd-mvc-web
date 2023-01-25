@@ -5,8 +5,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-#if USING_DATABASE_PROVIDER && USING_IDENTITY
 using Domain.Entities;
+#if USING_IDENTITY
 using Domain.Entities.Identity;
 #endif
 using Microsoft.EntityFrameworkCore;
@@ -42,12 +42,12 @@ namespace Web.Services
 				try
 				{
 					await FromLocal<Setting>(context, cancellationToken: cancellationToken);
-
+#if USING_IDENTITY
 					await FromLocal<Role>(context, cancellationToken: cancellationToken);
 					await FromLocal<User>(context, cancellationToken: cancellationToken);
 					await FromLocal<UserRole>(context, cancellationToken: cancellationToken);
 					await FromLocal<UserClaim>(context, cancellationToken: cancellationToken);
-
+#endif
 #if DEBUG
 					await FromLocal<Client>(context, cancellationToken: cancellationToken);
 #endif

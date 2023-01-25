@@ -9,8 +9,10 @@
 @section Styles{
 	@await RenderSectionAsync("Styles", false)
 }
+
 @if (Html.UsingIdentity())
 {
+	@* ReSharper disable once Mvc.PartialViewNotResolved *@
 	<partial name="_Header.Identity"/>
 }
 else

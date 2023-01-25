@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -54,7 +55,6 @@ using Auth0.AspNetCore.Authentication;
 #endif
 #if ENABLE_TOKEN_VALIDATION
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 #endif
 #if USING_NEWTONSOFT

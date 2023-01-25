@@ -8,7 +8,7 @@
 
 	<!-- Persistence -->
   <PropertyGroup>
-  	<BuildConstants Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">$(BuildConstants)USING_DATABASE_PROVIDER;</BuildConstants>
+		<UsingDabaseProvider>false</UsingDabaseProvider>
     <BuildConstants Condition="'$(UsingSqlite)' == 'true'">$(BuildConstants)USING_SQLITE;</BuildConstants>
     <BuildConstants Condition="'$(UsingSqlServer)' == 'true'">$(BuildConstants)USING_MSSQL;</BuildConstants>
     <BuildConstants Condition="'$(UsingMariaDb)' == 'true'">$(BuildConstants)USING_MARIADB;</BuildConstants>
@@ -19,6 +19,10 @@
     <BuildConstants Condition="'$(EnableBulk)' == 'true'">$(BuildConstants)ENABLE_BULK;</BuildConstants>
     <BuildConstants Condition="'$(EnableSplit)' == 'true'">$(BuildConstants)ENABLE_SPLIT;</BuildConstants>
   </PropertyGroup>
+	<PropertyGroup Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">
+		<UsingDabaseProvider>true</UsingDabaseProvider>
+		<BuildConstants>$(BuildConstants)USING_DATABASE_PROVIDER;</BuildConstants>
+	</PropertyGroup>
 
 	<!-- Infrastructure -->
 	<PropertyGroup>
