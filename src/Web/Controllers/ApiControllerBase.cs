@@ -36,6 +36,9 @@ namespace Web.Controllers
 		protected IGenericRepository<TEntity, TKey> Repository()
 			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
 
+		protected IGenericRepository<E, K> Repository<E, K>() where E : class, IEntity<K> where K : struct, IComparable<K>, IEquatable<K>
+			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<E, K>>();
+
 		protected bool IsAdmin => User.IsInRole(Roles.Admin);
 		protected int UserId => User.GetUserId<int>();
 
@@ -183,6 +186,9 @@ namespace Web.Controllers
 	{
 		protected new IGenericRepository<TEntity> Repository()
 			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity>>();
+
+		protected IGenericRepository<E> Repository<E>() where E : class, IEntity<int>
+			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<E>>();
 	}
 
 

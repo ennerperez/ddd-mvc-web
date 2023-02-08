@@ -15,7 +15,18 @@ namespace Persistence
 		public static IServiceCollection AddPersistence<TContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) where TContext : DbContext
 		{
 			services.AddDbContext<TContext>(optionsBuilder, serviceLifetime);
-
+			switch (serviceLifetime)
+			{
+				case ServiceLifetime.Transient:
+					services.AddTransient<DbContext, TContext>();
+					break;
+				case ServiceLifetime.Singleton:
+					services.AddSingleton<DbContext, TContext>();
+					break;
+				default:
+					services.AddScoped<DbContext, TContext>();
+					break;
+			}
 			DbContext = () => services.BuildServiceProvider().GetRequiredService<TContext>();
 
 			services.AddFromAssembly(Assembly.GetExecutingAssembly());
