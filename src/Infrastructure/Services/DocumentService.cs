@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -43,6 +44,18 @@ namespace Infrastructure.Services
 #endif
 			return data;
 		}
+
+		public Task<T> ComposeAsync<T>(object model = null) where T : IDocument
+		{
+			var instance = Compose<T>(model);
+			return Task.FromResult(instance);
+		}
+		public Task<byte[]> GenerateAsync<T>(T instance, string format) where T : IDocument
+		{
+			var data = Generate(instance, format);
+			return Task.FromResult(data);
+		}
+
 		public static void RegisterFonts(string path, string format = "ttf")
 		{
 #if USING_QUESTPDF

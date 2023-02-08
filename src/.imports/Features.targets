@@ -7,18 +7,19 @@
 	</PropertyGroup>
 
 	<!-- Persistence -->
-  <PropertyGroup>
+	<PropertyGroup>
 		<UsingDabaseProvider>false</UsingDabaseProvider>
-    <BuildConstants Condition="'$(UsingSqlite)' == 'true'">$(BuildConstants)USING_SQLITE;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSqlServer)' == 'true'">$(BuildConstants)USING_MSSQL;</BuildConstants>
-    <BuildConstants Condition="'$(UsingMariaDb)' == 'true'">$(BuildConstants)USING_MARIADB;</BuildConstants>
-    <BuildConstants Condition="'$(UsingMySql)' == 'true'">$(BuildConstants)USING_MYSQL;</BuildConstants>
-    <BuildConstants Condition="'$(UsingPostgreSql)' == 'true'">$(BuildConstants)USING_POSTGRESQL;</BuildConstants>
-    <BuildConstants Condition="'$(UsingOracle)' == 'true'">$(BuildConstants)USING_ORACLE;</BuildConstants>
-    <BuildConstants Condition="'$(EnableNonAsync)' == 'true'">$(BuildConstants)ENABLE_NONASYNC;</BuildConstants>
-    <BuildConstants Condition="'$(EnableBulk)' == 'true'">$(BuildConstants)ENABLE_BULK;</BuildConstants>
-    <BuildConstants Condition="'$(EnableSplit)' == 'true'">$(BuildConstants)ENABLE_SPLIT;</BuildConstants>
-  </PropertyGroup>
+		<BuildConstants Condition="'$(UsingSqlite)' == 'true'">$(BuildConstants)USING_SQLITE;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSqlServer)' == 'true'">$(BuildConstants)USING_MSSQL;</BuildConstants>
+		<BuildConstants Condition="'$(UsingMariaDb)' == 'true'">$(BuildConstants)USING_MARIADB;</BuildConstants>
+		<BuildConstants Condition="'$(UsingMySql)' == 'true'">$(BuildConstants)USING_MYSQL;</BuildConstants>
+		<BuildConstants Condition="'$(UsingPostgreSql)' == 'true'">$(BuildConstants)USING_POSTGRESQL;</BuildConstants>
+		<BuildConstants Condition="'$(UsingOracle)' == 'true'">$(BuildConstants)USING_ORACLE;</BuildConstants>
+		<BuildConstants Condition="'$(UsingDapper)' == 'true'">$(BuildConstants)USING_DAPPER;</BuildConstants>
+		<BuildConstants Condition="'$(UsingNonAsync)' == 'true'">$(BuildConstants)USING_NONASYNC;</BuildConstants>
+		<BuildConstants Condition="'$(UsingBulk)' == 'true'">$(BuildConstants)USING_BULK;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSplit)' == 'true'">$(BuildConstants)USING_SPLIT;</BuildConstants>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">
 		<UsingDabaseProvider>true</UsingDabaseProvider>
 		<BuildConstants>$(BuildConstants)USING_DATABASE_PROVIDER;</BuildConstants>
@@ -30,26 +31,30 @@
 		<BuildConstants Condition="'$(UsingAzureQueues)' == 'true'">$(BuildConstants)USING_QUEUES;</BuildConstants>
 		<BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
 		<BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
+		<BuildConstants Condition="'$(UsingAzureKeyVault)' == 'true'">$(BuildConstants)USING_VAULT;</BuildConstants>
 	</PropertyGroup>
 
 	<!-- Web -->
 	<PropertyGroup>
 		<BuildConstants Condition="'$(UsingAzureApplicationInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
-		<BuildConstants Condition="'$(EnableDatadog)' == 'true'">$(BuildConstants)ENABLE_DATADOG;</BuildConstants>
+		<BuildConstants Condition="'$(UsingDatadog)' == 'true'">$(BuildConstants)USING_DATADOG;</BuildConstants>
 		<BuildConstants Condition="'$(UsingNewtonsoft)' == 'true'">$(BuildConstants)USING_NEWTONSOFT;</BuildConstants>
 		<BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
 		<BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
 		<BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
-		<BuildConstants Condition="'$(EnableSassWatch)' == 'true'">$(BuildConstants)ENABLE_SASS_WATCH;</BuildConstants>
-		<BuildConstants Condition="'$(EnableSmartSchema)' == 'true'">$(BuildConstants)ENABLE_SMARTSCHEMA;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSassWatch)' == 'true'">$(BuildConstants)USING_SASS_WATCH;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSmartSchema)' == 'true'">$(BuildConstants)USING_SMARTSCHEMA;</BuildConstants>
 		<BuildConstants Condition="'$(UsingIdentity)' == 'true'">$(BuildConstants)USING_IDENTITY;</BuildConstants>
 		<BuildConstants Condition="'$(UsingCookies)' == 'true'">$(BuildConstants)USING_COOKIES;</BuildConstants>
 		<BuildConstants Condition="'$(UsingApiKey)' == 'true'">$(BuildConstants)USING_APIKEY;</BuildConstants>
 		<BuildConstants Condition="'$(UsingBearer)' == 'true'">$(BuildConstants)USING_BEARER;</BuildConstants>
 		<BuildConstants Condition="'$(UsingOpenId)' == 'true'">$(BuildConstants)USING_OPENID;</BuildConstants>
 		<BuildConstants Condition="'$(UsingAuth0)' == 'true'">$(BuildConstants)USING_AUTH0;</BuildConstants>
-		<BuildConstants Condition="'$(EnableTokenValidation)' == 'true'">$(BuildConstants)ENABLE_TOKEN_VALIDATION;</BuildConstants>
-		<BuildConstants Condition="'$(UsingAzureTables)' == 'true' AND '$(EnableApiKeyTables)' == 'true'">$(BuildConstants)ENABLE_APIKEY_TABLES;</BuildConstants>
+		<BuildConstants Condition="'$(UsingTokenValidation)' == 'true'">$(BuildConstants)USING_TOKEN_VALIDATION;</BuildConstants>
+		<BuildConstants Condition="'$(UsingCors)' == 'true'">$(BuildConstants)USING_CORS;</BuildConstants>
+		<BuildConstants Condition="'$(UsingAzureTables)' == 'true' AND '$(UsingApiKeyTables)' == 'true'">$(BuildConstants)USING_APIKEY_TABLES;</BuildConstants>
+		<BuildConstants Condition="'$(UsingCompression)' == 'true'">$(BuildConstants)USING_COMPRESSION;</BuildConstants>
+		<BuildConstants Condition="'$(UsingSession)' == 'true'">$(BuildConstants)USING_SESSION;</BuildConstants>
 	</PropertyGroup>
 
 	<!-- Testing -->

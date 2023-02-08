@@ -11,7 +11,7 @@ namespace Business
 	public static class Extensions
 	{
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="optionsBuilder"></param>
@@ -23,7 +23,7 @@ namespace Business
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="optionsBuilder"></param>
@@ -37,7 +37,7 @@ namespace Business
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="configureOptions"></param>
@@ -50,14 +50,15 @@ namespace Business
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="services"></param>
 		/// <returns></returns>
 		public static IServiceCollection AddBusiness(this IServiceCollection services)
 		{
-			services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-			services.AddMediatR(Assembly.GetExecutingAssembly());
+			var assemblies = new[] {Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly()};
+			services.AddValidatorsFromAssembly(assemblies[0]);
+			services.AddMediatR(assemblies);
 
 			services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
 			services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

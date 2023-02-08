@@ -10,7 +10,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Web.Controllers.API
@@ -20,7 +19,7 @@ namespace Web.Controllers.API
 	{
 		private readonly ILogger _logger;
 
-		public BudgetController(ILoggerFactory loggerFactory, IGenericRepository<Budget, Guid> repository) : base(repository)
+		public BudgetController(ILoggerFactory loggerFactory)
 		{
 			_logger = loggerFactory.CreateLogger(GetType());
 		}
@@ -31,11 +30,11 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s =>s), null, null, null);
+				var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s));
 				if (collection == null || !collection.Any())
-					return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Budget>() });
+					return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Budget>()});
 
-				return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
+				return new JsonResult(new {lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection});
 			}
 			catch (ValidationException v)
 			{
@@ -56,7 +55,7 @@ namespace Web.Controllers.API
 			{
 				try
 				{
-					var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s), p => p.Id == id, null, null);
+					var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s), p => p.Id == id);
 
 					return new JsonResult(collection);
 				}
@@ -81,7 +80,7 @@ namespace Web.Controllers.API
 			try
 			{
 				var collection = await Mediator.SendWithPage<Budget, Guid, Budget>((new Budget()).Select(s => s),
-					null, null, null, skip: ((page - 1) * size), take: size);
+					skip: ((page - 1) * size), take: size);
 				return new JsonResult(collection);
 			}
 			catch (ValidationException v)
@@ -170,7 +169,7 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				await Mediator.Send(new DeleteBudgetRequest() { Id = id });
+				await Mediator.Send(new DeleteBudgetRequest() {Id = id});
 				return Ok(id);
 			}
 			catch (ValidationException v)
@@ -195,8 +194,10 @@ namespace Web.Controllers.API
 				t.Id,
 				t.Code,
 				//Client = new { t.ClientId, ClientFullName = t.Client.FullName, ClientIdentification = t.Client.Identification },
-				t.ClientId, ClientFullName = t.Client.FullName, ClientIdentification = t.Client.Identification,
-				State = t.Status,
+				t.ClientId,
+				ClientFullName = t.Client.FullName,
+				ClientIdentification = t.Client.Identification,
+				t.Status,
 				t.Subtotal,
 				t.Taxes,
 				t.Total,

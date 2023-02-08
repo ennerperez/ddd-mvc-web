@@ -60,7 +60,7 @@ namespace Microsoft.EntityFrameworkCore
 			var database = context.Database;
 			var entityTypes = context.Model.GetEntityTypes().ToArray();
 			var query = string.Empty;
-			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.SqlServer))
+			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.SqlServer))
 				query = string.Join(Environment.NewLine, entityTypes.Select(m =>
 				{
 					var q1 = $"DBCC CHECKIDENT ('[{m.GetSchema()}].[{m.GetTableName()}]', RESEED, 0);";
@@ -68,7 +68,7 @@ namespace Microsoft.EntityFrameworkCore
 					var q0 = $"TRUNCATE TABLE [{m.GetSchema()}].[{m.GetTableName()}];";
 					return string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}).ToArray());
-			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.Sqlite))
+			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.Sqlite))
 				query = string.Join(Environment.NewLine, entityTypes.Select(m =>
 				{
 					var q1 = $"UPDATE sqlite_sequence SET seq=0 WHERE name='{m.GetTableName()}';";
@@ -90,7 +90,7 @@ namespace Microsoft.EntityFrameworkCore
 			var database = context.Database;
 			var entityType = context.Model.FindEntityType(typeof(TEntity));
 			var query = string.Empty;
-			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.SqlServer))
+			if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.SqlServer))
 			{
 				if (entityType != null)
 				{
@@ -100,7 +100,7 @@ namespace Microsoft.EntityFrameworkCore
 					query = string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
 				}
 			}
-			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.Sqlite))
+			else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.Sqlite))
 			{
 				if (entityType != null)
 				{
@@ -148,7 +148,7 @@ namespace Microsoft.EntityFrameworkCore
 				if (isValueGenerated)
 				{
 					var query = string.Empty;
-					if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(Providers.SqlServer))
+					if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.SqlServer))
 						query = $"SET IDENTITY_INSERT [{entityType.GetSchema()}].[{entityType.GetTableName()}] {(enable ? "ON" : "OFF")};";
 
 					if (!string.IsNullOrWhiteSpace(query))
@@ -164,17 +164,18 @@ namespace Microsoft.EntityFrameworkCore
 		}
 		public static bool HasSchema(string providerName)
 		{
-			return !(new[] { Providers.Sqlite, Providers.MySql }).Contains(providerName);
+			return !(new[] {DatabaseProviders.Sqlite, DatabaseProviders.MySql, DatabaseProviders.MariaDb}).Contains(providerName);
 		}
 
-		public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string providerName = "")
+		public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string contextName = "", string providerName = "")
 		{
-			var contextName = optionsBuilder.Options.ContextType.Name.Split(".").First();
+			if (string.IsNullOrWhiteSpace(contextName))
+				contextName = optionsBuilder.Options.ContextType.Name.Split(".").First();
 
 			if (string.IsNullOrWhiteSpace(providerName))
 			{
 				var connectionStrings = new Dictionary<string, string>();
-				config.Bind("ConnectionStrings",connectionStrings);
+				config.Bind("ConnectionStrings", connectionStrings);
 				connectionStrings = connectionStrings
 					.Where(m => m.Key.StartsWith(contextName))
 					.ToDictionary(k => k.Key, v => v.Value);
@@ -197,10 +198,10 @@ namespace Microsoft.EntityFrameworkCore
 			switch (providerName)
 			{
 #if USING_SQLITE
-				case Providers.Sqlite:
+				case DatabaseProviders.Sqlite:
 #pragma warning restore 219
 #pragma warning restore 168
-					DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder() { ConnectionString = connectionString };
+					DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder() {ConnectionString = connectionString};
 					var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(data source ?= ?)(.*)(;?)").Groups[2].Value;
 					var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
 					csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);
@@ -208,13 +209,13 @@ namespace Microsoft.EntityFrameworkCore
 					break;
 #endif
 #if USING_MSSQL
-				case Providers.SqlServer:
+				case DatabaseProviders.SqlServer:
 					optionsBuilder.UseSqlServer(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
 					break;
 #endif
 #if (USING_MYSQL) || (USING_MARIADB)
-				case Providers.MariaDb:
-				case Providers.MySql:
+				case DatabaseProviders.MariaDb:
+				case DatabaseProviders.MySql:
 #if USING_MARIADB
 					var serverVersion = ServerVersion.Parse("10.6");
 #elif USING_MYSQL
@@ -232,12 +233,12 @@ namespace Microsoft.EntityFrameworkCore
 					break;
 #endif
 #if USING_POSTGRESQL
-				case Providers.PostgreSql:
+				case DatabaseProviders.PostgreSql:
 					optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
 					break;
 #endif
 #if USING_ORACLE
-				case Providers.Oracle:
+				case DatabaseProviders.Oracle:
 					optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
 					break;
 #endif

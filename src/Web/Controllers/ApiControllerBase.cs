@@ -9,18 +9,21 @@ using Business.Models;
 using Domain;
 using Domain.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
 
+#if USING_SMARTSCHEMA
+using Microsoft.AspNetCore.Authorization;
+#endif
+
 // ReSharper disable RedundantCast
 
 namespace Web.Controllers
 {
-#if ENABLE_SMARTSCHEMA
+#if USING_SMARTSCHEMA
 	[SmartAuthorize]
 #endif
 	[Route("api/[controller]")]
@@ -30,15 +33,12 @@ namespace Web.Controllers
 		private ISender _mediator = null!;
 		protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
-		protected readonly IGenericRepository<TEntity, TKey> Repository;
+		protected IGenericRepository<TEntity, TKey> Repository()
+			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
 
 		protected bool IsAdmin => User.IsInRole(Roles.Admin);
 		protected int UserId => User.GetUserId<int>();
 
-		public ApiControllerBase(IGenericRepository<TEntity, TKey> repository)
-		{
-			Repository = repository;
-		}
 
 		public async Task<JsonResult> Table<TResult>(TableInfo model,
 			Expression<Func<TEntity, TResult>> selector,
@@ -154,29 +154,36 @@ namespace Web.Controllers
 
 			if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
 			{
-				rows = await Repository.SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order), include: include,
+				rows = await Repository().SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order), include: include,
 					skip: model.Start, take: model.Length);
 			}
 			else
 			{
-				rows = await Repository.ReadAsync(selector, expression, o => o.SortDynamically(order), include: include,
+				rows = await Repository().ReadAsync(selector, expression, o => o.SortDynamically(order), include: include,
 					skip: model.Start, take: model.Length);
 			}
 
 			var data = await ((IQueryable<object>)rows).ToListAsync();
 
-			var total = await Repository.CountAsync();
+			var total = await Repository().CountAsync();
 			var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
 			var stotal = isFiltered ? data.Count : total;
 
 			return new JsonResult(new TableResult() {iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data});
 		}
+
 	}
 
+#if USING_SMARTSCHEMA
+	[SmartAuthorize]
+#endif
+	[Route("api/[controller]")]
+	[ApiController]
 	public abstract class ApiControllerBase<TEntity> : ApiControllerBase<TEntity, int> where TEntity : class, IEntity<int>
 	{
-		public ApiControllerBase(IGenericRepository<TEntity, int> repository) : base(repository)
-		{
-		}
+		protected new IGenericRepository<TEntity> Repository()
+			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity>>();
 	}
+
+
 }

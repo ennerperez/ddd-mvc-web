@@ -12,7 +12,7 @@ namespace Tests.Business.Services
 	public class ClientTestService : GenericTestService<Client>, ITestService<Client>
 	{
 
-		private string type = nameof(Client);
+		private const string Type = nameof(Client);
 
 		private readonly ISender _mediator;
 		public ClientTestService(ISender mediator) : base(mediator)
@@ -21,7 +21,7 @@ namespace Tests.Business.Services
 		}
 		public override async Task CreateAsync(Table table)
 		{
-			await ExecuteAsync<CreateClientRequest>(type, table);
+			await ExecuteAsync<CreateClientRequest>(Type, table);
 		}
 
 		public override Task<Client> ReadAsync(Table table)
@@ -40,12 +40,12 @@ namespace Tests.Business.Services
 					if (lstMatch.Success)
 					{
 						var prop = lstMatch.Groups[1].Value;
-						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{type}_{prop}".ToLower(), throwException: false);
+						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{Type}_{prop}".ToLower(), throwException: false);
 						entity.Id = int.Parse(propValue.ToString() ?? string.Empty);
 					}
 				}
 			});
-			await ExecuteAsync(type, table, customProps: customAction);
+			await ExecuteAsync(Type, table, customProps: customAction);
 		}
 
 		public override async Task PartialUpdateAsync(Table table)
@@ -60,12 +60,12 @@ namespace Tests.Business.Services
 					if (lstMatch.Success)
 					{
 						var prop = lstMatch.Groups[1].Value;
-						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{type}_{prop}".ToLower(), throwException: false);
+						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{Type}_{prop}".ToLower(), throwException: false);
 						entity.Id = int.Parse(propValue.ToString() ?? string.Empty);
 					}
 				}
 			});
-			await ExecuteAsync(type, table, customProps: customAction);
+			await ExecuteAsync(Type, table, customProps: customAction);
 		}
 		public override async Task DeleteAsync(Table table)
 		{
@@ -79,12 +79,12 @@ namespace Tests.Business.Services
 					if (lstMatch.Success)
 					{
 						var prop = lstMatch.Groups[1].Value;
-						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{type}_{prop}".ToLower(), throwException: false);
+						var propValue = _automationContext.GetAttribute($"{ScenarioCode}_{Type}_{prop}".ToLower(), throwException: false);
 						entity.Id = int.Parse(propValue.ToString() ?? string.Empty);
 					}
 				}
 			});
-			await ExecuteAsync(type, table, customProps: customAction);
+			await ExecuteAsync(Type, table, customProps: customAction);
 		}
 	}
 }

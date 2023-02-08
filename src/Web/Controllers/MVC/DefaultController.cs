@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Web.Models;
@@ -11,7 +14,7 @@ namespace Web.Controllers.MVC
 {
 	[AllowAnonymous]
 	[ApiExplorerSettings(IgnoreApi = true)]
-	public class DefaultController : Controller
+	public class DefaultController : MvcControllerBase
 	{
 		private readonly ILogger _logger;
 
@@ -114,11 +117,24 @@ namespace Web.Controllers.MVC
 			foreach (var item in assemblies)
 			{
 				var model = new AboutViewModel() {Name = item.Name, Version = item.Version, Dependency = true,};
-				if (!models.Any(m => m.Name == model.Name))
+				if (models.All(m => m.Name != model.Name))
 					models.Add(model);
 			}
 
 			return View(models);
+		}
+
+		[HttpPost]
+		[AllowAnonymous]
+		public IActionResult SetLanguage(string culture, string returnUrl = "/")
+		{
+			Response.Cookies.Append(
+				CookieRequestCultureProvider.DefaultCookieName,
+				CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+				new CookieOptions {Expires = DateTimeOffset.UtcNow.AddYears(1)}
+			);
+
+			return LocalRedirect(returnUrl);
 		}
 	}
 }

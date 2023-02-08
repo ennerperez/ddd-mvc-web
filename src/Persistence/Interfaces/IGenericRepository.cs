@@ -78,7 +78,7 @@ namespace Persistence.Interfaces
 			bool includeDeleted = false,
 			CancellationToken cancellationToken = default);
 
-#if ENABLE_NONASYNC
+#if USING_NONASYNC
 		IQueryable<TResult> Read<TResult>(
 			Expression<Func<TEntity, TResult>> selector = null,
 			Expression<Func<TEntity, bool>> predicate = null,

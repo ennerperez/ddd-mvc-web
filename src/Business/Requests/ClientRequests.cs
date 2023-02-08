@@ -40,7 +40,7 @@ namespace Business.Requests
 			entity.PhoneNumber = request.PhoneNumber;
 			entity.Address = request.Address;
 			entity.Category = request.Category;
-			
+
 			await _repository.CreateAsync(entity);
 
 			return entity.Id;
@@ -53,7 +53,7 @@ namespace Business.Requests
 		{
 			RuleFor(m => m.Identification).NotEmpty();
 			RuleFor(m => m.FullName).NotEmpty();
-			RuleFor(m => new { m.Identification })
+			RuleFor(m => new {m.Identification})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Identification == m.Identification, c);
@@ -77,7 +77,7 @@ namespace Business.Requests
 
 		public async Task<PaginatedList<Client>> Handle(PaginatedRequest<Client, Client> request, CancellationToken cancellationToken)
 		{
-			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null, null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
 			var result = await PaginatedList<Client>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
@@ -85,7 +85,7 @@ namespace Business.Requests
 		}
 	}
 
-	public class ReadClientRequestHandler : IRequestHandler<GenericRequest<Client, Client>, Client[]>
+	public class ReadClientRequestHandler : IRequestHandler<RepositoryRequest<Client, Client>, Client[]>
 	{
 		private readonly IGenericRepository<Client> _repository;
 
@@ -93,8 +93,7 @@ namespace Business.Requests
 		{
 			_repository = repository;
 		}
-
-		public async Task<Client[]> Handle(GenericRequest<Client, Client> request, CancellationToken cancellationToken)
+		public async Task<Client[]> Handle(RepositoryRequest<Client, Client> request, CancellationToken cancellationToken)
 		{
 			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var items = await entities.ToArrayAsync(cancellationToken);
@@ -149,7 +148,7 @@ namespace Business.Requests
 			RuleFor(m => m.Id).NotEmpty();
 			RuleFor(m => m.Identification).NotEmpty();
 			RuleFor(m => m.FullName).NotEmpty();
-			RuleFor(m => new { m.Id, m.Identification })
+			RuleFor(m => new {m.Id, m.Identification})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Identification == m.Identification && p.Id != m.Id, c);
@@ -201,7 +200,7 @@ namespace Business.Requests
 		public PartialUpdateClientRequestValidator(IGenericRepository<Client> repository)
 		{
 			RuleFor(m => m.Id).NotEmpty();
-			RuleFor(m => new { m.Id, m.Identification })
+			RuleFor(m => new {m.Id, m.Identification})
 				.CustomAsync(async (m, v, c) =>
 				{
 					if (m.Identification != null)

@@ -92,7 +92,7 @@ function rangeBadgeRender(input, defaultValue, values, texts, styles) {
 	return `<span class="float-center badge bg-${color} ${styles}">${value}</span>`;
 }
 
-function stateBadgeRender(input, values, styles) {
+function statusBadgeRender(input, values, styles) {
 	for (let i = 0; i < values.length; i++) {
 		let item = values[i];
 		let props = Object.getOwnPropertyNames(item);
@@ -198,7 +198,6 @@ function resizeMe(img, max_width, max_height, quality) {
 }
 
 /* Model Builder */
-
 function getModel(source) {
 	let controls = $(`#${source} [data-field]`);
 	let model = {};
@@ -208,59 +207,46 @@ function getModel(source) {
 		let type = $(control).prop("tagName").toLowerCase();
 		let hasMask = $(control).data("mask") !== undefined;
 		let dataType = $(control).data("type");
+		let dataValue = $(control).data("value");
 		if ($(control).attr("type") === "checkbox") type = "checkbox";
 		switch (type) {
 			case "input":
 			case "select":
 			case "textarea":
-				if (dataType === "datetime" || dataType === "date" || dataType === "time") {
+				if (dataType === "datetime" || dataType === "date" || dataType === "time")
 					data = $(control).datepicker("getDate");
-				} else if (!hasMask) {
+				else if (!hasMask)
 					data = $(control).val();
-				} else {
+				else
 					data = $(control).cleanVal();
-				}
 				break;
 			case "checkbox":
 				data = $(control).val("").prop("checked");
+				if (dataValue !== null && dataValue !== undefined)
+					data = data ? dataValue : null;
 				break;
 		}
 		let field = $(control).data("field");
+		let exp = /(.*)\[(.*)]/g;
+		let regex = new RegExp(exp);
+		let isArray = regex.test(field);
+		if (isArray) {
+			let groups = [...field.matchAll(exp)];
+			field = groups[0][1];
+			let currentVal = Reflect.get(model, field)
+			if (data !== null) {
+				if (currentVal === null || currentVal === undefined) {
+					data = [data];
+				} else {
+					currentVal.push(data);
+					data = currentVal;
+				}
+			}
+		}
+
 		if (data !== null && data !== "") Reflect.set(model, field, data);
 	});
-	return model;
-}
 
-function validateModel(source) {
-	let controls = $(`#${source} [data-field]`);
-	return controls.each(function (s) {
-		let control = controls[s];
-		let data = null;
-		let type = $(control).prop("tagName").toLowerCase();
-		let hasMask = $(control).data("mask") !== undefined;
-		let dataType = $(control).data("type");
-		let required = $(control).attr("required") !== undefined;
-		if ($(control).attr("type") === "checkbox") type = "checkbox";
-		switch (type) {
-			case "input":
-			case "select":
-			case "textarea":
-				if (dataType === "datetime" || dataType === "date" || dataType === "time") {
-					data = $(control).datepicker("getDate");
-				} else if (!hasMask) {
-					data = $(control).val();
-				} else {
-					data = $(control).cleanVal();
-				}
-				break;
-			case "checkbox":
-				data = $(control).val("").prop("checked");
-				break;
-		}
-		if ((data === null || data === "" || data === undefined) && required) {
-			$(control).focus();
-			return false;
-		}
-		return true;
-	});
+
+	return model;
 }

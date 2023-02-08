@@ -10,7 +10,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Web.Controllers.API
@@ -20,7 +19,7 @@ namespace Web.Controllers.API
 	{
 		private readonly ILogger _logger;
 
-		public SettingController(ILoggerFactory loggerFactory, IGenericRepository<Setting> repository) : base(repository)
+		public SettingController(ILoggerFactory loggerFactory)
 		{
 			_logger = loggerFactory.CreateLogger(GetType());
 		}
@@ -31,11 +30,11 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				var collection = await Mediator.SendWithRepository((new Setting()).Select(s => s), null, null, null);
+				var collection = await Mediator.SendWithRepository<Setting>();
 				if (collection == null || !collection.Any())
-					return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>() });
+					return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>()});
 
-				return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
+				return new JsonResult(new {lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection});
 			}
 			catch (ValidationException v)
 			{
@@ -56,7 +55,7 @@ namespace Web.Controllers.API
 			{
 				try
 				{
-					var collection = await Mediator.SendWithRepository((new Setting()).Select(s => s), p => p.Id == id, null, null);
+					var collection = await Mediator.SendWithRepository<Setting>(predicate: p => p.Id == id);
 
 					return new JsonResult(collection);
 				}
@@ -80,8 +79,7 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				var collection = await Mediator.SendWithPage((new Setting()).Select(s => s),
-					null, null, null, skip: ((page - 1) * size), take: size);
+				var collection = await Mediator.SendWithPage<Setting>(skip: ((page - 1) * size), take: size);
 				return new JsonResult(collection);
 			}
 			catch (ValidationException v)
@@ -170,7 +168,7 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				await Mediator.Send(new DeleteSettingRequest() { Id = id });
+				await Mediator.Send(new DeleteSettingRequest() {Id = id});
 				return Ok(id);
 			}
 			catch (ValidationException v)
@@ -190,7 +188,7 @@ namespace Web.Controllers.API
 		[HttpPost("Table")]
 		public async Task<JsonResult> Table(TableInfo model)
 		{
-			var selector = (new Setting()).Select(t => new { t.Id, t.Key, t.Value });
+			var selector = (new Setting()).Select(t => new {t.Id, t.Key, t.Value});
 
 			return await base.Table(model, selector);
 		}

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
 {
-	public class RoleClaim : IdentityRoleClaim<int>, IEntity<int>, IAuditable
+	public class RoleClaim : IdentityRoleClaim<int>, IEntity, IAuditable
 	{
 		public RoleClaim()
 		{

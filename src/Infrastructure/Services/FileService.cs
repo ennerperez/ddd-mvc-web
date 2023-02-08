@@ -533,6 +533,42 @@ namespace Infrastructure.Services
 		{
 			throw new NotImplementedException();
 		}
+
+		#region Extended
+
+		public async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
+		{
+			var _client = await GetClientAsync(string.Empty, cancellationToken);
+			await _client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
+		}
+
+		public Task<Stream> ReadStreamAsync(string path, CancellationToken cancellationToken = default)
+			=> InternalReadStreamAsync(path, cancellationToken);
+
+		private async Task<Stream> InternalReadStreamAsync(string path, CancellationToken cancellationToken = default)
+		{
+			var _client = await GetClientAsync(string.Empty, cancellationToken);
+
+			path = NormalizeFilePath(path);
+
+			var blob = _client.GetBlobClient(path);
+
+			if (blob != null)
+				if (await blob.ExistsAsync(cancellationToken))
+				{
+					var file = new MemoryStream();
+
+					await blob.DownloadToAsync(file, cancellationToken);
+
+					file.Seek(0, SeekOrigin.Begin);
+
+					return file;
+				}
+
+			return null;
+		}
+
+		#endregion
 	}
 }
 #endif

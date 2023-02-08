@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
 {
-	public class UserToken : IdentityUserToken<int>, IEntity<int>, IAuditable
+	public class UserToken : IdentityUserToken<int>, IEntity, IAuditable
 	{
 		public UserToken()
 		{

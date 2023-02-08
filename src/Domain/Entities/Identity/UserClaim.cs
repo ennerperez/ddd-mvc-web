@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
 {
-	public sealed class UserClaim : IdentityUserClaim<int>, IEntity<int>, IAuditable
+	public sealed class UserClaim : IdentityUserClaim<int>, IEntity, IAuditable
 	{
 		public UserClaim()
 		{

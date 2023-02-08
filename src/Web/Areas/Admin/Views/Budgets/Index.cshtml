@@ -65,20 +65,20 @@
             let tableMain = null;
             let editorMain = null;
             let apiUrl = '@Url.Content("~/")api/budget';
-			
-			__editor_options.change_state = {
+
+			__editor_options.change_status = {
 				title: "Confirmation",
-				text: "Are you sure you want to change the state?",
+				text: "Are you sure you want to change the status?",
 				icon: 'question',
 				showCancelButton: true,
 				confirmButtonText: "Yes",
 				cancelButtonText: "No"
 			};
-			
+
 			var formatter = new Intl.NumberFormat('@currencyCulture.Name', { style: 'currency', currency: '@currencyRegion.ISOCurrencySymbol' });
-            
+
             $(document).ready( function () {
-                
+
                 tableMain = $('#table').DataTable({
                     language: { url: __datatable_options.language },
                     serverSide: true,
@@ -101,7 +101,7 @@
                             return JSON.stringify(d);
                         }
                     },
-                    columns: [                  
+                    columns: [
                         { name: "code", data: "code", render: function (data, type, row)
 							 {
 								 return `${data}<br /><small>${dateTimeRender(row["createdAt"])}</small>`;
@@ -112,15 +112,15 @@
 								return `<span class="position-relative">${data.clientFullName}<br /><small>${data.clientIdentification}</small></span>`;
                         	}
 						},
-                        { name: "state", data: "state", render: function (data, type, row)
+                        { name: "status", data: "status", render: function (data, type, row)
 							{
 								let values = [
-									{'danger': {'-2':'Rejected'}},
-									{'info': {'-1':'Draft','1':'Created'}},
+									{'info': {'-10':'Draft','10':'Created'}},
 									{'warning': {'0':'Unknown'}},
-									{'success': {'2':'Accepted'}} 
+									{'success': {'20':'Approved'}},
+									{'danger': {'30':'Rejected'}}
 								];
-								return stateBadgeRender(data, values);
+								return statusBadgeRender(data, values);
 							}
 						},
 						{ name: "total", data: null, render: function (data, type, row)
@@ -128,9 +128,9 @@
 								return `<span class="position-relative"><small>Subtotal: ${formatter.format(data.subtotal)}<br />Taxes: ${formatter.format(data.taxes)}<br /><b>Total: ${formatter.format(data.total)}</b></small></span>`;
 							}
 						},
-                        { className: "text-center", data: null, render: function (data, type, row) 
+                        { className: "text-center", data: null, render: function (data, type, row)
                             {
-								let state = data.state;
+								let status = data.status;
                                 return `<div class="dropdown">
                                             <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Actions">
                                                 <i class="fas fa-bolt"></i>
@@ -138,36 +138,36 @@
                                             <div class="dropdown-menu dropdown-menu-end">
 												<button type="button" class="dropdown-item" data-format="pdf" name="btn-export-pdf">Export as PDF</button>
 												<hr class="dropdown-divider">
-												${state === -1 ? '<button type="button" class="dropdown-item" name="btn-send">Send</button>' : ""}
-												${state === 1 ? '<button type="button" class="dropdown-item text-success" name="btn-accept">Accept</button>' : ""}
-												${state === 1 ? '<button type="button" class="dropdown-item text-danger" name="btn-reject">Reject</button>' : ""}
-												${state !== 2 && state !== -2 ? '<hr class="dropdown-divider">':""}
+												${status === -10 ? '<button type="button" class="dropdown-item" name="btn-send">Send</button>' : ""}
+												${status === 10 ? '<button type="button" class="dropdown-item text-success" name="btn-approve">Approve</button>' : ""}
+												${status === 10 ? '<button type="button" class="dropdown-item text-danger" name="btn-reject">Reject</button>' : ""}
+												${status !== 20 && status !== 30 ? '<hr class="dropdown-divider">':""}
                                                 <button type="button" class="dropdown-item" name="btn-edit">Edit</button>
                                                 <button type="button" class="dropdown-item text-danger" name="btn-delete">Delete</button>
                                             </div>
                                         </div>`;
                             }
                         }
-                                            
+
                     ],
                     lengthMenu: __datatable_options.lengthMenu,
                     initComplete: function () {
-                        
+
 						$("[name='btn-export-table-pdf']").appendTo($('.dt-buttons'));
 						$("[name='btn-create']").appendTo($('.dt-buttons'));
-                        
+
                         tableMain.on('draw', reHandle);
 						tableMain.on('draw', reHandleExtended);
-						
+
                         reHandle();
 						reHandleExtended();
-                        
+
                         // Search Delay
                         doSearchDelay(tableMain);
-                        
+
                         // UI Fix
                         UIFix(tableMain);
-                        
+
                         hideLoader();
 
                     }
@@ -175,13 +175,13 @@
                 editorMain = new bootstrap.Modal(document.getElementById('modal-editor'));
                 setEditor(tableMain, editorMain, apiUrl);
             });
-			
+
 			function reHandleExtended() {
             	$("[name='btn-send']").each(function () {
             		$(this).off("click", sendRecord).on("click", sendRecord);
             	});
-            	$("[name='btn-accept']").each(function () {
-            		$(this).off("click", acceptRecord).on("click", acceptRecord);
+            	$("[name='btn-approve']").each(function () {
+            		$(this).off("click", approveRecord).on("click", approveRecord);
             	});
             	$("[name='btn-reject']").each(function () {
             		$(this).off("click", rejectRecord).on("click", rejectRecord);
@@ -193,30 +193,30 @@
 					$(this).off("click", exportRecord).on("click", exportRecord);
 				});
             }
-			
+
 			function sendRecord(){
 				let btn = $(this);
 				let row = btn.closest("tr");
 				let data = __editor_table.rows(row).data()[0];
 				let id = data['id'];
-				let model = { id: id, state: 1 }; 
-				patchRecord(model,__editor_options.change_state);
+				let model = { id: id, status: 10 };
+				patchRecord(model,__editor_options.change_status);
 			}
-			function acceptRecord(){
+			function approveRecord(){
 				let btn = $(this);
 				let row = btn.closest("tr");
 				let data = __editor_table.rows(row).data()[0];
 				let id = data['id'];
-				let model = { id: id, state: 2 }; 
-				patchRecord(model,__editor_options.change_state);
+				let model = { id: id, status: 20 };
+				patchRecord(model,__editor_options.change_status);
 			}
 			function rejectRecord(){
 				let btn = $(this);
 				let row = btn.closest("tr");
 				let data = __editor_table.rows(row).data()[0];
 				let id = data['id'];
-				let model = { id: id, state: -2 }; 
-				patchRecord(model,__editor_options.change_state);
+				let model = { id: id, status: 30 };
+				patchRecord(model,__editor_options.change_status);
 			}
 			function exportRecord(){
 				let btn = $(this);
@@ -245,7 +245,7 @@
                   })
                   .catch(() => Toast.fire(__editor_options.error));
 			}
-			
+
 			function patchRecord(model,question) {
             	swal.fire(question).then((result) => {
             		if (result.value) {
@@ -271,6 +271,6 @@
             		}
             	});
             }
-            
+
     </script>
 }

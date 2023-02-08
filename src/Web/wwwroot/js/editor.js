@@ -172,59 +172,6 @@ function validateEditor() {
 	return is_modal_valid;
 }
 
-function getModel() {
-	let controls = $(`#${__editor._element.id} [data-field]`);
-	let model = {};
-	controls.each(function (s) {
-		let control = controls[s];
-		let data = null;
-		let type = $(control).prop("tagName").toLowerCase();
-		let hasMask = $(control).data("mask") !== undefined;
-		let dataType = $(control).data("type");
-		let dataValue = $(control).data("value");
-		if ($(control).attr("type") === "checkbox") type = "checkbox";
-		switch (type) {
-			case "input":
-			case "select":
-			case "textarea":
-				if (dataType === "datetime" || dataType === "date" || dataType === "time")
-					data = $(control).datepicker("getDate");
-				else if (!hasMask)
-					data = $(control).val();
-				else
-					data = $(control).cleanVal();
-				break;
-			case "checkbox":
-				data = $(control).val("").prop("checked");
-				if (dataValue !== null && dataValue !== undefined)
-					data = data ? dataValue : null;
-				break;
-		}
-		let field = $(control).data("field");
-		let exp = /(.*)\[(.*)]/g;
-		let regex = new RegExp(exp);
-		let isArray = regex.test(field);
-		if (isArray) {
-			let groups = [...field.matchAll(exp)];
-			field = groups[0][1];
-			let currentVal = Reflect.get(model, field)
-			if (data !== null) {
-				if (currentVal === null || currentVal === undefined) {
-					data = [data];
-				} else {
-					currentVal.push(data);
-					data = currentVal;
-				}
-			}
-		}
-
-		if (data !== null && data !== "") Reflect.set(model, field, data);
-	});
-
-
-	return model;
-}
-
 function createRecord() {
 	clearEditor();
 	__editor.show();
@@ -313,7 +260,7 @@ function deleteRecord() {
 
 function saveRecord() {
 	if (!validateEditor()) return;
-	let model = getModel();
+	let model = getModel(__editor._element.id);
 
 	let method = "POST";
 	let url = `${__editor_api_url}`;

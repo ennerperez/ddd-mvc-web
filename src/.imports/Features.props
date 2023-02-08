@@ -2,6 +2,7 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup Label="General">
+		<TargetFramework>net6.0</TargetFramework>
 		<UsingAssemblyInfoTemplate>true</UsingAssemblyInfoTemplate>
 	</PropertyGroup>
 
@@ -12,6 +13,10 @@
 		<UsingMySql>false</UsingMySql>
 		<UsingPostgreSql>false</UsingPostgreSql>
 		<UsingOracle>false</UsingOracle>
+		<UsingNonAsync>false</UsingNonAsync>
+		<UsingDapper>true</UsingDapper>
+		<UsingBulk>true</UsingBulk>
+		<UsingSplit>true</UsingSplit>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Azure">
@@ -37,26 +42,26 @@
 		<UsingBearer>false</UsingBearer>
 		<UsingOpenId>false</UsingOpenId>
 		<UsingAuth0>false</UsingAuth0>
+		<UsingSmartSchema>false</UsingSmartSchema>
+		<UsingApiKeyTables>false</UsingApiKeyTables>
+		<UsingTokenValidation>false</UsingTokenValidation>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Options">
-		<EnableNonAsync>false</EnableNonAsync>
-		<EnableBulk>true</EnableBulk>
-		<EnableSplit>true</EnableSplit>
-		<EnableSassWatch>true</EnableSassWatch>
-		<EnableDatadog>false</EnableDatadog>
-		<EnableNewRelic>false</EnableNewRelic>
-		<EnableSmartSchema>false</EnableSmartSchema>
-		<EnableApiKeyTables>false</EnableApiKeyTables>
-		<EnableTokenValidation>false</EnableTokenValidation>
+		<UsingSassWatch>true</UsingSassWatch>
+		<UsingDatadog>false</UsingDatadog>
+		<UsingNewRelic>false</UsingNewRelic>
+		<UsingCors>true</UsingCors>
+		<UsingCompression>true</UsingCompression>
+		<UsingSession>true</UsingSession>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Testing">
 		<TestExecutionFramework>xUnit</TestExecutionFramework>
 		<DefaultLanguage>EN</DefaultLanguage>
-		<EnableChromeDriver>false</EnableChromeDriver>
-		<EnableGeckoDriver>false</EnableGeckoDriver>
-		<EnableIEDriver>false</EnableIEDriver>
+		<UsingChromeDriver>false</UsingChromeDriver>
+		<UsingGeckoDriver>false</UsingGeckoDriver>
+		<UsingIEDriver>false</UsingIEDriver>
 	</PropertyGroup>
 
 </Project>

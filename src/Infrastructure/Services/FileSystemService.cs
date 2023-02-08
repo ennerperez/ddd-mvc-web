@@ -373,5 +373,35 @@ namespace Infrastructure.Services
 			}
 			return path;
 		}
+
+		#region Extended
+
+		public Task DeleteAsync(string path, CancellationToken cancellationToken = default)
+		{
+			path = ValidatePath(path);
+			Delete(path);
+			return Task.CompletedTask;
+		}
+
+		public Task<Stream> ReadStreamAsync(string path, CancellationToken cancellationToken = default)
+			=> InternalReadStreamAsync(path, cancellationToken);
+
+		private Task<Stream> InternalReadStreamAsync(string path, CancellationToken cancellationToken = default)
+		{
+			path = ValidatePath(path);
+			Stream stream = File.Open(path, FileMode.Open);
+			return Task.FromResult(stream);
+		}
+
+		public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
+			=> InternalExistsAsync(path, cancellationToken);
+
+		private Task<bool> InternalExistsAsync(string path, CancellationToken cancellationToken = default)
+		{
+			path = ValidatePath(path);
+			return Task.FromResult(File.Exists(path));
+		}
+
+		#endregion
 	}
 }

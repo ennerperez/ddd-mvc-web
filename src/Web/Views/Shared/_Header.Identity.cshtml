@@ -18,21 +18,24 @@
 			<div class="collapse navbar-collapse" id="navbar">
 				<ul class="navbar-nav flex-grow-1">
 					<li class="nav-item">
-						<a class="nav-link" asp-area="" asp-controller="Default" asp-action="Index">Home</a>
+						<a class="nav-link" asp-active-class="active" asp-area="" asp-controller="Default" asp-action="Index">Home</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" asp-area="" asp-controller="Default" asp-action="Privacy">Privacy</a>
+						<a class="nav-link" asp-active-class="active" asp-area="" asp-controller="Default" asp-action="Privacy">Privacy</a>
 					</li>
 					@if (User.IsInRole("Admin"))
 					{
 						<li class="nav-item">
-							<a class="nav-link" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
+							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" asp-area="Admin" asp-controller="Clients" asp-action="Index">Clients</a>
+							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" asp-area="Admin" asp-controller="Budgets" asp-action="Index">Budgets</a>
+							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Clients" asp-action="Index">Clients</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Budgets" asp-action="Index">Budgets</a>
 						</li>
 					}
 					@if (SignInManager.IsSignedIn(User) && Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))

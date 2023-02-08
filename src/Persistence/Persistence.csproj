@@ -43,9 +43,10 @@
 		<PackageReference Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
 		<PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
 		<PackageReference Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="6.21.90" />
+		<PackageReference Condition="'$(UsingDapper)' == 'true'" Include="Dapper" Version="2.0.123" />
 	</ItemGroup>
-	
-	<ItemGroup Label="EnableBulk" Condition="'$(EnableBulk)' == 'true'">
+
+	<ItemGroup Label="UsingBulk" Condition="'$(UsingBulk)' == 'true'">
 		<PackageReference Include="EFCore.BulkExtensions" Version="6.7.0" />
 		<!--
 		<PackageReference Condition="$(UsingSqlite) == 'true'" Include="EFCore.BulkExtensions.Sqlite" Version="6.7.0" />
@@ -67,7 +68,7 @@
 			<DependentUpon>DefaultContext.cs</DependentUpon>
 		</Compile>
 	</ItemGroup>
-	
+
 	<ItemGroup Condition="'$(UsingDabaseProvider)' == 'false'">
 		<Compile Remove="Migrations\**" />
 		<EmbeddedResource Remove="Migrations\**" />

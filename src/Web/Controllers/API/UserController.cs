@@ -12,7 +12,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Persistence.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Web.Controllers.API
@@ -22,7 +21,7 @@ namespace Web.Controllers.API
 	{
 		private readonly ILogger _logger;
 
-		public UserController(ILoggerFactory loggerFactory, IGenericRepository<User> repository) : base(repository)
+		public UserController(ILoggerFactory loggerFactory)
 		{
 			_logger = loggerFactory.CreateLogger(GetType());
 		}
@@ -33,11 +32,11 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				var collection = await Mediator.SendWithRepository((new User()).Select(s => s), null, null, null);
+				var collection = await Mediator.SendWithRepository<User>();
 				if (collection == null || !collection.Any())
-					return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>() });
+					return new JsonResult(new {lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>()});
 
-				return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
+				return new JsonResult(new {lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection});
 			}
 			catch (ValidationException v)
 			{
@@ -58,7 +57,7 @@ namespace Web.Controllers.API
 			{
 				try
 				{
-					var collection = await Mediator.SendWithRepository((new User()).Select(s => s), p => p.Id == id, null, null);
+					var collection = await Mediator.SendWithRepository<User>(predicate: p => p.Id == id);
 
 					return new JsonResult(collection);
 				}
@@ -82,8 +81,7 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				var collection = await Mediator.SendWithPage((new User()).Select(s => s),
-					null, null, null, skip: ((page - 1) * size), take: size);
+				var collection = await Mediator.SendWithPage<User>(skip: ((page - 1) * size), take: size);
 				return new JsonResult(collection);
 			}
 			catch (ValidationException v)
@@ -172,7 +170,7 @@ namespace Web.Controllers.API
 		{
 			try
 			{
-				await Mediator.Send(new DeleteUserRequest() { Id = id });
+				await Mediator.Send(new DeleteUserRequest() {Id = id});
 				return Ok(id);
 			}
 			catch (ValidationException v)

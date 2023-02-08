@@ -119,7 +119,7 @@ namespace Business.Requests.Identity
 		}
 	}
 
-	public class ReadUsersRequestHandler : IRequestHandler<GenericRequest<User, User>, User[]>
+	public class ReadUsersRequestHandler : IRequestHandler<RepositoryRequest<User, User>, User[]>
 	{
 		private readonly IGenericRepository<User> _repository;
 
@@ -128,7 +128,7 @@ namespace Business.Requests.Identity
 			_repository = repository;
 		}
 
-		public async Task<User[]> Handle(GenericRequest<User, User> request, CancellationToken cancellationToken)
+		public async Task<User[]> Handle(RepositoryRequest<User, User> request, CancellationToken cancellationToken)
 		{
 			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var items = await entities.ToArrayAsync(cancellationToken);

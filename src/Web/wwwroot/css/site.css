@@ -6,4 +6,8 @@
   color: #dc3545;
 }
 
+.nav-item .active {
+  border-bottom: thin solid #fff;
+}
+
 /*# sourceMappingURL=site.css.map */

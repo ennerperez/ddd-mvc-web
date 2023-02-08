@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
+#if USING_VAULT
+using Azure.Security.KeyVault.Secrets;
+#endif
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;

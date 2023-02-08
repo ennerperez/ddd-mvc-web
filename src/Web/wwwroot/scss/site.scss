@@ -11,3 +11,9 @@
   font-size: $font-size-sm;
   color: $red;
 }
+
+.nav-item{
+  .active{
+	border-bottom: thin solid $white;
+  }
+}

@@ -20,14 +20,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication;
+#if USING_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
+#endif
+#if USING_COOKIES
 using Microsoft.AspNetCore.Authentication.Cookies;
+#endif
+#if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
+#if USING_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+#endif
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+
+// ReSharper disable MemberCanBePrivate.Global
 
 #if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
@@ -36,6 +45,7 @@ using Auth0.AspNetCore.Authentication;
 #pragma warning disable 618
 // ReSharper disable CheckNamespace
 
+#if USING_AUTH0
 namespace Auth0.AspNetCore.Authentication
 {
 	public sealed class Auth0Defaults
@@ -44,6 +54,7 @@ namespace Auth0.AspNetCore.Authentication
 		public const string AuthenticationScheme = "Auth0";
 	}
 }
+#endif
 
 namespace Microsoft.AspNetCore
 {
@@ -51,7 +62,7 @@ namespace Microsoft.AspNetCore
 	{
 		public class SmartAuthorizeAttribute : AuthorizeAttribute
 		{
-			private string[] _schemes = new string[]
+			private readonly string[] _schemes = new string[]
 			{
 				"Identity.Application",
 #if !USING_OPENID && USING_COOKIES
@@ -69,8 +80,8 @@ namespace Microsoft.AspNetCore
 #if USING_AUTH0
 				Auth0Defaults.AuthenticationScheme,
 #endif
-#if ENABLE_SMARTSCHEMA
-				SmartScheme.DefaultScheme,
+#if USING_SMARTSCHEMA
+				Authentication.SmartScheme.DefaultScheme,
 #endif
 			};
 
@@ -129,22 +140,21 @@ namespace Microsoft.AspNetCore
 
 					var existingApiKey = await _apiKeyProvider.Execute(providedApiKey);
 
-					if (existingApiKey != null)
-					{
-						var claims = new List<Claim> {new Claim(ClaimTypes.Name, existingApiKey.Owner)};
+					if (existingApiKey == null)
+						return AuthenticateResult.Fail("Invalid API Key provided.");
 
-						if (existingApiKey.Roles != null)
-							claims.AddRange(existingApiKey.Roles.Split("|").Select(role => new Claim(ClaimTypes.Role, role)));
+					var claims = new List<Claim> {new Claim(ClaimTypes.Name, existingApiKey.Owner)};
 
-						var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
-						var identities = new List<ClaimsIdentity> {identity};
-						var principal = new ClaimsPrincipal(identities);
-						var ticket = new AuthenticationTicket(principal, Options.Scheme);
+					if (existingApiKey.Roles != null)
+						claims.AddRange(existingApiKey.Roles.Split("|").Select(role => new Claim(ClaimTypes.Role, role)));
 
-						return AuthenticateResult.Success(ticket);
-					}
+					var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
+					var identities = new List<ClaimsIdentity> {identity};
+					var principal = new ClaimsPrincipal(identities);
+					var ticket = new AuthenticationTicket(principal, Options.Scheme);
 
-					return AuthenticateResult.Fail("Invalid API Key provided.");
+					return AuthenticateResult.Success(ticket);
+
 				}
 
 				protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
@@ -190,11 +200,9 @@ namespace Microsoft.AspNetCore
 				public string Owner { get; set; }
 				public string Key { get; set; }
 				public string Roles { get; set; }
-
 				public bool Active { get; set; }
 
 #if USING_TABLES
-
 				#region ITableEntity
 
 				public string PartitionKey { get; set; }
@@ -203,7 +211,6 @@ namespace Microsoft.AspNetCore
 				public ETag ETag { get; set; }
 
 				#endregion
-
 #endif
 			}
 
@@ -214,7 +221,7 @@ namespace Microsoft.AspNetCore
 				public AppSettingsApiKeyProvider(IConfiguration configuration)
 				{
 					var existingApiKeys = new List<ApiKey>();
-					var apilocal = configuration.GetSection("AppSettings")?["ApiKey"];
+					var apilocal = configuration["AppSettings:ApiKey"];
 					var apikey = new ApiKey(1, configuration["AppSettings:Name"], apilocal, true, "General");
 					existingApiKeys.Add(apikey);
 
@@ -238,7 +245,7 @@ namespace Microsoft.AspNetCore
 				}
 				public async Task<ApiKey> Execute(string providedApiKey)
 				{
-					var apiKey = await _tableService.ReadAllAsync<ApiKey>(p => p.Active && p.Key == providedApiKey, null);
+					var apiKey = await _tableService.ReadAllAsync<ApiKey>(p => p.Active && p.Key == providedApiKey);
 					return apiKey.FirstOrDefault();
 				}
 			}
@@ -250,7 +257,7 @@ namespace Microsoft.AspNetCore
 		{
 			public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
 			{
-				private string _apiPrefix;
+				private readonly string _apiPrefix;
 
 				public CustomCookieAuthenticationEvents(string apiPrefix)
 				{
@@ -259,30 +266,19 @@ namespace Microsoft.AspNetCore
 
 				public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
 				{
-					if (!string.IsNullOrWhiteSpace(_apiPrefix) && context.Request.Path.StartsWithSegments($"/{_apiPrefix}") &&
-					    context.Response.StatusCode == StatusCodes.Status200OK)
-					{
-						context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-						return Task.CompletedTask;
-					}
-					else
-					{
+					if (string.IsNullOrWhiteSpace(_apiPrefix) || !context.Request.Path.StartsWithSegments($"/{_apiPrefix}") || context.Response.StatusCode != StatusCodes.Status200OK)
 						return base.RedirectToLogin(context);
-					}
+
+					context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+					return Task.CompletedTask;
 				}
 
 				public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
 				{
-					if (!string.IsNullOrWhiteSpace(_apiPrefix) && context.Request.Path.StartsWithSegments($"/{_apiPrefix}") &&
-					    context.Response.StatusCode == StatusCodes.Status200OK)
-					{
-						context.Response.StatusCode = StatusCodes.Status403Forbidden;
-						return Task.CompletedTask;
-					}
-					else
-					{
+					if (string.IsNullOrWhiteSpace(_apiPrefix) || !context.Request.Path.StartsWithSegments($"/{_apiPrefix}") || context.Response.StatusCode != StatusCodes.Status200OK)
 						return base.RedirectToAccessDenied(context);
-					}
+					context.Response.StatusCode = StatusCodes.Status403Forbidden;
+					return Task.CompletedTask;
 				}
 			}
 		}
@@ -301,6 +297,7 @@ namespace Microsoft.AspNetCore
 			}
 #endif
 
+#if USING_APIKEY
 			public static AuthenticationBuilder AddApiKey<T>(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null) where T : IApiKeyProvider
 			{
 				authenticationBuilder.Services.AddSingleton(typeof(IApiKeyProvider), typeof(T));
@@ -317,20 +314,25 @@ namespace Microsoft.AspNetCore
 						var hasApiKeyHeader = context.Request.Headers.ContainsKey(ApiKeyAuthenticationDefaults.ApiKeyHeaderName) && !string.IsNullOrWhiteSpace(context.Request.Headers[ApiKeyAuthenticationDefaults.ApiKeyHeaderName]);
 						// ReSharper disable once UnusedVariable
 						var hasCookieHeader = context.Request.Headers.ContainsKey("cookie") && !string.IsNullOrWhiteSpace(context.Request.Headers["cookie"]);
-						var hasOpenId = false;//TODO: OpenId
-
+#if USING_OPENID
+						//TODO: Better implementation
+						var hasOpenId = true;
+#endif
 						if (hasJwtBearerhHeader)
 							return JwtBearerDefaults.AuthenticationScheme;
 						else if (hasApiKeyHeader)
 							return ApiKeyAuthenticationDefaults.AuthenticationScheme;
 						// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+#if USING_OPENID
 						else if (hasOpenId)
 							return OpenIdConnectDefaults.AuthenticationScheme;
+#endif
 
 						return CookieAuthenticationDefaults.AuthenticationScheme;
 					};
 				});
 			}
+#endif
 		}
 	}
 
@@ -384,12 +386,11 @@ namespace Microsoft.AspNetCore
 			public static Guid? GetKey(this ISession session)
 			{
 				var prop = session.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "_sessionKey");
-				if (prop != null)
-				{
-					var value = prop.GetValue(session)?.ToString();
-					if (!string.IsNullOrWhiteSpace(value))
-						return Guid.Parse(value);
-				}
+				if (prop == null)
+					return null;
+				var value = prop.GetValue(session)?.ToString();
+				if (!string.IsNullOrWhiteSpace(value))
+					return Guid.Parse(value);
 
 				return null;
 			}
@@ -403,7 +404,7 @@ namespace Microsoft.AspNetCore
 			private const string ScriptsKey = "scripts_";
 			private const string StylesKey = "styles_";
 
-			private static Dictionary<string, Queue<string>> PageList { get; set; } = new Dictionary<string, Queue<string>>();
+			public static Dictionary<string, Queue<string>> PageList { get; } = new Dictionary<string, Queue<string>>();
 
 			public static IDisposable BeginBlock(this IHtmlHelper helper, string key, Func<HttpContext, List<string>> getPageList = null)
 			{
@@ -412,34 +413,33 @@ namespace Microsoft.AspNetCore
 
 			public static HtmlString PageBlocks(this IHtmlHelper helper, string key)
 			{
-				if (PageList != null && PageList.Any(m => m.Key.StartsWith(key)))
-				{
-					var items = PageList.Where(m => m.Key.StartsWith(key)).Select(m => m.Value);
-					var result = new List<string>();
-					foreach (var qitem in items)
-					{
-						while (qitem.Any())
-						{
-							var value = qitem.Dequeue();
-							if (!string.IsNullOrWhiteSpace(value) && !result.Contains(value))
-								result.Add(value);
-						}
-					}
+				if (PageList == null || !PageList.Any(m => m.Key.StartsWith(key)))
+					return HtmlString.Empty;
 
-					return new HtmlString(string.Join(Environment.NewLine, result.ToArray()));
+				var items = PageList.Where(m => m.Key.StartsWith(key)).Select(m => m.Value);
+				var result = new List<string>();
+				foreach (var qitem in items)
+				{
+					while (qitem.Any())
+					{
+						var value = qitem.Dequeue();
+						if (!string.IsNullOrWhiteSpace(value) && !result.Contains(value))
+							result.Add(value);
+					}
 				}
 
-				return HtmlString.Empty;
+				return new HtmlString(string.Join(Environment.NewLine, result.ToArray()));
+
 			}
 
-			private static List<string> GetPageBlocksList(HttpContext httpContext, string key)
+			public static List<string> GetPageBlocksList(HttpContext httpContext, string key)
 			{
 				var pageBlocks = (List<string>)httpContext.Items[key];
-				if (pageBlocks == null)
-				{
-					pageBlocks = new List<string>();
-					httpContext.Items[key] = pageBlocks;
-				}
+				if (pageBlocks != null)
+					return pageBlocks;
+
+				pageBlocks = new List<string>();
+				httpContext.Items[key] = pageBlocks;
 
 				return pageBlocks;
 			}
@@ -455,7 +455,7 @@ namespace Microsoft.AspNetCore
 				return PageBlocks(helper, key);
 			}
 
-			private static List<string> GetPageScriptsList(HttpContext httpContext, string key = ScriptsKey)
+			public static List<string> GetPageScriptsList(HttpContext httpContext, string key = ScriptsKey)
 			{
 				return GetPageBlocksList(httpContext, key);
 			}
@@ -471,7 +471,7 @@ namespace Microsoft.AspNetCore
 				return PageBlocks(helper, key);
 			}
 
-			private static List<string> GetPageStylesList(HttpContext httpContext, string key = StylesKey)
+			public static List<string> GetPageStylesList(HttpContext httpContext, string key = StylesKey)
 			{
 				return GetPageBlocksList(httpContext, key);
 			}
@@ -482,7 +482,7 @@ namespace Microsoft.AspNetCore
 				private readonly TextWriter _originalWriter;
 
 				private readonly ViewContext _viewContext;
-				private string _key;
+				private readonly string _key;
 
 				public HtmlBlock(ViewContext viewContext, string key, Func<HttpContext, List<string>> getPageList = null)
 				{
@@ -493,7 +493,7 @@ namespace Microsoft.AspNetCore
 					GetPageList = getPageList;
 				}
 
-				public Func<HttpContext, List<string>> GetPageList { get; }
+				private Func<HttpContext, List<string>> GetPageList { get; }
 
 				public void Dispose()
 				{
@@ -512,9 +512,21 @@ namespace Microsoft.AspNetCore
 							Debug.WriteLine(e);
 						}
 					}
-					if (PageList.ContainsKey(_key))
-						foreach (var item in pageList)
-							PageList[_key].Enqueue(item);
+
+					if (!PageList.TryGetValue(_key, out var value))
+						return;
+
+					foreach (var item in pageList)
+					{
+						try
+						{
+							value.Enqueue(item);
+						}
+						catch (Exception e)
+						{
+							Debug.WriteLine(e);
+						}
+					}
 				}
 			}
 		}
@@ -535,7 +547,7 @@ namespace Microsoft.AspNetCore
 #if USING_SASS
 				return true;
 #else
-                return false;
+				return false;
 #endif
 			}
 
@@ -544,7 +556,7 @@ namespace Microsoft.AspNetCore
 #if USING_SWAGGER
 				return true;
 #else
-                return false;
+				return false;
 #endif
 			}
 
@@ -553,7 +565,7 @@ namespace Microsoft.AspNetCore
 #if USING_INSIGHTS
 				return true;
 #else
-                return false;
+				return false;
 #endif
 			}
 
@@ -562,7 +574,7 @@ namespace Microsoft.AspNetCore
 #if USING_NEWTONSOFT
 				return true;
 #else
-                return false;
+				return false;
 #endif
 			}
 
@@ -571,7 +583,7 @@ namespace Microsoft.AspNetCore
 #if USING_LOCALIZATION
 				return true;
 #else
-                return false;
+				return false;
 #endif
 			}
 
@@ -608,13 +620,13 @@ namespace Microsoft.AspNetCore
 					var result = engine.FindView(@this.ControllerContext, viewToRender, false);
 
 					StringWriter output;
-					using (output = new StringWriter())
+					await using (output = new StringWriter())
 					{
-						if (result.View != null)
-						{
-							var viewContext = new ViewContext(@this.ControllerContext, result.View, viewData, @this.TempData, output, new HtmlHelperOptions());
-							await result.View.RenderAsync(viewContext);
-						}
+						if (result.View == null)
+							return output.ToString();
+
+						var viewContext = new ViewContext(@this.ControllerContext, result.View, viewData, @this.TempData, output, new HtmlHelperOptions());
+						await result.View.RenderAsync(viewContext);
 					}
 
 					return output.ToString();
@@ -632,7 +644,7 @@ namespace Microsoft.AspNetCore
 				private const string ActiveClassAttributeName = "asp-active-class";
 
 				[HtmlAttributeName(ActiveClassAttributeName)]
-				public string ActiveClass { get; set; }
+				private string ActiveClass { get; set; }
 
 				public ActiveClassTagHelper(IHtmlGenerator generator) : base(generator)
 				{
@@ -641,11 +653,18 @@ namespace Microsoft.AspNetCore
 				public override void Process(TagHelperContext context, TagHelperOutput output)
 				{
 					var routeData = ViewContext.RouteData.Values;
+					var currentArea = routeData["area"] as string;
 					var currentController = routeData["controller"] as string;
 					var currentAction = routeData["action"] as string;
 					var result = false;
 
-					if (!string.IsNullOrWhiteSpace(Controller) && !string.IsNullOrWhiteSpace(Action))
+					if (!string.IsNullOrWhiteSpace(Area) && !string.IsNullOrWhiteSpace(Controller) && !string.IsNullOrWhiteSpace(Action))
+					{
+						result = string.Equals(Action, currentAction, StringComparison.OrdinalIgnoreCase) &&
+						         string.Equals(Controller, currentController, StringComparison.OrdinalIgnoreCase) &&
+						         string.Equals(Area, currentArea, StringComparison.OrdinalIgnoreCase);
+					}
+					else if (!string.IsNullOrWhiteSpace(Controller) && !string.IsNullOrWhiteSpace(Action))
 					{
 						result = string.Equals(Action, currentAction, StringComparison.OrdinalIgnoreCase) &&
 						         string.Equals(Controller, currentController, StringComparison.OrdinalIgnoreCase);
@@ -659,17 +678,17 @@ namespace Microsoft.AspNetCore
 						result = string.Equals(Controller, currentController, StringComparison.OrdinalIgnoreCase);
 					}
 
-					if (result)
-					{
-						var @cssClass = ActiveClass ?? "active";
-						var existingClasses = output.Attributes["class"].Value.ToString();
-						if (output.Attributes["class"] != null)
-						{
-							output.Attributes.Remove(output.Attributes["class"]);
-						}
+					if (!result)
+						return;
 
-						output.Attributes.Add("class", $"{existingClasses} {cssClass}");
+					var @cssClass = ActiveClass ?? "active";
+					var existingClasses = output.Attributes["class"].Value.ToString();
+					if (output.Attributes["class"] != null)
+					{
+						output.Attributes.Remove(output.Attributes["class"]);
 					}
+
+					output.Attributes.Add("class", $"{existingClasses} {cssClass}");
 				}
 			}
 		}

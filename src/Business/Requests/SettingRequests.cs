@@ -73,7 +73,7 @@ namespace Business.Requests
 
 		public async Task<PaginatedList<Setting>> Handle(PaginatedRequest<Setting, Setting> request, CancellationToken cancellationToken)
 		{
-			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
 			var result = await PaginatedList<Setting>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
@@ -81,7 +81,7 @@ namespace Business.Requests
 		}
 	}
 
-	public class ReadSettingsRequestHandler : IRequestHandler<GenericRequest<Setting, Setting>, Setting[]>
+	public class ReadSettingsRequestHandler : IRequestHandler<RepositoryRequest<Setting, Setting>, Setting[]>
 	{
 		private readonly IGenericRepository<Setting> _repository;
 
@@ -90,7 +90,7 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Setting[]> Handle(GenericRequest<Setting, Setting> request, CancellationToken cancellationToken)
+		public async Task<Setting[]> Handle(RepositoryRequest<Setting, Setting> request, CancellationToken cancellationToken)
 		{
 			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
 			var items = await entities.ToArrayAsync();

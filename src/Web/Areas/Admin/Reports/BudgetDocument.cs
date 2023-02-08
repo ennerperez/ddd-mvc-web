@@ -32,16 +32,16 @@ namespace Web.Areas.Admin.Reports
 		{
 			if (typeof(IEnumerable).IsAssignableFrom(Model.GetType()))
 				container
-					.Page(page => buildMultipleReport(page));
+					.Page(page => BuildMultipleReport(page));
 			else
 				container
-					.Page(page => buildSingleReport(page));
+					.Page(page => BuildSingleReport(page));
 
 
 		}
 
 		private TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
-		private void buildSingleReport(PageDescriptor page)
+		private void BuildSingleReport(PageDescriptor page)
 		{
 			page.Margin(25);
 			page.Size(PageSizes.Letter.Portrait());
@@ -80,12 +80,12 @@ namespace Web.Areas.Admin.Reports
 						row.RelativeItem().PaddingTop(8).Column(colum =>
 						{
 							colum.Item().Text($"Client: {record.Client}");
-							colum.Item().Text($"Status: {record.State}");
+							colum.Item().Text($"Status: {record.Status}");
 						});
 					});
 			});
 		}
-		private void buildMultipleReport(PageDescriptor page)
+		private void BuildMultipleReport(PageDescriptor page)
 		{
 			page.Margin(25);
 			page.Size(PageSizes.Letter.Landscape());

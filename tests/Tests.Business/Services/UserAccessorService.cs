@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using Infrastructure.Interfaces;
 
@@ -27,6 +28,10 @@ namespace Tests.Business.Services
 		public string FindFirstValue(string claimType)
 		{
 			return _testUser.FindFirstValue(claimType);
+		}
+		public string FindLastValue(string claimType)
+		{
+			return _testUser.FindAll(claimType).LastOrDefault()?.Value;
 		}
 #endif
 	}

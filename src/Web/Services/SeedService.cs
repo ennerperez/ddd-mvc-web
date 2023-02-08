@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Entities.Cache;
 #if USING_IDENTITY
 using Domain.Entities.Identity;
 #endif
@@ -35,21 +36,27 @@ namespace Web.Services
 #if USING_DATABASE_PROVIDER
 			using (var scope = _scopeFactory.CreateScope())
 			{
-				DbContext context = scope.ServiceProvider.GetService<DefaultContext>();
-				context.Initialize();
-				if (context == null || !await context.Database.CanConnectAsync(cancellationToken)) return;
+				DbContext defaultContext = scope.ServiceProvider.GetService<DefaultContext>();
+				defaultContext.Initialize();
+				if (defaultContext == null || !await defaultContext.Database.CanConnectAsync(cancellationToken)) return;
+
+				var cacheContext = scope.ServiceProvider.GetService<CacheContext>();
+				cacheContext.Initialize();
+				if (cacheContext == null || !await cacheContext.Database.CanConnectAsync(cancellationToken)) return;
 
 				try
 				{
-					await FromLocal<Setting>(context, cancellationToken: cancellationToken);
+					await FromLocal<Setting>(defaultContext, cancellationToken: cancellationToken);
+					await FromLocal<Country>(cacheContext, cancellationToken: cancellationToken);
+
 #if USING_IDENTITY
-					await FromLocal<Role>(context, cancellationToken: cancellationToken);
-					await FromLocal<User>(context, cancellationToken: cancellationToken);
-					await FromLocal<UserRole>(context, cancellationToken: cancellationToken);
-					await FromLocal<UserClaim>(context, cancellationToken: cancellationToken);
+					await FromLocal<Role>(defaultContext, cancellationToken: cancellationToken);
+					await FromLocal<User>(defaultContext, cancellationToken: cancellationToken);
+					await FromLocal<UserRole>(defaultContext, cancellationToken: cancellationToken);
+					await FromLocal<UserClaim>(defaultContext, cancellationToken: cancellationToken);
 #endif
 #if DEBUG
-					await FromLocal<Client>(context, cancellationToken: cancellationToken);
+					await FromLocal<Client>(defaultContext, cancellationToken: cancellationToken);
 #endif
 				}
 				catch (Exception e)

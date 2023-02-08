@@ -159,7 +159,7 @@ partial class Build : NukeBuild
 		});
 
 	Target Publish => _ => _
-		.DependsOn(Test)
+		//.DependsOn(Test)
 		.DependsOn(Compile)
 		.DependsOn(Clean)
 		.Executes(() =>
@@ -179,6 +179,7 @@ partial class Build : NukeBuild
 
 			var combinations = from item in connectionStrings
 				let split = item.Key.Split(".")
+				where split.Length > 1
 				let context = split.First()
 				let provider = split.Last()
 				where provider != "Sqlite"

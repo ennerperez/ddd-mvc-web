@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Infrastructure.Interfaces
 {
 
 	public interface IDocument
@@ -27,11 +29,14 @@
 	{
 	}
 
-	public interface IDocumentService<TDocument> where TDocument : IDocument
+	public interface IDocumentService<in TDocument> where TDocument : IDocument
 	{
 		T Compose<T>(object model = null) where T : TDocument;
+		Task<T> ComposeAsync<T>(object model = null) where T : TDocument;
 
 		byte[] Generate<T>(T instance, string format) where T : TDocument;
+
+		Task<byte[]> GenerateAsync<T>(T instance, string format) where T : TDocument;
 
 	}
 }

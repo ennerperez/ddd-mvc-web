@@ -92,7 +92,7 @@ namespace Business.Requests
 
 		public async Task<PaginatedList<Budget>> Handle(PaginatedRequest<Budget, Guid, Budget> request, CancellationToken cancellationToken)
 		{
-			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
 			var result = await PaginatedList<Budget>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
@@ -100,7 +100,7 @@ namespace Business.Requests
 		}
 	}
 
-	public class ReadBudgetsRequestHandler : IRequestHandler<GenericRequest<Budget, Guid, Budget>, Budget[]>
+	public class ReadBudgetsRequestHandler : IRequestHandler<RepositoryRequest<Budget, Guid, Budget>, Budget[]>
 	{
 		private readonly IGenericRepository<Budget, Guid> _repository;
 
@@ -109,7 +109,7 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Budget[]> Handle(GenericRequest<Budget, Guid, Budget> request, CancellationToken cancellationToken)
+		public async Task<Budget[]> Handle(RepositoryRequest<Budget, Guid, Budget> request, CancellationToken cancellationToken)
 		{
 			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var items = await entities.ToArrayAsync(cancellationToken);

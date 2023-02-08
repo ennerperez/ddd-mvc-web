@@ -1,6 +1,6 @@
 namespace Persistence
 {
-	public static class Providers
+	public static class DatabaseProviders
 	{
 		public const string Sqlite = "Sqlite";
 		public const string SqlServer = "SqlServer";

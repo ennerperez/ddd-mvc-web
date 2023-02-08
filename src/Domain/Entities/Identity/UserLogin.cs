@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
 {
-	public class UserLogin : IdentityUserLogin<int>, IEntity<int>, IAuditable
+	public class UserLogin : IdentityUserLogin<int>, IEntity, IAuditable
 	{
 		public UserLogin()
 		{

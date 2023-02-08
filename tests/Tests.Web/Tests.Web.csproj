@@ -29,9 +29,9 @@
 	<ItemGroup>
 		<PackageReference Include="Selenium.Support" Version="4.7.0" />
 		<PackageReference Include="Selenium.WebDriver" Version="4.7.0" />
-		<PackageReference Condition="'$(EnableChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="108.0.5359.7100" />
-		<PackageReference Condition="'$(EnableGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.32.0" />
-		<PackageReference Condition="'$(EnableIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.7.0" />
+		<PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="108.0.5359.7100" />
+		<PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.32.0" />
+		<PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.7.0" />
 	</ItemGroup>
 
 	<!-- Serilog -->

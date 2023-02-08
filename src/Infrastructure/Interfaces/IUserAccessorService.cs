@@ -11,6 +11,7 @@ namespace Infrastructure.Interfaces
 
 #if USING_IDENTITY
 		string FindFirstValue(string claimType);
+		string FindLastValue(string claimType);
 #endif
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -39,12 +40,18 @@ namespace Web.Services
 			if (_httpContext.HttpContext != null) return _httpContext.HttpContext.User;
 			return null;
 		}
-
+#if USING_IDENTITY
 		public string FindFirstValue(string claimType)
 		{
 			if (_httpContext.HttpContext != null) return _httpContext.HttpContext.User.FindFirstValue(claimType);
 			return string.Empty;
 		}
+		public string FindLastValue(string claimType)
+		{
+			if (_httpContext.HttpContext != null) return _httpContext.HttpContext.User.FindAll(claimType).LastOrDefault()?.Value;
+			return string.Empty;
+		}
+#endif
 	}
 
 }

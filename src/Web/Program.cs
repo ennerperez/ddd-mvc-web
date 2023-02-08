@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -8,12 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Web.Services;
 
+#if  USING_SASS && USING_SASS_WATCH
+using System.Diagnostics;
+#endif
+
 namespace Web
 {
 	public static class Program
 	{
 		internal static string Name { get; private set; }
-		internal static IServiceProvider ServiceProvider { get; private set; }
+		private static IServiceProvider ServiceProvider { get; set; }
 		public static void Main(string[] args)
 		{
 			var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -32,7 +35,7 @@ namespace Web
 				.Enrich.WithProperty("ApplicationName", Name)
 				.CreateLogger();
 
-#if USING_SASS && ENABLE_SASS_WATCH
+#if USING_SASS && USING_SASS_WATCH
 			var darts = Process.GetProcessesByName("dart");
 			foreach (var process in darts)
 				process.Kill();

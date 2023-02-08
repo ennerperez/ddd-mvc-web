@@ -6,17 +6,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.Interfaces;
 using Web.Areas.Admin.Reports;
+using Web.Controllers;
 
 namespace Web.Areas.Admin.Controllers
 {
 	[Authorize(Roles = "Admin")]
 	[Area("Admin")]
-	public class BudgetsController : Controller
+	public class BudgetsController : MvcControllerBase
 	{
-		private readonly IDocumentService<IDocument> _documentService;
+		private readonly IDocumentService _documentService;
 		private readonly IGenericRepository<Budget, Guid> _budgetRepository;
 
-		public BudgetsController(IDocumentService<IDocument> documentService, IGenericRepository<Budget, Guid> budgetRepository)
+		public BudgetsController(IDocumentService documentService, IGenericRepository<Budget, Guid> budgetRepository)
 		{
 			_documentService = documentService;
 			_budgetRepository = budgetRepository;

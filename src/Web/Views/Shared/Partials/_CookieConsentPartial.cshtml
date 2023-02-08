@@ -9,7 +9,7 @@
 @if (showBanner)
 {
 	<div id="cookieConsent" class="alert alert-info alert-dismissible fade show fixed-bottom m-0 d-flex justify-content-between" role="alert">
-		<span class="align-self-center">Use this space to summarize your privacy and cookie use policy. <a asp-action="Privacy">Learn More</a>.</span>
+		<span class="align-self-center">Use this space to summarize your privacy and cookie use policy. <a asp-controller="Default" asp-action="Privacy">Learn More</a>.</span>
 		<div class="align-self-center">
 			<button type="button" class="btn btn-primary accept-policy close" data-bs-dismiss="alert" aria-label="Close" data-cookie-string="@cookieString">
 				<span aria-hidden="true">Accept</span>

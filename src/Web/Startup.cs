@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using System.IO.Compression;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,6 +12,7 @@ using Domain;
 #if USING_IDENTITY
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 #endif
 using Infrastructure;
 using Infrastructure.Interfaces;
@@ -22,7 +22,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+#if USING_COMPRESSION
 using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
+#endif
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +33,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
+using Serilog;
 using Web.Services;
 using SameSiteMode=Microsoft.AspNetCore.Http.SameSiteMode;
 
@@ -42,6 +46,7 @@ using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
 #if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 #endif
 #if USING_COOKIES
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -53,7 +58,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
 #endif
-#if ENABLE_TOKEN_VALIDATION
+#if USING_TOKEN_VALIDATION
 using System.Security.Claims;
 using Microsoft.IdentityModel.Logging;
 #endif
@@ -65,6 +70,7 @@ using Newtonsoft.Json.Serialization;
 #if USING_SWAGGER
 using Microsoft.OpenApi.Models;
 #endif
+
 #if USING_LOCALIZATION
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
@@ -128,6 +134,7 @@ namespace Web
 			{
 				options.CheckConsentNeeded = _ => true;
 				options.MinimumSameSitePolicy = SameSiteMode.None;
+				options.Secure = CookieSecurePolicy.Always;
 			});
 #endif
 
@@ -145,6 +152,9 @@ namespace Web
 
 			services.AddHttpContextAccessor();
 			services.AddTransient<IUserAccessorService, UserAccessorService>();
+#if USING_IDENTITY
+			services.AddTransient<IEmailSender, SmtpSender>();
+#endif
 
 			services
 				.AddDomain()
@@ -242,9 +252,11 @@ namespace Web
 				options.UseCaseSensitivePaths = true;
 			});
 
+#if USING_COMPRESSION
+
 			services.AddResponseCompression(config =>
 			{
-				config.EnableForHttps = Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection");
+				config.EnableForHttps = true;
 				config.Providers.Add<BrotliCompressionProvider>();
 				config.Providers.Add<GzipCompressionProvider>();
 				config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {"image/svg+xml", "text/css", "text/javascript"});
@@ -253,10 +265,7 @@ namespace Web
 			services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
 			services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.SmallestSize; });
 
-			var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
-			{
-				options.Cookie = new CookieBuilder() {Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration};
-			});
+#endif
 
 #if USING_COOKIES
 			var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
@@ -279,6 +288,26 @@ namespace Web
 			});
 
 			services.ConfigureApplicationCookie(cookieOptions);
+#endif
+
+#if USING_SESSION
+			var sessionOptions = new Action<SessionOptions>((option) =>
+			{
+				option.Cookie.Name = $"{Configuration["AppSettings:Name"]}.Session".ToUpperInvariant();
+				option.Cookie.HttpOnly = true;
+				option.Cookie.IsEssential = true;
+#if DEBUG && SESSION_TEST
+		        //option.Cookie.Expiration = TimeSpan.FromMinutes(1);
+		        option.IdleTimeout = TimeSpan.FromMinutes(1);
+		        option.IOTimeout = TimeSpan.FromMinutes(1);
+#else
+				//option.Cookie.Expiration = TimeSpan.FromHours(8);
+				option.IdleTimeout = TimeSpan.FromHours(8);
+				option.IOTimeout = TimeSpan.FromHours(8);
+#endif
+			});
+
+			services.AddSession(sessionOptions);
 #endif
 
 #if USING_NEWTONSOFT
@@ -327,21 +356,21 @@ namespace Web
 				c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 				c.AddSecurityRequirement(new OpenApiSecurityRequirement {{jwtSecurityScheme, Array.Empty<string>()}});
 #endif
-// #if USING_AUTH0
-// 				var auth0SecurityScheme = new OpenApiSecurityScheme
-// 				{
-// 					Name = "Auth0 Authentication",
-// 					Scheme = Auth0Constants.AuthenticationScheme,
-// 					BearerFormat = "JWT",
-// 					In = ParameterLocation.Header,
-// 					Type = SecuritySchemeType.OAuth2,
-// 					Description = "Put **_ONLY_** your JWT Bearer token",
-// 					Reference = new OpenApiReference { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
-// 				};
-//
-// 				c.AddSecurityDefinition(auth0SecurityScheme.Reference.Id, auth0SecurityScheme);
-// 				c.AddSecurityRequirement(new OpenApiSecurityRequirement { { auth0SecurityScheme, Array.Empty<string>() } });
-// #endif
+#if USING_AUTH0 && !USING_BEARER
+				var auth0SecurityScheme = new OpenApiSecurityScheme
+				{
+					Name = "Auth0 Authentication",
+					Scheme = Auth0Constants.AuthenticationScheme,
+					BearerFormat = "JWT",
+					In = ParameterLocation.Header,
+					Type = SecuritySchemeType.OAuth2,
+					Description = "Put **_ONLY_** your JWT Bearer token",
+					Reference = new OpenApiReference {Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme}
+				};
+
+				c.AddSecurityDefinition(auth0SecurityScheme.Reference.Id, auth0SecurityScheme);
+				c.AddSecurityRequirement(new OpenApiSecurityRequirement {{auth0SecurityScheme, Array.Empty<string>()}});
+#endif
 				c.ResolveConflictingActions(apiDescription => apiDescription.First());
 				c.CustomSchemaIds(type => type.ToString());
 				c.EnableAnnotations();
@@ -356,11 +385,11 @@ namespace Web
 			{
 				Configuration.Bind("OpenIdSettings", options);
 
-#if ENABLE_TOKEN_VALIDATION
+#if USING_TOKEN_VALIDATION
 				options.Events.OnTokenValidated = OpenId_OnTokenValidated;
 #endif
 				options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
-				options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					// This sets the value of User.Identity.Name to users AD username
 					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, RoleClaimType = System.Security.Claims.ClaimTypes.Role, AuthenticationType = "Cookies", ValidateIssuer = false
@@ -382,24 +411,42 @@ namespace Web
 			});
 #endif
 
+			var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
+			{
+				options.Cookie = new CookieBuilder() {Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration};
+			});
 			services.AddAntiforgery(antiforgeryOptions);
+
+#if USING_CORS
+			services.AddCors(options =>
+			{
+				options.AddPolicy("AllowCors", builder =>
+				{
+					builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+				});
+			});
+#endif
 
 			services.AddAuthentication()
 #if !USING_AUTH0 && USING_COOKIES
 				.AddCookie()
 #endif
-#if ENABLE_SMARTSCHEMA
+#if USING_SMARTSCHEMA
 				.AddSmartScheme()
 #endif
 #if USING_APIKEY
-#if ENABLE_APIKEY_TABLES
+#if USING_APIKEY_TABLES
 				.AddApiKey<TableServiceApiKeyProvider>()
 #else
 				.AddApiKey<AppSettingsApiKeyProvider>()
 #endif
 #endif
 #if USING_BEARER
-				.AddJwtBearer()
+				.AddJwtBearer(options =>
+				{
+					options.Authority = Configuration["Auth0Settings:Authority"];
+					options.TokenValidationParameters = new TokenValidationParameters() {ValidateAudience = false};
+				})
 #endif
 #if USING_OPENID
 				.AddOpenIdConnect(openIdConnectOptions)
@@ -425,7 +472,7 @@ namespace Web
 
 		}
 
-#if (USING_OPENID) && ENABLE_TOKEN_VALIDATION
+#if (USING_OPENID) && USING_TOKEN_VALIDATION
 		private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
 		{
 			if (context.Principal != null && context.Principal.Identity != null)
@@ -473,18 +520,22 @@ namespace Web
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseMigrationsEndPoint();
-#if ENABLE_TOKEN_VALIDATION
+#if USING_TOKEN_VALIDATION
 				IdentityModelEventSource.ShowPII = true;
 #endif
 			}
 			else
 			{
-				app.UseExceptionHandler("/Default/Error");
+				app.UseExceptionHandler("/Error");
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 				app.UseHsts();
 			}
 
-			app.UseStatusCodePagesWithReExecute("/Default/Error/{0}");
+			app.UseSerilogRequestLogging();
+#if USING_SESSION
+			app.UseSession();
+#endif
+			app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 			if (Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"))
 			{
@@ -533,7 +584,9 @@ namespace Web
 				await next();
 			});
 
+#if USING_COMPRESSION
 			app.UseResponseCompression();
+#endif
 
 			app.UseRouting();
 
@@ -596,6 +649,10 @@ namespace Web
 			{
 				app.UseForwardedHeaders(new ForwardedHeadersOptions {ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto});
 			}
+
+#if USING_CORS
+			app.UseCors();
+#endif
 
 			app.UseAuthentication();
 			app.UseAuthorization();

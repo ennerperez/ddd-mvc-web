@@ -25,7 +25,7 @@ namespace Persistence.Contexts
 		{
 			if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
 
-			var providerName = Database.ProviderName?.Split('.').Last();
+			ProviderName = Database.ProviderName?.Split('.').Last();
 
 			// Configurations
 			modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly, m => m.GetCustomAttributes(typeof(DbContextAttribute), true).OfType<DbContextAttribute>().Any(a => a.ContextType == GetType()));
@@ -34,13 +34,13 @@ namespace Persistence.Contexts
 			// modelBuilder.RemovePluralizingTableNameConvention();
 			modelBuilder.AddProviderTypeConventions(m =>
 			{
-				m.Provider = providerName;
+				m.Provider = ProviderName;
 				m.DecimalConfig.Add(6, new[] {"Lat", "Long"});
 				m.Exclude = null;
 				m.UseDateTime = false;
 			});
-			modelBuilder.AddAuditableEntitiesConventions<IAuditable>(providerName);
-			modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>(providerName);
+			modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
+			modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>(ProviderName);
 		}
 
 #if DEBUG
@@ -48,20 +48,6 @@ namespace Persistence.Contexts
 		{
 			optionsBuilder?.EnableDetailedErrors();
 			optionsBuilder?.EnableSensitiveDataLogging();
-// #if HAS_DATABASE_PROVIDER
-// 			if (optionsBuilder == null)
-// 			{
-// 				var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-// 				var config = new ConfigurationBuilder()
-// 					.SetBasePath(Directory.GetCurrentDirectory())
-// 					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-// 					.AddJsonFile($"appsettings.{environmentName}.json", true, true)
-// 					.AddEnvironmentVariables()
-// 					.Build();
-//
-// 				this.UseDbEngine(optionsBuilder, config);
-// 			}
-// #endif
 		}
 #endif
 
