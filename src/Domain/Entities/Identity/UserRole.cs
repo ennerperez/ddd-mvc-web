@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
 {
-	public class UserRole : IdentityUserRole<int>, IEntity<int>, IAuditable
+	public class UserRole : IdentityUserRole<int>, IEntity, IAuditable
 	{
 		public UserRole()
 		{
