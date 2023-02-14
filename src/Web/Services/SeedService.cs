@@ -68,10 +68,12 @@ namespace Web.Services
 			await StopAsync(cancellationToken);
 		}
 
-		private async Task FromLocal<T>(DbContext context, string source = "Data", CancellationToken cancellationToken = default) where T : class
+		private async Task FromLocal<T>(DbContext context, string source = "Data", int minRows = 0, CancellationToken cancellationToken = default) where T : class
 		{
 			var dbSet = context.Set<T>();
-			if (!await dbSet.AnyAsync(cancellationToken: cancellationToken))
+			var hasRow = await dbSet.AnyAsync(cancellationToken: cancellationToken);
+			if (minRows > 0) hasRow = await dbSet.CountAsync(cancellationToken: cancellationToken) > minRows;
+			if (!hasRow)
 			{
 				try
 				{
