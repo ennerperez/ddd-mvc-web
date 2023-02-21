@@ -29,7 +29,7 @@ partial class Build
     config.Bind("ConnectionStrings", connectionStrings);
 
     var combinations = from item in connectionStrings
-      let split = item.Key.Split(".")
+      let split = item.Key.Split("_")
       where split.Length > 1
       let context = split.First()
       let provider = split.Last()
