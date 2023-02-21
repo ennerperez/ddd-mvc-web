@@ -190,6 +190,7 @@ partial class Build : NukeBuild
 				var fileName = Path.Combine(ScriptsDirectory, $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.sql");
 				if (File.Exists(fileName)) File.Delete(fileName);
 				DotNetEf(_ => new MigrationsSettings(Migrations.Script)
+					.EnableIdempotent()
 					.SetProjectFile(Solution.GetProject(persistence))
 					.SetStartupProjectFile(Solution.GetProject(startup))
 					.SetContext(item.Context)
