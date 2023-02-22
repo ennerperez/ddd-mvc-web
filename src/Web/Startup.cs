@@ -293,7 +293,7 @@ namespace Web
 #if USING_SESSION
 			var sessionOptions = new Action<SessionOptions>((option) =>
 			{
-				option.Cookie.Name = $"{Configuration["AppSettings:Name"]}.Session".ToUpperInvariant();
+				option.Cookie.Name = $"{Program.Name.Normalize(false)}.Session".ToUpperInvariant();
 				option.Cookie.HttpOnly = true;
 				option.Cookie.IsEssential = true;
 #if DEBUG && SESSION_TEST
