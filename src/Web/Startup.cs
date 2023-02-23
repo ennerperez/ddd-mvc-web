@@ -444,7 +444,11 @@ namespace Web
 #if USING_BEARER
 				.AddJwtBearer(options =>
 				{
+#if USING_AUTH0
 					options.Authority = Configuration["Auth0Settings:Authority"];
+#else
+					options.Authority = Program.Name.Normalize();
+#endif
 					options.TokenValidationParameters = new TokenValidationParameters() {ValidateAudience = false};
 				})
 #endif
