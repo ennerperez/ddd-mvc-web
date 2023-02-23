@@ -303,7 +303,8 @@ namespace Microsoft.AspNetCore
 				authenticationBuilder.Services.AddSingleton(typeof(IApiKeyProvider), typeof(T));
 				return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
 			}
-
+#endif
+#if USING_SMARTSCHEMA
 			public static AuthenticationBuilder AddSmartScheme(this AuthenticationBuilder authenticationBuilder)
 			{
 				return authenticationBuilder.AddPolicyScheme("SmartScheme", "Smart Scheme Selector", options =>
@@ -311,7 +312,9 @@ namespace Microsoft.AspNetCore
 					options.ForwardDefaultSelector = context =>
 					{
 						var hasJwtBearerhHeader = context.Request.Headers.ContainsKey("Authorization") && context.Request.Headers["Authorization"].Any(m => m.ToLower().StartsWith("bearer"));
+#if USING_APIKEY
 						var hasApiKeyHeader = context.Request.Headers.ContainsKey(ApiKeyAuthenticationDefaults.ApiKeyHeaderName) && !string.IsNullOrWhiteSpace(context.Request.Headers[ApiKeyAuthenticationDefaults.ApiKeyHeaderName]);
+#endif
 						// ReSharper disable once UnusedVariable
 						var hasCookieHeader = context.Request.Headers.ContainsKey("cookie") && !string.IsNullOrWhiteSpace(context.Request.Headers["cookie"]);
 #if USING_OPENID
@@ -320,8 +323,10 @@ namespace Microsoft.AspNetCore
 #endif
 						if (hasJwtBearerhHeader)
 							return JwtBearerDefaults.AuthenticationScheme;
+#if USING_APIKEY
 						else if (hasApiKeyHeader)
 							return ApiKeyAuthenticationDefaults.AuthenticationScheme;
+#endif
 						// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 #if USING_OPENID
 						else if (hasOpenId)
