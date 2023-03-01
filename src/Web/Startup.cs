@@ -169,8 +169,8 @@ namespace Web
 				.AddRoles<Role>()
 				.AddUserManager<UserManager<User>>()
 				.AddRoleManager<RoleManager<Role>>()
-				.AddDefaultTokenProviders()
-				.AddEntityFrameworkStores<DefaultContext>();
+				.AddEntityFrameworkStores<DefaultContext>()
+				.AddDefaultTokenProviders();
 
 			services.Configure<IdentityOptions>(options =>
 			{
@@ -275,7 +275,7 @@ namespace Web
 				options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 #endif
 				options.LoginPath = "/Identity/Account/Login";
-				options.LogoutPath = "/Identity/Account/Login";
+				options.LogoutPath = "/Identity/Account/Logout";
 				options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 
 				options.Cookie = new CookieBuilder
@@ -427,12 +427,34 @@ namespace Web
 			});
 #endif
 
+#if !USING_SMARTSCHEMA
 			services.AddAuthentication()
-#if !USING_AUTH0 && USING_COOKIES
-				.AddCookie()
+#else
+			services.AddAuthentication(options =>
+				{
+					options.DefaultScheme = SmartScheme.DefaultScheme;
+					options.DefaultChallengeScheme = SmartScheme.DefaultScheme;
+				})
 #endif
-#if USING_SMARTSCHEMA
-				.AddSmartScheme()
+#if !USING_AUTH0 && USING_COOKIES
+				.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+				{
+					options.ExpireTimeSpan = TimeSpan.FromHours(1);
+#if DEBUG
+					options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+#endif
+					options.LoginPath = "/Identity/Account/Login";
+					options.LogoutPath = "/Identity/Account/Logout";
+					options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+					options.Cookie = new CookieBuilder
+					{
+						Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
+					};
+#if USING_SWAGGER
+					options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
+#endif
+				})
 #endif
 #if USING_APIKEY
 #if USING_APIKEY_TABLES
@@ -442,14 +464,33 @@ namespace Web
 #endif
 #endif
 #if USING_BEARER
-				.AddJwtBearer(options =>
+				.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 				{
 #if USING_AUTH0
 					options.Authority = Configuration["Auth0Settings:Authority"];
-#else
-					options.Authority = Program.Name.Normalize();
-#endif
 					options.TokenValidationParameters = new TokenValidationParameters() {ValidateAudience = false};
+#else
+#if DEBUG
+					options.IncludeErrorDetails = true;
+#endif
+					var audiences = new List<string>();
+					Configuration.Bind("AuthSettings:Audiences", audiences);
+					options.TokenValidationParameters = new TokenValidationParameters()
+					{
+						ValidIssuer = Configuration["AuthSettings:Issuer"],
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"])),
+						ValidateLifetime = Configuration.GetValue<bool>("AuthSettings:Validate:Lifetime"),
+						ValidateIssuer = Configuration.GetValue<bool>("AuthSettings:Validate:Issuer"),
+						ValidateAudience = Configuration.GetValue<bool>("AuthSettings:Validate:Audience"),
+						ValidAudiences = audiences,
+						RequireAudience = Configuration.GetValue<bool>("AuthSettings:Require:Audience"),
+						RequireExpirationTime = Configuration.GetValue<bool>("AuthSettings:Require:ExpirationTime"),
+					};
+					options.SaveToken = Configuration.GetValue<bool>("AuthSettings:SaveToken");
+					options.RequireHttpsMetadata = Configuration.GetValue<bool>("AuthSettings:RequireHttpsMetadata");
+
+#endif
+
 				})
 #endif
 #if USING_OPENID
@@ -469,6 +510,9 @@ namespace Web
 					options.Audience = Configuration["Auth0Settings:Audience"];
 					options.UseRefreshTokens = Configuration.GetValue<bool>("Auth0Settings:UseRefreshTokens");
 				})
+#endif
+#if USING_SMARTSCHEMA
+				.AddSmartScheme()
 #endif
 				.Close();
 
@@ -539,7 +583,9 @@ namespace Web
 #if USING_SESSION
 			app.UseSession();
 #endif
+#if !DEBUG
 			app.UseStatusCodePagesWithReExecute("/Error/{0}");
+#endif
 
 			if (Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"))
 			{

@@ -9,15 +9,12 @@ using Business.Models;
 using Domain;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
-
-#if USING_SMARTSCHEMA
-using Microsoft.AspNetCore.Authorization;
-#endif
 
 // ReSharper disable RedundantCast
 
@@ -25,28 +22,44 @@ namespace Web.Controllers
 {
 #if USING_SMARTSCHEMA
 	[SmartAuthorize]
+#else
+	[Authorize]
 #endif
 	[Route("api/[controller]")]
 	[ApiController]
-	public abstract class ApiControllerBase<TEntity, TKey> : ControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
+	public abstract class ApiControllerBase : ControllerBase
 	{
 		private ISender _mediator = null!;
 		protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
-		protected IGenericRepository<TEntity, TKey> Repository()
-			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
-
 		protected IGenericRepository<E, K> Repository<E, K>() where E : class, IEntity<K> where K : struct, IComparable<K>, IEquatable<K>
 			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<E, K>>();
+
+		protected IGenericRepository<E> Repository<E>() where E : class, IEntity<int>
+			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<E>>();
 
 		protected bool IsAdmin => User.IsInRole(Roles.Admin);
 		protected int UserId => User.GetUserId<int>();
 
+	}
+
+#if USING_SMARTSCHEMA
+	[SmartAuthorize]
+#else
+	[Authorize]
+#endif
+	[Route("api/[controller]")]
+	[ApiController]
+	public abstract class ApiControllerBase<TEntity, TKey> : ApiControllerBase where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
+	{
+		protected IGenericRepository<TEntity, TKey> Repository()
+			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
 
 		public async Task<JsonResult> Table<TResult>(TableInfo model,
 			Expression<Func<TEntity, TResult>> selector,
 			Expression<Func<TEntity, bool>> predicate = null,
-			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
+			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+			bool includeDeleted = false)
 		{
 			object rows;
 
@@ -158,12 +171,12 @@ namespace Web.Controllers
 			if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
 			{
 				rows = await Repository().SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order), include: include,
-					skip: model.Start, take: model.Length);
+					skip: model.Start, take: model.Length, includeDeleted: includeDeleted);
 			}
 			else
 			{
 				rows = await Repository().ReadAsync(selector, expression, o => o.SortDynamically(order), include: include,
-					skip: model.Start, take: model.Length);
+					skip: model.Start, take: model.Length, includeDeleted: includeDeleted);
 			}
 
 			var data = await ((IQueryable<object>)rows).ToListAsync();
@@ -179,6 +192,8 @@ namespace Web.Controllers
 
 #if USING_SMARTSCHEMA
 	[SmartAuthorize]
+#else
+	[Authorize]
 #endif
 	[Route("api/[controller]")]
 	[ApiController]
@@ -187,9 +202,6 @@ namespace Web.Controllers
 		protected new IGenericRepository<TEntity> Repository()
 			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity>>();
 
-		protected IGenericRepository<E> Repository<E>() where E : class, IEntity<int>
-			=> HttpContext.RequestServices.GetRequiredService<IGenericRepository<E>>();
 	}
-
 
 }

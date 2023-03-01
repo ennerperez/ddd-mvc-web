@@ -307,7 +307,7 @@ namespace Microsoft.AspNetCore
 #if USING_SMARTSCHEMA
 			public static AuthenticationBuilder AddSmartScheme(this AuthenticationBuilder authenticationBuilder)
 			{
-				return authenticationBuilder.AddPolicyScheme("SmartScheme", "Smart Scheme Selector", options =>
+				return authenticationBuilder.AddPolicyScheme(SmartScheme.DefaultScheme, "Smart Scheme Selector", options =>
 				{
 					options.ForwardDefaultSelector = context =>
 					{
@@ -316,7 +316,7 @@ namespace Microsoft.AspNetCore
 						var hasApiKeyHeader = context.Request.Headers.ContainsKey(ApiKeyAuthenticationDefaults.ApiKeyHeaderName) && !string.IsNullOrWhiteSpace(context.Request.Headers[ApiKeyAuthenticationDefaults.ApiKeyHeaderName]);
 #endif
 						// ReSharper disable once UnusedVariable
-						var hasCookieHeader = context.Request.Headers.ContainsKey("cookie") && !string.IsNullOrWhiteSpace(context.Request.Headers["cookie"]);
+						var hasCookieHeader = context.Request.Headers.Any(m=> m.Key.EndsWith(CookieAuthenticationDefaults.AuthenticationScheme) && !m.Key.Contains("Antiforgery"));
 #if USING_OPENID
 						//TODO: Better implementation
 						var hasOpenId = true;
