@@ -184,9 +184,9 @@ namespace Microsoft.EntityFrameworkCore
 				if (connectionStrings.Count != 1)
 					throw new InvalidDataException($"The context {contextName} has more than one connection string");
 
-				providerName = connectionStrings.First().Key.Split(".").Last();
+				providerName = connectionStrings.First().Key.Split("_").Last();
 			}
-			var connectionString = config.GetConnectionString($"{contextName}.{providerName}");
+			var connectionString = config.GetConnectionString($"{contextName}_{providerName}");
 
 #pragma warning disable 168
 #pragma warning disable 219

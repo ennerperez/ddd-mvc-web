@@ -6,17 +6,17 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
-
-#if USING_SMARTSCHEMA
 using Microsoft.AspNetCore.Authorization;
-#endif
 
 // ReSharper disable RedundantCast
 
 namespace Web.Controllers
 {
+
 #if USING_SMARTSCHEMA
 	[SmartAuthorize]
+#else
+	[Authorize]
 #endif
 #if USING_SWAGGER
 	[ApiExplorerSettings(IgnoreApi = true)]

@@ -283,6 +283,10 @@ function saveRecord() {
 			Toast.fire(__editor_options.success);
 		},
 		error: function (e) {
+            if (e.status == 401) {
+                window.location.reload();
+                return;
+            }
 			let text = "";
 			if (e.hasOwnProperty("responseJSON")) text = e.responseJSON.detail;
 			__editor_options.error.text = text;
