@@ -50,7 +50,6 @@
 	<PropertyGroup Label="Options">
 		<UsingSassWatch>true</UsingSassWatch>
 		<UsingDatadog>false</UsingDatadog>
-		<UsingNewRelic>false</UsingNewRelic>
 		<UsingCors>true</UsingCors>
 		<UsingCompression>true</UsingCompression>
 		<UsingSession>true</UsingSession>
