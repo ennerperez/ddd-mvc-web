@@ -13,11 +13,28 @@ using Microsoft.Data.Sqlite;
 #endif
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
-using Persistence;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.EntityFrameworkCore
 {
+
+	public static class DatabaseProviders
+	{
+		public const string Sqlite = "Sqlite";
+		public const string SqlServer = "SqlServer";
+		public const string MariaDb = "MariaDB";
+		public const string MySql = "MySql";
+		public const string PostgreSql = "PostgreSQL";
+		public const string Oracle = "Oracle";
+	}
+
+	public static partial class Schemas
+	{
+		public const string Migration = "db_migrations";
+		public const string Identity = "db_identity";
+		public const string Default = "db_default";
+	}
+
 	public static class RelationalEntityTypeBuilderExtensions
 	{
 		public static EntityTypeBuilder<TEntity> ToTable<TEntity>([NotNull] this EntityTypeBuilder<TEntity> entityTypeBuilder, string name = "", string schema = "", bool auto = true) where TEntity : class
