@@ -43,7 +43,10 @@ partial class Build
 		.DependsOn(Restore)
 		.Executes(() =>
 		{
-			var projects = Solution.Projects.Where(m => !TestsProjects.Contains(m)).ToArray();
+			var projects = Solution.AllProjects
+				.Where(m=> !m.Name.StartsWith("_"))
+				.Where(m=> new []{Persistence, Startup}.Contains(m))
+				.ToArray();
 			DotNetBuild(s => s
 				.CombineWith(projects, configurator: (buildSettings, v) => buildSettings
 					.SetProjectFile(v)
