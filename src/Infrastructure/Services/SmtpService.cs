@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -22,14 +23,8 @@ namespace Infrastructure.Services
 			_logger = loggerFactory.CreateLogger(GetType());
 		}
 
-		public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+		private async Task InternalSendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, Stream> attachments = null)
 		{
-			await SendEmailAsync(email, null, subject, htmlMessage);
-		}
-
-		public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, byte[]> attachments = null)
-		{
-
 			var smtpSettings = _configuration.GetSection("SmtpSettings");
 
 			var name = smtpSettings["Name"];
@@ -41,7 +36,7 @@ namespace Infrastructure.Services
 			var enableSsl = bool.Parse(smtpSettings["EnableSsl"]);
 			var useDefaultCredentials = bool.Parse(smtpSettings["UseDefaultCredentials"]);
 
-			var client = new SmtpClient(server, port) { EnableSsl = enableSsl, UseDefaultCredentials = useDefaultCredentials };
+			var client = new SmtpClient(server, port) {EnableSsl = enableSsl, UseDefaultCredentials = useDefaultCredentials};
 			if (!client.UseDefaultCredentials)
 				client.Credentials = new NetworkCredential(username, password);
 
@@ -50,13 +45,13 @@ namespace Infrastructure.Services
 			var target = new MailAddress(email, userFullName, System.Text.Encoding.UTF8);
 			var html = AlternateView.CreateAlternateViewFromString(htmlMessage, null, MediaTypeNames.Text.Html);
 
-			var message = new MailMessage(sender, target) { IsBodyHtml = true, Subject = subject };
+			var message = new MailMessage(sender, target) {IsBodyHtml = true, Subject = subject};
 
 			message.AlternateViews.Add(html);
 			if (attachments != null)
 				foreach (var item in attachments)
 					if (item.Value != null)
-						message.Attachments.Add(new Attachment(new MemoryStream(item.Value), item.Key));
+						message.Attachments.Add(new Attachment(item.Value, item.Key));
 #if !DEBUG
             if (!string.IsNullOrWhiteSpace(bcc))
                 message.Bcc.Add(new MailAddress(bcc));
@@ -90,6 +85,19 @@ namespace Infrastructure.Services
 						_logger.LogError(e, "{Message}", e.Message);
 				}
 			}
+		}
+		public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+		{
+			await InternalSendEmailAsync(email, null, subject, htmlMessage);
+		}
+		public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, Stream> attachments = null)
+		{
+			await InternalSendEmailAsync(email, userFullName, subject, htmlMessage, useThread, bcc, attachments);
+		}
+		public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, byte[]> attachments = null)
+		{
+			var attachs = attachments?.Select(m => m).ToDictionary(k => k.Key, v => (Stream)new MemoryStream(v.Value));
+			await InternalSendEmailAsync(email, userFullName, subject, htmlMessage, useThread, bcc, attachs);
 		}
 	}
 }
