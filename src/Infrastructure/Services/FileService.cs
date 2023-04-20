@@ -3,15 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable InconsistentNaming
+// ReSharper disable UnusedParameter.Local
 
 namespace Infrastructure.Services
 {
@@ -20,22 +23,22 @@ namespace Infrastructure.Services
 		private readonly IConfiguration _configuration;
 		private readonly ILogger _logger;
 
-		private List<BlobContainerClient> _clients;
+		private List<BlobContainerClient> clients;
 
 		public FileService(IConfiguration configuration, ILoggerFactory logger)
 		{
 			_configuration = configuration;
 			_logger = logger.CreateLogger(GetType());
-			_clients = new List<BlobContainerClient>();
+			clients = new List<BlobContainerClient>();
 		}
 
 		public string ContainerName { get; set; }
 		public bool CreateIfNotExists { get; set; }
 
-		public async Task<BlobContainerClient> GetClientAsync(string containerName = "", CancellationToken cancellationToken = default)
+		private BlobContainerClient GetClient(string containerName = "")
 		{
 			if (string.IsNullOrWhiteSpace(containerName)) containerName = ContainerName;
-			var client = _clients.FirstOrDefault(c => c.Name == containerName);
+			var client = clients.FirstOrDefault(c => c.Name == containerName);
 			if (client != null)
 				return client;
 
@@ -44,8 +47,32 @@ namespace Infrastructure.Services
 				_logger.LogInformation("Initializing [{ContainerName}] storage client", containerName);
 				var connectionString = _configuration["AzureSettings:Storage:ConnectionString"];
 				client = new BlobContainerClient(connectionString, containerName);
-				await client.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
-				_clients.Add(client);
+				if (CreateIfNotExists) client.CreateIfNotExists();
+				clients.Add(client);
+
+				return client;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "{Message}", e.Message);
+				throw new TypeInitializationException(GetType().FullName, new Exception($"Could not initialize the [{containerName}] storage client.", e));
+			}
+
+		}
+		private async Task<BlobContainerClient> GetClientAsync(string containerName = "", CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(containerName)) containerName = ContainerName;
+			var client = clients.FirstOrDefault(c => c.Name == containerName);
+			if (client != null)
+				return client;
+
+			try
+			{
+				_logger.LogInformation("Initializing [{ContainerName}] storage client", containerName);
+				var connectionString = _configuration["AzureSettings:Storage:ConnectionString"];
+				client = new BlobContainerClient(connectionString, containerName);
+				if (CreateIfNotExists) await client.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+				clients.Add(client);
 
 				return client;
 			}
@@ -57,12 +84,10 @@ namespace Infrastructure.Services
 
 		}
 
-		// ReSharper disable once UnusedMember.Local
 		private string NormalizePath(string targetPath)
 		{
 			if (targetPath.StartsWith(@"app/") || targetPath.StartsWith(@"app\")) targetPath = targetPath.Substring(4);
 			targetPath = targetPath.Replace(Path.DirectorySeparatorChar, '/');
-
 			return targetPath;
 		}
 
@@ -75,79 +100,38 @@ namespace Infrastructure.Services
 			{
 				targetPath = targetPath.Replace(Path.DirectorySeparatorChar, '/');
 				targetPath = Path.Combine(targetPath, fileName);
-
-				return targetPath;
 			}
-
-			throw new NullReferenceException();
+			return targetPath;
 		}
+
+		#region Internals
 
 		private async Task InternalWriteAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default, bool overwrite = false)
 		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
 
 			path = NormalizeFilePath(path);
 
 			if (!overwrite)
 			{
-				var blob = _client.GetBlobClient(path);
+				var blob = client.GetBlobClient(path);
 				if (blob != null)
 					if (await blob.ExistsAsync())
 						return;
 			}
 
 			var data = new MemoryStream(bytes);
-			if (overwrite) await _client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
+			if (overwrite) await client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
 			data.Position = 0;
-			await _client.UploadBlobAsync(path, data, cancellationToken);
+			await client.UploadBlobAsync(path, data, cancellationToken);
 		}
-
-		private async Task InternalWriteAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = false)
-			=> await InternalWriteAllBytesAsync(path, encoding.GetBytes(contents), cancellationToken, overwrite);
-
-		// ReSharper disable once UnusedParameter.Local
-		private async Task InternalWriteAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = true)
-			=> await InternalWriteAllTextAsync(path, string.Join(Environment.NewLine, contents), encoding, cancellationToken);
-
-		private async Task<byte[]> InternalReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
-		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
-
-			path = NormalizeFilePath(path);
-
-			var blob = _client.GetBlobClient(path);
-			if (blob != null)
-				if (await blob.ExistsAsync(cancellationToken))
-				{
-					byte[] result;
-					var download = blob.Download();
-					var downloadPath = Path.GetTempFileName();
-					using (var file = File.OpenWrite(downloadPath))
-						await download.Value.Content.CopyToAsync(file, cancellationToken);
-
-					result = await File.ReadAllBytesAsync(downloadPath, cancellationToken);
-					try
-					{
-						File.Delete(downloadPath);
-					}
-					catch
-					{
-						// ignored
-					}
-
-					return result;
-				}
-
-			return null;
-		}
-
 		private async Task<string> InternalReadAllTextAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
 		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
 
 			path = NormalizeFilePath(path);
 
-			var blob = _client.GetBlobClient(path);
+			var blob = client.GetBlobClient(path);
 			if (blob != null)
 				if (await blob.ExistsAsync(cancellationToken))
 				{
@@ -172,14 +156,52 @@ namespace Infrastructure.Services
 
 			return string.Empty;
 		}
-
-		private async Task<string[]> InternalReadAllLinesAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
+		private async Task InternalWriteAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = false)
+			=> await InternalWriteAllBytesAsync(path, encoding.GetBytes(contents), cancellationToken, overwrite);
+		private void InternalWriteAllText(string path, string contents, Encoding encoding, bool overwrite = false)
+			=> InternalWriteAllBytes(path, encoding.GetBytes(contents), overwrite);
+		private async Task InternalWriteAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default, bool overwrite = true)
+			=> await InternalWriteAllTextAsync(path, string.Join(Environment.NewLine, contents), encoding, cancellationToken);
+		private void InternalWriteAllLines(string path, IEnumerable<string> contents, Encoding encoding, bool overwrite = true)
+			=> InternalWriteAllText(path, string.Join(Environment.NewLine, contents), encoding);
+		private async Task<byte[]> InternalReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
 		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
 
 			path = NormalizeFilePath(path);
 
-			var blob = _client.GetBlobClient(path);
+			var blob = client.GetBlobClient(path);
+			if (blob != null)
+				if (await blob.ExistsAsync(cancellationToken))
+				{
+					byte[] result;
+					var download = blob.Download();
+					var downloadPath = Path.GetTempFileName();
+					using (var file = File.OpenWrite(downloadPath))
+						await download.Value.Content.CopyToAsync(file, cancellationToken);
+
+					result = await File.ReadAllBytesAsync(downloadPath, cancellationToken);
+					try
+					{
+						File.Delete(downloadPath);
+					}
+					catch
+					{
+						// ignored
+					}
+
+					return result;
+				}
+
+			return null;
+		}
+		private async Task<string[]> InternalReadAllLinesAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
+		{
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
+
+			path = NormalizeFilePath(path);
+
+			var blob = client.GetBlobClient(path);
 			if (blob != null)
 				if (await blob.ExistsAsync(cancellationToken))
 				{
@@ -204,17 +226,188 @@ namespace Infrastructure.Services
 
 			return null;
 		}
+		private string[] InternalReadAllLines(string path, Encoding encoding)
+		{
+			var client = GetClient();
 
+			path = NormalizeFilePath(path);
 
+			var blob = client.GetBlobClient(path);
+			if (blob != null)
+				if (blob.Exists())
+				{
+					string[] result;
+					var download = blob.Download();
+					var downloadPath = Path.GetTempFileName();
+					using (var file = File.OpenWrite(downloadPath))
+						download.Value.Content.CopyTo(file);
+
+					result = File.ReadAllLines(downloadPath, encoding);
+					try
+					{
+						File.Delete(downloadPath);
+					}
+					catch
+					{
+						// ignored
+					}
+
+					return result;
+				}
+
+			return null;
+		}
 		private async Task<bool> InternalExistsAsync(string path, CancellationToken cancellationToken = default)
 		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
 
-			var blob = _client.GetBlobClient(path);
+			var blob = client.GetBlobClient(path);
 			if (blob != null) return await blob.ExistsAsync(cancellationToken);
 
 			return false;
 		}
+		private void InternalCopy(string sourceFileName, string destFileName, bool overwrite)
+		{
+			var client = GetClient();
+
+			sourceFileName = NormalizeFilePath(sourceFileName);
+			destFileName = NormalizeFilePath(destFileName);
+
+			var sourceBlob = client.GetBlobClient(sourceFileName);
+			var destBlob = client.GetBlobClient(destFileName);
+
+			if (sourceBlob != null)
+				using (var stream = sourceBlob.OpenRead())
+				{
+					using (var writer = destBlob.OpenWrite(overwrite))
+					{
+						using (var reader = new StreamReader(stream))
+							while (!reader.EndOfStream)
+								stream.CopyTo(writer);
+					}
+				}
+		}
+		private FileStream InternalCreate(string path, int bufferSize, FileOptions options, bool overwrite = false)
+		 => throw new NotImplementedException();
+		private FileStream InternalOpen(string path, FileMode mode, FileAccess access, FileShare share)
+		{
+			var client = GetClient();
+
+			path = NormalizeFilePath(path);
+
+			var blob = client.GetBlobClient(path);
+
+			if (blob != null)
+				using (var stream = blob.OpenRead())
+				{
+					var tempFile = Path.GetTempFileName();
+					using (var writer = File.Open(tempFile, FileMode.OpenOrCreate))
+					{
+						using (var reader = new StreamReader(stream))
+							while (!reader.EndOfStream)
+								stream.CopyTo(writer);
+						return writer;
+					}
+				}
+
+			return null;
+		}
+		private void InternalDelete(string path)
+		{
+			var client = GetClient();
+			path = NormalizeFilePath(path);
+			client.DeleteBlobIfExists(path);
+		}
+		private bool InternalExists(string path)
+		{
+			var client = GetClient();
+			path = NormalizeFilePath(path);
+			var blob = client.GetBlobClient(path);
+			return blob.Exists();
+		}
+		private string InternalReadAllText(string path, Encoding encoding)
+		{
+			var client = GetClient();
+
+			path = NormalizeFilePath(path);
+
+			var blob = client.GetBlobClient(path);
+			if (blob != null)
+				if (blob.Exists())
+				{
+					string result;
+					var download = blob.Download();
+					var downloadPath = Path.GetTempFileName();
+					using (var file = File.OpenWrite(downloadPath))
+						download.Value.Content.CopyToAsync(file);
+
+					result = File.ReadAllText(downloadPath, encoding);
+					try
+					{
+						File.Delete(downloadPath);
+					}
+					catch
+					{
+						// ignored
+					}
+
+					return result;
+				}
+
+			return string.Empty;
+		}
+		private void InternalWriteAllBytes(string path, byte[] bytes, bool overwrite = false)
+		{
+			var client = GetClient();
+
+			path = NormalizeFilePath(path);
+
+			if (!overwrite)
+			{
+				var blob = client.GetBlobClient(path);
+				if (blob != null)
+					if (blob.Exists())
+						return;
+			}
+
+			var data = new MemoryStream(bytes);
+			if (overwrite) client.DeleteBlobIfExistsAsync(path);
+			data.Position = 0;
+			client.UploadBlob(path, data);
+		}
+		private byte[] InternalReadAllBytes(string path)
+		{
+			var client = GetClient();
+
+			path = NormalizeFilePath(path);
+
+			var blob = client.GetBlobClient(path);
+			if (blob != null)
+				if (blob.Exists())
+				{
+					byte[] result;
+					var download = blob.Download();
+					var downloadPath = Path.GetTempFileName();
+					using (var file = File.OpenWrite(downloadPath))
+						download.Value.Content.CopyTo(file);
+
+					result = File.ReadAllBytes(downloadPath);
+					try
+					{
+						File.Delete(downloadPath);
+					}
+					catch
+					{
+						// ignored
+					}
+
+					return result;
+				}
+
+			return null;
+		}
+
+		#endregion
 
 		// private const int MaxByteArrayLength = 0x7FFFFFC7;
 		private static Encoding s_UTF8NoBOM;
@@ -223,272 +416,128 @@ namespace Infrastructure.Services
 		internal const int DefaultBufferSize = 4096;
 
 		public StreamReader OpenText(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public StreamWriter CreateText(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public StreamWriter AppendText(string path)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public void Copy(string sourceFileName, string destFileName)
-			=> Copy(sourceFileName, destFileName, true);
-
+			=> InternalCopy(sourceFileName, destFileName, true);
 		public void Copy(string sourceFileName, string destFileName, bool overwrite)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalCopy(sourceFileName, destFileName, true);
 		public FileStream Create(string path)
-			=> Create(path, DefaultBufferSize);
-
+			=> InternalCreate(path, DefaultBufferSize, FileOptions.None);
 		public FileStream Create(string path, int bufferSize)
-			=> Create(path, bufferSize, FileOptions.None);
-
+			=> InternalCreate(path, bufferSize, FileOptions.None);
 		public FileStream Create(string path, int bufferSize, FileOptions options)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalCreate(path, bufferSize, FileOptions.None);
 		public void Delete(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalDelete(path);
 		public bool Exists(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalExists(path);
+		public FileStream OpenRead(string path)
+			=> InternalOpen(path, FileMode.Open, FileAccess.Read, FileShare.None);
 		public FileStream Open(string path, FileMode mode)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalOpen(path, mode, FileAccess.Read, FileShare.None);
 		public FileStream Open(string path, FileMode mode, FileAccess access)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalOpen(path, mode, access, FileShare.None);
 		public FileStream Open(string path, FileMode mode, FileAccess access, FileShare share)
-		{
-			throw new NotImplementedException();
-		}
+			=> InternalOpen(path, mode, access, share);
 
 		public void SetCreationTime(string path, DateTime creationTime)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public DateTime GetCreationTime(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public DateTime GetCreationTimeUtc(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void SetLastAccessTime(string path, DateTime lastAccessTime)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public DateTime GetLastAccessTime(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public DateTime GetLastAccessTimeUtc(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void SetLastWriteTime(string path, DateTime lastWriteTime)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public DateTime GetLastWriteTime(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public DateTime GetLastWriteTimeUtc(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public FileAttributes GetAttributes(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void SetAttributes(string path, FileAttributes fileAttributes)
-		{
-			throw new NotImplementedException();
-		}
-
-		public FileStream OpenRead(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public FileStream OpenWrite(string path)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
+
 
 		public string ReadAllText(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalReadAllText(path, Encoding.UTF8);
 		public string ReadAllText(string path, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalReadAllText(path, encoding);
 		public void WriteAllText(string path, string contents)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalWriteAllBytes(path, Encoding.UTF8.GetBytes(contents));
 		public void WriteAllText(string path, string contents, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalWriteAllBytes(path, encoding.GetBytes(contents));
 		public byte[] ReadAllBytes(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalReadAllBytes(path);
 		public void WriteAllBytes(string path, byte[] bytes)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalWriteAllBytes(path, bytes);
 		public string[] ReadAllLines(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalReadAllLines(path, Encoding.Default);
 		public string[] ReadAllLines(string path, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
+			=> InternalReadAllLines(path, encoding);
 
 		public IEnumerable<string> ReadLines(string path)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public IEnumerable<string> ReadLines(string path, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public void WriteAllLines(string path, string[] contents)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalWriteAllLines(path, contents, Encoding.Default);
 		public void WriteAllLines(string path, IEnumerable<string> contents)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalWriteAllLines(path, contents, Encoding.Default);
 		public void WriteAllLines(string path, string[] contents, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> InternalWriteAllLines(path, contents, encoding);
 		public void WriteAllLines(string path, IEnumerable<string> contents, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
+			=> InternalWriteAllLines(path, contents, encoding);
 
 		public void AppendAllText(string path, string contents)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void AppendAllText(string path, string contents, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void AppendAllLines(string path, IEnumerable<string> contents)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void AppendAllLines(string path, IEnumerable<string> contents, Encoding encoding)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void Replace(string sourceFileName, string destinationFileName, string destinationBackupFileName)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void Replace(string sourceFileName, string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void Move(string sourceFileName, string destFileName)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void Move(string sourceFileName, string destFileName, bool overwrite)
-		{
-			throw new NotImplementedException();
-		}
-
+			=> throw new NotImplementedException();
 		public void Encrypt(string path)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public void Decrypt(string path)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken = default)
-			=> ReadAllTextAsync(path, Encoding.UTF8, cancellationToken);
+			=> InternalReadAllTextAsync(path, Encoding.UTF8, cancellationToken);
 
 		public Task<string> ReadAllTextAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
 			=> InternalReadAllTextAsync(path, encoding, cancellationToken);
 
 		public Task WriteAllTextAsync(string path, string contents, CancellationToken cancellationToken = default)
-			=> WriteAllTextAsync(path, contents, UTF8NoBOM, cancellationToken);
+			=> InternalWriteAllTextAsync(path, contents, UTF8NoBOM, cancellationToken);
 
 		public Task WriteAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default)
 			=> InternalWriteAllTextAsync(path, contents, encoding, cancellationToken, true);
@@ -503,55 +552,38 @@ namespace Infrastructure.Services
 			=> InternalExistsAsync(path, cancellationToken);
 
 		public Task<string[]> ReadAllLinesAsync(string path, CancellationToken cancellationToken = default)
-			=> ReadAllLinesAsync(path, Encoding.UTF8, cancellationToken);
+			=> InternalReadAllLinesAsync(path, Encoding.UTF8, cancellationToken);
 
 		public Task<string[]> ReadAllLinesAsync(string path, Encoding encoding, CancellationToken cancellationToken = default)
 			=> InternalReadAllLinesAsync(path, encoding, cancellationToken);
 
 		public Task WriteAllLinesAsync(string path, IEnumerable<string> contents, CancellationToken cancellationToken = default)
-			=> WriteAllLinesAsync(path, contents, UTF8NoBOM, cancellationToken);
+			=> InternalWriteAllLinesAsync(path, contents, UTF8NoBOM, cancellationToken);
 
 		public Task WriteAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default)
 			=> InternalWriteAllLinesAsync(path, contents, encoding, cancellationToken);
 
 		public Task AppendAllTextAsync(string path, string contents, CancellationToken cancellationToken = default)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public Task AppendAllTextAsync(string path, string contents, Encoding encoding, CancellationToken cancellationToken = default)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public Task AppendAllLinesAsync(string path, IEnumerable<string> contents, CancellationToken cancellationToken = default)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		public Task AppendAllLinesAsync(string path, IEnumerable<string> contents, Encoding encoding, CancellationToken cancellationToken = default)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 		#region Extended
 
-		public async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
-		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
-			await _client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
-		}
-
-		public Task<Stream> ReadStreamAsync(string path, CancellationToken cancellationToken = default)
-			=> InternalReadStreamAsync(path, cancellationToken);
-
 		private async Task<Stream> InternalReadStreamAsync(string path, CancellationToken cancellationToken = default)
 		{
-			var _client = await GetClientAsync(string.Empty, cancellationToken);
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
 
 			path = NormalizeFilePath(path);
 
-			var blob = _client.GetBlobClient(path);
+			var blob = client.GetBlobClient(path);
 
 			if (blob != null)
 				if (await blob.ExistsAsync(cancellationToken))
@@ -567,6 +599,15 @@ namespace Infrastructure.Services
 
 			return null;
 		}
+
+		public async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
+		{
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
+			await client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
+		}
+
+		public Task<Stream> ReadStreamAsync(string path, CancellationToken cancellationToken = default)
+			=> InternalReadStreamAsync(path, cancellationToken);
 
 		#endregion
 	}

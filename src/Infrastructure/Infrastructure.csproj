@@ -26,6 +26,7 @@
 
 	<ItemGroup Condition="'$(UsingAzureBlobs)' == 'false'">
 		<Compile Remove="Services\FileService.cs" />
+		<Compile Remove="Services\DirectoryService.cs" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(UsingAzureQueues)' == 'false'">
 		<Compile Remove="Services\QueueService.cs" />

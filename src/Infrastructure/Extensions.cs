@@ -47,8 +47,10 @@ namespace Infrastructure
 
 #if USING_BLOBS
 			services.AddTransient<IFileService, FileService>();
+			services.AddTransient<IDirectoryService, DirectoryService>();
 #else
 			services.AddSingleton<IFileService>(new FileSystemService() {ContainerName = "Data", CreateIfNotExists = true});
+			services.AddSingleton<IDirectoryService>(new FileSystemService() {ContainerName = "Data", CreateIfNotExists = true});
 #endif
 #if USING_QUEUES
 			services.AddTransient<IQueueService, QueueService>();
