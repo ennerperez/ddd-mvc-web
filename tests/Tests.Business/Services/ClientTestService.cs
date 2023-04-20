@@ -25,9 +25,7 @@ namespace Tests.Business.Services
 		}
 
 		public override Task<Client> ReadAsync(Table table)
-		{
-			throw new NotImplementedException();
-		}
+		 => throw new NotImplementedException();
 		public override async Task UpdateAsync(Table table)
 		{
 			var customAction = new Action<UpdateClientRequest>(entity =>
