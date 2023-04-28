@@ -496,6 +496,9 @@ namespace Web
 
 				})
 #endif
+#if USING_SMARTSCHEMA
+				.AddSmartScheme()
+#endif
 #if USING_OPENID
 				.AddOpenIdConnect(openIdConnectOptions)
 #endif
@@ -513,9 +516,6 @@ namespace Web
 					options.Audience = Configuration["Auth0Settings:Audience"];
 					options.UseRefreshTokens = Configuration.GetValue<bool>("Auth0Settings:UseRefreshTokens");
 				})
-#endif
-#if USING_SMARTSCHEMA
-				.AddSmartScheme()
 #endif
 				.Close();
 
