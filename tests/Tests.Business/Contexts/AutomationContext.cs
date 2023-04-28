@@ -11,7 +11,7 @@ namespace Tests.Business.Contexts
 {
 	public class AutomationContext : IAutomationContext
 	{
-		public AutomationContext(IConfiguration configuration,IAutomationConfiguration automationConfiguration, FeatureContext featureContext, ScenarioContext scenarioContext)
+		public AutomationContext(IConfiguration configuration, IAutomationConfiguration automationConfiguration, FeatureContext featureContext, ScenarioContext scenarioContext)
 		{
 			FeatureContext = featureContext;
 			ScenarioContext = scenarioContext;

@@ -1,38 +1,38 @@
 [
-	{
-		"outputFileName": "wwwroot/css/bootstrap.min.css",
-		"inputFiles": [
-			"wwwroot/css/bootstrap.css"
-		]
-	},
-	{
-		"outputFileName": "wwwroot/css/site.min.css",
-		"inputFiles": [
-			"wwwroot/css/site.css"
-		]
-	},
-	{
-		"outputFileName": "wwwroot/css/swagger.min.css",
-		"inputFiles": [
-			"wwwroot/css/swagger.css"
-		]
-	},
-	{
-		"outputFileName": "wwwroot/js/editor.min.js",
-		"inputFiles": [
-			"wwwroot/js/editor.js"
-		]
-	},
-	{
-		"outputFileName": "wwwroot/js/site.min.js",
-		"inputFiles": [
-			"wwwroot/js/site.js"
-		]
-	},
-	{
-		"outputFileName": "wwwroot/js/swagger.min.js",
-		"inputFiles": [
-			"wwwroot/js/swagger.js"
-		]
-	}
+  {
+    "outputFileName": "wwwroot/css/bootstrap.min.css",
+    "inputFiles": [
+      "wwwroot/css/bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/swagger.min.css",
+    "inputFiles": [
+      "wwwroot/css/swagger.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/editor.min.js",
+    "inputFiles": [
+      "wwwroot/js/editor.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/swagger.min.js",
+    "inputFiles": [
+      "wwwroot/js/swagger.js"
+    ]
+  }
 ]

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Domain.Interfaces;
+
 #pragma warning disable CS8632
 
 namespace System.Reflection

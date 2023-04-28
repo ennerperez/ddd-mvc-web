@@ -131,7 +131,7 @@ namespace Persistence.Configurations
 
 			// e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Ignore(m => m.Id);
-			e.HasKey(m => new { m.UserId, m.RoleId });
+			e.HasKey(m => new {m.UserId, m.RoleId});
 		}
 	}
 
@@ -148,7 +148,7 @@ namespace Persistence.Configurations
 
 			// e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Ignore(m => m.Id);
-			e.HasKey(m => new { m.UserId, m.LoginProvider });
+			e.HasKey(m => new {m.UserId, m.LoginProvider});
 		}
 	}
 
@@ -165,7 +165,7 @@ namespace Persistence.Configurations
 
 			// e.Property(m => m.Id).ValueGeneratedOnAdd();
 			e.Ignore(m => m.Id);
-			e.HasKey(m => new { m.UserId, m.LoginProvider, m.Name });
+			e.HasKey(m => new {m.UserId, m.LoginProvider, m.Name});
 		}
 	}
 }

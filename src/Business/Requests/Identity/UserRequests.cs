@@ -87,7 +87,7 @@ namespace Business.Requests.Identity
 		public CreateUserRequestValidator(IGenericRepository<User> repository)
 		{
 			RuleFor(m => m.Email).NotEmpty();
-			RuleFor(m => new { m.Email })
+			RuleFor(m => new {m.Email})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper(), c);
@@ -230,7 +230,7 @@ namespace Business.Requests.Identity
 		{
 			RuleFor(m => m.Id).NotEmpty();
 			RuleFor(m => m.Email).NotEmpty();
-			RuleFor(m => new { m.Id, m.Email })
+			RuleFor(m => new {m.Id, m.Email})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.NormalizedEmail == m.Email.ToUpper() && p.Id != m.Id, c);
@@ -343,7 +343,7 @@ namespace Business.Requests.Identity
 		public PartialUpdateUserRequestValidator(IGenericRepository<User> repository)
 		{
 			RuleFor(m => m.Id).NotEmpty();
-			RuleFor(m => new { m.Id, m.Email })
+			RuleFor(m => new {m.Id, m.Email})
 				.CustomAsync(async (m, v, c) =>
 				{
 					if (m.Email != null)
@@ -389,7 +389,7 @@ namespace Business.Requests.Identity
 		public DeleteUserRequestValidator(IGenericRepository<User> repository)
 		{
 			RuleFor(m => m.Id).NotEmpty();
-			RuleFor(m => new { m.Id })
+			RuleFor(m => new {m.Id})
 				.CustomAsync(async (m, v, c) =>
 				{
 					if (m.Id == 1) v.AddFailure("Cannot delete the default user");

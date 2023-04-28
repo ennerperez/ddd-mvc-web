@@ -49,7 +49,7 @@ namespace Business.Requests
 		{
 			RuleFor(m => m.Key).NotEmpty();
 			RuleFor(m => m.Type).NotEmpty();
-			RuleFor(m => new { m.Key })
+			RuleFor(m => new {m.Key})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Key == m.Key, c);
@@ -73,7 +73,7 @@ namespace Business.Requests
 
 		public async Task<PaginatedList<Setting>> Handle(PaginatedRequest<Setting, Setting> request, CancellationToken cancellationToken)
 		{
-			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null, null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
 			var result = await PaginatedList<Setting>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
@@ -141,7 +141,7 @@ namespace Business.Requests
 			RuleFor(m => m.Id).NotEmpty();
 			RuleFor(m => m.Key).NotEmpty();
 			RuleFor(m => m.Type).NotEmpty();
-			RuleFor(m => new { m.Id, m.Key })
+			RuleFor(m => new {m.Id, m.Key})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Key == m.Key && p.Id != m.Id, c);
@@ -189,7 +189,7 @@ namespace Business.Requests
 		public PartialUpdateSettingRequestValidator(IGenericRepository<Setting> repository)
 		{
 			RuleFor(m => m.Id).NotEmpty();
-			RuleFor(m => new { m.Id, m.Key })
+			RuleFor(m => new {m.Id, m.Key})
 				.CustomAsync(async (m, v, c) =>
 				{
 					if (m.Key != null)

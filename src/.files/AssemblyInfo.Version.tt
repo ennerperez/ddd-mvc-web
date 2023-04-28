@@ -16,5 +16,5 @@ using System.Reflection;
 [assembly: AssemblyFileVersion("1.0.0.<#= _revisionNumber #>")]
 
 <#+
-    int _revisionNumber = (int)(DateTime.UtcNow - new DateTime(2022, 09, 01)).TotalDays;
+	int _revisionNumber = (int)(DateTime.UtcNow - new DateTime(2022, 09, 01)).TotalDays;
 #>

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 // Version information for an assembly consists of the following four values:
 //
@@ -11,6 +11,6 @@
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.0.53")]
-[assembly: AssemblyFileVersion("1.0.0.53")]
+[assembly: AssemblyVersion("1.0.0.239")]
+[assembly: AssemblyFileVersion("1.0.0.239")]
 

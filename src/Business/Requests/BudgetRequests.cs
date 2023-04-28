@@ -62,13 +62,13 @@ namespace Business.Requests
 		public CreateBudgetRequestValidator(IGenericRepository<Budget, Guid> repository)
 		{
 			RuleFor(m => m.Code).NotEmpty();
-			RuleFor(m => new { m.Subtotal, m.Taxes, m.Total })
+			RuleFor(m => new {m.Subtotal, m.Taxes, m.Total})
 				.Custom((m, v) =>
 				{
 					if (m.Subtotal + m.Taxes != m.Total)
 						v.AddFailure("Total is miscalculated");
 				});
-			RuleFor(m => new { m.Code })
+			RuleFor(m => new {m.Code})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Code == m.Code, c);
@@ -92,7 +92,7 @@ namespace Business.Requests
 
 		public async Task<PaginatedList<Budget>> Handle(PaginatedRequest<Budget, Guid, Budget> request, CancellationToken cancellationToken)
 		{
-			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null, null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
 			var result = await PaginatedList<Budget>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
@@ -173,13 +173,13 @@ namespace Business.Requests
 		{
 			RuleFor(m => m.Id).NotEmpty();
 			RuleFor(m => m.Code).NotEmpty();
-			RuleFor(m => new { m.Subtotal, m.Taxes, m.Total })
+			RuleFor(m => new {m.Subtotal, m.Taxes, m.Total})
 				.Custom((m, v) =>
 				{
 					if (m.Subtotal + m.Taxes != m.Total)
 						v.AddFailure("Total is miscalculated");
 				});
-			RuleFor(m => new { m.Id, m.Code })
+			RuleFor(m => new {m.Id, m.Code})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Code == m.Code && p.Id != m.Id, c);
@@ -241,13 +241,13 @@ namespace Business.Requests
 		public PartialUpdateBudgetRequestValidator(IGenericRepository<Budget, Guid> repository)
 		{
 			RuleFor(m => m.Id).NotEmpty();
-			RuleFor(m => new { m.Subtotal, m.Taxes, m.Total })
+			RuleFor(m => new {m.Subtotal, m.Taxes, m.Total})
 				.Custom((m, v) =>
 				{
 					if (m.Subtotal + m.Taxes != m.Total)
 						v.AddFailure("Total is miscalculated");
 				});
-			RuleFor(m => new { m.Id, m.Code })
+			RuleFor(m => new {m.Id, m.Code})
 				.CustomAsync(async (m, v, c) =>
 				{
 					if (!string.IsNullOrWhiteSpace(m.Code))
@@ -307,7 +307,7 @@ namespace Business.Requests
 	{
 		public DeleteBudgetRequestValidator()
 		{
-			RuleFor(m => new { m.Id, m.Code }).Custom((m, v) =>
+			RuleFor(m => new {m.Id, m.Code}).Custom((m, v) =>
 			{
 				if (m.Id == null && string.IsNullOrWhiteSpace(m.Code))
 					v.AddFailure("Id or Code must have a value");

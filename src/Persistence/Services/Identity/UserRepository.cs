@@ -38,7 +38,7 @@ namespace Persistence.Services.Identity
 					select item;
 
 				var jointIds = joint.Select(m => m.Id).ToArray();
-				var invalidId = await _dbContext.Set<User>().Select(m => new {m.Id, m.NormalizedEmail}).FirstOrDefaultAsync(m => jointIds.Contains(m.Id),cancellationToken);
+				var invalidId = await _dbContext.Set<User>().Select(m => new {m.Id, m.NormalizedEmail}).FirstOrDefaultAsync(m => jointIds.Contains(m.Id), cancellationToken);
 				if (invalidId != null)
 					throw new OperationCanceledException($"The email '{invalidId.NormalizedEmail}' is already in use.");
 			}

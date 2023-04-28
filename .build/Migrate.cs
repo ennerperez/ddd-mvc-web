@@ -44,8 +44,8 @@ partial class Build
 		.Executes(() =>
 		{
 			var projects = Solution.AllProjects
-				.Where(m=> !m.Name.StartsWith("_"))
-				.Where(m=> new []{Persistence, Startup}.Contains(m))
+				.Where(m => !m.Name.StartsWith("_"))
+				.Where(m => new[] {Persistence, Startup}.Contains(m))
 				.ToArray();
 			DotNetBuild(s => s
 				.CombineWith(projects, configurator: (buildSettings, v) => buildSettings

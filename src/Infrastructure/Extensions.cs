@@ -34,10 +34,10 @@ namespace Infrastructure
 		{
 			services.AddTransient<IEmailService, SmtpService>();
 
-			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
-			var types = assemblies.Where(m=> m != null) .SelectMany(m => m.GetTypes()).ToArray();
+			var assemblies = new[] {Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly()};
+			var types = assemblies.Where(m => m != null).SelectMany(m => m.GetTypes()).ToArray();
 
-			var userAccessorServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IUserAccessorService).IsAssignableFrom(m));
+			var userAccessorServiceType = types.FirstOrDefault(m => m.IsClass && typeof(IUserAccessorService).IsAssignableFrom(m));
 			if (userAccessorServiceType != null)
 				services.AddTransient(typeof(IUserAccessorService), userAccessorServiceType);
 

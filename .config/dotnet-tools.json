@@ -1,18 +1,18 @@
 {
-	"version": 1,
-	"isRoot": true,
-	"tools": {
-		"nuke.globaltool": {
-			"version": "6.3.0",
-			"commands": [
-				"nuke"
-			]
-		},
-		"dotnet-ef": {
-			"version": "6.0.13",
-			"commands": [
-				"dotnet-ef"
-			]
-		}
-	}
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "nuke.globaltool": {
+      "version": "6.3.0",
+      "commands": [
+        "nuke"
+      ]
+    },
+    "dotnet-ef": {
+      "version": "6.0.13",
+      "commands": [
+        "dotnet-ef"
+      ]
+    }
+  }
 }

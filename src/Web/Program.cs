@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Web.Services;
 
-#if  USING_SASS && USING_SASS_WATCH
+#if USING_SASS && USING_SASS_WATCH
 using System.Diagnostics;
 #endif
 

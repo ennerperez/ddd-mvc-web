@@ -9,7 +9,7 @@ namespace System.Text
 	{
 		public static string ToTitleCase(this string @this, CultureInfo culture)
 		{
-			var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
+			var words = @this.Split(new[] {"_", " "}, StringSplitOptions.RemoveEmptyEntries);
 
 			words = words
 				.Select(w => char.ToUpper(w[0], culture) + w.Substring(1).ToLower(culture))
@@ -20,7 +20,7 @@ namespace System.Text
 
 		public static string ToCamelCase(this string @this, CultureInfo culture)
 		{
-			var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
+			var words = @this.Split(new[] {"_", " "}, StringSplitOptions.RemoveEmptyEntries);
 			var leadWord = words[0].ToLower(culture);
 			var tailwords = words.Skip(1)
 				.Select(w => char.ToUpper(w[0], culture) + w.Substring(1).ToLower(culture))
@@ -31,7 +31,7 @@ namespace System.Text
 
 		public static string ToTitleCaseInvariant(this string @this)
 		{
-			var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
+			var words = @this.Split(new[] {"_", " "}, StringSplitOptions.RemoveEmptyEntries);
 
 			words = words
 				.Select(w => char.ToUpperInvariant(w[0]) + w.Substring(1).ToLowerInvariant())
@@ -42,7 +42,7 @@ namespace System.Text
 
 		public static string ToCamelCaseInvariant(this string @this)
 		{
-			var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
+			var words = @this.Split(new[] {"_", " "}, StringSplitOptions.RemoveEmptyEntries);
 			var leadWord = words[0].ToLowerInvariant();
 			var tailwords = words.Skip(1)
 				.Select(w => char.ToUpperInvariant(w[0]) + w.Substring(1).ToLowerInvariant())

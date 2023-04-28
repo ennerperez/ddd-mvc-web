@@ -43,7 +43,7 @@ namespace Business.Abstractions
 	}
 
 	public abstract class RepositoryRequestHandler<TRequest, TEntity, TKey, TResult> : IRepositoryRequestHandler<TRequest, TEntity, TKey, TResult>
-		where TRequest: IRepositoryRequest<TEntity, TKey, TResult>
+		where TRequest : IRepositoryRequest<TEntity, TKey, TResult>
 		where TEntity : class, IEntity<TKey>
 		where TKey : struct, IComparable<TKey>, IEquatable<TKey>
 	{

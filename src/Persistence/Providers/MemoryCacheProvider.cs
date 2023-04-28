@@ -109,7 +109,7 @@ namespace Persistence.Providers
 			}
 		}
 		public bool KeyExists(string key)
-		 => throw new NotImplementedException();
+			=> throw new NotImplementedException();
 
 		public void InvalidateCache(string key)
 		{
@@ -136,7 +136,7 @@ namespace Persistence.Providers
 				InvalidateCache(key);
 		}
 		public void InvalidateCachePattern(string pattern)
-		 => throw new NotImplementedException();
+			=> throw new NotImplementedException();
 
 		private Task<T> AddToCacheAsync<T>(string key, T value, long? expires = null)
 		{
