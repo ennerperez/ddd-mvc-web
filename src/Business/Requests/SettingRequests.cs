@@ -119,7 +119,7 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(UpdateSettingRequest request, CancellationToken cancellationToken)
+		public async Task Handle(UpdateSettingRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
@@ -130,7 +130,7 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -169,7 +169,7 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(PartialUpdateSettingRequest request, CancellationToken cancellationToken)
+		public async Task Handle(PartialUpdateSettingRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
@@ -180,7 +180,7 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -219,14 +219,14 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(DeleteSettingRequest request, CancellationToken cancellationToken)
+		public async Task Handle(DeleteSettingRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
 
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 

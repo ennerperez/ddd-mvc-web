@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup Label="ConditionalReferences">
-		<PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="6.0.13" />
+		<PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="6.0.16" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(UsingIdentity)' == 'false'">

@@ -146,7 +146,7 @@ namespace Business.Requests
 			_userAccessorService = userAccessorService;
 		}
 
-		public async Task<Unit> Handle(UpdateBudgetRequest request, CancellationToken cancellationToken)
+		public async Task Handle(UpdateBudgetRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Budget), request.Id);
@@ -163,7 +163,7 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -215,7 +215,7 @@ namespace Business.Requests
 			_userAccessorService = userAccessorService;
 		}
 
-		public async Task<Unit> Handle(PartialUpdateBudgetRequest request, CancellationToken cancellationToken)
+		public async Task Handle(PartialUpdateBudgetRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Budget), request.Id);
@@ -232,7 +232,7 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -280,7 +280,7 @@ namespace Business.Requests
 			_userAccessorService = userAccessorService;
 		}
 
-		public async Task<Unit> Handle(DeleteBudgetRequest request, CancellationToken cancellationToken)
+		public async Task Handle(DeleteBudgetRequest request, CancellationToken cancellationToken)
 		{
 			Budget entity = null;
 			if (request.Id != null)
@@ -299,7 +299,7 @@ namespace Business.Requests
 				entity.DeletedById = deletedById;
 			await _repository.UpdateAsync(entity);
 
-			return Unit.Value;
+			return;
 		}
 	}
 

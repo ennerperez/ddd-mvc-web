@@ -16,30 +16,30 @@
 
 	<ItemGroup>
 		<PackageReference Include="BuildBundlerMinifierPlus" Version="5.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.13" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.13" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.13">
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.13">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.16">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
-		<PackageReference Include="Microsoft.Identity.Web.UI" Version="1.25.10" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="1.26.0" />
+		<PackageReference Include="Microsoft.Identity.Web.UI" Version="1.26.0" />
 		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.13" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.16" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 	</ItemGroup>
 
 	<ItemGroup Label="Serilog">
 		<PackageReference Include="Serilog" Version="2.12.0" />
-		<PackageReference Include="Serilog.Sinks.Async" Version="1.5.0"/>
+		<PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
@@ -63,13 +63,13 @@
 	</Target>
 
 	<ItemGroup Label="ConditionalReferences">
-		<PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.13" />
+		<PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />
 		<PackageReference Condition="'$(UsingAzureApplicationInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
-		<PackageReference Condition="'$(UsingBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13" />
+		<PackageReference Condition="'$(UsingBearer)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
 		<PackageReference Condition="'$(UsingOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.13" />
-		<PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.AspNetCore.Authentication" Version="1.1.0" />
-		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13" />
-		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
+		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
+		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
 		<PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
 		<PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization.Routing" Version="2.2.0" />
@@ -77,7 +77,7 @@
 		<PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
 		<PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.5.0" />
-		<PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.57.1" />
+		<PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.62.1" />
 		<PackageReference Condition="'$(UsingDatadog)' == 'true'" Include="Serilog.Sinks.Datadog.Logs" Version="0.5.1" />
 	</ItemGroup>
 

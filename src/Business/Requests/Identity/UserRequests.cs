@@ -167,7 +167,7 @@ namespace Business.Requests.Identity
 			_userManager = userManager;
 		}
 
-		public async Task<Unit> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
+		public async Task Handle(UpdateUserRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, include: i => i.Include(m => m.UserClaims), cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(User), request.Id);
@@ -220,7 +220,7 @@ namespace Business.Requests.Identity
 
 			#endregion
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -268,7 +268,7 @@ namespace Business.Requests.Identity
 			_userManager = userManager;
 		}
 
-		public async Task<Unit> Handle(PartialUpdateUserRequest request, CancellationToken cancellationToken)
+		public async Task Handle(PartialUpdateUserRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, include: i => i.Include(m => m.UserClaims), cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(User), request.Id);
@@ -334,7 +334,7 @@ namespace Business.Requests.Identity
 
 			#endregion
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -373,14 +373,14 @@ namespace Business.Requests.Identity
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
+		public async Task Handle(DeleteUserRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(User), request.Id);
 
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
