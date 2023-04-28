@@ -91,13 +91,13 @@ namespace Web.Areas.Admin.Reports
 			page.Size(PageSizes.Letter.Landscape());
 
 			page.Header().Element(container =>
-					container.Row(row =>
+				container.Row(row =>
+				{
+					row.RelativeItem().PaddingBottom(4).Column(column =>
 					{
-						row.RelativeItem().PaddingBottom(4).Column(column =>
-						{
-							column.Item().Text("Budgets").Style(titleStyle);
-						});
-					})
+						column.Item().Text("Budgets").Style(titleStyle);
+					});
+				})
 			);
 
 			page.Content().Element(container =>

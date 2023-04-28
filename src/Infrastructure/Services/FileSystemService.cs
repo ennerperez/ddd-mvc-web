@@ -8,11 +8,15 @@ using Infrastructure.Interfaces;
 
 namespace Infrastructure.Services
 {
-	public class FileSystemService : IFileService
+	public class FileSystemService : IFileService, IDirectoryService
 	{
 
 		public string ContainerName { get; set; }
 		public bool CreateIfNotExists { get; set; }
+		public string DirectoryExtension { get; set; }
+
+		#region FileService
+
 		public StreamReader OpenText(string path)
 		{
 			path = ValidatePath(path);
@@ -401,6 +405,46 @@ namespace Infrastructure.Services
 			path = ValidatePath(path);
 			return Task.FromResult(File.Exists(path));
 		}
+
+		#endregion
+
+		#endregion
+
+		#region IDirectoryService
+
+		public DirectoryInfo GetParent(string path) => Directory.GetParent(path);
+		public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
+		public string[] GetFiles(string path) => Directory.GetFiles(path);
+		public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
+		public string[] GetFiles(string path, string searchPattern, SearchOption searchOption) => Directory.GetFiles(path, searchPattern, searchOption);
+		public string[] GetFiles(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.GetFiles(path, searchPattern, enumerationOptions);
+		public string[] GetDirectories(string path) => Directory.GetDirectories(path);
+		public string[] GetDirectories(string path, string searchPattern) => Directory.GetDirectories(path, searchPattern);
+		public string[] GetDirectories(string path, string searchPattern, SearchOption searchOption) => Directory.GetDirectories(path, searchPattern, searchOption);
+		public string[] GetDirectories(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.GetDirectories(path, searchPattern, enumerationOptions);
+		public string[] GetFileSystemEntries(string path) => Directory.GetFileSystemEntries(path);
+		public string[] GetFileSystemEntries(string path, string searchPattern) => Directory.GetFileSystemEntries(path, searchPattern);
+		public string[] GetFileSystemEntries(string path, string searchPattern, SearchOption searchOption) => Directory.GetFileSystemEntries(path, searchPattern, searchOption);
+		public string[] GetFileSystemEntries(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.GetFileSystemEntries(path, searchPattern, enumerationOptions);
+		public IEnumerable<string> EnumerateDirectories(string path) => Directory.EnumerateDirectories(path);
+		public IEnumerable<string> EnumerateDirectories(string path, string searchPattern) => Directory.EnumerateDirectories(path, searchPattern);
+		public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateDirectories(path, searchPattern, searchOption);
+		public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.EnumerateDirectories(path, searchPattern, enumerationOptions);
+		public IEnumerable<string> EnumerateFiles(string path) => Directory.EnumerateFiles(path);
+		public IEnumerable<string> EnumerateFiles(string path, string searchPattern) => Directory.EnumerateFiles(path, searchPattern);
+		public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFiles(path, searchPattern, searchOption);
+		public IEnumerable<string> EnumerateFiles(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.EnumerateFiles(path, searchPattern, enumerationOptions);
+		public IEnumerable<string> EnumerateFileSystemEntries(string path) => Directory.EnumerateFileSystemEntries(path);
+		public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern) => Directory.EnumerateFileSystemEntries(path, searchPattern);
+		public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
+		public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.EnumerateFileSystemEntries(path, searchPattern, enumerationOptions);
+		public string GetDirectoryRoot(string path) => Directory.GetDirectoryRoot(path);
+		public string GetCurrentDirectory() => Directory.GetCurrentDirectory();
+		public void SetCurrentDirectory(string path) { Directory.SetCurrentDirectory(path); }
+		public void Delete(string path, bool recursive) => Directory.Delete(path, recursive);
+		public string[] GetLogicalDrives() => Directory.GetLogicalDrives();
+		public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget) => Directory.CreateSymbolicLink(path, pathToTarget);
+		public FileSystemInfo ResolveLinkTarget(string linkPath, bool returnFinalTarget) => Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
 
 		#endregion
 	}

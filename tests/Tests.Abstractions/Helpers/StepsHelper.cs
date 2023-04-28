@@ -159,9 +159,7 @@ namespace Tests.Abstractions.Helpers
 		}
 
 		public virtual void CaptureTakeScreenshot(object driver, string method = "", bool trace = false)
-		{
-			throw new NotImplementedException();
-		}
+			=> throw new NotImplementedException();
 
 	}
 }

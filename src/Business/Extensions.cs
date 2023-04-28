@@ -58,7 +58,10 @@ namespace Business
 		{
 			var assemblies = new[] {Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly()};
 			services.AddValidatorsFromAssembly(assemblies[0]);
-			services.AddMediatR(assemblies);
+			services.AddMediatR(cfg =>
+			{
+				cfg.RegisterServicesFromAssemblies(assemblies);
+			});
 
 			services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
 			services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

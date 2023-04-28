@@ -3,7 +3,7 @@
 @inject IGenericRepository<Client> ClientRepository
 
 @{
-	var clients = await ClientRepository.ReadAsync(s => new { s.Id, s.FullName });
+	var clients = await ClientRepository.ReadAsync(s => new {s.Id, s.FullName});
 }
 
 <!-- Modal -->
@@ -16,7 +16,7 @@
 			</div>
 			<div class="modal-body">
 				<input type="hidden" data-field="id" id="id"/>
-				<input type="hidden" data-field="status" id="status" />
+				<input type="hidden" data-field="status" id="status"/>
 				<div class="mb-3">
 					<label for="code" class="form-label required">Code</label>
 					<input id="code" class="form-control" required
@@ -25,7 +25,7 @@
 					       data-feedback="Please enter a valid code">
 				</div>
 				<div class="mb-3">
-                    <label for="client" class="form-label required">Client</label>
+					<label for="client" class="form-label required">Client</label>
 					<select id="client" class="form-control" required
 					        data-field="clientId"
 					        data-validate="true"
@@ -35,7 +35,7 @@
 							<option value="@item.Id">@item.FullName</option>
 						}
 					</select>
-                </div>
+				</div>
 				<div class="mb-3">
 					<label for="subtotal" class="form-label required">Subtotal</label>
 					<input id="subtotal" class="form-control" type="number" min="1" step="any" required
@@ -48,13 +48,13 @@
 					<input id="taxes" class="form-control" type="number" min="1" step="any" required
 					       data-field="taxes"
 					       data-validate="true"
-					       data-feedback="Please enter a valid value for taxes" />
+					       data-feedback="Please enter a valid value for taxes"/>
 				</div>
 				<div class="mb-3">
 					<label for="total" class="form-label required">Total</label>
 					<input id="total" class="form-control disabled" type="number" min="1" step="any" required disabled
 					       data-field="total"
-					       data-feedback="Please enter a valid value for total" />
+					       data-feedback="Please enter a valid value for total"/>
 				</div>
 			</div>
 			<div class="modal-footer">

@@ -1,9 +1,10 @@
-﻿@inject IConfiguration Configuration
+﻿@using Microsoft.AspNetCore.Localization
+@inject IConfiguration Configuration
 @{
 	var twoLetterIsoLanguageName = "en";
 	if (Html.UsingLocalization())
 	{
-		var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+		IRequestCultureFeature requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
 		twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
 	}
 }
@@ -97,8 +98,8 @@
 
 @Html.AntiForgeryToken()
 <script>
-        let __RequestVerificationToken = $("[name=__RequestVerificationToken]").val();
-    </script>
+	let __RequestVerificationToken = $("[name=__RequestVerificationToken]").val();
+</script>
 
 @Html.PageScripts()
 @await RenderSectionAsync("Scripts", false)

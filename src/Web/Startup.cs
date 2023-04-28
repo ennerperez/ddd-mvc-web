@@ -56,6 +56,9 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #endif
 #if USING_AUTH0
+#if !USING_BEARER
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
 using Auth0.AspNetCore.Authentication;
 #endif
 #if USING_TOKEN_VALIDATION
@@ -493,6 +496,9 @@ namespace Web
 
 				})
 #endif
+#if USING_SMARTSCHEMA
+				.AddSmartScheme()
+#endif
 #if USING_OPENID
 				.AddOpenIdConnect(openIdConnectOptions)
 #endif
@@ -510,9 +516,6 @@ namespace Web
 					options.Audience = Configuration["Auth0Settings:Audience"];
 					options.UseRefreshTokens = Configuration.GetValue<bool>("Auth0Settings:UseRefreshTokens");
 				})
-#endif
-#if USING_SMARTSCHEMA
-				.AddSmartScheme()
 #endif
 				.Close();
 

@@ -83,14 +83,25 @@ namespace Persistence.Conventions
 				// This only supports millisecond precision, but should be sufficient for most use cases.
 				foreach (var entityType in modelBuilder.Model.GetEntityTypes())
 				{
-					var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+					var properties = entityType.ClrType.GetProperties()
+						.Where(p => p.PropertyType == typeof(decimal) || p.PropertyType == typeof(decimal?));
 
 					foreach (var property in properties)
 					{
-						modelBuilder
-							.Entity(entityType.Name)
-							.Property(property.Name)
-							.HasConversion<double>();
+						if (property.PropertyType == typeof(decimal))
+						{
+							modelBuilder
+								.Entity(entityType.Name)
+								.Property(property.Name)
+								.HasConversion<double>();
+						}
+						else if (property.PropertyType == typeof(decimal?))
+						{
+							modelBuilder
+								.Entity(entityType.Name)
+								.Property(property.Name)
+								.HasConversion<double?>();
+						}
 					}
 				}
 			}
@@ -110,7 +121,12 @@ namespace Persistence.Conventions
 						if (value.Contains(p.Name))
 							precision = key;
 
-					p.SetColumnType($"decimal(18,{precision})");
+					var dataType = $"decimal(18,{precision})";
+					if (new[] {DatabaseProviders.Sqlite}.Contains(options.Provider) && !options.DecimalConfig.SelectMany(m => m.Value).Contains(p.Name))
+						dataType = "double";
+
+					p.SetColumnType(dataType);
+
 					columnType = p.GetColumnType();
 					entity.HasColumnType(columnType);
 				}

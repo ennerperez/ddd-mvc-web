@@ -8,6 +8,7 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.DotNet.EF;
 using Nuke.Common.Tools.DotNet.EF.Commands;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
@@ -42,10 +43,15 @@ partial class Build
 		.DependsOn(Restore)
 		.Executes(() =>
 		{
+			var projects = Solution.AllProjects
+				.Where(m => !m.Name.StartsWith("_"))
+				.Where(m => new[] {Persistence, Startup}.Contains(m))
+				.ToArray();
 			DotNetBuild(s => s
-				.SetProjectFile(Solution)
-				.SetConfiguration(Configuration)
-				.EnableNoRestore());
+				.CombineWith(projects, configurator: (buildSettings, v) => buildSettings
+					.SetProjectFile(v)
+					.SetConfiguration(Configuration)
+					.EnableNoRestore()));
 		});
 
 	Target MigrationAdd => _ => _

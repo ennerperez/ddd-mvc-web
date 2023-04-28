@@ -18,7 +18,7 @@ namespace System.Linq
 				IOrderedQueryable<TEntityType> result = null;
 				if (args != null)
 				{
-					var typeParams = new[] { Expression.Parameter(typeof(TEntityType), "") };
+					var typeParams = new[] {Expression.Parameter(typeof(TEntityType), "")};
 					var props = typeof(TEntityType).GetProperties()
 						.Where(m => m.PropertyType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.PropertyType) && !m.PropertyType.IsClass))
 						.ToArray();
@@ -26,9 +26,9 @@ namespace System.Linq
 					{
 						// if (typeof(IEntity).IsAssignableFrom(typeof(TEntityType)) || typeof(IEntity<>).IsAssignableFrom(typeof(TEntityType)))
 						if (props.Any(m => m.Name == "Id"))
-							args = new[] { new[] { props.First(m => m.Name == "Id").Name, "asc" } };
+							args = new[] {new[] {props.First(m => m.Name == "Id").Name, "asc"}};
 						else
-							args = new[] { new[] { props.First().Name, "asc" } };
+							args = new[] {new[] {props.First().Name, "asc"}};
 					}
 
 					foreach (var item in args.Where(m => m.Length > 0))
@@ -41,7 +41,7 @@ namespace System.Linq
 							Expression.Call(
 								typeof(Queryable),
 								direction == "asc" ? "OrderBy" : "OrderByDescending",
-								new[] { typeof(TEntityType), pi.PropertyType },
+								new[] {typeof(TEntityType), pi.PropertyType},
 								result != null ? result.Expression : query.Expression,
 								Expression.Lambda(Expression.Property(typeParams[0], pi), typeParams))
 						);
@@ -57,7 +57,7 @@ namespace System.Linq
 				var property = Expression.Property(arg, propertyName);
 				// return the property as object
 				var conv = Expression.Convert(property, typeof(Te));
-				var exp = Expression.Lambda<Func<T, Te>>(conv, new ParameterExpression[] { arg });
+				var exp = Expression.Lambda<Func<T, Te>>(conv, new ParameterExpression[] {arg});
 				return exp;
 			}
 
@@ -67,7 +67,7 @@ namespace System.Linq
 				var property = Expression.Property(arg, propertyInfo.Name);
 				// return the property as object
 				var conv = Expression.Convert(property, typeof(string));
-				var exp = Expression.Lambda<Func<T, string>>(conv, new ParameterExpression[] { arg });
+				var exp = Expression.Lambda<Func<T, string>>(conv, new ParameterExpression[] {arg});
 				return exp;
 			}
 		}

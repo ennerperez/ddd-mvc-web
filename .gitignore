@@ -584,3 +584,6 @@ package-lock.json
 [Pp]ublish
 [Oo]utput
 [Ss]cripts
+
+# Development Settings
+appsettings.*.json

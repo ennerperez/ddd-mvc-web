@@ -49,7 +49,7 @@ namespace Business.Requests
 		{
 			RuleFor(m => m.Key).NotEmpty();
 			RuleFor(m => m.Type).NotEmpty();
-			RuleFor(m => new { m.Key })
+			RuleFor(m => new {m.Key})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Key == m.Key, c);
@@ -73,7 +73,7 @@ namespace Business.Requests
 
 		public async Task<PaginatedList<Setting>> Handle(PaginatedRequest<Setting, Setting> request, CancellationToken cancellationToken)
 		{
-			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null,null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+			var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, null, null, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
 			var number = ((request.Skip ?? 10) / (request.Take ?? 10)) + 1;
 			var result = await PaginatedList<Setting>.CreateAsync(entities, number, request.Take ?? 10, cancellationToken);
 
@@ -119,7 +119,7 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(UpdateSettingRequest request, CancellationToken cancellationToken)
+		public async Task Handle(UpdateSettingRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
@@ -130,7 +130,7 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -141,7 +141,7 @@ namespace Business.Requests
 			RuleFor(m => m.Id).NotEmpty();
 			RuleFor(m => m.Key).NotEmpty();
 			RuleFor(m => m.Type).NotEmpty();
-			RuleFor(m => new { m.Id, m.Key })
+			RuleFor(m => new {m.Id, m.Key})
 				.CustomAsync(async (m, v, c) =>
 				{
 					var isInUse = await repository.AnyAsync(p => p.Key == m.Key && p.Id != m.Id, c);
@@ -169,7 +169,7 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(PartialUpdateSettingRequest request, CancellationToken cancellationToken)
+		public async Task Handle(PartialUpdateSettingRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
@@ -180,7 +180,7 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 
@@ -189,7 +189,7 @@ namespace Business.Requests
 		public PartialUpdateSettingRequestValidator(IGenericRepository<Setting> repository)
 		{
 			RuleFor(m => m.Id).NotEmpty();
-			RuleFor(m => new { m.Id, m.Key })
+			RuleFor(m => new {m.Id, m.Key})
 				.CustomAsync(async (m, v, c) =>
 				{
 					if (m.Key != null)
@@ -219,14 +219,14 @@ namespace Business.Requests
 			_repository = repository;
 		}
 
-		public async Task<Unit> Handle(DeleteSettingRequest request, CancellationToken cancellationToken)
+		public async Task Handle(DeleteSettingRequest request, CancellationToken cancellationToken)
 		{
 			var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
 			if (entity == null) throw new NotFoundException(nameof(Setting), request.Id);
 
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
-			return Unit.Value;
+			return;
 		}
 	}
 

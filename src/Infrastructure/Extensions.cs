@@ -34,10 +34,10 @@ namespace Infrastructure
 		{
 			services.AddTransient<IEmailService, SmtpService>();
 
-			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
-			var types = assemblies.Where(m=> m != null) .SelectMany(m => m.GetTypes()).ToArray();
+			var assemblies = new[] {Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly()};
+			var types = assemblies.Where(m => m != null).SelectMany(m => m.GetTypes()).ToArray();
 
-			var userAccessorServiceType = types.FirstOrDefault(m=> m.IsClass && typeof(IUserAccessorService).IsAssignableFrom(m));
+			var userAccessorServiceType = types.FirstOrDefault(m => m.IsClass && typeof(IUserAccessorService).IsAssignableFrom(m));
 			if (userAccessorServiceType != null)
 				services.AddTransient(typeof(IUserAccessorService), userAccessorServiceType);
 
@@ -47,8 +47,10 @@ namespace Infrastructure
 
 #if USING_BLOBS
 			services.AddTransient<IFileService, FileService>();
+			services.AddTransient<IDirectoryService, DirectoryService>();
 #else
 			services.AddSingleton<IFileService>(new FileSystemService() {ContainerName = "Data", CreateIfNotExists = true});
+			services.AddSingleton<IDirectoryService>(new FileSystemService() {ContainerName = "Data", CreateIfNotExists = true});
 #endif
 #if USING_QUEUES
 			services.AddTransient<IQueueService, QueueService>();
