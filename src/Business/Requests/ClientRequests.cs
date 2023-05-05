@@ -137,7 +137,6 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return;
 		}
 	}
 
@@ -191,7 +190,6 @@ namespace Business.Requests
 
 			await _repository.UpdateAsync(entity, cancellationToken);
 
-			return;
 		}
 	}
 
@@ -237,7 +235,6 @@ namespace Business.Requests
 
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
-			return;
 		}
 	}
 

@@ -220,7 +220,6 @@ namespace Business.Requests.Identity
 
 			#endregion
 
-			return;
 		}
 	}
 
@@ -334,7 +333,6 @@ namespace Business.Requests.Identity
 
 			#endregion
 
-			return;
 		}
 	}
 
@@ -380,7 +378,6 @@ namespace Business.Requests.Identity
 
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
-			return;
 		}
 	}
 
