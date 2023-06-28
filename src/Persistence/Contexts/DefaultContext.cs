@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Persistence.Conventions;
+using Persistence.Interceptors;
 #if USING_IDENTITY
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -57,6 +59,7 @@ namespace Persistence.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //optionsBuilder.AddInterceptors(null); //TODO: Interceptors
 #if DEBUG
             optionsBuilder?.EnableDetailedErrors();
             optionsBuilder?.EnableSensitiveDataLogging();
