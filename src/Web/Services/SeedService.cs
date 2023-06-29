@@ -37,17 +37,24 @@ namespace Web.Services
             {
                 DbContext defaultContext = scope.ServiceProvider.GetService<DefaultContext>();
                 defaultContext.Initialize();
-                if (defaultContext == null || !await defaultContext.Database.CanConnectAsync(cancellationToken))
+
+                if (defaultContext == null) return;
+#if !USING_COSMOS
+                if (!await defaultContext.Database.CanConnectAsync(cancellationToken))
                 {
                     return;
                 }
+#endif
 
                 var cacheContext = scope.ServiceProvider.GetService<CacheContext>();
                 cacheContext.Initialize();
-                if (cacheContext == null || !await cacheContext.Database.CanConnectAsync(cancellationToken))
+                if (cacheContext == null) return;
+#if !USING_COSMOS
+                if (!await cacheContext.Database.CanConnectAsync(cancellationToken))
                 {
                     return;
                 }
+#endif
 
                 try
                 {
@@ -55,10 +62,10 @@ namespace Web.Services
                     await FromLocal<Setting>(defaultContext, cancellationToken: cancellationToken);
                     await FromLocal<Country>(cacheContext, cancellationToken: cancellationToken);
 #if USING_IDENTITY
-					await FromLocal<Role>(defaultContext, cancellationToken: cancellationToken);
-					await FromLocal<User>(defaultContext, cancellationToken: cancellationToken);
-					await FromLocal<UserRole>(defaultContext, cancellationToken: cancellationToken);
-					await FromLocal<UserClaim>(defaultContext, cancellationToken: cancellationToken);
+                    await FromLocal<Role>(defaultContext, cancellationToken: cancellationToken);
+                    await FromLocal<User>(defaultContext, cancellationToken: cancellationToken);
+                    await FromLocal<UserRole>(defaultContext, cancellationToken: cancellationToken);
+                    await FromLocal<UserClaim>(defaultContext, cancellationToken: cancellationToken);
 #endif
                     await FromLocal<Client>(defaultContext, cancellationToken: cancellationToken);
 #endif

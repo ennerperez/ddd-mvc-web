@@ -16,6 +16,7 @@
         <UsingMySql>false</UsingMySql>
         <UsingPostgreSql>false</UsingPostgreSql>
         <UsingOracle>false</UsingOracle>
+        <UsingCosmos>true</UsingCosmos>
         <UsingNonAsync>false</UsingNonAsync>
         <UsingDapper>false</UsingDapper>
         <UsingBulk>true</UsingBulk>

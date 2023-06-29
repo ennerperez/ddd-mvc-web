@@ -44,6 +44,7 @@
         <PackageReference Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
         <PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
         <PackageReference Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="6.21.90" />
+        <PackageReference Condition="'$(UsingCosmos)' == 'true'" Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.16" />
         <PackageReference Condition="'$(UsingDapper)' == 'true'" Include="Dapper" Version="2.0.143" />
     </ItemGroup>
 

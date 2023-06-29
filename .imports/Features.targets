@@ -15,12 +15,13 @@
         <BuildConstants Condition="'$(UsingMySql)' == 'true'">$(BuildConstants)USING_MYSQL;</BuildConstants>
         <BuildConstants Condition="'$(UsingPostgreSql)' == 'true'">$(BuildConstants)USING_POSTGRESQL;</BuildConstants>
         <BuildConstants Condition="'$(UsingOracle)' == 'true'">$(BuildConstants)USING_ORACLE;</BuildConstants>
+        <BuildConstants Condition="'$(UsingCosmos)' == 'true'">$(BuildConstants)USING_COSMOS;</BuildConstants>
         <BuildConstants Condition="'$(UsingDapper)' == 'true'">$(BuildConstants)USING_DAPPER;</BuildConstants>
         <BuildConstants Condition="'$(UsingNonAsync)' == 'true'">$(BuildConstants)USING_NONASYNC;</BuildConstants>
         <BuildConstants Condition="'$(UsingBulk)' == 'true'">$(BuildConstants)USING_BULK;</BuildConstants>
         <BuildConstants Condition="'$(UsingSplit)' == 'true'">$(BuildConstants)USING_SPLIT;</BuildConstants>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">
+    <PropertyGroup Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true' OR '$(UsingCosmos)' == 'true'">
         <UsingDabaseProvider>true</UsingDabaseProvider>
         <BuildConstants>$(BuildConstants)USING_DATABASE_PROVIDER;</BuildConstants>
     </PropertyGroup>

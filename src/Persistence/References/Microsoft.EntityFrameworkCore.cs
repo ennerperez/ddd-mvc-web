@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 #if USING_SQLITE
@@ -14,13 +16,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
+
 // ReSharper disable IdentifierTypo
 // ReSharper disable once CheckNamespace
 // ReSharper disable StringLiteralTypo
 
 namespace Microsoft.EntityFrameworkCore
 {
-
     public static class DatabaseProviders
     {
         public const string Sqlite = "Sqlite";
@@ -29,6 +31,7 @@ namespace Microsoft.EntityFrameworkCore
         public const string MySql = "MySql";
         public const string PostgreSql = "PostgreSQL";
         public const string Oracle = "Oracle";
+        public const string Cosmos = "Cosmos";
     }
 
     public static class Schemas
@@ -94,7 +97,9 @@ namespace Microsoft.EntityFrameworkCore
 
         public static void Initialize(this DbContext context)
         {
+#if !USING_COSMOS
             context.Database.Migrate();
+#endif
         }
 
         public static async Task TruncateAsync(this DbContext context, bool reseed = true, CancellationToken cancellationToken = default)
@@ -113,7 +118,7 @@ namespace Microsoft.EntityFrameworkCore
                     }
 
                     var q0 = $"TRUNCATE TABLE [{m.GetSchema()}].[{m.GetTableName()}];";
-                    return string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                    return string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
                 }).ToArray());
             }
             else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.Sqlite))
@@ -127,7 +132,7 @@ namespace Microsoft.EntityFrameworkCore
                     }
 
                     var q0 = $"DELETE FROM {m.GetTableName()};";
-                    return string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                    return string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
                 }).ToArray());
             }
 
@@ -155,7 +160,7 @@ namespace Microsoft.EntityFrameworkCore
                     }
 
                     var q1 = $"TRUNCATE TABLE [{entityType.GetSchema()}].[{entityType.GetTableName()}];";
-                    query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                    query = string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
                 }
             }
             else if (context.Database.ProviderName != null && context.Database.ProviderName.EndsWith(DatabaseProviders.Sqlite))
@@ -169,7 +174,7 @@ namespace Microsoft.EntityFrameworkCore
                     }
 
                     var q1 = $"DELETE FROM {entityType.GetTableName()};";
-                    query = string.Join(Environment.NewLine, new[] { q0, q1 }.Where(q => !string.IsNullOrWhiteSpace(q)));
+                    query = string.Join(Environment.NewLine, new[] {q0, q1}.Where(q => !string.IsNullOrWhiteSpace(q)));
                 }
             }
 
@@ -228,9 +233,10 @@ namespace Microsoft.EntityFrameworkCore
             var providerName = context.Database.ProviderName?.Split('.').Last();
             return HasSchema(providerName);
         }
+
         public static bool HasSchema(string providerName)
         {
-            return !(new[] { DatabaseProviders.Sqlite, DatabaseProviders.MySql, DatabaseProviders.MariaDb }).Contains(providerName);
+            return !(new[] {DatabaseProviders.Sqlite, DatabaseProviders.MySql, DatabaseProviders.MariaDb}).Contains(providerName);
         }
 
         public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string contextName = "", string providerName = "")
@@ -317,6 +323,13 @@ namespace Microsoft.EntityFrameworkCore
 				case DatabaseProviders.Oracle:
 					optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
 					break;
+#endif
+#if USING_COSMOS
+                case DatabaseProviders.Cosmos:
+                    var regex = new Regex("AccountEndpoint=(.*);AccountKey=(.*);DatabaseName=(.*)", RegexOptions.Compiled);
+                    var match = regex.Match(connectionString).Groups;
+                    optionsBuilder.UseCosmos(match[1].Value, match[2].Value, match[3].Value);
+                    break;
 #endif
                 default:
                     break;
