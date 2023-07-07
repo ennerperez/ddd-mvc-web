@@ -8,47 +8,50 @@ using Persistence.Providers;
 
 namespace Persistence
 {
-	public static class Extensions
-	{
-		public static Func<DbContext> DbContext { get; set; }
+    public static class Extensions
+    {
+        public static Func<DbContext> DbContext { get; set; }
 
-		public static IServiceCollection AddPersistence<TContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) where TContext : DbContext
-		{
-			services.AddDbContext<TContext>(optionsBuilder, serviceLifetime);
-			switch (serviceLifetime)
-			{
-				case ServiceLifetime.Transient:
-					services.AddTransient<DbContext, TContext>();
-					break;
-				case ServiceLifetime.Singleton:
-					services.AddSingleton<DbContext, TContext>();
-					break;
-				default:
-					services.AddScoped<DbContext, TContext>();
-					break;
-			}
-			DbContext = () => services.BuildServiceProvider().GetRequiredService<TContext>();
+        public static IServiceCollection AddPersistence<TContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) where TContext : DbContext
+        {
+            services.AddDbContext<TContext>(optionsBuilder, serviceLifetime);
+            switch (serviceLifetime)
+            {
+                case ServiceLifetime.Transient:
+                    services.AddTransient<DbContext, TContext>();
+                    break;
+                case ServiceLifetime.Singleton:
+                    services.AddSingleton<DbContext, TContext>();
+                    break;
+                default:
+                    services.AddScoped<DbContext, TContext>();
+                    break;
+            }
 
-			services.AddFromAssembly(Assembly.GetExecutingAssembly());
+            DbContext = () => services.BuildServiceProvider().GetRequiredService<TContext>();
 
-			services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
+            services.AddFromAssembly(Assembly.GetExecutingAssembly());
 
-			return services;
-		}
+            services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
 
-		#region FromAssembly
+            return services;
+        }
 
-		private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
-		{
-			if (!assemblies.Any())
-				throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
+        #region FromAssembly
 
-			var assembliesToScan = assemblies.Distinct().ToArray();
-			services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), assembliesToScan, false);
-			services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<>), assembliesToScan, false);
-		}
+        private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
+        {
+            if (!assemblies.Any())
+            {
+                throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
+            }
 
-		#endregion
+            var assembliesToScan = assemblies.Distinct().ToArray();
+            services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<,>), assembliesToScan, false);
+            services.ConnectImplementationsToTypesClosing(typeof(IGenericRepository<>), assembliesToScan, false);
+        }
 
-	}
+        #endregion
+
+    }
 }

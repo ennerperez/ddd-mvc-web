@@ -83,13 +83,13 @@ namespace Infrastructure.Services
 
 		// ReSharper disable once UnusedMember.Local
 
-		private string NormalizePath(string targetPath)
+		private static string NormalizePath(string targetPath)
 		{
 			if (targetPath.StartsWith(@"app/") || targetPath.StartsWith(@"app\")) targetPath = targetPath.Substring(4);
 			targetPath = targetPath.Replace(Path.DirectorySeparatorChar, '/');
 			return targetPath;
 		}
-		private string NormalizeFilePath(string targetPath)
+		private static string NormalizeFilePath(string targetPath)
 		{
 			var fileName = Path.GetFileName(targetPath);
 			targetPath = Path.GetDirectoryName(targetPath);
@@ -104,7 +104,7 @@ namespace Infrastructure.Services
 
 
 		public DirectoryInfo GetParent(string path)
-			=> new DirectoryInfo(Path.GetRelativePath(Directory.GetCurrentDirectory(), new DirectoryInfo(path).Parent.FullName));
+			=> new DirectoryInfo(Path.GetRelativePath(Directory.GetCurrentDirectory(), new DirectoryInfo(path).Parent?.FullName ?? throw new DirectoryNotFoundException()));
 		public DirectoryInfo CreateDirectory(string path)
 		{
 			var client = GetClient();
@@ -113,7 +113,7 @@ namespace Infrastructure.Services
 			var folderPath = Path.Combine(path, DirectoryExtension);
 			var blob = client.GetBlobClient(folderPath);
 			if (blob == null || !blob.Exists())
-				client.UploadBlob(folderPath, new BinaryData(new byte[1] {1}));
+				client.UploadBlob(folderPath, new BinaryData(new byte[] {1}));
 
 			return new DirectoryInfo(path);
 		}
@@ -172,7 +172,7 @@ namespace Infrastructure.Services
 			if (!string.IsNullOrWhiteSpace(searchPattern)) items = items.Where(m => m.Blob.Name.Contains(searchPattern)).ToArray();
 			var files = items.Where(m => m.IsBlob && m.Blob.Name != $"{path}{Path.AltDirectorySeparatorChar}{DirectoryExtension}");
 
-			var results = new List<string>();
+			List<string> results;
 			results = files.Select(m => m.Blob.Name).ToList();
 
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -233,9 +233,9 @@ namespace Infrastructure.Services
 			if (!string.IsNullOrWhiteSpace(searchPattern)) items = items.Where(m => m.Blob.Name.Contains(searchPattern)).ToArray();
 			var folders = items.Where(m => m.IsBlob && m.Blob.Name.EndsWith($"{Path.AltDirectorySeparatorChar}{DirectoryExtension}"));
 
-			var results = new List<string>();
+			List<string> results;
 			var dirResults = folders.Select(m =>
-				Path.GetRelativePath(Directory.GetCurrentDirectory(), new FileInfo(m.Blob.Name).Directory.FullName)).ToList();
+				Path.GetRelativePath(Directory.GetCurrentDirectory(), new FileInfo(m.Blob.Name).Directory?.FullName ?? throw new DirectoryNotFoundException())).ToList();
 
 			if (searchOption == SearchOption.TopDirectoryOnly)
 				results = dirResults.Where(m =>

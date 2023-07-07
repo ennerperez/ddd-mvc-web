@@ -12,13 +12,16 @@ using Nuke.Common.Tooling;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
-partial class Build
+// ReSharper disable UnusedMember.Local
+public partial class Build
 {
 
 	Project Persistence => Solution.GetProject("Persistence");
 	Project Startup => Solution.GetProject("Web");
-	string MigrationsPath => "Migrations";
-	string ScriptsPath => "Scripts";
+
+    static string MigrationsPath => "Migrations";
+
+    static string ScriptsPath => "Scripts";
 	IEnumerable<Tuple<string, string, string, string>> GetConnectionStringsCombinations()
 	{
 		var config = new ConfigurationBuilder()

@@ -1,17 +1,17 @@
-﻿using System.Security.Principal;
+using System.Security.Principal;
 
 namespace Infrastructure.Interfaces
 {
-	public interface IUserAccessorService
-	{
-		string Scheme { get; }
-		string Host { get; }
+    public interface IUserAccessorService
+    {
+        string Scheme { get; }
+        string Host { get; }
 
-		IPrincipal GetActiveUser();
+        IPrincipal GetActiveUser();
 
 #if USING_IDENTITY
 		string FindFirstValue(string claimType);
 		string FindLastValue(string claimType);
 #endif
-	}
+    }
 }

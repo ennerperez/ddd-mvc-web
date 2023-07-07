@@ -10,168 +10,194 @@ using System.Linq;
 
 namespace Persistence.Conventions
 {
-	internal class ProviderTypeOptions
-	{
-		public ProviderTypeOptions()
-		{
-			DecimalConfig = new Dictionary<int, string[]>();
-			Exclude = new[] {"Identity"};
-			UseDateTime = true;
-		}
+    internal class ProviderTypeOptions
+    {
+        public ProviderTypeOptions()
+        {
+            DecimalConfig = new Dictionary<int, string[]>();
+            Exclude = new[] { "Identity" };
+            UseDateTime = true;
+        }
 
-		public Dictionary<int, string[]> DecimalConfig { get; set; }
-		public string Provider { get; set; }
-		public string[] Exclude { get; set; }
+        public Dictionary<int, string[]> DecimalConfig { get; set; }
+        public string Provider { get; set; }
+        public string[] Exclude { get; set; }
 
-		public bool UseDateTime { get; set; }
-	}
+        public bool UseDateTime { get; set; }
+    }
 
-	internal static class ProviderTypeConventions
-	{
-		public static void AddProviderTypeConventions(this ModelBuilder modelBuilder, Action<ProviderTypeOptions> optionsAction = null)
-		{
+    internal static class ProviderTypeConventions
+    {
+        public static void AddProviderTypeConventions(this ModelBuilder modelBuilder, Action<ProviderTypeOptions> optionsAction = null)
+        {
 #if DEBUG
-			var sw = new Stopwatch();
-			sw.Start();
+            var sw = new Stopwatch();
+            sw.Start();
 #endif
 
-			var options = new ProviderTypeOptions();
-			optionsAction?.Invoke(options);
+            var options = new ProviderTypeOptions();
+            optionsAction?.Invoke(options);
 
-			options.Exclude ??= Array.Empty<string>();
+            options.Exclude ??= Array.Empty<string>();
 
-			// Fix datetime offset support for integration tests
-			// See: https://blog.dangl.me/archive/handling-datetimeoffset-in-sqlite-with-entity-framework-core/
-			if (new[] {DatabaseProviders.Sqlite}.Contains(options.Provider))
-			{
-				// SQLite does not have proper support for DateTimeOffset via Entity Framework Domain, see the limitations
-				// here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
-				// To work around this, when the Sqlite database provider is used, all model properties of type DateTimeOffset
-				// use the DateTimeOffsetToBinaryConverter
-				// Based on: https://github.com/aspnet/EntityFrameworkCore/issues/10784#issuecomment-415769754
-				// This only supports millisecond precision, but should be sufficient for most use cases.
-				var datetimeProperties = modelBuilder.Model.GetEntityTypes()
-					.Where(m => !m.IsOwned())
-					.SelectMany(m => m.GetProperties())
-					.Where(p => p.ClrType == typeof(DateTimeOffset) || p.ClrType == typeof(DateTimeOffset?))
-					.ToArray();
-				foreach (var p in datetimeProperties)
-				{
-					var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
-					property.HasConversion(new DateTimeOffsetToBinaryConverter());
-				}
+            // Fix datetime offset support for integration tests
+            // See: https://blog.dangl.me/archive/handling-datetimeoffset-in-sqlite-with-entity-framework-core/
+            if (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider))
+            {
+                // SQLite does not have proper support for DateTimeOffset via Entity Framework Domain, see the limitations
+                // here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
+                // To work around this, when the Sqlite database provider is used, all model properties of type DateTimeOffset
+                // use the DateTimeOffsetToBinaryConverter
+                // Based on: https://github.com/aspnet/EntityFrameworkCore/issues/10784#issuecomment-415769754
+                // This only supports millisecond precision, but should be sufficient for most use cases.
+                var datetimeProperties = modelBuilder.Model.GetEntityTypes()
+                    .Where(m => !m.IsOwned())
+                    .SelectMany(m => m.GetProperties())
+                    .Where(p => p.ClrType == typeof(DateTimeOffset) || p.ClrType == typeof(DateTimeOffset?))
+                    .ToArray();
+                foreach (var p in datetimeProperties)
+                {
+                    var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
+                    property.HasConversion(new DateTimeOffsetToBinaryConverter());
+                }
 
-				var guidProperties = modelBuilder.Model.GetEntityTypes()
-					.Where(m => !m.IsOwned())
-					.SelectMany(m => m.GetProperties())
-					.Where(m => m.IsPrimaryKey() && m.ClrType == typeof(Guid) || m.ClrType == typeof(Guid?))
-					.ToArray();
+                var guidProperties = modelBuilder.Model.GetEntityTypes()
+                    .Where(m => !m.IsOwned())
+                    .SelectMany(m => m.GetProperties())
+                    .Where(m => m.IsPrimaryKey() && m.ClrType == typeof(Guid) || m.ClrType == typeof(Guid?))
+                    .ToArray();
 
-				foreach (var p in guidProperties)
-				{
-					var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
-					if (p.IsColumnNullable())
-						property.HasDefaultValue(null);
-				}
+                foreach (var p in guidProperties)
+                {
+                    var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
+                    if (p.IsColumnNullable())
+                    {
+                        property.HasDefaultValue(null);
+                    }
+                }
 
-				//TODO: Sqlite Temporal Patch
-				// SQLite does not have proper support for DateTimeOffset via Entity Framework Core, see the limitations
-				// here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
-				// To work around this, when the Sqlite database provider is used, all model properties of type DateTimeOffset
-				// use the DateTimeOffsetToBinaryConverter
-				// Based on: https://github.com/aspnet/EntityFrameworkCore/issues/10784#issuecomment-415769754
-				// This only supports millisecond precision, but should be sufficient for most use cases.
-				foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-				{
-					var properties = entityType.ClrType.GetProperties()
-						.Where(p => p.PropertyType == typeof(decimal) || p.PropertyType == typeof(decimal?));
+                //TODO: Sqlite Temporal Patch
+                // SQLite does not have proper support for DateTimeOffset via Entity Framework Core, see the limitations
+                // here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
+                // To work around this, when the Sqlite database provider is used, all model properties of type DateTimeOffset
+                // use the DateTimeOffsetToBinaryConverter
+                // Based on: https://github.com/aspnet/EntityFrameworkCore/issues/10784#issuecomment-415769754
+                // This only supports millisecond precision, but should be sufficient for most use cases.
+                foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+                {
+                    var properties = entityType.ClrType.GetProperties()
+                        .Where(p => p.PropertyType == typeof(decimal) || p.PropertyType == typeof(decimal?));
 
-					foreach (var property in properties)
-					{
-						if (property.PropertyType == typeof(decimal))
-						{
-							modelBuilder
-								.Entity(entityType.Name)
-								.Property(property.Name)
-								.HasConversion<double>();
-						}
-						else if (property.PropertyType == typeof(decimal?))
-						{
-							modelBuilder
-								.Entity(entityType.Name)
-								.Property(property.Name)
-								.HasConversion<double?>();
-						}
-					}
-				}
-			}
+                    foreach (var property in properties)
+                    {
+                        if (property.PropertyType == typeof(decimal))
+                        {
+                            modelBuilder
+                                .Entity(entityType.Name)
+                                .Property(property.Name)
+                                .HasConversion<double>();
+                        }
+                        else if (property.PropertyType == typeof(decimal?))
+                        {
+                            modelBuilder
+                                .Entity(entityType.Name)
+                                .Property(property.Name)
+                                .HasConversion<double?>();
+                        }
+                    }
+                }
+            }
 
-			// Generic Fields
-			var items1 = modelBuilder.Model.GetEntityTypes().Where(m => !options.Exclude.Contains(m.Name)).SelectMany(t => t.GetProperties()).ToArray();
-			foreach (var p in items1)
-			{
-				if (p.DeclaringEntityType.ClrType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(p.DeclaringEntityType.ClrType)) continue;
-				var entity = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
-				var columnType = p.GetColumnType();
-				if (columnType != null) continue;
-				if (p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?))
-				{
-					var precision = 2;
-					foreach (var (key, value) in options.DecimalConfig)
-						if (value.Contains(p.Name))
-							precision = key;
+            // Generic Fields
+            var items1 = modelBuilder.Model.GetEntityTypes().Where(m => !options.Exclude.Contains(m.Name)).SelectMany(t => t.GetProperties()).ToArray();
+            foreach (var p in items1)
+            {
+                if (p.DeclaringEntityType.ClrType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(p.DeclaringEntityType.ClrType))
+                {
+                    continue;
+                }
 
-					var dataType = $"decimal(18,{precision})";
-					if (new[] {DatabaseProviders.Sqlite}.Contains(options.Provider) && !options.DecimalConfig.SelectMany(m => m.Value).Contains(p.Name))
-						dataType = "double";
+                var entity = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
+                var columnType = p.GetColumnType();
+                if (columnType != null)
+                {
+                    continue;
+                }
 
-					p.SetColumnType(dataType);
+                if (p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?))
+                {
+                    var precision = 2;
+                    foreach (var (key, value) in options.DecimalConfig)
+                    {
+                        if (value.Contains(p.Name))
+                        {
+                            precision = key;
+                        }
+                    }
 
-					columnType = p.GetColumnType();
-					entity.HasColumnType(columnType);
-				}
-				else if (p.ClrType == typeof(float) || p.ClrType == typeof(float?))
-				{
-					p.SetColumnType("float");
-					columnType = p.GetColumnType();
-					entity.HasColumnType(columnType);
-				}
-				else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
-				{
-					if (options.UseDateTime || (new[] {DatabaseProviders.Sqlite}.Contains(options.Provider)))
-					{
-						p.SetColumnType("datetime");
-						columnType = p.GetColumnType();
-						entity.HasColumnType(columnType);
-					}
-				}
-				else if (p.ClrType == typeof(string))
-				{
-					var maxValue = p.GetMaxLength();
-					var max = maxValue.HasValue ? maxValue.ToString() : "max";
+                    var dataType = $"decimal(18,{precision})";
+                    if (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider) && !options.DecimalConfig.SelectMany(m => m.Value).Contains(p.Name))
+                    {
+                        dataType = "double";
+                    }
 
-					if (new[] {DatabaseProviders.MySql, DatabaseProviders.MariaDb}.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
-						p.SetColumnType(max == "max" ? $"longtext" : $"text");
-					else if (new[] {DatabaseProviders.Sqlite}.Contains(options.Provider))
-						p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
-					else if (new[] {DatabaseProviders.PostgreSql}.Contains(options.Provider))
-						p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
-					else
-						p.SetColumnType($"varchar({max})");
+                    p.SetColumnType(dataType);
 
-					columnType = p.GetColumnType();
-					entity.HasColumnType(columnType);
-				}
+                    columnType = p.GetColumnType();
+                    entity.HasColumnType(columnType);
+                }
+                else if (p.ClrType == typeof(float) || p.ClrType == typeof(float?))
+                {
+                    p.SetColumnType("float");
+                    columnType = p.GetColumnType();
+                    entity.HasColumnType(columnType);
+                }
+                else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
+                {
+                    if (options.UseDateTime || (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider)))
+                    {
+                        p.SetColumnType("datetime");
+                        columnType = p.GetColumnType();
+                        entity.HasColumnType(columnType);
+                    }
+                }
+                else if (p.ClrType == typeof(string))
+                {
+                    var maxValue = p.GetMaxLength();
+                    var max = maxValue.HasValue ? maxValue.ToString() : "max";
 
-				// See: https://stackoverflow.com/questions/8746207/1071-specified-key-was-too-long-max-key-length-is-1000-bytes
-				if (new[] {DatabaseProviders.MySql, DatabaseProviders.MariaDb}.Contains(options.Provider) && p.GetMaxLength() > 255)
-					p.SetMaxLength(255);
-			}
+                    if (new[] { DatabaseProviders.MySql, DatabaseProviders.MariaDb }.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
+                    {
+                        p.SetColumnType(max == "max" ? $"longtext" : $"text");
+                    }
+                    else if (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider))
+                    {
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
+                    }
+                    else if (new[] { DatabaseProviders.PostgreSql }.Contains(options.Provider))
+                    {
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
+                    }
+                    else
+                    {
+                        p.SetColumnType($"varchar({max})");
+                    }
+
+                    columnType = p.GetColumnType();
+                    entity.HasColumnType(columnType);
+                }
+
+                // See: https://stackoverflow.com/questions/8746207/1071-specified-key-was-too-long-max-key-length-is-1000-bytes
+                if (new[] { DatabaseProviders.MySql, DatabaseProviders.MariaDb }.Contains(options.Provider) && p.GetMaxLength() > 255)
+                {
+                    p.SetMaxLength(255);
+                }
+            }
 
 #if DEBUG
-			sw.Stop();
-			Debug.WriteLine($"[INFO] - Elapsed time for provider type conventions: {sw.Elapsed}");
+            sw.Stop();
+            Debug.WriteLine($"[INFO] - Elapsed time for provider type conventions: {sw.Elapsed}");
 #endif
-		}
-	}
+        }
+    }
 }

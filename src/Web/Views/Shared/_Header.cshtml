@@ -1,5 +1,9 @@
 @inject IConfiguration Configuration
 
+@{
+    var isSignedIn = User.Identity?.IsAuthenticated ?? false;
+}
+
 <hader class="pb-4">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
 		<div class="container-fluid">
@@ -30,13 +34,14 @@
 							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Budgets" asp-action="Index">Budgets</a>
 						</li>
 					}
-					@if (Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
+					@if (isSignedIn && Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
 					{
 						<li class="nav-item">
 							<a class="nav-link" href="~/api">API</a>
 						</li>
 					}
 				</ul>
+				<partial name="_LoginPartial"/>
 			</div>
 		</div>
 	</nav>

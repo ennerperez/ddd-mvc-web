@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
 namespace Domain.Interfaces
 {
-	public interface ISyncronizable
-	{
-		Guid? RowKey { get; set; }
+    public interface ISyncronizable
+    {
+        Guid? RowKey { get; set; }
 
-		byte[] RowVersion { get; set; }
-	}
+        byte[] RowVersion { get; set; }
+    }
 }
