@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Enner Pérez",
+  "classifications": [
+    "ASP.NET",
+    "Web",
+    "DDD",
+    "MVC"
+  ],
+  "name": "DDD-MVC Solution",
+  "description": "A DDD-MVC Solution Template for creating a Web Project with ASP.NET Core.",
+  "identity": "DDD-MVC.Solution.CSharp",
+  "groupIdentity": "DDD-MVC.Solution",
+  "shortName": "ddd-mvc-sln",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "DDD-MVC",
+  "preferNameDirectory": true,
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        "**/bin/**",
+        "**/obj/**",
+        "**/.template.config",
+        "**/.vs/**",
+        "**/.idea/**",
+        "**/.github/**",
+        "**/.nuke/temp/**",
+        "**/publish/**",
+        "**/output/**",
+        "**/scripts/**",
+        "**/testresults/**",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/.git/**",
+        "*.nuspec",
+        "**/logs/**",
+        "**/lib/**",
+        "**/css/**",
+        "**/Data/**"
+      ]
+    }
+  ]
+}

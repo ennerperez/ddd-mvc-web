@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+
+    <id>ddd-mvc-web.solution.template</id>
+    <version>1.0.0</version>
+    <title>DDD-MVC Solution Template</title>
+    <authors>Enner Pérez</authors>
+    <description>DDD-MVC Solution Template for .NET</description>
+    <summary>
+      A DDD-MVC Solution Template for creating a Web Project with ASP.NET Core.
+    </summary>
+    <releaseNotes>
+      Initial Release
+    </releaseNotes>
+
+    <projectUrl>https://github.com/ennerperez/ddd-mvc-web</projectUrl>
+    <repository type="git" url="https://github.com/ennerperez/ddd-mvc-web.git" branch="master" />
+
+    <license type="expression">MIT</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>ddd-mvc project template csharp dotnet</tags>
+    <icon>.editoricon.png</icon>
+
+    <packageTypes>
+      <packageType name="Template" />
+    </packageTypes>
+
+  </metadata>
+
+  <files>
+    <file src=".editoricon.png" />
+    <file src="README.md" />
+    <file src=".\**" target="content" exclude="**/bin/**;**/obj/**;**/.template.config/**;**/.vs/**;**/.idea/**;**/.github/**;**/.nuke/temp/**;**/publish/**;**/output/**;**/scripts/**;**/testresults/**;**/*.filelist;**/*.user;**/*.lock.json;**/.git/**;*.nuspec;**/logs/**;**/lib/**;**/css/**;**/Data/**" />
+  </files>
+
+</package>

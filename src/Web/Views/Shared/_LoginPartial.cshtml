@@ -1,37 +1,29 @@
 @using System.Security.Claims
-@using Domain.Entities.Identity
-@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
-@inject SignInManager<User> SignInManager
 @{
-	var name = "";
-	if (SignInManager.IsSignedIn(User))
-	{
-		name = @User.GetUserFullName();
-	}
+    var isSignedIn = User.Identity?.IsAuthenticated ?? false;
+    var name = "";
+    if (isSignedIn)
+    {
+        name = @User.GetUserFullName();
+    }
 }
 
 <ul class="navbar-nav">
-	@if (SignInManager.IsSignedIn(User))
-	{
+    @if (isSignedIn)
+    {
 		<li class="nav-item">
-			<a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@name</a>
+			<a class="nav-link" asp-controller="Account" asp-action="Profile" title="Manage">@name</a>
 		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#" onclick="document.getElementById('form-logout').submit();">Logout</a>
-		</li>
-	}
-	else
-	{
-		<li class="nav-item">
-			<a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-		</li>
-	}
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+        </li>
+    }
 </ul>
-
-<form id="form-logout" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Default", new {area = ""})">
-</form>

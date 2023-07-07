@@ -6,47 +6,55 @@ using System.Linq;
 
 namespace Persistence.Conventions
 {
-	internal static class AuditableEntitiesConventions
-	{
-		public static void AddAuditableEntitiesConventions<T>(this ModelBuilder modelBuilder, string provider, string[] exclude = null)
-		{
+    internal static class AuditableEntitiesConventions
+    {
+        public static void AddAuditableEntitiesConventions<T>(this ModelBuilder modelBuilder, string provider, string[] exclude = null)
+        {
 #if DEBUG
-			var sw = new Stopwatch();
-			sw.Start();
+            var sw = new Stopwatch();
+            sw.Start();
 #endif
-			if (exclude == null || exclude.Length == 0)
-				exclude = System.Array.Empty<string>();
+            if (exclude == null || exclude.Length == 0)
+            {
+                exclude = System.Array.Empty<string>();
+            }
 
+            var defaultDateFunction = provider switch
+            {
+                DatabaseProviders.MySql => "now()",
+                DatabaseProviders.MariaDb => "now()",
+                DatabaseProviders.PostgreSql => "now()",
+                DatabaseProviders.Sqlite => "CURRENT_TIMESTAMP",
+                _ => "getdate()"
+            };
 
-			var defaultDateFunction = provider switch
-			{
-				DatabaseProviders.MySql => "now()",
-				DatabaseProviders.MariaDb => "now()",
-				DatabaseProviders.PostgreSql => "now()",
-				DatabaseProviders.Sqlite => "CURRENT_TIMESTAMP",
-				_ => "getdate()"
-			};
+            var items = modelBuilder.Model.GetEntityTypes().Where(m => !exclude.Contains(m.Name));
+            foreach (var t in items)
+            {
+                var type = t.ClrType;
+                if (!typeof(T).IsAssignableFrom(type))
+                {
+                    continue;
+                }
 
-			var items = modelBuilder.Model.GetEntityTypes().Where(m => !exclude.Contains(m.Name));
-			foreach (var t in items)
-			{
-				var type = t.ClrType;
-				if (!typeof(T).IsAssignableFrom(type)) continue;
-				var properties = t.GetProperties().ToArray();
-				if (!properties.Any()) continue;
+                var properties = t.GetProperties().ToArray();
+                if (!properties.Any())
+                {
+                    continue;
+                }
 
-				var created = properties.First(m => m.Name == "CreatedAt");
-				created.SetDefaultValueSql(defaultDateFunction);
-				t.AddIndex(created);
+                var created = properties.First(m => m.Name == "CreatedAt");
+                created.SetDefaultValueSql(defaultDateFunction);
+                t.AddIndex(created);
 
-				var modified = properties.First(m => m.Name == "ModifiedAt");
-				t.AddIndex(modified);
-			}
+                var modified = properties.First(m => m.Name == "ModifiedAt");
+                t.AddIndex(modified);
+            }
 
 #if DEBUG
-			sw.Stop();
-			Debug.WriteLine($"[INFO] - Elapsed time for auditable entities conventions: {sw.Elapsed}");
+            sw.Stop();
+            Debug.WriteLine($"[INFO] - Elapsed time for auditable entities conventions: {sw.Elapsed}");
 #endif
-		}
-	}
+        }
+    }
 }

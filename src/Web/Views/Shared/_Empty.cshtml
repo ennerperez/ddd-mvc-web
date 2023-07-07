@@ -4,7 +4,7 @@
 	var twoLetterIsoLanguageName = "en";
 	if (Html.UsingLocalization())
 	{
-		IRequestCultureFeature requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+		IRequestCultureFeature requestCulture = Context.Features.Get<IRequestCultureFeature>();
 		twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
 	}
 }

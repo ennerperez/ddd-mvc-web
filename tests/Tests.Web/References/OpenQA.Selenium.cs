@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace OpenQA.Selenium
 {
@@ -23,10 +23,16 @@ namespace OpenQA.Selenium
 
         public static string GetElementId(this IWebElement @this)
         {
-            if (@this == null) return string.Empty;
+            if (@this == null)
+            {
+                return string.Empty;
+            }
 
             var field = @this.GetType().GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field == null) return string.Empty;
+            if (field == null)
+            {
+                return string.Empty;
+            }
 
             return field.GetValue(@this)?.ToString();
         }

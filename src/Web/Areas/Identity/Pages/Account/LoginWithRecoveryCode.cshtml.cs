@@ -16,8 +16,7 @@ namespace Web.Areas.Identity.Pages.Account
 	public class LoginWithRecoveryCodeModel : PageModel
 	{
 		private readonly SignInManager<User> _signInManager;
-		private readonly UserManager<User> _userManager;
-		private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
+        private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
 		public LoginWithRecoveryCodeModel(
 			SignInManager<User> signInManager,
@@ -25,8 +24,7 @@ namespace Web.Areas.Identity.Pages.Account
 			ILogger<LoginWithRecoveryCodeModel> logger)
 		{
 			_signInManager = signInManager;
-			_userManager = userManager;
-			_logger = logger;
+            _logger = logger;
 		}
 
 		/// <summary>

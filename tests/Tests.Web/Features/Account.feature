@@ -4,5 +4,5 @@ Feature: Account
 
 	@TestCase(0)
 	Scenario: Login
-		Given I am at the "Main" page
-		Then I click on the "Login" button
+		Given the user is at the "Main" page
+		When the user clicks the "Login" button

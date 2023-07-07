@@ -44,7 +44,7 @@ jobs:
           if-no-files-found: warn
   publish:
     name: Publish
-    needs: Build
+    needs: build
     environment:
       name: 'Production'
     runs-on: ubuntu-latest
