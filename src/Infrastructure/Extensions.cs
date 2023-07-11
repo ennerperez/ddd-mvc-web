@@ -4,6 +4,9 @@ using System.Reflection;
 #if USING_VAULT
 using Azure.Security.KeyVault.Secrets;
 #endif
+#if USING_AUTH0
+using Infrastructure.Factories;
+#endif
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,5 +68,13 @@ namespace Infrastructure
 #endif
             return services;
         }
+
+#if USING_AUTH0
+        public static IServiceCollection WithAuth0ApiManagement(this IServiceCollection services)
+        {
+            services.AddSingleton<IAuth0ApiClientFactory, Auth0ApiClientFactory>();
+            return services;
+        }
+#endif
     }
 }

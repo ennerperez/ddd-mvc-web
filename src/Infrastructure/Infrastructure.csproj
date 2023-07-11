@@ -22,6 +22,8 @@
         <PackageReference Condition="'$(UsingAzureTables)' == 'true'" Include="Azure.Data.Tables" Version="12.8.0" />
         <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
         <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Identity" Version="1.9.0" />
+        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.21.0" />
+        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingAzureBlobs)' == 'false'">
@@ -36,6 +38,10 @@
     </ItemGroup>
     <ItemGroup Condition="'$(UsingAzureKeyVault)' == 'false'">
         <Compile Remove="Services\VaultService.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(UsingAuth0)' == 'false'">
+        <Compile Remove="Factories\Auth0ApiClientFactory.cs" />
+        <Compile Remove="Interfaces\IAuth0ApiClientFactory.cs" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingQuestPDF)' == 'true'">
