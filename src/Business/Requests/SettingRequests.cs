@@ -65,11 +65,11 @@ namespace Business.Requests
 
     #region Read
 
-    public class ReadPaginatedSettingsRequestHandler : IRequestHandler<PaginatedRequest<Setting, Setting>, PaginatedList<Setting>>
+    public class ReadPaginatedSettingRequestHandler : IRequestHandler<PaginatedRequest<Setting, Setting>, PaginatedList<Setting>>
     {
         private readonly IGenericRepository<Setting> _repository;
 
-        public ReadPaginatedSettingsRequestHandler(IGenericRepository<Setting> repository)
+        public ReadPaginatedSettingRequestHandler(IGenericRepository<Setting> repository)
         {
             _repository = repository;
         }
@@ -84,11 +84,11 @@ namespace Business.Requests
         }
     }
 
-    public class ReadSettingsRequestHandler : IRequestHandler<RepositoryRequest<Setting, Setting>, Setting[]>
+    public class ReadSettingRequestHandler : IRequestHandler<RepositoryRequest<Setting, Setting>, Setting[]>
     {
         private readonly IGenericRepository<Setting> _repository;
 
-        public ReadSettingsRequestHandler(IGenericRepository<Setting> repository)
+        public ReadSettingRequestHandler(IGenericRepository<Setting> repository)
         {
             _repository = repository;
         }

@@ -86,11 +86,11 @@ namespace Business.Requests
 
     #region Read
 
-    public class ReadPaginatedBudgetsRequestHandler : IRequestHandler<PaginatedRequest<Budget, Guid, Budget>, PaginatedList<Budget>>
+    public class ReadPaginatedBudgetRequestHandler : IRequestHandler<PaginatedRequest<Budget, Guid, Budget>, PaginatedList<Budget>>
     {
         private readonly IGenericRepository<Budget, Guid> _repository;
 
-        public ReadPaginatedBudgetsRequestHandler(IGenericRepository<Budget, Guid> repository)
+        public ReadPaginatedBudgetRequestHandler(IGenericRepository<Budget, Guid> repository)
         {
             _repository = repository;
         }
@@ -105,11 +105,11 @@ namespace Business.Requests
         }
     }
 
-    public class ReadBudgetsRequestHandler : IRequestHandler<RepositoryRequest<Budget, Guid, Budget>, Budget[]>
+    public class ReadBudgetRequestHandler : IRequestHandler<RepositoryRequest<Budget, Guid, Budget>, Budget[]>
     {
         private readonly IGenericRepository<Budget, Guid> _repository;
 
-        public ReadBudgetsRequestHandler(IGenericRepository<Budget, Guid> repository)
+        public ReadBudgetRequestHandler(IGenericRepository<Budget, Guid> repository)
         {
             _repository = repository;
         }
