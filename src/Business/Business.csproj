@@ -22,6 +22,10 @@
         <PackageReference Include="MediatR" Version="12.1.1" />
     </ItemGroup>
 
+    <ItemGroup Label="ConditionalReferences">
+        <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" Version="6.0.20" />
+    </ItemGroup>
+
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
         <Compile Remove="Requests\Identity\**" />
         <EmbeddedResource Remove="Requests\Identity\**" />
