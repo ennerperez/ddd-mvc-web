@@ -55,6 +55,7 @@
         <BuildConstants Condition="'$(UsingAzureTables)' == 'true' AND '$(UsingApiKeyTables)' == 'true'">$(BuildConstants)USING_APIKEY_TABLES;</BuildConstants>
         <BuildConstants Condition="'$(UsingCompression)' == 'true'">$(BuildConstants)USING_COMPRESSION;</BuildConstants>
         <BuildConstants Condition="'$(UsingSession)' == 'true'">$(BuildConstants)USING_SESSION;</BuildConstants>
+        <BuildConstants Condition="'$(CookieConsentNeeded)' == 'true'">$(BuildConstants)USING_COOKIE_CONSENT;</BuildConstants>
     </PropertyGroup>
 
     <!-- Testing -->

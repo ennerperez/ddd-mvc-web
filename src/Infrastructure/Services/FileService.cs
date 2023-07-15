@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Infrastructure.Interfaces;
+using Infrastructure.Records;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -260,7 +261,7 @@ namespace Infrastructure.Services
 		private async Task<bool> InternalExistsAsync(string path, CancellationToken cancellationToken = default)
 		{
 			var client = await GetClientAsync(cancellationToken: cancellationToken);
-
+			path = NormalizeFilePath(path);
 			var blob = client.GetBlobClient(path);
 			if (blob != null) return await blob.ExistsAsync(cancellationToken);
 
@@ -603,13 +604,109 @@ namespace Infrastructure.Services
 		public async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
 		{
 			var client = await GetClientAsync(cancellationToken: cancellationToken);
+			path = NormalizeFilePath(path);
 			await client.DeleteBlobIfExistsAsync(path, cancellationToken: cancellationToken);
 		}
 
 		public Task<Stream> ReadStreamAsync(string path, CancellationToken cancellationToken = default)
 			=> InternalReadStreamAsync(path, cancellationToken);
 
+		public Task<string[]> GetFilesAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default) =>
+			InternalGetFilesAsync(path, searchPattern, searchOption, cancellationToken);
+
+		public Task<FileRecord[]> GetFilesInfoAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default) =>
+			InternalGetFilesInfoAsync(path, searchPattern, searchOption, cancellationToken);
+
+		public Task<FileRecord> GetFileInfoAsync(string path, CancellationToken cancellationToken = default) =>
+			InternalGetFileInfoAsync(path, cancellationToken);
+
+		private async Task<string[]> InternalGetFilesAsync(string path, string searchPattern, SearchOption searchOption, CancellationToken cancellationToken)
+		{
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
+
+			path = NormalizePath(path + Path.AltDirectorySeparatorChar);
+			var result = new List<string>();
+
+			var items = client.GetBlobsByHierarchyAsync(BlobTraits.None, BlobStates.None, null, path, cancellationToken: cancellationToken);
+
+			await foreach (var item in items)
+				if (searchOption == SearchOption.TopDirectoryOnly)
+					result.Add(item.Blob.Name);
+
+			if (result.Any())
+				return result.ToArray();
+			else
+				return null;
+		}
+
+		private async Task<FileRecord[]> InternalGetFilesInfoAsync(string path, string searchPattern, SearchOption searchOption, CancellationToken cancellationToken)
+		{
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
+
+			path = NormalizePath(path);
+			var result = new List<FileRecord>();
+
+			var items = client.GetBlobsByHierarchyAsync(BlobTraits.Metadata, BlobStates.None, null, path, cancellationToken: cancellationToken);
+
+			await foreach (var item in items)
+				if (searchOption == SearchOption.TopDirectoryOnly)
+					result.Add(new FileRecord(item.Blob.Name, item.Blob.Properties.CreatedOn?.UtcDateTime ?? DateTime.MinValue, item.Blob.Properties.LastModified?.UtcDateTime, Path.GetExtension(item.Blob.Name), item.Blob.Properties.ContentLength));
+
+			if (result.Any())
+				return result.ToArray();
+			else
+				return null;
+		}
+
+		private async Task<FileRecord> InternalGetFileInfoAsync(string path, CancellationToken cancellationToken)
+		{
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
+
+			path = NormalizeFilePath(path);
+			var result = new List<FileRecord>();
+
+			var items = client.GetBlobsByHierarchyAsync(BlobTraits.Metadata, BlobStates.None, null, path, cancellationToken: cancellationToken);
+
+			await foreach (var item in items)
+				result.Add(new FileRecord(item.Blob.Name, item.Blob.Properties.CreatedOn?.UtcDateTime ?? DateTime.MinValue, item.Blob.Properties.LastModified?.UtcDateTime, Path.GetExtension(item.Blob.Name), item.Blob.Properties.ContentLength));
+
+			if (result.Any())
+				return result.FirstOrDefault();
+			else
+				return null;
+		}
+
 		#endregion
+
+		#region URL
+
+		public async Task<string> GetUrlAsync(string path, CancellationToken cancellationToken = default)
+		{
+			var client = await GetClientAsync(cancellationToken: cancellationToken);
+
+			path = NormalizeFilePath(path);
+
+			var blob = client.GetBlobClient(path);
+			if (blob != null && blob.CanGenerateSasUri)
+				return blob.Uri.ToString();
+
+			return null;
+		}
+		public string GetUrl(string path)
+		{
+			var client = GetClient();
+
+			path = NormalizeFilePath(path);
+
+			var blob = client.GetBlobClient(path);
+			if (blob != null && blob.CanGenerateSasUri)
+				return blob.Uri.ToString();
+
+			return null;
+		}
+
+		#endregion
+
 	}
 }
 #endif

@@ -100,11 +100,11 @@ namespace Business.Requests.Identity
 
 	#region Read
 
-	public class ReadPaginatedUsersRequestHandler : IRequestHandler<PaginatedRequest<User, User>, PaginatedList<User>>
+	public class ReadPaginatedUserRequestHandler : IRequestHandler<PaginatedRequest<User, User>, PaginatedList<User>>
 	{
 		private readonly IGenericRepository<User> _repository;
 
-		public ReadPaginatedUsersRequestHandler(IGenericRepository<User> repository)
+		public ReadPaginatedUserRequestHandler(IGenericRepository<User> repository)
 		{
 			_repository = repository;
 		}
@@ -119,11 +119,11 @@ namespace Business.Requests.Identity
 		}
 	}
 
-	public class ReadUsersRequestHandler : IRequestHandler<RepositoryRequest<User, User>, User[]>
+	public class ReadUserRequestHandler : IRequestHandler<RepositoryRequest<User, User>, User[]>
 	{
 		private readonly IGenericRepository<User> _repository;
 
-		public ReadUsersRequestHandler(IGenericRepository<User> repository)
+		public ReadUserRequestHandler(IGenericRepository<User> repository)
 		{
 			_repository = repository;
 		}
@@ -220,7 +220,6 @@ namespace Business.Requests.Identity
 
 			#endregion
 
-			return;
 		}
 	}
 
@@ -334,7 +333,6 @@ namespace Business.Requests.Identity
 
 			#endregion
 
-			return;
 		}
 	}
 
@@ -380,7 +378,6 @@ namespace Business.Requests.Identity
 
 			await _repository.DeleteAsync(request.Id, cancellationToken);
 
-			return;
 		}
 	}
 

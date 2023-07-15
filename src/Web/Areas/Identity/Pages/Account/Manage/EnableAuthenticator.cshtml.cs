@@ -159,10 +159,10 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 			AuthenticatorUri = GenerateQrCodeUri(email, unformattedKey);
 		}
 
-		private string FormatKey(string unformattedKey)
+		private static string FormatKey(string unformattedKey)
 		{
 			var result = new StringBuilder();
-			int currentPosition = 0;
+			var currentPosition = 0;
 			while (currentPosition + 4 < unformattedKey.Length)
 			{
 				result.Append(unformattedKey.AsSpan(currentPosition, 4)).Append(' ');

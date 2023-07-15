@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\.imports\Template.props" />
+    <Import Project="..\..\.imports\Template.props" />
     <Import Condition="Exists('Options.props')" Project="Options.props" />
-    <Import Project="..\.imports\Template.targets" />
+    <Import Project="..\..\.imports\Template.targets" />
     <Import Condition="Exists('Options.targets')" Project="Options.targets" />
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -15,21 +15,13 @@
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="6.0.16" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="6.0.20" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
         <Compile Remove="Entities\Identity\**" />
         <EmbeddedResource Remove="Entities\Identity\**" />
         <None Remove="Entities\Identity\**" />
-        <None Update="..\.files\AssemblyInfo.Version.tt">
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
-          <DependentUpon>AssemblyInfo.cs</DependentUpon>
-        </None>
-        <Compile Update="..\.files\AssemblyInfo.Version.cs">
-          <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
-        </Compile>
     </ItemGroup>
 
 </Project>

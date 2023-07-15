@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\src\.imports\Template.props"/>
-    <Import Condition="Exists('Options.props')" Project="Options.props"/>
-    <Import Project="..\..\src\.imports\Template.targets"/>
-    <Import Condition="Exists('Options.targets')" Project="Options.targets"/>
+    <Import Project="..\..\.imports\Template.props" />
+    <Import Condition="Exists('Options.props')" Project="Options.props" />
+    <Import Project="..\..\.imports\Template.targets" />
+    <Import Condition="Exists('Options.targets')" Project="Options.targets" />
 
     <PropertyGroup>
         <IsPackable>false</IsPackable>
@@ -16,60 +16,60 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Business\Business.csproj"/>
-        <ProjectReference Include="..\..\src\Domain\Domain.csproj"/>
-        <ProjectReference Include="..\Tests.Abstractions\Tests.Abstractions.csproj"/>
+        <ProjectReference Include="$(SolutionDir)\src\Business\Business.csproj" />
+        <ProjectReference Include="$(SolutionDir)\src\Domain\Domain.csproj" />
+        <ProjectReference Include="..\Tests.Abstractions\Tests.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Flurl" Version="3.0.7"/>
-        <PackageReference Include="Flurl.Http" Version="3.2.4"/>
+        <PackageReference Include="Flurl" Version="3.0.7" />
+        <PackageReference Include="Flurl.Http" Version="3.2.4" />
     </ItemGroup>
 
     <!-- Serilog -->
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="2.12.0"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0"/>
-        <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0"/>
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0"/>
-        <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2"/>
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
+        <PackageReference Include="Serilog" Version="3.0.1" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+        <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup Label="NUnit" Condition="'$(TestExecutionFramework)' == 'NUnit'">
-        <PackageReference Include="nunit" Version="3.13.3"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.2.1"/>
-        <PackageReference Include="SpecFlow.NUnit" Version="3.9.74"/>
-        <None Remove="xunit.runner.json"/>
+        <PackageReference Include="nunit" Version="3.13.3" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+        <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
+        <None Remove="xunit.runner.json" />
     </ItemGroup>
     <ItemGroup Label="xUnit" Condition="'$(TestExecutionFramework)' == 'xUnit'">
-        <PackageReference Include="xunit" Version="2.4.2"/>
-        <PackageReference Include="xunit.runners" Version="2.0.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+        <PackageReference Include="xunit" Version="2.5.0" />
+        <PackageReference Include="xunit.runners" Version="2.0.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="xunit.runner.console" Version="2.4.2">
+        <PackageReference Include="xunit.runner.console" Version="2.5.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="xunit.runner.utility" Version="2.4.2"/>
-        <PackageReference Include="xunit.runner.reporters" Version="2.4.2"/>
-        <PackageReference Include="SpecFlow.xUnit" Version="3.9.74"/>
+        <PackageReference Include="xunit.runner.utility" Version="2.5.0" />
+        <PackageReference Include="xunit.runner.reporters" Version="2.5.0" />
+        <PackageReference Include="SpecFlow.xUnit" Version="3.9.74" />
         <Content Include="xunit.runner.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="appsettings.json"/>
+        <None Remove="appsettings.json" />
         <Content Include="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="appsettings.Development.json"/>
+        <None Remove="appsettings.Development.json" />
         <Content Include="appsettings.Development.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="specflow.Development.json"/>
+        <None Remove="specflow.Development.json" />
         <Content Include="specflow.Development.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <DependentUpon>specflow.json</DependentUpon>

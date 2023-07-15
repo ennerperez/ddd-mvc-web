@@ -15,15 +15,13 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 	{
 		private readonly UserManager<User> _userManager;
 		private readonly SignInManager<User> _signInManager;
-		private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
-		public TwoFactorAuthenticationModel(
+        public TwoFactorAuthenticationModel(
 			UserManager<User> userManager, SignInManager<User> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
-			_logger = logger;
-		}
+        }
 
 		/// <summary>
 		///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

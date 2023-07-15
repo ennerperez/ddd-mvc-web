@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Helpers;
@@ -11,21 +11,21 @@ using Tests.Business.Services;
 
 namespace Tests.Business
 {
-	public static class Extensions
-	{
-		public static IServiceCollection AddTests(this IServiceCollection services)
-		{
-			services.AddScoped<IAutomationConfiguration, SpecFlowConfiguration>();
-			services.AddScoped<IFeatureContext, FeatureContext>();
-			services.AddScoped<IScenarioContext, ScenarioContext>();
-			services.AddScoped<IAutomationContext, AutomationContext>();
+    public static class Extensions
+    {
+        public static IServiceCollection AddTests(this IServiceCollection services)
+        {
+            services.AddScoped<IAutomationConfiguration, SpecFlowConfiguration>();
+            services.AddScoped<IFeatureContext, FeatureContext>();
+            services.AddScoped<IScenarioContext, ScenarioContext>();
+            services.AddScoped<IAutomationContext, AutomationContext>();
 
-			services.AddSingleton<IStepHelper, StepsHelper>();
-			services.AddSingleton<LoremIpsumService>();
+            services.AddSingleton<IStepHelper, StepsHelper>();
+            services.AddSingleton<LoremIpsumService>();
 
-			services.AddSingleton<ITestService<Client>, ClientTestService>();
+            services.AddSingleton<ITestService<Client>, ClientTestService>();
 
-			return services;
-		}
-	}
+            return services;
+        }
+    }
 }

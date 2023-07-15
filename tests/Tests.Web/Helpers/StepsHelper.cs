@@ -1,28 +1,27 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Tests.Abstractions.Interfaces;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using TechTalk.SpecFlow;
+using Tests.Abstractions.Interfaces;
 
 namespace Tests.Web.Helpers
 {
-  public class StepsHelper : Abstractions.Helpers.StepsHelper
-  {
-
-    private FeatureContext _featureContext => _automationContext.FeatureContext;
-    private ScenarioContext _scenarioContext => _automationContext.ScenarioContext;
-    private IAutomationConfiguration _automationConfiguration => _automationContext.AutomationConfiguration;
-
-    public StepsHelper(IAutomationContext automationContext, IAutomationConfiguration automationConfigurations) : base(automationContext, automationConfigurations)
+    public class StepsHelper : Abstractions.Helpers.StepsHelper
     {
-    }
 
-    private static int s_counter = 1;
+        private FeatureContext _featureContext => _automationContext.FeatureContext;
+        private ScenarioContext _scenarioContext => _automationContext.ScenarioContext;
+
+        public StepsHelper(IAutomationContext automationContext, IAutomationConfiguration automationConfigurations) : base(automationContext, automationConfigurations)
+        {
+        }
+
+        private static int _counter = 1;
 
         private string GetScreenshotFileName(string method = "")
         {
@@ -31,13 +30,16 @@ namespace Tests.Web.Helpers
             var scenarioTitle = (_scenarioContext != null && _scenarioContext.ScenarioInfo != null ? _scenarioContext.ScenarioInfo.Title : string.Empty);
 
             var l = 3;
-            if (s_counter.ToString().Length > l) l = s_counter.ToString().Length;
+            if (_counter.ToString().Length > l)
+            {
+                l = _counter.ToString().Length;
+            }
 
-            var keys = new[] {DateTime.Now.ToString("yyyyMMddHHmmss"), featureTitle, scenarioTitle, s_counter.ToString($"D{l}"), method}.Where(m => !string.IsNullOrWhiteSpace(m));
+            var keys = new[] { DateTime.Now.ToString("yyyyMMddHHmmss"), featureTitle, scenarioTitle, _counter.ToString($"D{l}"), method }.Where(m => !string.IsNullOrWhiteSpace(m));
             var fileName = $"{string.Join("_", keys)}.jpg";
             fileName = fileName.Replace(" ", "_").Replace("-", "").Replace("__", "_");
             var name = Path.Combine("screenshots", fileName);
-            s_counter++;
+            _counter++;
             return name;
         }
 
@@ -52,7 +54,11 @@ namespace Tests.Web.Helpers
                 var directory = Path.GetDirectoryName(fileName) ?? "";
                 var name = Path.GetFileName(fileName);
                 fileName = Path.Combine(directory, name);
-                if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
                 if (screenshot != null)
                 {
                     string imageBase64;
@@ -72,7 +78,10 @@ namespace Tests.Web.Helpers
                         imageBase64 = screenshot.AsBase64EncodedString;
                     }
 
-                    if (trace) Console.WriteLine($@"SCREENSHOT[ {imageBase64} ]SCREENSHOT");
+                    if (trace)
+                    {
+                        Console.WriteLine($@"SCREENSHOT[ {imageBase64} ]SCREENSHOT");
+                    }
                     //Console.WriteLine($"SCREENSHOT_PATH[ {path} ]SCREENSHOT_PATH");
                     screenshot.SaveAsFile(fileName);
                 }
@@ -84,5 +93,5 @@ namespace Tests.Web.Helpers
                 Console.WriteLine(@"Error while taking screenshot: {0}", ex);
             }
         }
-  }
+    }
 }

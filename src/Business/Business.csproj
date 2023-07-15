@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\.imports\Template.props"/>
-    <Import Condition="Exists('Options.props')" Project="Options.props"/>
-    <Import Project="..\.imports\Template.targets"/>
-    <Import Condition="Exists('Options.targets')" Project="Options.targets"/>
+    <Import Project="..\..\.imports\Template.props" />
+    <Import Condition="Exists('Options.props')" Project="Options.props" />
+    <Import Project="..\..\.imports\Template.targets" />
+    <Import Condition="Exists('Options.targets')" Project="Options.targets" />
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DebugSymbols>true</DebugSymbols>
@@ -11,21 +11,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Domain\Domain.csproj"/>
-        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
-        <ProjectReference Include="..\Persistence\Persistence.csproj"/>
+        <ProjectReference Include="..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+        <ProjectReference Include="..\Persistence\Persistence.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.5.2"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2"/>
-        <PackageReference Include="MediatR" Version="12.0.1"/>
+        <PackageReference Include="FluentValidation" Version="11.6.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
+        <PackageReference Include="MediatR" Version="12.1.1" />
+    </ItemGroup>
+
+    <ItemGroup Label="ConditionalReferences">
+        <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" Version="6.0.20" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
-        <Compile Remove="Requests\Identity\**"/>
-        <EmbeddedResource Remove="Requests\Identity\**"/>
-        <None Remove="Requests\Identity\**"/>
+        <Compile Remove="Requests\Identity\**" />
+        <EmbeddedResource Remove="Requests\Identity\**" />
+        <None Remove="Requests\Identity\**" />
     </ItemGroup>
 
 </Project>

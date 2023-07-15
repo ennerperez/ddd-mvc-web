@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup Label="Framework" Condition="'$(UseMaui)' != 'true'">
+    <PropertyGroup Label="Framework" Condition="'$(UseMaui)' != 'false'">
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup Label="General">
-        <UsingAssemblyInfoTemplate>true</UsingAssemblyInfoTemplate>
+        <UsingAssemblyInfoTemplate>false</UsingAssemblyInfoTemplate>
     </PropertyGroup>
 
     <PropertyGroup Label="Databases">
@@ -17,7 +17,7 @@
         <UsingPostgreSql>false</UsingPostgreSql>
         <UsingOracle>false</UsingOracle>
         <UsingNonAsync>false</UsingNonAsync>
-        <UsingDapper>true</UsingDapper>
+        <UsingDapper>false</UsingDapper>
         <UsingBulk>true</UsingBulk>
         <UsingSplit>true</UsingSplit>
     </PropertyGroup>
@@ -52,18 +52,19 @@
 
     <PropertyGroup Label="Options">
         <UsingSassWatch>true</UsingSassWatch>
-        <UsingDatadog>false</UsingDatadog>
+        <UsingDatadog>true</UsingDatadog>
         <UsingCors>true</UsingCors>
         <UsingCompression>true</UsingCompression>
         <UsingSession>true</UsingSession>
+        <CookieConsentNeeded>true</CookieConsentNeeded>
     </PropertyGroup>
 
     <PropertyGroup Label="Testing">
         <TestExecutionFramework>xUnit</TestExecutionFramework>
         <DefaultLanguage>EN</DefaultLanguage>
-        <UsingChromeDriver>false</UsingChromeDriver>
-        <UsingGeckoDriver>false</UsingGeckoDriver>
-        <UsingIEDriver>false</UsingIEDriver>
+        <UsingChromeDriver>true</UsingChromeDriver>
+        <UsingGeckoDriver>true</UsingGeckoDriver>
+        <UsingIEDriver>true</UsingIEDriver>
     </PropertyGroup>
 
 </Project>

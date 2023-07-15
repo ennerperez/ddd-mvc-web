@@ -1,9 +1,9 @@
-﻿using Business.Models;
+using Business.Models;
 using MediatR;
 
 namespace Business.Interfaces
 {
-	public interface IPaginatedRequest<TResult> : IRequest<PaginatedList<TResult>>
-	{
-	}
+    public interface IPaginatedRequest<TResult> : IRequest<PaginatedList<TResult>>
+    {
+    }
 }
