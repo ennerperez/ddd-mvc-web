@@ -15,25 +15,25 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Web.Controllers.API
 {
     [ApiExplorerSettings(GroupName = "v1")]
-    public class ClientController : ApiControllerBase<Client>
+    public class SettingsController : ApiControllerBase<Setting>
     {
         private readonly ILogger _logger;
 
-        public ClientController(ILoggerFactory loggerFactory)
+        public SettingsController(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
         [SwaggerOperation("List all elements")]
-        [HttpGet("All")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var collection = await Mediator.SendWithRepository<Client>();
+                var collection = await Mediator.SendWithRepository<Setting>();
                 if (collection == null || !collection.Any())
                 {
-                    return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Client>() });
+                    return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>() });
                 }
 
                 return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
@@ -57,7 +57,7 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var collection = await Mediator.SendWithRepository<Client>(predicate: p => p.Id == id);
+                    var collection = await Mediator.SendWithRepository<Setting>(predicate: p => p.Id == id);
 
                     return new JsonResult(collection);
                 }
@@ -81,7 +81,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithPage<Client>(skip: ((page - 1) * size), take: size);
+                var collection = await Mediator.SendWithPage<Setting>(skip: ((page - 1) * size), take: size);
                 return new JsonResult(collection);
             }
             catch (ValidationException v)
@@ -98,7 +98,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Create a new element")]
         [DisableRequestSizeLimit]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateClientRequest model)
+        public async Task<IActionResult> Create(CreateSettingRequest model)
         {
             if (model == null)
             {
@@ -108,7 +108,7 @@ namespace Web.Controllers.API
             try
             {
                 var result = await Mediator.Send(model);
-                return Created(Url.Content($"~/api/{nameof(Client)}/{result}"), result);
+                return Created(Url.Content($"~/api/{nameof(Setting)}/{result}"), result);
             }
             catch (ValidationException v)
             {
@@ -124,7 +124,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateClientRequest model)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateSettingRequest model)
         {
             if (model == null || id != model.Id)
             {
@@ -150,7 +150,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Partial update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PartialUpdate(int id, [FromBody] PartialUpdateClientRequest model)
+        public async Task<IActionResult> PartialUpdate(int id, [FromBody] PartialUpdateSettingRequest model)
         {
             if (model == null || id != model.Id)
             {
@@ -179,7 +179,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Mediator.Send(new DeleteClientRequest() { Id = id });
+                await Mediator.Send(new DeleteSettingRequest() { Id = id });
                 return Ok(id);
             }
             catch (ValidationException v)
@@ -199,15 +199,7 @@ namespace Web.Controllers.API
         [HttpPost("Table")]
         public async Task<JsonResult> Table(TableInfo model)
         {
-            var selector = (new Client()).Select(t => new
-            {
-                t.Id,
-                t.Identification,
-                t.FullName,
-                t.Category,
-                t.Address,
-                t.PhoneNumber
-            });
+            var selector = (new Setting()).Select(t => new { t.Id, t.Key, t.Value });
 
             return await base.Table(model, selector);
         }

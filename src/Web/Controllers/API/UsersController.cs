@@ -17,17 +17,17 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Web.Controllers.API
 {
 	[ApiExplorerSettings(GroupName = "v1")]
-	public class UserController : ApiControllerBase<User>
+	public class UsersController : ApiControllerBase<User>
 	{
 		private readonly ILogger _logger;
 
-		public UserController(ILoggerFactory loggerFactory)
+		public UsersController(ILoggerFactory loggerFactory)
 		{
 			_logger = loggerFactory.CreateLogger(GetType());
 		}
 
 		[SwaggerOperation("List all elements")]
-		[HttpGet("All")]
+		[HttpGet]
 		public async Task<IActionResult> GetAll()
 		{
 			try

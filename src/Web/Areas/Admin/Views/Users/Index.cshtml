@@ -54,10 +54,10 @@
 	<script>
             let tableMain = null;
             let editorMain = null;
-            let apiUrl = '@Url.Content("~/api/user")';
-            
+            let apiUrl = '@Url.Content("~/api/users")';
+
             $(document).ready( function () {
-                
+
                 tableMain = $('#table').DataTable({
                     language: { url: __datatable_options.language },
                     serverSide: true,
@@ -80,18 +80,18 @@
                             return JSON.stringify(d);
                         }
                     },
-                    columns: [                  
+                    columns: [
                         { name: "fullName", data: null, render: function (data, type, row){
                             return row['givenName'] != null && row["surname"] !== null ? `${row['givenName']} ${row["surname"]}` : '';
                         }
                         },
-                        { name: "email", data: "email", render: function (data, type, row) 
-                            { 
+                        { name: "email", data: "email", render: function (data, type, row)
+                            {
                                 return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["emailConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;
                             }
                         },
-                        { name: "phoneNumber", data: "phoneNumber", render: function (data, type, row) 
-                            { 
+                        { name: "phoneNumber", data: "phoneNumber", render: function (data, type, row)
+                            {
 								if (data !== null){
                                 	return `<span class="position-relative">${data} ${boolPositionBadgeRender(row["phoneNumberConfirmed"], 'top-50 start-100', 'ms-3')} </span>`;
 								}
@@ -99,13 +99,13 @@
                             }
                         },
 						{
-							name:"roles", data: "roles", render: function (data, type, row) 
+							name:"roles", data: "roles", render: function (data, type, row)
 							{
 								return data.join(", ");
 							}
 						},
                         { name: "twoFactorEnabled", data: "twoFactorEnabled", render: function (data){ return boolBadgeRender(data, 'N/A', 'Yes', 'No');}},
-                        { className: "text-center", data: null, render: function (data, type, row) 
+                        { className: "text-center", data: null, render: function (data, type, row)
                             {
                                 return `<div class="dropdown">
                                             <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Actions">
@@ -118,22 +118,22 @@
                                         </div>`;
                             }
                         }
-                                            
+
                     ],
                     lengthMenu: __datatable_options.lengthMenu,
                     initComplete: function () {
-                        
+
                         $("[name='btn-create']").appendTo($('.dt-buttons'));
-                        
+
                         tableMain.on('draw', reHandle);
                         reHandle();
-                        
+
                         // Search Delay
                         doSearchDelay(tableMain);
-                        
+
                         // UI Fix
                         UIFix(tableMain);
-                        
+
                         hideLoader();
 
                     }
@@ -141,6 +141,6 @@
                 editorMain = new bootstrap.Modal(document.getElementById('modal-editor'));
                 setEditor(tableMain, editorMain, apiUrl);
             });
-            
+
     </script>
 }

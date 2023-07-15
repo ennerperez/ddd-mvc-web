@@ -15,25 +15,25 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Web.Controllers.API
 {
     [ApiExplorerSettings(GroupName = "v1")]
-    public class SettingController : ApiControllerBase<Setting>
+    public class BudgetsController : ApiControllerBase<Budget, Guid>
     {
         private readonly ILogger _logger;
 
-        public SettingController(ILoggerFactory loggerFactory)
+        public BudgetsController(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
         [SwaggerOperation("List all elements")]
-        [HttpGet("All")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var collection = await Mediator.SendWithRepository<Setting>();
+                var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s));
                 if (collection == null || !collection.Any())
                 {
-                    return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>() });
+                    return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Budget>() });
                 }
 
                 return new JsonResult(new { lastCreated = collection.Max(m => m.CreatedAt), lastUpdated = collection.Max(m => m.ModifiedAt), items = collection });
@@ -51,13 +51,13 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Get specific element by id")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            if (id != 0)
+            if (id != Guid.Empty)
             {
                 try
                 {
-                    var collection = await Mediator.SendWithRepository<Setting>(predicate: p => p.Id == id);
+                    var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s), p => p.Id == id);
 
                     return new JsonResult(collection);
                 }
@@ -81,7 +81,8 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithPage<Setting>(skip: ((page - 1) * size), take: size);
+                var collection = await Mediator.SendWithPage<Budget, Guid, Budget>((new Budget()).Select(s => s),
+                    skip: ((page - 1) * size), take: size);
                 return new JsonResult(collection);
             }
             catch (ValidationException v)
@@ -98,7 +99,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Create a new element")]
         [DisableRequestSizeLimit]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateSettingRequest model)
+        public async Task<IActionResult> Create(CreateBudgetRequest model)
         {
             if (model == null)
             {
@@ -108,7 +109,7 @@ namespace Web.Controllers.API
             try
             {
                 var result = await Mediator.Send(model);
-                return Created(Url.Content($"~/api/{nameof(Setting)}/{result}"), result);
+                return Created(Url.Content($"~/api/{nameof(Budget)}/{result}"), result);
             }
             catch (ValidationException v)
             {
@@ -124,7 +125,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateSettingRequest model)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBudgetRequest model)
         {
             if (model == null || id != model.Id)
             {
@@ -150,7 +151,7 @@ namespace Web.Controllers.API
         [SwaggerOperation("Partial update an existing element by id")]
         [DisableRequestSizeLimit]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PartialUpdate(int id, [FromBody] PartialUpdateSettingRequest model)
+        public async Task<IActionResult> PartialUpdate(Guid id, [FromBody] PartialUpdateBudgetRequest model)
         {
             if (model == null || id != model.Id)
             {
@@ -175,11 +176,11 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Delete an existing element by id")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                await Mediator.Send(new DeleteSettingRequest() { Id = id });
+                await Mediator.Send(new DeleteBudgetRequest() { Id = id });
                 return Ok(id);
             }
             catch (ValidationException v)
@@ -199,7 +200,20 @@ namespace Web.Controllers.API
         [HttpPost("Table")]
         public async Task<JsonResult> Table(TableInfo model)
         {
-            var selector = (new Setting()).Select(t => new { t.Id, t.Key, t.Value });
+            var selector = (new Budget()).Select(t => new
+            {
+                t.Id,
+                t.Code,
+                //Client = new { t.ClientId, ClientFullName = t.Client.FullName, ClientIdentification = t.Client.Identification },
+                t.ClientId,
+                ClientFullName = t.Client.FullName,
+                ClientIdentification = t.Client.Identification,
+                t.Status,
+                t.Subtotal,
+                t.Taxes,
+                t.Total,
+                t.CreatedAt
+            });
 
             return await base.Table(model, selector);
         }
