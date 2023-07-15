@@ -44,7 +44,6 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
 #if USING_BEARER
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 #endif
 #if USING_COOKIES || !USING_IDENTITY
@@ -365,7 +364,7 @@ namespace Web
 				c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 				c.AddSecurityRequirement(new OpenApiSecurityRequirement {{jwtSecurityScheme, Array.Empty<string>()}});
 #endif
-#if USING_AUTH0 && USING_BEARER
+#if USING_AUTH0 && !USING_BEARER
                 var auth0SecurityScheme = new OpenApiSecurityScheme
                 {
                     Name = "Auth0 Authentication",

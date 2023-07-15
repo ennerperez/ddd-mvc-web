@@ -17,13 +17,13 @@
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.16.0" />
-        <PackageReference Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.14.0" />
+        <PackageReference Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.17.0" />
+        <PackageReference Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.15.0" />
         <PackageReference Condition="'$(UsingAzureTables)' == 'true'" Include="Azure.Data.Tables" Version="12.8.0" />
         <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
         <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Identity" Version="1.9.0" />
-        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.21.0" />
-        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
+        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.21.1" />
+        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingAzureBlobs)' == 'false'">

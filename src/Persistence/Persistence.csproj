@@ -16,15 +16,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.19" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.19" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.19" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.19">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.20" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.20" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.20" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.20">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.19" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.19">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.20" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.20">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -38,9 +38,9 @@
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.19" />
-        <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.19" />
-        <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.19" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.20" />
+        <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.20" />
+        <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.20" />
         <PackageReference Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
         <PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
         <PackageReference Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="6.21.90" />
@@ -48,7 +48,7 @@
     </ItemGroup>
 
     <ItemGroup Label="UsingBulk" Condition="'$(UsingBulk)' == 'true'">
-        <PackageReference Include="EFCore.BulkExtensions" Version="6.7.13" />
+        <PackageReference Include="EFCore.BulkExtensions" Version="6.7.14" />
         <!--
         <PackageReference Condition="$(UsingSqlite) == 'true'" Include="EFCore.BulkExtensions.Sqlite" Version="6.7.0" />
         <PackageReference Condition="$(UsingSqlServer) == 'true'" Include="EFCore.BulkExtensions.SqlServer" Version="6.7.0" />
