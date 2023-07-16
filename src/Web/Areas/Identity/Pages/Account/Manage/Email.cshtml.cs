@@ -19,7 +19,7 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<User> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public EmailModel(UserManager<User> userManager,IEmailSender emailSender)
+        public EmailModel(UserManager<User> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;

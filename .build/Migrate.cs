@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Nuke.Common;
+using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.DotNet.EF;
 using Nuke.Common.Tools.DotNet.EF.Commands;
-using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
