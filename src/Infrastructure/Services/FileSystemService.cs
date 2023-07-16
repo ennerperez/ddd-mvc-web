@@ -12,9 +12,9 @@ namespace Infrastructure.Services
     public class FileSystemService : IFileService, IDirectoryService
     {
 
-        public string ContainerName { get; set; }
+        public string ContainerName { get; set; } = "public";
         public bool CreateIfNotExists { get; set; }
-        public string DirectoryExtension { get; set; }
+        public string DirectoryExtension { get; set; } = ".dir";
 
         #region FileService
 

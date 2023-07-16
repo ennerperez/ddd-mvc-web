@@ -60,7 +60,7 @@
     </Target>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.12.4" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.13.0" />
         <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="2.12.4" />
         <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.20" />
         <PackageReference Condition="'$(UsingAzureApplicationInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
