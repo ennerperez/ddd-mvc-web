@@ -43,7 +43,7 @@ public partial class Build
         return combinations;
     }
 
-    Target FastCompile => _ => _
+    Target FastCompile => d => d
         .DependsOn(Restore)
         .Executes(() =>
         {
@@ -58,7 +58,7 @@ public partial class Build
                     .EnableNoRestore()));
         });
 
-    Target MigrationAdd => _ => _
+    Target MigrationAdd => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
         {
@@ -76,7 +76,7 @@ public partial class Build
                 );
             }
         });
-    Target MigrationRemove => _ => _
+    Target MigrationRemove => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
         {
@@ -95,7 +95,7 @@ public partial class Build
             }
         });
 
-    Target MigrationOutput => _ => _
+    Target MigrationOutput => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
         {
@@ -120,7 +120,7 @@ public partial class Build
             }
         });
 
-    Target DatabaseUpdate => _ => _
+    Target DatabaseUpdate => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
         {
@@ -136,7 +136,7 @@ public partial class Build
             }
         });
 
-    Target DatabaseClear => _ => _
+    Target DatabaseClear => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
         {
@@ -153,7 +153,7 @@ public partial class Build
             }
         });
 
-    Target DatabaseRollback => _ => _
+    Target DatabaseRollback => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
         {

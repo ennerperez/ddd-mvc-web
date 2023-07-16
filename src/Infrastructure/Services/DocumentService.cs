@@ -11,10 +11,6 @@ namespace Infrastructure.Services
 {
     public class DocumentService : IDocumentService
     {
-        public DocumentService()
-        {
-        }
-
         public T Compose<T>(object model = null) where T : IDocument
         {
             var instance = (T)Activator.CreateInstance(typeof(T), model);

@@ -235,7 +235,7 @@ namespace Business.Requests
 
         public async Task Handle(DeleteSettingRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Setting), request.Id);
+            _ = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Setting), request.Id);
             await _repository.DeleteAsync(request.Id, cancellationToken);
         }
     }

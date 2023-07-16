@@ -253,7 +253,7 @@ namespace Business.Requests
 
         public async Task Handle(DeleteClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Client), request.Id);
+            _ = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Client), request.Id);
             await _repository.DeleteAsync(request.Id, cancellationToken);
         }
     }

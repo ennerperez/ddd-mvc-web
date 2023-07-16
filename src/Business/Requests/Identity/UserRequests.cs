@@ -446,9 +446,8 @@ namespace Business.Requests.Identity
 
         public async Task Handle(DeleteUserRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(User), request.Id);
+            _ = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(User), request.Id);
             await _repository.DeleteAsync(request.Id, cancellationToken);
-
         }
     }
 

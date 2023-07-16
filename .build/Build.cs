@@ -18,7 +18,7 @@ using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
-
+// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 #pragma warning disable IDE1006 // Naming Styles
 #pragma warning disable CA1050 // Declare types in namespaces
@@ -57,7 +57,7 @@ public partial class Build : NukeBuild
     readonly string[] PublishProjects = new[] { "Web" };
     readonly string[] TestsProjects = new[] { "Tests.Business" };
 
-    Target Prepare => _ => _
+    Target Prepare => d => d
         .Before(Compile)
         .Executes(() =>
         {
@@ -66,17 +66,23 @@ public partial class Build : NukeBuild
             {
                 Log.Information("Patching: {File}", assemblyInfoVersionFile);
 
-                using (var gitTag = new Process() { StartInfo = new ProcessStartInfo("git", "tag --sort=-v:refname") { WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false } })
+                using (var gitTag = new Process())
                 {
+                    gitTag.StartInfo = new ProcessStartInfo("git", "tag --sort=-v:refname") { WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false };
                     gitTag.Start();
                     var value = gitTag.StandardOutput.ReadToEnd().Trim();
                     value = new Regex(@"((?:[0-9]{1,}\.{0,}){1,})", RegexOptions.Compiled).Match(value).Captures.LastOrDefault()?.Value;
-                    _version = Version.Parse(value);
+                    if (value != null)
+                    {
+                        _version = Version.Parse(value);
+                    }
+
                     gitTag.WaitForExit();
                 }
 
-                using (var gitLog = new Process() { StartInfo = new ProcessStartInfo("git", "rev-parse --verify HEAD") { WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false } })
+                using (var gitLog = new Process())
                 {
+                    gitLog.StartInfo = new ProcessStartInfo("git", "rev-parse --verify HEAD") { WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false };
                     gitLog.Start();
                     _hash = gitLog.StandardOutput.ReadLine()?.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
                     gitLog.WaitForExit();
@@ -105,7 +111,7 @@ public partial class Build : NukeBuild
             }
         });
 
-    Target Clean => _ => _
+    Target Clean => d => d
         .Before(Restore)
         .Executes(() =>
         {
@@ -117,7 +123,7 @@ public partial class Build : NukeBuild
             EnsureCleanDirectory(ScriptsDirectory);
         });
 
-    Target Restore => _ => _
+    Target Restore => d => d
         .Executes(() =>
         {
             DotNetToolRestore();
@@ -125,7 +131,7 @@ public partial class Build : NukeBuild
                 .SetProjectFile(Solution));
         });
 
-    Target Compile => _ => _
+    Target Compile => d => d
         .DependsOn(Clean)
         .DependsOn(Restore)
         .DependsOn(Prepare)
@@ -137,7 +143,7 @@ public partial class Build : NukeBuild
                 .EnableNoRestore());
         });
 
-    Target Test => _ => _
+    Target Test => d => d
         .DependsOn(Compile)
         .Executes(() =>
         {
@@ -150,15 +156,15 @@ public partial class Build : NukeBuild
                 .EnableNoRestore()
                 .EnableNoBuild()
                 .SetConfiguration(Configuration)
-                .When(true, _ => _
+                .When(true, x => x
                     .SetLoggers("trx")
                     .SetResultsDirectory(TestResultsDirectory))
-                .CombineWith(testCombinations, (_, v) => _
+                .CombineWith(testCombinations, (x, v) => x
                     .SetProjectFile(v.project.Path)
                     .SetFramework(v.framework)));
         });
 
-    Target Publish => _ => _
+    Target Publish => d => d
         .DependsOn(Test)
         .DependsOn(Compile)
         .DependsOn(Clean)
@@ -211,13 +217,13 @@ public partial class Build : NukeBuild
                 .EnableNoBuild()
                 .SetConfiguration(Configuration)
                 .DisablePublishSingleFile()
-                .CombineWith(publishCombinations, (_, v) => _
+                .CombineWith(publishCombinations, (x, v) => x
                     .SetProject(v.project)
                     .SetFramework(v.framework)
                     .SetOutput($"{PublishDirectory}/{v.project.Name}")));
         });
 
-    Target Pack => _ => _
+    Target Pack => d => d
         .DependsOn(Publish)
         .Executes(() =>
         {

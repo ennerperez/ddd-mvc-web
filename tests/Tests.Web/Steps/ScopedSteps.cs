@@ -7,9 +7,5 @@ namespace Tests.Web.Steps
     {
 
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
-
-        public ScopedSteps()
-        {
-        }
     }
 }
