@@ -29,14 +29,14 @@ namespace Tests.Business.Services
         }
 
 #if USING_IDENTITY
-		public string FindFirstValue(string claimType)
-		{
-			return _testUser.FindFirstValue(claimType);
-		}
-		public string FindLastValue(string claimType)
-		{
-			return _testUser.FindAll(claimType).LastOrDefault()?.Value;
-		}
+        public string FindFirstValue(string claimType)
+        {
+            return _testUser.FindFirstValue(claimType);
+        }
+        public string FindLastValue(string claimType)
+        {
+            return _testUser.FindAll(claimType).LastOrDefault()?.Value;
+        }
 #endif
     }
 }

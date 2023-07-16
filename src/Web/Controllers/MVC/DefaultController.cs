@@ -42,13 +42,13 @@ namespace Web.Controllers.MVC
             var model = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Code = code };
             if (code != 0)
             {
-                return View($"Errors/{code.ToString().Substring(0, 1)}0x", model);
+                return View($"Errors/{code.ToString()[..1]}0x", model);
             }
 
             return View(model);
         }
 
-		[AllowAnonymous]
+        [AllowAnonymous]
         [Route("Health")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Health()

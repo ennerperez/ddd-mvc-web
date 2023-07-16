@@ -42,7 +42,7 @@ namespace TechTalk.SpecFlow
             {
                 if (string.IsNullOrWhiteSpace(result))
                 {
-                    return default(T);
+                    return default;
                 }
 
                 return (T)Convert.ChangeType(result, conversionType: Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
@@ -87,7 +87,7 @@ namespace TechTalk.SpecFlow
                     {
                         if (string.IsNullOrWhiteSpace(m))
                         {
-                            return default(T);
+                            return default;
                         }
 
                         return (T)Convert.ChangeType(m, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
@@ -126,7 +126,7 @@ namespace TechTalk.SpecFlow
                 {
                     if (string.IsNullOrWhiteSpace(value))
                     {
-                        return default(T);
+                        return default;
                     }
 
                     return (T)Convert.ChangeType(value, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
@@ -135,7 +135,7 @@ namespace TechTalk.SpecFlow
                 return (T)Convert.ChangeType(value, type);
             }
 
-            return default(T);
+            return default;
         }
 
         public static object GetValue(this Table table, string key, Type type, bool ignoreCase = true, string fieldColum = "Field", string valueColum = "Value")
@@ -345,8 +345,7 @@ namespace TechTalk.SpecFlow
 
                 if (result == null)
                 {
-                    DateTime pasedData;
-                    DateTime.TryParse(@this, out pasedData);
+                    _ = DateTime.TryParse(@this, out var pasedData);
                     if (pasedData != DateTime.MinValue)
                     {
                         return (T)Convert.ChangeType(pasedData, typeof(T));
@@ -393,8 +392,7 @@ namespace TechTalk.SpecFlow
 
                 if (result == null)
                 {
-                    int pasedData;
-                    int.TryParse(@this, out pasedData);
+                    _ = int.TryParse(@this, out var pasedData);
                     return (T)Convert.ChangeType(pasedData, typeof(T));
                 }
 
@@ -435,8 +433,7 @@ namespace TechTalk.SpecFlow
 
                 if (result == null)
                 {
-                    long pasedData;
-                    long.TryParse(@this, out pasedData);
+                    _ = long.TryParse(@this, out var pasedData);
                     return (T)Convert.ChangeType(pasedData, typeof(T));
                 }
 
@@ -477,8 +474,7 @@ namespace TechTalk.SpecFlow
 
                 if (result == null)
                 {
-                    short pasedData;
-                    short.TryParse(@this, out pasedData);
+                    _ = short.TryParse(@this, out var pasedData);
                     return (T)Convert.ChangeType(pasedData, typeof(T));
                 }
 
@@ -519,8 +515,7 @@ namespace TechTalk.SpecFlow
 
                 if (result == null)
                 {
-                    decimal pasedData;
-                    decimal.TryParse(@this, out pasedData);
+                    _ = decimal.TryParse(@this, out var pasedData);
                     return (T)Convert.ChangeType(pasedData, typeof(T));
                 }
 
@@ -536,8 +531,7 @@ namespace TechTalk.SpecFlow
 
                 if (result == null)
                 {
-                    Guid pasedData;
-                    Guid.TryParse(@this, out pasedData);
+                    _ = Guid.TryParse(@this, out var pasedData);
                     if (pasedData != Guid.Empty)
                     {
                         return (T)Convert.ChangeType(pasedData, typeof(T));
@@ -566,7 +560,7 @@ namespace TechTalk.SpecFlow
                         value += Guid.NewGuid().ToString().Replace("-", "");
                     }
 
-                    result = value.Substring(0, Math.Min(value.Length, maxLenght));
+                    result = value[..Math.Min(value.Length, maxLenght)];
                 }
                 else
                 {
@@ -620,7 +614,7 @@ namespace TechTalk.SpecFlow
                 if (matchRandomRegex.Success)
                 {
                     var value = Guid.NewGuid().ToString().Replace("-", "");
-                    result = value.Substring(0, 1)[0];
+                    result = value[..1][0];
                 }
                 else
                 {
@@ -652,10 +646,7 @@ namespace TechTalk.SpecFlow
                     }
                 }
 
-                if (result == null)
-                {
-                    result = (char)Convert.ChangeType(@this, typeof(T));
-                }
+                result ??= (char)Convert.ChangeType(@this, typeof(T));
 
                 return (T)result;
             }

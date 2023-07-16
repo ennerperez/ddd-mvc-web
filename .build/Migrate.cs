@@ -13,6 +13,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
 // ReSharper disable UnusedMember.Local
+#pragma warning disable IDE0051 // Remove unused private members
 public partial class Build
 {
     Project Persistence => Solution.GetProject("Persistence");
@@ -33,11 +34,11 @@ public partial class Build
         config.Bind("ConnectionStrings", connectionStrings);
 
         var combinations = from item in connectionStrings
-            let split = item.Key.Split("_")
-            where split.Length > 1
-            let context = split.First()
-            let provider = split.Last()
-            select new Tuple<string, string, string, string>(context, context.Replace("Context", ""), provider, item.Value);
+                           let split = item.Key.Split("_")
+                           where split.Length > 1
+                           let context = split.First()
+                           let provider = split.Last()
+                           select new Tuple<string, string, string, string>(context, context.Replace("Context", ""), provider, item.Value);
 
         return combinations;
     }
@@ -48,7 +49,7 @@ public partial class Build
         {
             var projects = Solution.AllProjects
                 .Where(m => !m.Name.StartsWith("_"))
-                .Where(m => new[] {Persistence, Startup}.Contains(m))
+                .Where(m => new[] { Persistence, Startup }.Contains(m))
                 .ToArray();
             DotNetBuild(s => s
                 .CombineWith(projects, configurator: (buildSettings, v) => buildSettings
@@ -75,7 +76,6 @@ public partial class Build
                 );
             }
         });
-
     Target MigrationRemove => _ => _
         .DependsOn(FastCompile)
         .Executes(() =>
@@ -104,7 +104,11 @@ public partial class Build
             {
                 var folderName = (item.Item2 == item.Item3 ? "" : item.Item3);
                 var fileName = Path.Combine(Persistence?.Directory ?? string.Empty, ScriptsPath, item.Item2, folderName, $"{DateTime.Now:yyyyMMdd}.sql");
-                if (File.Exists(fileName)) File.Delete(fileName);
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+
                 DotNetEf(_ => new MigrationsSettings(Migrations.Script)
                     .EnableIdempotent()
                     .EnableNoBuild()
@@ -165,7 +169,7 @@ public partial class Build
                 if (migrations.Any())
                 {
                     var lastIndex = migrations.IndexOf(migrations.Last());
-                    lastIndex = lastIndex - 1;
+                    lastIndex--;
                     if (lastIndex >= 0)
                     {
                         var lastMigration = migrations[lastIndex].Text;
@@ -182,3 +186,4 @@ public partial class Build
             }
         });
 }
+#pragma warning restore IDE0051 // Remove unused private members

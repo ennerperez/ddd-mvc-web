@@ -24,6 +24,8 @@ namespace Infrastructure
         /// <returns></returns>
         public static IServiceCollection AddInfrastructure<T>(this IServiceCollection services, Action<T> configureOptions = null)
         {
+            var options = Activator.CreateInstance<T>();
+            configureOptions?.Invoke(options);
             services.AddInfrastructure();
             return services;
         }

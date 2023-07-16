@@ -12,7 +12,7 @@ namespace System.Text
             var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
 
             words = words
-                .Select(w => char.ToUpper(w[0], culture) + w.Substring(1).ToLower(culture))
+                .Select(w => char.ToUpper(w[0], culture) + w[1..].ToLower(culture))
                 .ToArray();
             var result = string.Join(string.Empty, words);
             return result;
@@ -23,7 +23,7 @@ namespace System.Text
             var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
             var leadWord = words[0].ToLower(culture);
             var tailwords = words.Skip(1)
-                .Select(w => char.ToUpper(w[0], culture) + w.Substring(1).ToLower(culture))
+                .Select(w => char.ToUpper(w[0], culture) + w[1..].ToLower(culture))
                 .ToArray();
             var result = string.Join(string.Empty, tailwords);
             return $"{leadWord}{result}";
@@ -34,7 +34,7 @@ namespace System.Text
             var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
 
             words = words
-                .Select(w => char.ToUpperInvariant(w[0]) + w.Substring(1).ToLowerInvariant())
+                .Select(w => char.ToUpperInvariant(w[0]) + w[1..].ToLowerInvariant())
                 .ToArray();
             var result = string.Join(string.Empty, words);
             return result;
@@ -45,7 +45,7 @@ namespace System.Text
             var words = @this.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
             var leadWord = words[0].ToLowerInvariant();
             var tailwords = words.Skip(1)
-                .Select(w => char.ToUpperInvariant(w[0]) + w.Substring(1).ToLowerInvariant())
+                .Select(w => char.ToUpperInvariant(w[0]) + w[1..].ToLowerInvariant())
                 .ToArray();
             var result = string.Join(string.Empty, tailwords);
             return $"{leadWord}{result}";

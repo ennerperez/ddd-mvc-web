@@ -12,12 +12,7 @@ namespace System.Reflection
         {
             if ((resourceType != null) && (resourceName != null))
             {
-                var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-                if (property == null)
-                {
-                    throw new InvalidOperationException("Resource Type Does Not Have Property");
-                }
-
+                var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("Resource Type Does Not Have Property");
                 if (property.PropertyType != typeof(string))
                 {
                     throw new InvalidOperationException("Resource Property is Not String Type");
@@ -36,13 +31,13 @@ namespace System.Reflection
                 var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
                 if (property == null)
                 {
-                    return default(T);
+                    return default;
                 }
 
                 return (T)property.GetValue(null, null);
             }
 
-            return default(T);
+            return default;
         }
     }
 

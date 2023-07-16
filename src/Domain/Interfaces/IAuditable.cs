@@ -26,8 +26,8 @@ namespace Domain.Interfaces
         TKey? CreatedById { get; set; }
         TKey? ModifiedById { get; set; }
 #if USING_IDENTITY
-		User CreatedBy { get; set; }
-		User ModifiedBy { get; set; }
+        User CreatedBy { get; set; }
+        User ModifiedBy { get; set; }
 #endif
     }
 

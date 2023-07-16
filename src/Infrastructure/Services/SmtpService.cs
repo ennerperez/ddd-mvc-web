@@ -77,10 +77,7 @@ namespace Infrastructure.Services
                     }
                     catch (Exception e)
                     {
-                        if (_logger != null)
-                        {
-                            _logger.LogError(e, "{Message}", e.Message);
-                        }
+                        _logger?.LogError(e, "{Message}", e.Message);
                     }
                 });
                 thread.Start();
@@ -93,10 +90,7 @@ namespace Infrastructure.Services
                 }
                 catch (Exception e)
                 {
-                    if (_logger != null)
-                    {
-                        _logger.LogError(e, "{Message}", e.Message);
-                    }
+                    _logger?.LogError(e, "{Message}", e.Message);
                 }
             }
         }

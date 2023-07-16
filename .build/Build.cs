@@ -20,6 +20,8 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
 
 // ReSharper disable UnusedMember.Local
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable CA1050 // Declare types in namespaces
 public partial class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -69,7 +71,7 @@ public partial class Build : NukeBuild
                     gitTag.Start();
                     var value = gitTag.StandardOutput.ReadToEnd().Trim();
                     value = new Regex(@"((?:[0-9]{1,}\.{0,}){1,})", RegexOptions.Compiled).Match(value).Captures.LastOrDefault()?.Value;
-                    Version.TryParse(value, out _version);
+                    _version = Version.Parse(value);
                     gitTag.WaitForExit();
                 }
 
@@ -232,3 +234,5 @@ public partial class Build : NukeBuild
             Log.Information($"Output: {ArtifactsDirectory}");
         });
 }
+#pragma warning restore CA1050 // Declare types in namespaces
+#pragma warning restore IDE1006 // Naming Styles

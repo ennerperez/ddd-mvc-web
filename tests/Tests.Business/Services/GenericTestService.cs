@@ -44,10 +44,7 @@ namespace Tests.Business.Services
         {
             var entities = new List<T>();
             var entity = table.CastTo<T>();
-            if (customProps != null)
-            {
-                customProps.Invoke(entity);
-            }
+            customProps?.Invoke(entity);
 
             try
             {

@@ -406,7 +406,9 @@ namespace Infrastructure.Services
             => InternalReadStreamAsync(path, cancellationToken);
 
         // ReSharper disable once UnusedParameter.Local
+#pragma warning disable IDE0060 // Remove unused parameter
         private Task<Stream> InternalReadStreamAsync(string path, CancellationToken cancellationToken = default)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             path = ValidatePath(path);
             Stream stream = File.Open(path, FileMode.Open);
@@ -417,7 +419,9 @@ namespace Infrastructure.Services
             => InternalExistsAsync(path, cancellationToken);
 
         // ReSharper disable once UnusedParameter.Local
+#pragma warning disable IDE0060 // Remove unused parameter
         private Task<bool> InternalExistsAsync(string path, CancellationToken cancellationToken = default)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             path = ValidatePath(path);
             return Task.FromResult(File.Exists(path));

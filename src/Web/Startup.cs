@@ -132,7 +132,7 @@ namespace Web
             services.Configure<CookiePolicyOptions>(options =>
             {
 #if USING_COOKIE_CONSENT
-				options.CheckConsentNeeded = _ => true;
+                options.CheckConsentNeeded = _ => true;
 #else
                 options.CheckConsentNeeded = _ => false;
 #endif
@@ -157,7 +157,7 @@ namespace Web
             services.AddTransient<IUserAccessorService, UserAccessorService>();
 
 #if USING_IDENTITY
-			services.AddTransient<IEmailSender, SmtpSender>();
+            services.AddTransient<IEmailSender, SmtpSender>();
 #endif
 
             services
@@ -168,33 +168,33 @@ namespace Web
                 .AddBusiness();
 
 #if USING_IDENTITY
-			services
-				.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
-				.AddRoles<Role>()
-				.AddUserManager<UserManager<User>>()
-				.AddRoleManager<RoleManager<Role>>()
-				.AddEntityFrameworkStores<DefaultContext>()
-				.AddDefaultTokenProviders();
+            services
+                .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<Role>()
+                .AddUserManager<UserManager<User>>()
+                .AddRoleManager<RoleManager<Role>>()
+                .AddEntityFrameworkStores<DefaultContext>()
+                .AddDefaultTokenProviders();
 
-			services.Configure<IdentityOptions>(options =>
-			{
-				// Password settings.
-				options.Password.RequireDigit = false;
-				options.Password.RequireLowercase = false;
-				options.Password.RequireNonAlphanumeric = false;
-				options.Password.RequireUppercase = false;
-				options.Password.RequiredLength = 3;
-				options.Password.RequiredUniqueChars = 1;
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 3;
+                options.Password.RequiredUniqueChars = 1;
 
-				// Lockout settings.
-				options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(5);
-				options.Lockout.MaxFailedAccessAttempts = 5;
-				options.Lockout.AllowedForNewUsers = true;
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
 
-				// User settings.
-				options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-				options.User.RequireUniqueEmail = true;
-			});
+                // User settings.
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+            });
 #endif
 
 #if USING_NEWTONSOFT
@@ -263,7 +263,7 @@ namespace Web
                 config.EnableForHttps = true;
                 config.Providers.Add<BrotliCompressionProvider>();
                 config.Providers.Add<GzipCompressionProvider>();
-                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {"image/svg+xml", "text/css", "text/javascript"});
+                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml", "text/css", "text/javascript" });
             });
 
             services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
@@ -330,7 +330,7 @@ namespace Web
                 Configuration.Bind("SwaggerSettings:Versions", versions);
                 foreach (var version in versions)
                 {
-                    c.SwaggerDoc(version, new OpenApiInfo {Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}"});
+                    c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}" });
                 }
 
                 c.DocInclusionPredicate((_, _) => true);
@@ -421,7 +421,7 @@ namespace Web
 
             var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
             {
-                options.Cookie = new CookieBuilder() {Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration};
+                options.Cookie = new CookieBuilder() { Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration };
             });
             services.AddAntiforgery(antiforgeryOptions);
 
@@ -442,24 +442,25 @@ namespace Web
 #endif
             services.AddAuthentication(defaultScheme)
 #if !USING_AUTH0 && USING_COOKIES
-				.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-				{
-					options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
 #if DEBUG
-					options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 #endif
-					options.LoginPath = "/Identity/Account/Login";
-					options.LogoutPath = "/Identity/Account/Logout";
-					options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                    options.LoginPath = "/Identity/Account/Login";
+                    options.LogoutPath = "/Identity/Account/Logout";
+                    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 
-					options.Cookie = new CookieBuilder
-					{
-						Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
-					};
+                    options.Cookie = new CookieBuilder
+                    {
+                        Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}",
+                        IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
+                    };
 #if USING_SWAGGER
-					options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
+                    options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
 #endif
-				})
+                })
 #endif
 #if USING_APIKEY
 #if USING_APIKEY_TABLES
@@ -623,11 +624,11 @@ namespace Web
 
                 if (path.EndsWith(".css") || path.EndsWith(".js"))
                 {
-                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds.ToString("0")}");
+                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds:0}");
                 }
                 else if (path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".webp") || path.EndsWith(".svg"))
                 {
-                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds.ToString("0")}");
+                    context.Response.Headers.Append("Cache-Control", $"max-age={cacheControlInSeconds:0}");
                 }
                 else
                 {
@@ -704,7 +705,7 @@ namespace Web
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                app.UseForwardedHeaders(new ForwardedHeadersOptions {ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto});
+                app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
             }
 
 #if USING_CORS

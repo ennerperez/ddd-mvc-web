@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
@@ -134,7 +133,7 @@ namespace Test.Framework.Extended
                 try
                 {
                     var elements = @this.FindElements(by);
-                    found = elements != null && elements.Count() == amount;
+                    found = elements != null && elements.Count == amount;
                 }
                 catch (Exception)
                 {
@@ -176,10 +175,7 @@ namespace Test.Framework.Extended
                 Directory.CreateDirectory(directory);
             }
 
-            if (screenshot != null)
-            {
-                screenshot.SaveAsFile(path);
-            }
+            screenshot?.SaveAsFile(path);
 
             s_counter++;
         }

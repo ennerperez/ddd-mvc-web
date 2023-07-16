@@ -123,7 +123,7 @@ namespace System
                 return (T)Enum.Parse(typeof(T), @this, ignoreCase: ignoreCase);
             }
 
-            return default(T);
+            return default;
         }
 
         public static object AsEnum(this string @this, Type type, bool ignoreCase = true)
@@ -151,6 +151,5 @@ namespace System
                 return @this == value;
             }
         }
-
     }
 }

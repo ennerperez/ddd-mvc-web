@@ -15,7 +15,7 @@ namespace Domain.Interfaces
     {
         TKey? DeletedById { get; set; }
 #if USING_IDENTITY
-		User DeletedBy { get; set; }
+        User DeletedBy { get; set; }
 #endif
     }
 

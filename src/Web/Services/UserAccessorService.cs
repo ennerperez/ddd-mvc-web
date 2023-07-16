@@ -55,16 +55,24 @@ namespace Web.Services
             return null;
         }
 #if USING_IDENTITY
-		public string FindFirstValue(string claimType)
-		{
-			if (_httpContext.HttpContext != null) return _httpContext.HttpContext.User.FindFirstValue(claimType);
-			return string.Empty;
-		}
-		public string FindLastValue(string claimType)
-		{
-			if (_httpContext.HttpContext != null) return _httpContext.HttpContext.User.FindAll(claimType).LastOrDefault()?.Value;
-			return string.Empty;
-		}
+        public string FindFirstValue(string claimType)
+        {
+            if (_httpContext.HttpContext != null)
+            {
+                return _httpContext.HttpContext.User.FindFirstValue(claimType);
+            }
+
+            return string.Empty;
+        }
+        public string FindLastValue(string claimType)
+        {
+            if (_httpContext.HttpContext != null)
+            {
+                return _httpContext.HttpContext.User.FindAll(claimType).LastOrDefault()?.Value;
+            }
+
+            return string.Empty;
+        }
 #endif
     }
 }

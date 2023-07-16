@@ -9,7 +9,7 @@ namespace Tests.Abstractions.Interfaces
 {
     public interface IAutomationContext : IAttributeLibrary
 #if USING_SPECFLOW
-        ,ISpecFlowContext
+        , ISpecFlowContext
 #endif
     {
 

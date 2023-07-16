@@ -76,7 +76,7 @@ namespace System.Reflection
             if (s_version == null)
             {
                 var versionString = @this.GetCustomAttributes(typeof(AssemblyVersionAttribute), true).OfType<AssemblyVersionAttribute>().FirstOrDefault()?.Version;
-                System.Version.TryParse(versionString, out s_version);
+                _ = System.Version.TryParse(versionString, out s_version);
             }
 
             return s_version;
@@ -88,7 +88,7 @@ namespace System.Reflection
             if (s_fileVersion == null)
             {
                 var fileVersionString = @this.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true).OfType<AssemblyFileVersionAttribute>().FirstOrDefault()?.Version;
-                System.Version.TryParse(fileVersionString, out s_fileVersion);
+                _ = System.Version.TryParse(fileVersionString, out s_fileVersion);
             }
 
             return s_version;

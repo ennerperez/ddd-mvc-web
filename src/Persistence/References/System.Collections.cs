@@ -19,7 +19,7 @@ namespace System.Collections
             {
                 var data = source.ToArray();
                 var result = new List<IEnumerable<T>>();
-                var temp = new T[] { };
+                var temp = Array.Empty<T>();
                 var t = data.Length;
                 var size = (int)Math.Ceiling(((decimal)t / parts));
 
@@ -29,7 +29,7 @@ namespace System.Collections
                     if (temp.Length >= size)
                     {
                         result.Add(temp);
-                        temp = new T[] { };
+                        temp = Array.Empty<T>();
                     }
                 }
 

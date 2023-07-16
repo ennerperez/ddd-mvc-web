@@ -23,7 +23,7 @@ namespace Web.Controllers
 #if USING_SMARTSCHEMA
     [SmartAuthorize]
 #else
-	[Authorize]
+    [Authorize]
 #endif
     [Route("api/[controller]")]
     [ApiController]
@@ -46,7 +46,7 @@ namespace Web.Controllers
 #if USING_SMARTSCHEMA
     [SmartAuthorize]
 #else
-	[Authorize]
+    [Authorize]
 #endif
     [Route("api/[controller]")]
     [ApiController]
@@ -88,15 +88,15 @@ namespace Web.Controllers
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
 
-            ParameterExpression NestedMember(MemberExpression me)
+            static ParameterExpression NestedMember(MemberExpression me)
             {
-                if (me.Expression is ParameterExpression)
+                if (me.Expression is ParameterExpression expression1)
                 {
-                    return (ParameterExpression)me.Expression;
+                    return expression1;
                 }
-                else if (me.Expression is MemberExpression)
+                else if (me.Expression is MemberExpression expression2)
                 {
-                    return NestedMember((MemberExpression)me.Expression);
+                    return NestedMember(expression2);
                 }
                 else
                 {
@@ -119,13 +119,13 @@ namespace Web.Controllers
                     });
 
                 var args = Array.Empty<MemberExpression>();
-                if (selector.Body is NewExpression)
+                if (selector.Body is NewExpression expression1)
                 {
-                    args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
+                    args = expression1.Arguments.OfType<MemberExpression>().ToArray();
                 }
-                else if (selector.Body is MemberInitExpression)
+                else if (selector.Body is MemberInitExpression expression2)
                 {
-                    args = ((MemberInitExpression)selector.Body).Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
+                    args = expression2.Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
                 }
 
                 parameter = NestedMember(args.First());
@@ -149,10 +149,10 @@ namespace Web.Controllers
                         if (value != null && value != type.GetDefault())
                         {
                             constant = Expression.Constant(value);
-                            var methods = new[] {"Contains", "IndexOf", "Equals", "CompareTo"};
+                            var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
                             foreach (var method in methods)
                             {
-                                var methodInfo = type.GetMethod(method, new[] {type});
+                                var methodInfo = type.GetMethod(method, new[] { type });
                                 if (methodInfo != null)
                                 {
                                     var member = item;
@@ -195,7 +195,6 @@ namespace Web.Controllers
                     skip: model.Start, take: model.Length, includeDeleted: includeDeleted);
             }
 
-
             var data = await ((IQueryable<object>)rows).ToListAsync();
 
             var total = await Repository().CountAsync();
@@ -209,7 +208,7 @@ namespace Web.Controllers
 #if USING_SMARTSCHEMA
     [SmartAuthorize]
 #else
-	[Authorize]
+    [Authorize]
 #endif
     [Route("api/[controller]")]
     [ApiController]

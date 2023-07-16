@@ -18,21 +18,9 @@ namespace Business
         /// <returns></returns>
         public static IServiceCollection AddBusiness(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
         {
+            var options = new DbContextOptionsBuilder();
+            optionsBuilder?.Invoke(options);
             services.AddBusiness();
-            return services;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="optionsBuilder"></param>
-        /// <param name="configureOptions"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IServiceCollection AddBusiness<T>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder, Action<T> configureOptions = null)
-        {
-            services.AddBusiness(configureOptions);
             return services;
         }
 
@@ -45,6 +33,8 @@ namespace Business
         /// <returns></returns>
         public static IServiceCollection AddBusiness<T>(this IServiceCollection services, Action<T> configureOptions = null)
         {
+            var options = Activator.CreateInstance<T>();
+            configureOptions?.Invoke(options);
             services.AddBusiness();
             return services;
         }

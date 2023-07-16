@@ -33,15 +33,16 @@ namespace Business.Requests
 
         public async Task<int> Handle(CreateClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = new Client();
+            var entity = new Client
+            {
+                Identification = request.Identification,
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
+                Address = request.Address,
+                Category = request.Category
+            };
 
-            entity.Identification = request.Identification;
-            entity.FullName = request.FullName;
-            entity.PhoneNumber = request.PhoneNumber;
-            entity.Address = request.Address;
-            entity.Category = request.Category;
-
-            await _repository.CreateAsync(entity);
+            await _repository.CreateAsync(entity, cancellationToken);
 
             return entity.Id;
         }
@@ -129,12 +130,7 @@ namespace Business.Requests
 
         public async Task Handle(UpdateClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Client), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Client), request.Id);
             entity.Identification = request.Identification;
             entity.FullName = request.FullName;
             entity.Address = request.Address;
@@ -187,12 +183,7 @@ namespace Business.Requests
 
         public async Task Handle(PartialUpdateClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Client), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Client), request.Id);
             if (string.IsNullOrWhiteSpace(entity.Identification))
             {
                 entity.Identification = request.Identification;
@@ -262,12 +253,7 @@ namespace Business.Requests
 
         public async Task Handle(DeleteClientRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Client), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Client), request.Id);
             await _repository.DeleteAsync(request.Id, cancellationToken);
         }
     }

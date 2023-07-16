@@ -43,7 +43,7 @@ namespace Persistence.Contexts
                 m.UseDateTime = false;
             });
             modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
-            modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>(ProviderName);
+            modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>();
         }
 
 #if DEBUG

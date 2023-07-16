@@ -16,7 +16,7 @@ namespace Web.Controllers
 #if USING_SMARTSCHEMA
     [SmartAuthorize]
 #else
-	[Authorize]
+    [Authorize]
 #endif
 #if USING_SWAGGER
     [ApiExplorerSettings(IgnoreApi = true)]

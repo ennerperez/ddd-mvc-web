@@ -23,16 +23,14 @@ namespace Tests.Business.Steps
     {
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
-        private readonly IAutomationConfiguration _automationConfiguration;
         private readonly IAutomationContext _automationContext;
         protected readonly LoremIpsumService _loremIpsumService;
 
         // ReSharper disable once UnusedMember.Local
         private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
-        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, LoremIpsumService loremIpsumService)
+        public ScopedSteps(IAutomationContext automationContext, LoremIpsumService loremIpsumService)
         {
-            _automationConfiguration = automationConfiguration;
             _automationContext = automationContext;
             _loremIpsumService = loremIpsumService;
         }
@@ -123,21 +121,9 @@ namespace Tests.Business.Steps
             try
             {
                 var serviceType = Assembly.GetExecutingAssembly().DefinedTypes.FirstOrDefault(m => m.Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
-                var serviceInterface = serviceType?.ImplementedInterfaces.FirstOrDefault();
-                if (serviceInterface == null)
-                {
-                    //throw new NullException("Unable to find the interface for the required service");
-                    throw NotNullException.ForNullValue();
-                }
-
+                var serviceInterface = (serviceType?.ImplementedInterfaces.FirstOrDefault()) ?? throw NotNullException.ForNullValue();
                 var service = (ITestService)Program.Container.GetServices(serviceInterface)
-                    .FirstOrDefault(s => s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
-                if (service == null)
-                {
-                    //throw new NullException("Unable to find an instance for the required service");
-                    throw NotNullException.ForNullValue();
-                }
-
+                    .FirstOrDefault(s => s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase)) ?? throw NotNullException.ForNullValue();
                 service.AutomationContext = _automationContext;
 
                 var methodName = operation switch
@@ -150,13 +136,7 @@ namespace Tests.Business.Steps
                 };
 
                 var method = service.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                dynamic awaitable = method?.Invoke(service, new object[] { table });
-                if (awaitable == null)
-                {
-                    //throw new NullException(methodName);
-                    throw NotNullException.ForNullValue();
-                }
-
+                dynamic awaitable = (method?.Invoke(service, new object[] { table })) ?? throw NotNullException.ForNullValue();
                 await awaitable;
 
                 Assert.Pass();

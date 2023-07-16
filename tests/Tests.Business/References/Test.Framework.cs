@@ -113,7 +113,7 @@ namespace Test.Framework.Extended
             return new Exception("The table rows must contain the same number of items as the header count of the table. The structure cannot be modified.");
         }
 
-        #region Implementation of ICollection<KeyValuePair<string,string>>
+    #region Implementation of ICollection<KeyValuePair<string,string>>
 
         void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item)
         {
@@ -145,9 +145,9 @@ namespace Test.Framework.Extended
 
         bool ICollection<KeyValuePair<string, string>>.IsReadOnly => false;
 
-        #endregion
+    #endregion
 
-        #region Implementation of IDictionary<string,string>
+    #region Implementation of IDictionary<string,string>
 
         public bool ContainsKey(string key)
         {
@@ -181,7 +181,7 @@ namespace Test.Framework.Extended
 
         public ICollection<string> Values => _items;
 
-        #endregion
+    #endregion
     }
 
     [Serializable]

@@ -70,10 +70,7 @@ namespace Tests.Web.Contexts
 
         public void AddException(Exception e)
         {
-            if (_exceptions == null)
-            {
-                _exceptions = new List<Exception>();
-            }
+            _exceptions ??= new List<Exception>();
 
             _exceptions.Add(e);
         }
@@ -112,10 +109,7 @@ namespace Tests.Web.Contexts
 
         public void SetAttribute(string attributeKey, object attributeObject)
         {
-            if (_attributeLibrary == null)
-            {
-                _attributeLibrary = new Dictionary<string, object>();
-            }
+            _attributeLibrary ??= new Dictionary<string, object>();
 
             _attributeLibrary.Remove(attributeKey);
             _attributeLibrary.Add(attributeKey, attributeObject);

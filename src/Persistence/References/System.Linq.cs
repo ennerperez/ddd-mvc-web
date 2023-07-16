@@ -8,7 +8,9 @@ namespace System.Linq
     {
         public static class Extensions
         {
+#pragma warning disable IDE0060 // Remove unused parameter
             public static Expression<Func<TEntityType, TResult>> Select<TEntityType, TResult>(this TEntityType type, Expression<Func<TEntityType, TResult>> selector)
+#pragma warning restore IDE0060 // Remove unused parameter
             {
                 return selector;
             }
@@ -38,12 +40,7 @@ namespace System.Linq
                     foreach (var item in args.Where(m => m.Length > 0))
                     {
                         var pn = item[0];
-                        var pi = props.FirstOrDefault(m => m.Name.ToLower() == pn.ToLower());
-                        if (pi == null)
-                        {
-                            pi = props[0];
-                        }
-
+                        var pi = props.FirstOrDefault(m => m.Name.ToLower() == pn.ToLower()) ?? props[0];
                         var direction = (item.Length > 1) ? item[1] : "asc";
                         result = (IOrderedQueryable<TEntityType>)query.Provider.CreateQuery(
                             Expression.Call(
@@ -59,7 +56,9 @@ namespace System.Linq
                 return result;
             }
 
+#pragma warning disable IDE0060 // Remove unused parameter
             public static Expression<Func<T, Te>> GetPropertySelector<T, Te>(this Type @this, string propertyName)
+#pragma warning restore IDE0060 // Remove unused parameter
             {
                 var arg = Expression.Parameter(typeof(T), "x");
                 var property = Expression.Property(arg, propertyName);
@@ -69,7 +68,9 @@ namespace System.Linq
                 return exp;
             }
 
+#pragma warning disable IDE0060 // Remove unused parameter
             public static Expression<Func<T, string>> GetPropertySelector<T>(this Type @this, PropertyInfo propertyInfo)
+#pragma warning restore IDE0060 // Remove unused parameter
             {
                 var arg = Expression.Parameter(typeof(T), "x");
                 var property = Expression.Property(arg, propertyInfo.Name);
