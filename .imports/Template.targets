@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-        <ParameterGroup>
-            <InputFilename ParameterType="System.String" Required="true"/>
-            <OutputFilename ParameterType="System.String" Required="true"/>
-            <MatchExpression ParameterType="System.String" Required="true"/>
-            <ReplacementText ParameterType="System.String" Required="true"/>
-        </ParameterGroup>
-        <Task>
-            <Using Namespace="System"/>
-            <Using Namespace="System.IO"/>
-            <Using Namespace="System.Text.RegularExpressions"/>
-            <Code Type="Fragment" Language="cs">
-                <![CDATA[
+  <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <InputFilename ParameterType="System.String" Required="true"/>
+      <OutputFilename ParameterType="System.String" Required="true"/>
+      <MatchExpression ParameterType="System.String" Required="true"/>
+      <ReplacementText ParameterType="System.String" Required="true"/>
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.Text.RegularExpressions"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
           File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename), MatchExpression, ReplacementText));
         ]]>
-            </Code>
-        </Task>
-    </UsingTask>
+      </Code>
+    </Task>
+  </UsingTask>
 
-    <Import Project="$(_ImportDirectory)Features.targets"/>
-    <Import Project="$(_ImportDirectory)Project.targets"/>
+  <Import Project="$(_ImportDirectory)Features.targets"/>
+  <Import Project="$(_ImportDirectory)Project.targets"/>
 
-    <Target Condition="'$(_DebugTemplate)' == 'true'" Name="Debug" BeforeTargets="Build">
-        <!-- Template -->
-        <Message Importance="High" Text="------- "/>
-        <Message Importance="High" Text="------- SourceDirectory: $(SourceDirectory)"/>
-        <Message Importance="High" Text="------- .imprortDirectory: $(_ImportDirectory)"/>
-        <Message Importance="High" Text="------- .filesDirectory: $(_FilesDirectory)"/>
-        <Message Importance="High" Text="------- TestsDirectory: $(TestsDirectory)"/>
-        <!-- MSBuildThisFile -->
-        <Message Importance="High" Text="------- "/>
-        <Message Importance="High" Text="------- MSBuildThisFile: $(MSBuildThisFile)"/>
-        <Message Importance="High" Text="------- MSBuildThisFileDirectory: $(MSBuildThisFileDirectory)"/>
-        <Message Importance="High" Text="------- MSBuildThisFileDirectoryNoRoot: $(MSBuildThisFileDirectoryNoRoot)"/>
-        <Message Importance="High" Text="------- MSBuildThisFileExtension: $(MSBuildThisFileExtension)"/>
-        <Message Importance="High" Text="------- MSBuildThisFileFullPath: $(MSBuildThisFileFullPath)"/>
-        <Message Importance="High" Text="------- MSBuildThisFileName: $(MSBuildThisFileName)"/>
-        <!-- MSBuildProject -->
-        <Message Importance="High" Text="------- MSBuildProjectFile: $(MSBuildProjectFile)"/>
-        <Message Importance="High" Text="------- MSBuildProjectDirectory: $(MSBuildProjectDirectory)"/>
-        <Message Importance="High" Text="------- MSBuildProjectDirectoryNoRoot: $(MSBuildProjectDirectoryNoRoot)"/>
-        <Message Importance="High" Text="------- MSBuildProjectExtension: $(MSBuildProjectExtension)"/>
-        <Message Importance="High" Text="------- MSBuildProjectFullPath: $(MSBuildProjectFullPath)"/>
-        <Message Importance="High" Text="------- MSBuildProjectName: $(MSBuildProjectName)"/>
-    </Target>
+  <Target Condition="'$(_DebugTemplate)' == 'true'" Name="Debug" BeforeTargets="Build">
+    <!-- Template -->
+    <Message Importance="High" Text="------- "/>
+    <Message Importance="High" Text="------- SourceDirectory: $(SourceDirectory)"/>
+    <Message Importance="High" Text="------- .imprortDirectory: $(_ImportDirectory)"/>
+    <Message Importance="High" Text="------- .filesDirectory: $(_FilesDirectory)"/>
+    <Message Importance="High" Text="------- TestsDirectory: $(TestsDirectory)"/>
+    <!-- MSBuildThisFile -->
+    <Message Importance="High" Text="------- "/>
+    <Message Importance="High" Text="------- MSBuildThisFile: $(MSBuildThisFile)"/>
+    <Message Importance="High" Text="------- MSBuildThisFileDirectory: $(MSBuildThisFileDirectory)"/>
+    <Message Importance="High" Text="------- MSBuildThisFileDirectoryNoRoot: $(MSBuildThisFileDirectoryNoRoot)"/>
+    <Message Importance="High" Text="------- MSBuildThisFileExtension: $(MSBuildThisFileExtension)"/>
+    <Message Importance="High" Text="------- MSBuildThisFileFullPath: $(MSBuildThisFileFullPath)"/>
+    <Message Importance="High" Text="------- MSBuildThisFileName: $(MSBuildThisFileName)"/>
+    <!-- MSBuildProject -->
+    <Message Importance="High" Text="------- MSBuildProjectFile: $(MSBuildProjectFile)"/>
+    <Message Importance="High" Text="------- MSBuildProjectDirectory: $(MSBuildProjectDirectory)"/>
+    <Message Importance="High" Text="------- MSBuildProjectDirectoryNoRoot: $(MSBuildProjectDirectoryNoRoot)"/>
+    <Message Importance="High" Text="------- MSBuildProjectExtension: $(MSBuildProjectExtension)"/>
+    <Message Importance="High" Text="------- MSBuildProjectFullPath: $(MSBuildProjectFullPath)"/>
+    <Message Importance="High" Text="------- MSBuildProjectName: $(MSBuildProjectName)"/>
+  </Target>
 
 </Project>

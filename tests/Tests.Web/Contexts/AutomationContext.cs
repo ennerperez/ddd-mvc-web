@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+#if USING_SPECFLOW
 using TechTalk.SpecFlow;
+#endif
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Settings;
 using Xunit.Sdk;
@@ -12,11 +14,16 @@ namespace Tests.Web.Contexts
 {
     public class AutomationContext : IAutomationContext
     {
-
+#if USING_SPECFLOW
         public AutomationContext(IConfiguration configuration, IAutomationConfiguration automationConfigurations, FeatureContext featureContext, ScenarioContext scenarioContext)
+#else
+        public AutomationContext(IConfiguration configuration, IAutomationConfiguration automationConfigurations)
+#endif
         {
+#if USING_SPECFLOW
             FeatureContext = featureContext;
             ScenarioContext = scenarioContext;
+#endif
             AutomationConfiguration = automationConfigurations;
             NavigationStack = new Stack<string>();
             ScreenshotConfiguration = new ScreenshotConfiguration();
@@ -46,16 +53,21 @@ namespace Tests.Web.Contexts
 
         public IAutomationConfiguration AutomationConfiguration { get; }
         public ScreenshotConfiguration ScreenshotConfiguration { get; }
+
+#if USING_SPECFLOW
         public FeatureContext FeatureContext { get; }
         public ScenarioContext ScenarioContext { get; }
+#endif
 
         #region Exceptions
 
         private List<Exception> _exceptions;
+
         public IEnumerable<Exception> GetExceptions()
         {
             return _exceptions?.ToArray();
         }
+
         public void AddException(Exception e)
         {
             if (_exceptions == null)
@@ -65,12 +77,14 @@ namespace Tests.Web.Contexts
 
             _exceptions.Add(e);
         }
+
         public bool HasExceptions()
         {
             return _exceptions?.Any() ?? false;
         }
 
         #endregion
+
         public bool IsInitialized { get; set; }
 
         private Dictionary<string, object> _attributeLibrary;

@@ -12,15 +12,19 @@ using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Serilog;
+#if USING_SPECFLOW
 using SolidToken.SpecFlow.DependencyInjection;
 using TechTalk.SpecFlow;
+#endif
 using Tests.Web.Settings;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Tests.Web
 {
+#if USING_SPECFLOW
     [Binding]
+#endif
     internal class Program
     {
         #region IOC
@@ -147,7 +151,9 @@ namespace Tests.Web
             }
         }
 
+#if USING_SPECFLOW
         [ScenarioDependencies]
+#endif
         public static IServiceCollection CreateServices()
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;

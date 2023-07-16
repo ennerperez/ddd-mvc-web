@@ -13,13 +13,11 @@ using OpenQA.Selenium;
 using Tests.Abstractions.Entities;
 using Tests.Abstractions.Enums;
 using Tests.Abstractions.Interfaces;
-using Tests.Web.Interfaces;
 
 namespace Tests.Web.Services
 {
-    public class DefinitionService : IDefinitionService, IDisposable
+    public class DefinitionService : IDefinitionService<IWebElement>, IDisposable
     {
-
         private readonly IAutomationContext _automationContext;
         private readonly IConfigurationRoot _globalConfiguration;
 
@@ -27,7 +25,7 @@ namespace Tests.Web.Services
         private Definition ScenarioDefinitions { get; }
         private Definition PageDefinitions { get; set; }
 
-        private Definition[] Definitions => new[] { GlobalDefinitions, ScenarioDefinitions, PageDefinitions }.Where(m => m != null).ToArray();
+        private Definition[] Definitions => new[] {GlobalDefinitions, ScenarioDefinitions, PageDefinitions}.Where(m => m != null).ToArray();
 
         internal static IWebDriver Driver => Program.Driver;
         internal IEnumerable<MethodInfo> _methods;
@@ -54,8 +52,8 @@ namespace Tests.Web.Services
             var basePageFile = Path.Combine(basePath, definitionsDirectory, "Global.ini");
 
             _globalConfiguration = new ConfigurationBuilder()
-              .AddIniFile(basePageFile, false, true)
-              .Build();
+                .AddIniFile(basePageFile, false, true)
+                .Build();
 
             GlobalDefinitions = new Definition("Global", "Global");
             _globalConfiguration.Bind(GlobalDefinitions);
@@ -96,7 +94,7 @@ namespace Tests.Web.Services
                 key = name;
             }
 
-            key = key.Replace(new[] { "&", "-", " ", "'" }, "");
+            key = key.Replace(new[] {"&", "-", " ", "'"}, "");
 
             if (selector.StartsWith(_definitionConfiguration.ElementUniquenessIdentifier))
             {
@@ -527,7 +525,7 @@ namespace Tests.Web.Services
 
             if ((elements == null || !elements.Any()) && IsOptional(selector))
             {
-                elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                elements = new[] {new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}")};
             }
 
             return elements;
@@ -606,7 +604,7 @@ namespace Tests.Web.Services
 
             if ((elements == null || !elements.Any()) && IsOptional(selector))
             {
-                elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                elements = new[] {new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}")};
             }
 
             return elements;
@@ -650,7 +648,7 @@ namespace Tests.Web.Services
 
                 if ((elements == null || !elements.Any()) && IsOptional(selector))
                 {
-                    elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                    elements = new[] {new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}")};
                 }
 
                 if (elements == null)
@@ -704,7 +702,7 @@ namespace Tests.Web.Services
 
                 if ((elements == null || !elements.Any()) && IsOptional(selector))
                 {
-                    elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                    elements = new[] {new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}")};
                 }
 
                 if (elements == null)
@@ -745,7 +743,7 @@ namespace Tests.Web.Services
                     var basePath = Program.GetCurrentDirectory();
                     var builder = new ConfigurationBuilder();
 
-                    var value = name.Replace(new[] { "&", "-", " ", "'" }, "");
+                    var value = name.Replace(new[] {"&", "-", " ", "'"}, "");
                     var file = _globalConfiguration[$"DefinitionFiles:{value}"];
                     if (string.IsNullOrWhiteSpace(file) && Directory.Exists(Path.Combine(basePath, definitionsPagesDirectory)))
                     {
@@ -760,7 +758,7 @@ namespace Tests.Web.Services
                     var basePageFile = Path.Combine(basePath, definitionsPagesDirectory, $"{file}.ini");
 
                     builder
-                      .AddIniFile(basePageFile, false, true);
+                        .AddIniFile(basePageFile, false, true);
 
                     var config = builder.Build();
 
@@ -805,6 +803,7 @@ namespace Tests.Web.Services
 
         private Definition GetCurrentScenarioDefinitions()
         {
+#if USING_SPECFLOW
             var basePath = Program.GetCurrentDirectory();
 
             var definitionsDirectory = _definitionConfiguration.GetApplicationDefinitionsLocation();
@@ -853,6 +852,9 @@ namespace Tests.Web.Services
             scenarioDefinitions.PrepareAndValidate(_definitionConfiguration);
 
             return scenarioDefinitions;
+#else
+            return null;
+#endif
         }
 
         #region IDisposable

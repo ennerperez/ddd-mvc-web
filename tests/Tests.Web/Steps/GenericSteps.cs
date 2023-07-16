@@ -9,7 +9,6 @@ using OpenQA.Selenium.Interactions;
 using TechTalk.SpecFlow;
 using Test.Framework.Extended;
 using Tests.Abstractions.Interfaces;
-using Tests.Web.Interfaces;
 // ReSharper disable UnusedParameter.Local
 
 namespace Tests.Web.Steps
@@ -20,10 +19,10 @@ namespace Tests.Web.Steps
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
         private readonly IAutomationContext _automationContext;
-        private readonly IDefinitionService _definitionService;
+        private readonly IDefinitionService<IWebElement> _definitionService;
         private readonly IStepHelper _stepsHelper;
 
-        public GenericSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, IStepHelper stepsHelper, IDefinitionService definitionService)
+        public GenericSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, IStepHelper stepsHelper, IDefinitionService<IWebElement> definitionService)
         {
             _automationContext = automationContext;
             _definitionService = definitionService;

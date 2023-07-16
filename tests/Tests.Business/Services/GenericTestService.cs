@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
+#if USING_SPECFLOW
 using TechTalk.SpecFlow;
+#else
+using Test.Framework.Extended;
+#endif
 using Tests.Abstractions.Interfaces;
 using Tests.Business.Interfaces;
 
@@ -10,7 +14,6 @@ namespace Tests.Business.Services
 {
     public abstract class GenericTestService<TEntity> : ITestService<TEntity>
     {
-
         public IAutomationContext AutomationContext
         {
             get => _automationContext;
@@ -25,7 +28,12 @@ namespace Tests.Business.Services
             Mediator = mediator;
         }
 
+#if USING_SPECFLOW
         protected string ScenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
+#else
+        private string _scenarioCode = Guid.NewGuid().ToString("N");
+        protected string ScenarioCode => _scenarioCode;
+#endif
 
         public abstract Task CreateAsync(Table table);
         public abstract Task<TEntity> ReadAsync(Table table);

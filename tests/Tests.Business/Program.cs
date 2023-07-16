@@ -15,13 +15,17 @@ using Microsoft.Extensions.Logging;
 using Persistence;
 using Persistence.Contexts;
 using Serilog;
+#if USING_SPECFLOW
 using SolidToken.SpecFlow.DependencyInjection;
 using TechTalk.SpecFlow;
+#endif
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Tests.Business
 {
+#if USING_SPECFLOW
     [Binding]
+#endif
     internal class Program
     {
         #region IOC
@@ -119,7 +123,9 @@ namespace Tests.Business
             IsInitialized = true;
         }
 
+#if USING_SPECFLOW
         [ScenarioDependencies]
+#endif
         public static IServiceCollection CreateServices()
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;

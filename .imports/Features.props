@@ -1,70 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup Label="Framework" Condition="'$(UseMaui)' != 'false'">
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup Label="Framework" Condition="'$(UseMaui)' != 'false'">
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
 
-    <PropertyGroup Label="General">
-        <UsingAssemblyInfoTemplate>false</UsingAssemblyInfoTemplate>
-    </PropertyGroup>
+  <PropertyGroup Label="General">
+    <UsingAssemblyInfoTemplate>true</UsingAssemblyInfoTemplate>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Databases">
-        <UsingSqlite>true</UsingSqlite>
-        <UsingSqlServer>true</UsingSqlServer>
-        <UsingMariaDb>false</UsingMariaDb>
-        <UsingMySql>false</UsingMySql>
-        <UsingPostgreSql>false</UsingPostgreSql>
-        <UsingOracle>false</UsingOracle>
-        <UsingNonAsync>false</UsingNonAsync>
-        <UsingDapper>false</UsingDapper>
-        <UsingBulk>true</UsingBulk>
-        <UsingSplit>true</UsingSplit>
-    </PropertyGroup>
+  <PropertyGroup Label="Databases">
+    <UsingSqlite>true</UsingSqlite>
+    <UsingSqlServer>true</UsingSqlServer>
+    <UsingMariaDb>false</UsingMariaDb>
+    <UsingMySql>false</UsingMySql>
+    <UsingPostgreSql>false</UsingPostgreSql>
+    <UsingOracle>false</UsingOracle>
+    <UsingNonAsync>false</UsingNonAsync>
+    <UsingDapper>false</UsingDapper>
+    <UsingBulk>true</UsingBulk>
+    <UsingSplit>true</UsingSplit>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Azure">
-        <UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
-        <UsingAzureBlobs>false</UsingAzureBlobs>
-        <UsingAzureQueues>false</UsingAzureQueues>
-        <UsingAzureTables>false</UsingAzureTables>
-        <UsingAzureKeyVault>false</UsingAzureKeyVault>
-    </PropertyGroup>
+  <PropertyGroup Label="Azure">
+    <UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
+    <UsingAzureBlobs>false</UsingAzureBlobs>
+    <UsingAzureQueues>false</UsingAzureQueues>
+    <UsingAzureTables>false</UsingAzureTables>
+    <UsingAzureKeyVault>false</UsingAzureKeyVault>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Services">
-        <UsingQuestPDF>true</UsingQuestPDF>
-        <UsingNewtonsoft>true</UsingNewtonsoft>
-        <UsingSwagger>true</UsingSwagger>
-        <UsingLocalization>false</UsingLocalization>
-        <UsingSass>true</UsingSass>
-    </PropertyGroup>
+  <PropertyGroup Label="Services">
+    <UsingQuestPDF>true</UsingQuestPDF>
+    <UsingNewtonsoft>true</UsingNewtonsoft>
+    <UsingSwagger>true</UsingSwagger>
+    <UsingLocalization>false</UsingLocalization>
+    <UsingSass>true</UsingSass>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Auth">
-        <UsingIdentity>true</UsingIdentity>
-        <UsingCookies>true</UsingCookies>
-        <UsingApiKey>false</UsingApiKey>
-        <UsingBearer>false</UsingBearer>
-        <UsingOpenId>false</UsingOpenId>
-        <UsingAuth0>false</UsingAuth0>
-        <UsingSmartSchema>false</UsingSmartSchema>
-        <UsingApiKeyTables>false</UsingApiKeyTables>
-        <UsingTokenValidation>false</UsingTokenValidation>
-    </PropertyGroup>
+  <PropertyGroup Label="Auth">
+    <UsingIdentity>true</UsingIdentity>
+    <UsingCookies>true</UsingCookies>
+    <UsingApiKey>false</UsingApiKey>
+    <UsingBearer>false</UsingBearer>
+    <UsingOpenId>false</UsingOpenId>
+    <UsingAuth0>false</UsingAuth0>
+    <UsingSmartSchema>false</UsingSmartSchema>
+    <UsingApiKeyTables>false</UsingApiKeyTables>
+    <UsingTokenValidation>false</UsingTokenValidation>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Options">
-        <UsingSassWatch>true</UsingSassWatch>
-        <UsingDatadog>true</UsingDatadog>
-        <UsingCors>true</UsingCors>
-        <UsingCompression>true</UsingCompression>
-        <UsingSession>true</UsingSession>
-        <CookieConsentNeeded>true</CookieConsentNeeded>
-    </PropertyGroup>
+  <PropertyGroup Label="Options">
+    <UsingSassWatch>true</UsingSassWatch>
+    <UsingDatadog>true</UsingDatadog>
+    <UsingCors>true</UsingCors>
+    <UsingCompression>true</UsingCompression>
+    <UsingSession>true</UsingSession>
+    <CookieConsentNeeded>true</CookieConsentNeeded>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Testing">
-        <TestExecutionFramework>xUnit</TestExecutionFramework>
-        <DefaultLanguage>EN</DefaultLanguage>
-        <UsingChromeDriver>true</UsingChromeDriver>
-        <UsingGeckoDriver>true</UsingGeckoDriver>
-        <UsingIEDriver>true</UsingIEDriver>
-    </PropertyGroup>
+  <PropertyGroup Label="Testing">
+    <TestExecutionFramework>xUnit</TestExecutionFramework>
+    <DefaultLanguage>EN</DefaultLanguage>
+    <UsingSpecFlow>true</UsingSpecFlow>
+    <UsingChromeDriver>true</UsingChromeDriver>
+    <UsingGeckoDriver>true</UsingGeckoDriver>
+    <UsingIEDriver>true</UsingIEDriver>
+  </PropertyGroup>
 
 </Project>
