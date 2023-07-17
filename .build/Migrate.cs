@@ -34,7 +34,7 @@ public partial class Build
         config.Bind("ConnectionStrings", connectionStrings);
 
         var combinations = from item in connectionStrings
-                           let split = item.Key.Split("_")
+                           let split = item.Key.Split(".")
                            where split.Length > 1
                            let context = split.First()
                            let provider = split.Last()
@@ -48,7 +48,7 @@ public partial class Build
         .Executes(() =>
         {
             var projects = Solution.AllProjects
-                .Where(m => !m.Name.StartsWith("_"))
+                .Where(m => !m.Name.StartsWith("."))
                 .Where(m => new[] { Persistence, Startup }.Contains(m))
                 .ToArray();
             DotNetBuild(s => s

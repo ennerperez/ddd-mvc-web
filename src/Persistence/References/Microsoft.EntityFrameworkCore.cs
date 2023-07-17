@@ -261,10 +261,10 @@ namespace Microsoft.EntityFrameworkCore
                     throw new InvalidDataException($"The context {contextName} has more than one connection string");
                 }
 
-                providerName = connectionStrings.First().Key.Split("_").Last();
+                providerName = connectionStrings.First().Key.Split(".").Last();
             }
 
-            var connectionString = config.GetConnectionString($"{contextName}_{providerName}");
+            var connectionString = config.GetConnectionString($"{contextName}.{providerName}");
 
 #if USING_DATABASE_PROVIDER
             const string MigrationsHistoryTableName = "__EFMigrationsHistory";

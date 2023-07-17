@@ -183,7 +183,7 @@ public partial class Build : NukeBuild
             config.Bind("ConnectionStrings", connectionStrings);
 
             var combinations = from item in connectionStrings
-                               let split = item.Key.Split("_")
+                               let split = item.Key.Split(".")
                                where split.Length > 1
                                let context = split.First()
                                let provider = split.Last()
