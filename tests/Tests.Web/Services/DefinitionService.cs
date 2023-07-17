@@ -13,13 +13,11 @@ using OpenQA.Selenium;
 using Tests.Abstractions.Entities;
 using Tests.Abstractions.Enums;
 using Tests.Abstractions.Interfaces;
-using Tests.Web.Interfaces;
 
 namespace Tests.Web.Services
 {
-    public class DefinitionService : IDefinitionService, IDisposable
+    public class DefinitionService : IDefinitionService<IWebElement>, IDisposable
     {
-
         private readonly IAutomationContext _automationContext;
         private readonly IConfigurationRoot _globalConfiguration;
 
@@ -54,8 +52,8 @@ namespace Tests.Web.Services
             var basePageFile = Path.Combine(basePath, definitionsDirectory, "Global.ini");
 
             _globalConfiguration = new ConfigurationBuilder()
-              .AddIniFile(basePageFile, false, true)
-              .Build();
+                .AddIniFile(basePageFile, false, true)
+                .Build();
 
             GlobalDefinitions = new Definition("Global", "Global");
             _globalConfiguration.Bind(GlobalDefinitions);
@@ -161,17 +159,7 @@ namespace Tests.Web.Services
         {
             method = method.Replace("Dynamic", "");
             var methodName = $"{method}By{Enum.GetName(location.Key)}";
-            var methodInfo = _methods.FirstOrDefault(m => m.Name == methodName);
-            if (methodInfo == null)
-            {
-                methodInfo = Driver.GetType().GetMethods().FirstOrDefault(m => m.Name == methodName);
-            }
-
-            if (methodInfo == null)
-            {
-                throw new NotImplementedException(methodName);
-            }
-
+            var methodInfo = (_methods.FirstOrDefault(m => m.Name == methodName) ?? Driver.GetType().GetMethods().FirstOrDefault(m => m.Name == methodName)) ?? throw new NotImplementedException(methodName);
             var value = location.Value;
             var valuesList = new List<object>(values);
             valuesList.Insert(0, Driver);
@@ -257,7 +245,7 @@ namespace Tests.Web.Services
 
             if (element == null && IsOptional(selector))
             {
-                element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}");
+                element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}");
             }
 
             return element;
@@ -337,7 +325,7 @@ namespace Tests.Web.Services
 
             if (element == null && IsOptional(selector))
             {
-                element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}");
+                element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}");
             }
 
             return element;
@@ -381,7 +369,7 @@ namespace Tests.Web.Services
 
                 if (element == null && IsOptional(selector))
                 {
-                    element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}");
+                    element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}");
                 }
 
                 if (element == null)
@@ -435,7 +423,7 @@ namespace Tests.Web.Services
 
                 if (element == null && IsOptional(selector))
                 {
-                    element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}");
+                    element = new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}");
                 }
 
                 if (element == null)
@@ -527,7 +515,7 @@ namespace Tests.Web.Services
 
             if ((elements == null || !elements.Any()) && IsOptional(selector))
             {
-                elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}") };
             }
 
             return elements;
@@ -606,7 +594,7 @@ namespace Tests.Web.Services
 
             if ((elements == null || !elements.Any()) && IsOptional(selector))
             {
-                elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}") };
             }
 
             return elements;
@@ -650,7 +638,7 @@ namespace Tests.Web.Services
 
                 if ((elements == null || !elements.Any()) && IsOptional(selector))
                 {
-                    elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                    elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}") };
                 }
 
                 if (elements == null)
@@ -704,7 +692,7 @@ namespace Tests.Web.Services
 
                 if ((elements == null || !elements.Any()) && IsOptional(selector))
                 {
-                    elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid().ToString()}") };
+                    elements = new[] { new WebElement((WebDriver)Driver, $"optional_{Guid.NewGuid()}") };
                 }
 
                 if (elements == null)
@@ -760,7 +748,7 @@ namespace Tests.Web.Services
                     var basePageFile = Path.Combine(basePath, definitionsPagesDirectory, $"{file}.ini");
 
                     builder
-                      .AddIniFile(basePageFile, false, true);
+                        .AddIniFile(basePageFile, false, true);
 
                     var config = builder.Build();
 
@@ -805,6 +793,7 @@ namespace Tests.Web.Services
 
         private Definition GetCurrentScenarioDefinitions()
         {
+#if USING_SPECFLOW
             var basePath = Program.GetCurrentDirectory();
 
             var definitionsDirectory = _definitionConfiguration.GetApplicationDefinitionsLocation();
@@ -853,6 +842,9 @@ namespace Tests.Web.Services
             scenarioDefinitions.PrepareAndValidate(_definitionConfiguration);
 
             return scenarioDefinitions;
+#else
+            return null;
+#endif
         }
 
         #region IDisposable

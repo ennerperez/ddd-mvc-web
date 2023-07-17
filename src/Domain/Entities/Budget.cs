@@ -42,9 +42,9 @@ namespace Domain.Entities
         public DateTime? DeletedAt { get; set; }
 
 #if USING_IDENTITY
-		public User CreatedBy { get; set; }
-		public User ModifiedBy { get; set; }
-		public User DeletedBy { get; set; }
+        public User CreatedBy { get; set; }
+        public User ModifiedBy { get; set; }
+        public User DeletedBy { get; set; }
 #endif
 
     }

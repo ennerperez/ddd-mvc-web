@@ -102,7 +102,7 @@ namespace Tests.Abstractions.Services
 
             if (uppercaseFirstLetter)
             {
-                source = char.ToUpper(source[0]) + source.Substring(1);
+                source = char.ToUpper(source[0]) + source[1..];
             }
 
             return source;

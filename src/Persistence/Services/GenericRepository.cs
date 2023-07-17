@@ -59,7 +59,7 @@ namespace Persistence.Services
                     var prop = typeof(TEntity).GetProperty("IsDeleted");
                     var type = prop?.PropertyType;
                     var constant = Expression.Constant(false);
-                    var methodInfo = type?.GetMethod("Equals", new[] {type});
+                    var methodInfo = type?.GetMethod("Equals", new[] { type });
                     var member = Expression.Property(predicate.Parameters[0], prop);
                     var callExp = Expression.Call(member, methodInfo, constant);
                     var body = Expression.AndAlso(callExp, predicate.Body);
@@ -176,24 +176,24 @@ namespace Persistence.Services
             var args = Array.Empty<MemberExpression>();
 
             Expression searchPredicate = null;
-            if (selector != null && selector.Body is NewExpression)
+            if (selector != null && selector.Body is NewExpression expression1)
             {
-                args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
+                args = expression1.Arguments.OfType<MemberExpression>().ToArray();
             }
-            else if (selector != null && selector.Body is MemberInitExpression)
+            else if (selector != null && selector.Body is MemberInitExpression expression2)
             {
-                args = ((MemberInitExpression)selector.Body).Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
+                args = expression2.Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
             }
 
-            ParameterExpression NestedMember(MemberExpression me)
+            static ParameterExpression NestedMember(MemberExpression me)
             {
-                if (me.Expression is ParameterExpression)
+                if (me.Expression is ParameterExpression expression2)
                 {
-                    return (ParameterExpression)me.Expression;
+                    return expression2;
                 }
-                else if (me.Expression is MemberExpression)
+                else if (me.Expression is MemberExpression expression3)
                 {
-                    return NestedMember((MemberExpression)me.Expression);
+                    return NestedMember(expression3);
                 }
                 else
                 {
@@ -222,10 +222,10 @@ namespace Persistence.Services
                     if (value != null && value != type.GetDefault())
                     {
                         constant = Expression.Constant(value);
-                        var methods = new[] {"Contains", "IndexOf", "Equals", "CompareTo"};
+                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
                         foreach (var method in methods)
                         {
-                            var methodInfo = type.GetMethod(method, new[] {type});
+                            var methodInfo = type.GetMethod(method, new[] { type });
                             if (methodInfo != null)
                             {
                                 var member = item;
@@ -537,7 +537,7 @@ namespace Persistence.Services
             var list = new List<TEntity>();
             foreach (var item in keys)
             {
-                var entity = await _dbSet.FindAsync(item);
+                var entity = await _dbSet.FindAsync(new object[] { item }, cancellationToken: cancellationToken);
                 if (entity != null)
                 {
                     list.Add(entity);
@@ -579,7 +579,7 @@ namespace Persistence.Services
 
         public virtual async Task DeleteAsync<T>(T key, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>
         {
-            var entity = await _dbSet.FindAsync(key);
+            var entity = await _dbSet.FindAsync(new object[] { key }, cancellationToken: cancellationToken);
             if (entity != null)
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))

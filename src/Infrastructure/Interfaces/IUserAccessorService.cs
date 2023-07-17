@@ -10,8 +10,8 @@ namespace Infrastructure.Interfaces
         IPrincipal GetActiveUser();
 
 #if USING_IDENTITY
-		string FindFirstValue(string claimType);
-		string FindLastValue(string claimType);
+        string FindFirstValue(string claimType);
+        string FindLastValue(string claimType);
 #endif
     }
 }

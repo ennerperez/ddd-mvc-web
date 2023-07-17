@@ -9,8 +9,8 @@ using OpenQA.Selenium.Interactions;
 using TechTalk.SpecFlow;
 using Test.Framework.Extended;
 using Tests.Abstractions.Interfaces;
-using Tests.Web.Interfaces;
 // ReSharper disable UnusedParameter.Local
+#pragma warning disable IDE0060 // Remove unused parameter
 
 namespace Tests.Web.Steps
 {
@@ -20,10 +20,10 @@ namespace Tests.Web.Steps
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
         private readonly IAutomationContext _automationContext;
-        private readonly IDefinitionService _definitionService;
+        private readonly IDefinitionService<IWebElement> _definitionService;
         private readonly IStepHelper _stepsHelper;
 
-        public GenericSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext, IStepHelper stepsHelper, IDefinitionService definitionService)
+        public GenericSteps(IAutomationContext automationContext, IStepHelper stepsHelper, IDefinitionService<IWebElement> definitionService)
         {
             _automationContext = automationContext;
             _definitionService = definitionService;
@@ -62,8 +62,7 @@ namespace Tests.Web.Steps
                 }
                 else
                 {
-                    int index;
-                    int.TryParse(position, out index);
+                    _ = int.TryParse(position, out var index);
                     result = index;
                 }
             }
@@ -102,12 +101,7 @@ namespace Tests.Web.Steps
 
         private void TapElement(string name, string type, [CallerMemberName] string method = "")
         {
-            var element = _definitionService.TryFindElement(name, Timeout, MaxAttempts);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
+            var element = _definitionService.TryFindElement(name, Timeout, MaxAttempts) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
             element.Click();
         }
 
@@ -125,12 +119,7 @@ namespace Tests.Web.Steps
 
         private void TapDynamicElement(string name, string token = "", string type = "item", [CallerMemberName] string method = "")
         {
-            var element = _definitionService.TryFindDynamicElement(name, token, type, Timeout, MaxAttempts);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
+            var element = _definitionService.TryFindDynamicElement(name, token, type, Timeout, MaxAttempts) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
             element.Click();
         }
 
@@ -186,26 +175,16 @@ namespace Tests.Web.Steps
         private bool ElementVisible(string name, string type, [CallerMemberName] string method = "")
         {
             bool result;
-            var element = _definitionService.TryFindElement(name);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
-            result = !element.IsOptional() ? element.Displayed : true;
+            var element = _definitionService.TryFindElement(name) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
+            result = element.IsOptional() || element.Displayed;
             return result;
         }
 
         private bool ElementEnabled(string name, string type, [CallerMemberName] string method = "")
         {
             bool result;
-            var element = _definitionService.TryFindElement(name);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
-            result = !element.IsOptional() ? element.Enabled : true;
+            var element = _definitionService.TryFindElement(name) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
+            result = element.IsOptional() || element.Enabled;
             return result;
         }
 
@@ -227,13 +206,8 @@ namespace Tests.Web.Steps
         private bool ElementChecked(string name, string type, [CallerMemberName] string method = "")
         {
             bool result;
-            var element = _definitionService.TryFindElement(name);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
-            result = !element.IsOptional() ? element.GetChecked() : true;
+            var element = _definitionService.TryFindElement(name) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
+            result = element.IsOptional() || element.GetChecked();
             return result;
         }
 
@@ -260,26 +234,16 @@ namespace Tests.Web.Steps
         private bool ElementSelected(string name, string type, [CallerMemberName] string method = "")
         {
             bool result;
-            var element = _definitionService.TryFindElement(name);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
-            result = !element.IsOptional() ? element.Selected : true;
+            var element = _definitionService.TryFindElement(name) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
+            result = element.IsOptional() || element.Selected;
             return result;
         }
 
         private bool ElementEmpty(string name, string type, [CallerMemberName] string method = "")
         {
             bool result;
-            var element = _definitionService.TryFindElement(name);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
-            result = !element.IsOptional() ? element.Text == string.Empty : true;
+            var element = _definitionService.TryFindElement(name) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
+            result = element.IsOptional() || element.Text == string.Empty;
             return result;
         }
 
@@ -315,15 +279,10 @@ namespace Tests.Web.Steps
         private bool SetTextTo(string name, string text, string type, [CallerMemberName] string method = "")
         {
             bool result;
-            var element = _definitionService.TryFindElement(name);
-            if (element == null)
-            {
-                throw new ElementNotInteractableException($"Element [{name}] is not reachable");
-            }
-
+            var element = _definitionService.TryFindElement(name) ?? throw new ElementNotInteractableException($"Element [{name}] is not reachable");
             element.SendKeys(text);
             //TODO: Validate if the text was entered
-            result = !element.IsOptional() ? element.Text == text : true;
+            result = element.IsOptional() || element.Text == text;
             //result = element.GetText() == text;
             return result;
         }
@@ -740,3 +699,4 @@ namespace Tests.Web.Steps
 
     }
 }
+#pragma warning restore IDE0060 // Remove unused parameter

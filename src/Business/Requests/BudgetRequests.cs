@@ -41,17 +41,18 @@ namespace Business.Requests
 
         public async Task<Guid> Handle(CreateBudgetRequest request, CancellationToken cancellationToken)
         {
-            var entity = new Budget();
+            var entity = new Budget
+            {
+                Code = request.Code,
+                ClientId = request.ClientId,
+                Subtotal = request.Subtotal,
+                Taxes = request.Taxes,
+                Total = request.Total,
 
-            entity.Code = request.Code;
-            entity.ClientId = request.ClientId;
-            entity.Subtotal = request.Subtotal;
-            entity.Taxes = request.Taxes;
-            entity.Total = request.Total;
+                CreatedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId())
+            };
 
-            entity.CreatedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId());
-
-            await _repository.CreateAsync(entity);
+            await _repository.CreateAsync(entity, cancellationToken);
 
             return entity.Id;
         }
@@ -153,12 +154,7 @@ namespace Business.Requests
 
         public async Task Handle(UpdateBudgetRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Budget), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Budget), request.Id);
             entity.Code = request.Code;
             entity.ClientId = request.ClientId;
             entity.Status = request.Status;
@@ -228,12 +224,7 @@ namespace Business.Requests
 
         public async Task Handle(PartialUpdateBudgetRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Budget), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Budget), request.Id);
             if (request.Code != null)
             {
                 entity.Code = request.Code;
@@ -344,13 +335,13 @@ namespace Business.Requests
 
             entity.DeletedAt = DateTime.Now;
             var userId = (_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId();
-            int.TryParse(userId, out var deletedById);
+            _ = int.TryParse(userId, out var deletedById);
             if (deletedById != 0)
             {
                 entity.DeletedById = deletedById;
             }
 
-            await _repository.UpdateAsync(entity);
+            await _repository.UpdateAsync(entity, cancellationToken);
         }
     }
 

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+#if USING_SPECFLOW
 using TechTalk.SpecFlow;
+#endif
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Settings;
 using Xunit.Sdk;
@@ -11,10 +13,16 @@ namespace Tests.Business.Contexts
 {
     public class AutomationContext : IAutomationContext
     {
+#if USING_SPECFLOW
         public AutomationContext(IConfiguration configuration, IAutomationConfiguration automationConfiguration, FeatureContext featureContext, ScenarioContext scenarioContext)
+#else
+        public AutomationContext(IConfiguration configuration, IAutomationConfiguration automationConfiguration)
+#endif
         {
+#if USING_SPECFLOW
             FeatureContext = featureContext;
             ScenarioContext = scenarioContext;
+#endif
             AutomationConfiguration = automationConfiguration;
             NavigationStack = new Stack<string>();
             ScreenshotConfiguration = new ScreenshotConfiguration();
@@ -43,8 +51,11 @@ namespace Tests.Business.Contexts
 
         public IAutomationConfiguration AutomationConfiguration { get; }
         public ScreenshotConfiguration ScreenshotConfiguration { get; }
+
+#if USING_SPECFLOW
         public FeatureContext FeatureContext { get; }
         public ScenarioContext ScenarioContext { get; }
+#endif
 
         public bool IsInitialized { get; set; }
 
@@ -59,10 +70,7 @@ namespace Tests.Business.Contexts
         }
         public void AddException(Exception e)
         {
-            if (_exceptions == null)
-            {
-                _exceptions = new List<Exception>();
-            }
+            _exceptions ??= new List<Exception>();
 
             _exceptions.Add(e);
         }
@@ -96,10 +104,7 @@ namespace Tests.Business.Contexts
 
         public void SetAttribute(string attributeKey, object attributeObject)
         {
-            if (_attributeLibrary == null)
-            {
-                _attributeLibrary = new Dictionary<string, object>();
-            }
+            _attributeLibrary ??= new Dictionary<string, object>();
 
             _attributeLibrary.Remove(attributeKey);
             _attributeLibrary.Add(attributeKey, attributeObject);

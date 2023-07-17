@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
+#if USING_SPECFLOW
 using TechTalk.SpecFlow;
+#endif
 using Tests.Abstractions.Settings;
 
 namespace Tests.Abstractions.Interfaces
 {
-    public interface IAutomationContext : ISpecFlowContext, IAttributeLibrary
+    public interface IAutomationContext : IAttributeLibrary
+#if USING_SPECFLOW
+        , ISpecFlowContext
+#endif
     {
 
         string AutomationType { get; set; }
@@ -17,8 +22,10 @@ namespace Tests.Abstractions.Interfaces
         IAutomationConfiguration AutomationConfiguration { get; }
         ScreenshotConfiguration ScreenshotConfiguration { get; }
 
+#if USING_SPECFLOW
         FeatureContext FeatureContext { get; }
         ScenarioContext ScenarioContext { get; }
+#endif
 
         void AddException(Exception e);
         bool HasExceptions();

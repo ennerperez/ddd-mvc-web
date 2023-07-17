@@ -16,7 +16,7 @@ namespace Domain.Abstractions
 
         public override bool Equals(object obj)
         {
-            return obj != null && obj is Entity<TKey> && Id.Equals(((Entity<TKey>)obj).Id);
+            return obj != null && obj is Entity<TKey> entity && Id.Equals(entity.Id);
         }
 
         protected bool Equals(Entity<TKey> other)

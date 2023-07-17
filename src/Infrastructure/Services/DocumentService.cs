@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Microsoft.Extensions.Configuration;
 
 #if USING_QUESTPDF
 using QuestPDF.Fluent;
@@ -12,14 +11,6 @@ namespace Infrastructure.Services
 {
     public class DocumentService : IDocumentService
     {
-        // ReSharper disable once NotAccessedField.Local
-        private readonly IConfiguration _configuration;
-
-        public DocumentService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         public T Compose<T>(object model = null) where T : IDocument
         {
             var instance = (T)Activator.CreateInstance(typeof(T), model);
@@ -71,10 +62,8 @@ namespace Infrastructure.Services
                 var fonts = Directory.GetFiles(path, $"*.{format}");
                 foreach (var font in fonts)
                 {
-                    using (var fs = File.OpenRead(font))
-                    {
-                        QuestPDF.Drawing.FontManager.RegisterFont(fs);
-                    }
+                    using var fs = File.OpenRead(font);
+                    QuestPDF.Drawing.FontManager.RegisterFont(fs);
                 }
             }
 #endif

@@ -89,9 +89,9 @@ namespace Infrastructure.Interfaces
 
         Task DeleteAsync(string path, CancellationToken cancellationToken = default);
 
-		Task<string[]> GetFilesAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default);
-		Task<FileRecord[]> GetFilesInfoAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default);
-		Task<FileRecord> GetFileInfoAsync(string path, CancellationToken cancellationToken = default);
+        Task<string[]> GetFilesAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default);
+        Task<FileRecord[]> GetFilesInfoAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default);
+        Task<FileRecord> GetFileInfoAsync(string path, CancellationToken cancellationToken = default);
 
         #endregion
 

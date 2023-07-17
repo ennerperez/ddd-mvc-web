@@ -8,19 +8,21 @@ namespace System.Net.Http
         // the HttpClient object is constructed in a shared project.
         public static HttpClientHandler GetInsecureHandler()
         {
-            var handler = new HttpClientHandler();
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            var handler = new HttpClientHandler
             {
-#if DEBUG
-                if (cert.Issuer.Equals("CN=localhost"))
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
                 {
-                    return true;
-                }
+#if DEBUG
+                    if (cert.Issuer.Equals("CN=localhost"))
+                    {
+                        return true;
+                    }
 
-                return errors == Security.SslPolicyErrors.None;
+                    return errors == Security.SslPolicyErrors.None;
 #else
-                return true;
+                    return true;
 #endif
+                }
             };
             return handler;
         }

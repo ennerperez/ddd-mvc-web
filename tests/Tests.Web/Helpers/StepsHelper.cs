@@ -65,12 +65,10 @@ namespace Tests.Web.Helpers
                     try
                     {
                         var buffer = screenshot.AsByteArray;
-                        using (var image = Image.Load(buffer))
-                        {
-                            var width = 192;
-                            image.Mutate(x => x.Resize(width, 0));
-                            imageBase64 = image.ToBase64String(SixLabors.ImageSharp.Formats.Jpeg.JpegFormat.Instance);
-                        }
+                        using var image = Image.Load(buffer);
+                        var width = 192;
+                        image.Mutate(x => x.Resize(width, 0));
+                        imageBase64 = image.ToBase64String(SixLabors.ImageSharp.Formats.Jpeg.JpegFormat.Instance);
                     }
                     catch (Exception e)
                     {

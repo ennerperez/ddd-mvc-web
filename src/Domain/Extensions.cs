@@ -32,6 +32,8 @@ namespace Domain
         /// <returns></returns>
         public static IServiceCollection AddDomain<T>(this IServiceCollection services, Action<T> configureOptions = null)
         {
+            var options = Activator.CreateInstance<T>();
+            configureOptions?.Invoke(options);
             services.AddDomain();
             return services;
         }

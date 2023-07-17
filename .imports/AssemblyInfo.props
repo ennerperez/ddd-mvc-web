@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'false'">
-        <None Include="$(_FilesDirectory)AssemblyInfo.General.tt" Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.General.tt')">
-            <Link>Properties\AssemblyInfo.General.tt</Link>
-            <Generator>TextTemplatingFileGenerator</Generator>
-            <LastGenOutput>AssemblyInfo.General.cs</LastGenOutput>
-            <DependentUpon>AssemblyInfo.cs</DependentUpon>
-        </None>
-        <None Include="$(_FilesDirectory)AssemblyInfo.Version.tt" Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.Version.tt')">
-            <Link>Properties\AssemblyInfo.Version.tt</Link>
-            <Generator>TextTemplatingFileGenerator</Generator>
-            <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
-            <DependentUpon>AssemblyInfo.cs</DependentUpon>
-        </None>
-        <Compile Include="$(_FilesDirectory)AssemblyInfo.General.cs" Condition="Exists('$(_FilesDirectory)AssemblyInfo.General.cs')">
-            <Link>Properties\AssemblyInfo.General.cs</Link>
-            <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.General.tt')">AssemblyInfo.General.tt</DependentUpon>
-            <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'false' OR !Exists('$(_FilesDirectory)AssemblyInfo.General.tt')">AssemblyInfo.cs</DependentUpon>
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-        </Compile>
-        <Compile Include="$(_FilesDirectory)AssemblyInfo.Version.cs" Condition="Exists('$(_FilesDirectory)AssemblyInfo.Version.cs')">
-            <Link>Properties\AssemblyInfo.Version.cs</Link>
-            <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.Version.tt')">AssemblyInfo.Version.tt</DependentUpon>
-            <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'false' OR !Exists('$(_FilesDirectory)AssemblyInfo.Version.tt')">AssemblyInfo.cs</DependentUpon>
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-        </Compile>
-    </ItemGroup>
-    <ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'true'">
-        <None Remove="*\AssemblyInfo.*"/>
-        <Compile Remove="*\AssemblyInfo.*"/>
-    </ItemGroup>
+  <ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'false'">
+    <None Include="$(_FilesDirectory)AssemblyInfo.General.tt" Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.General.tt')">
+      <Link>Properties\AssemblyInfo.General.tt</Link>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.General.cs</LastGenOutput>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </None>
+    <None Include="$(_FilesDirectory)AssemblyInfo.Version.tt" Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.Version.tt')">
+      <Link>Properties\AssemblyInfo.Version.tt</Link>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </None>
+    <Compile Include="$(_FilesDirectory)AssemblyInfo.General.cs" Condition="Exists('$(_FilesDirectory)AssemblyInfo.General.cs')">
+      <Link>Properties\AssemblyInfo.General.cs</Link>
+      <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.General.tt')">AssemblyInfo.General.tt</DependentUpon>
+      <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'false' OR !Exists('$(_FilesDirectory)AssemblyInfo.General.tt')">AssemblyInfo.cs</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="$(_FilesDirectory)AssemblyInfo.Version.cs" Condition="Exists('$(_FilesDirectory)AssemblyInfo.Version.cs')">
+      <Link>Properties\AssemblyInfo.Version.cs</Link>
+      <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'true' AND Exists('$(_FilesDirectory)AssemblyInfo.Version.tt')">AssemblyInfo.Version.tt</DependentUpon>
+      <DependentUpon Condition="'$(UsingAssemblyInfoTemplate)' == 'false' OR !Exists('$(_FilesDirectory)AssemblyInfo.Version.tt')">AssemblyInfo.cs</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(GenerateAssemblyInfo)' == 'true'">
+    <None Remove="*\AssemblyInfo.*"/>
+    <Compile Remove="*\AssemblyInfo.*"/>
+  </ItemGroup>
 
 </Project>

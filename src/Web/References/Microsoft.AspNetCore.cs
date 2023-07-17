@@ -42,7 +42,6 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Auth0.AspNetCore.Authentication;
 #endif
 
-#pragma warning disable 618
 // ReSharper disable CheckNamespace
 
 #if USING_AUTH0
@@ -371,7 +370,7 @@ namespace Microsoft.AspNetCore
             {
                 var value = session.GetString(key);
 
-                return value == null ? default(T) : JsonSerializer.Deserialize<T>(value);
+                return value == null ? default : JsonSerializer.Deserialize<T>(value);
             }
 
             public static T GetFromSession<T>(this Mvc.ControllerBase controller, string key = null) where T : class
@@ -440,7 +439,9 @@ namespace Microsoft.AspNetCore
                 return new HtmlBlock(helper.ViewContext, key, getPageList);
             }
 
+#pragma warning disable IDE0060 // Remove unused parameter
             public static HtmlString PageBlocks(this IHtmlHelper helper, string key)
+#pragma warning restore IDE0060 // Remove unused parameter
             {
                 if (PageList == null || !PageList.Any(m => m.Key.StartsWith(key)))
                 {
@@ -627,7 +628,7 @@ namespace Microsoft.AspNetCore
             public static bool UsingIdentity(this IHtmlHelper htmlHelper)
             {
 #if USING_IDENTITY
-				return true;
+                return true;
 #else
                 return false;
 #endif

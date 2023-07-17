@@ -29,7 +29,9 @@ namespace System
         public static Dictionary<TValue, string> ToDictionary<TValue>(this Type type) where TValue : struct, IComparable<TValue>, IEquatable<TValue>
         {
             if (!type.IsEnum)
+            {
                 throw new ArgumentException("Type must be an enum");
+            }
 
             var result = new Dictionary<TValue, string>();
             var values = Enum.GetValues(type);
@@ -37,10 +39,11 @@ namespace System
             foreach (var item in values)
             {
                 var memInfo = type.GetMember(type.GetEnumName(item) ?? string.Empty);
-                var description = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault() as DescriptionAttribute;
 
-                if (description != null)
+                if (memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault() is DescriptionAttribute description)
+                {
                     result.Add((TValue)item, description.Description);
+                }
             }
 
             return result;

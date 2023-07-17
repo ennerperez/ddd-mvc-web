@@ -41,7 +41,7 @@ namespace Web.Areas.Admin.Reports
             }
         }
 
-        private readonly TextStyle titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
+        private readonly TextStyle _titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
         private void BuildSingleReport(PageDescriptor page)
         {
             page.Margin(25);
@@ -55,7 +55,7 @@ namespace Web.Areas.Admin.Reports
                 {
                     row.RelativeItem().Column(column =>
                     {
-                        column.Item().Text($"Budget #{record.Code}").Style(titleStyle);
+                        column.Item().Text($"Budget #{record.Code}").Style(_titleStyle);
 
                         column.Item().Text(text =>
                         {
@@ -96,7 +96,7 @@ namespace Web.Areas.Admin.Reports
                 {
                     row.RelativeItem().PaddingBottom(4).Column(column =>
                     {
-                        column.Item().Text("Budgets").Style(titleStyle);
+                        column.Item().Text("Budgets").Style(_titleStyle);
                     });
                 })
             );

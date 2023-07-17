@@ -1,5 +1,4 @@
 using TechTalk.SpecFlow;
-using Tests.Abstractions.Interfaces;
 
 namespace Tests.Web.Steps
 {
@@ -8,9 +7,5 @@ namespace Tests.Web.Steps
     {
 
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
-
-        public ScopedSteps(IAutomationConfiguration automationConfiguration, IAutomationContext automationContext)
-        {
-        }
     }
 }

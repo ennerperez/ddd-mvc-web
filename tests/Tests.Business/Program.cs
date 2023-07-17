@@ -15,13 +15,17 @@ using Microsoft.Extensions.Logging;
 using Persistence;
 using Persistence.Contexts;
 using Serilog;
+#if USING_SPECFLOW
 using SolidToken.SpecFlow.DependencyInjection;
 using TechTalk.SpecFlow;
+#endif
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Tests.Business
 {
+#if USING_SPECFLOW
     [Binding]
+#endif
     internal class Program
     {
         #region IOC
@@ -98,6 +102,9 @@ namespace Tests.Business
                 Logger = factory.CreateLogger(typeof(Program));
             }
 
+            Container.GetService<CacheContext>().Initialize();
+            Container.GetService<DefaultContext>().Initialize();
+
             // Arguments
             s_arguments = new Dictionary<string, string>();
             var assembly = Assembly.GetExecutingAssembly().Location;
@@ -119,7 +126,9 @@ namespace Tests.Business
             IsInitialized = true;
         }
 
+#if USING_SPECFLOW
         [ScenarioDependencies]
+#endif
         public static IServiceCollection CreateServices()
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;

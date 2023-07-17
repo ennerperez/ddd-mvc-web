@@ -32,10 +32,12 @@ namespace Business.Requests
 
         public async Task<int> Handle(CreateSettingRequest request, CancellationToken cancellationToken)
         {
-            var entity = new Setting();
-            entity.Key = request.Key;
-            entity.Type = request.Type;
-            entity.Value = request.Value;
+            var entity = new Setting
+            {
+                Key = request.Key,
+                Type = request.Type,
+                Value = request.Value
+            };
 
             await _repository.CreateAsync(entity, cancellationToken);
 
@@ -95,8 +97,8 @@ namespace Business.Requests
 
         public async Task<Setting[]> Handle(RepositoryRequest<Setting, Setting> request, CancellationToken cancellationToken)
         {
-            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted);
-            var items = await entities.ToArrayAsync();
+            var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
+            var items = await entities.ToArrayAsync(cancellationToken: cancellationToken);
             return items;
         }
     }
@@ -124,12 +126,7 @@ namespace Business.Requests
 
         public async Task Handle(UpdateSettingRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Setting), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Setting), request.Id);
             entity.Key = request.Key;
             entity.Type = request.Type;
             entity.Value = request.Value;
@@ -178,12 +175,7 @@ namespace Business.Requests
 
         public async Task Handle(PartialUpdateSettingRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Setting), request.Id);
-            }
-
+            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Setting), request.Id);
             if (string.IsNullOrWhiteSpace(request.Key))
             {
                 entity.Key = request.Key;
@@ -243,12 +235,7 @@ namespace Business.Requests
 
         public async Task Handle(DeleteSettingRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken);
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Setting), request.Id);
-            }
-
+            _ = await _repository.FirstOrDefaultAsync(s => s, p => p.Id == request.Id, cancellationToken: cancellationToken) ?? throw new NotFoundException(nameof(Setting), request.Id);
             await _repository.DeleteAsync(request.Id, cancellationToken);
         }
     }

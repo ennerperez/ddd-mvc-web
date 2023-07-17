@@ -47,12 +47,12 @@ namespace Persistence.Contexts
             modelBuilder.AddProviderTypeConventions(m =>
             {
                 m.Provider = ProviderName;
-                m.DecimalConfig.Add(6, new[] {"Lat", "Long"});
+                m.DecimalConfig.Add(6, new[] { "Lat", "Long" });
                 m.Exclude = null;
                 m.UseDateTime = false;
             });
             modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
-            modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>(ProviderName);
+            modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -62,7 +62,6 @@ namespace Persistence.Contexts
             optionsBuilder?.EnableSensitiveDataLogging();
 #endif
         }
-
 
         #region DbSet
 

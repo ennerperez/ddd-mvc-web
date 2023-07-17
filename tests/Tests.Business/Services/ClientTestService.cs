@@ -4,7 +4,12 @@ using System.Threading.Tasks;
 using Business.Requests;
 using Domain.Entities;
 using MediatR;
+#if USING_SPECFLOW
 using TechTalk.SpecFlow;
+#else
+using Test.Framework.Extended;
+
+#endif
 using Tests.Business.Interfaces;
 
 namespace Tests.Business.Services

@@ -15,6 +15,7 @@ namespace Tests.Abstractions.Hooks
             _configuration = configuration;
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         [BeforeTestRun]
         public static void BeforeTestRunInjection(ITestRunnerManager testRunnerManager, ITestRunner testRunner)
         {
@@ -24,6 +25,7 @@ namespace Tests.Abstractions.Hooks
         public static void AfterTestRunInjection(ITestRunnerManager testRunnerManager, ITestRunner testRunner)
         {
         }
+#pragma warning restore IDE0060 // Remove unused parameter
 
         [BeforeScenario]
         public static void BeforeScenario()

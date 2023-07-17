@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -94,6 +95,9 @@ namespace Microsoft.EntityFrameworkCore
 
         public static void Initialize(this DbContext context)
         {
+            if (!context.Database.GetMigrations().Any())
+                throw new NullReferenceException("There is no migrations in the current context");
+
             context.Database.Migrate();
         }
 
@@ -257,13 +261,11 @@ namespace Microsoft.EntityFrameworkCore
                     throw new InvalidDataException($"The context {contextName} has more than one connection string");
                 }
 
-                providerName = connectionStrings.First().Key.Split("_").Last();
+                providerName = connectionStrings.First().Key.Split(".").Last();
             }
 
-            var connectionString = config.GetConnectionString($"{contextName}_{providerName}");
+            var connectionString = config.GetConnectionString($"{contextName}.{providerName}");
 
-#pragma warning disable 168
-#pragma warning disable 219
 #if USING_DATABASE_PROVIDER
             const string MigrationsHistoryTableName = "__EFMigrationsHistory";
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -275,8 +277,6 @@ namespace Microsoft.EntityFrameworkCore
             {
 #if USING_SQLITE
                 case DatabaseProviders.Sqlite:
-#pragma warning restore 219
-#pragma warning restore 168
                     DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder() { ConnectionString = connectionString };
                     var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(data source ?= ?)(.*)(;?)").Groups[2].Value;
                     var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);

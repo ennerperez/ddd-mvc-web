@@ -23,10 +23,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<int>
         {
-            if (selector == null)
-            {
-                selector = (s) => s;
-            }
+            selector ??= (s) => s;
 
             return await @this.SendWithRepository<TEntity, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -73,10 +70,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
         {
-            if (selector == null)
-            {
-                selector = (s) => s;
-            }
+            selector ??= (s) => s;
 
             return await @this.SendWithRepository<TEntity, TKey, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -123,10 +117,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<int>
         {
-            if (selector == null)
-            {
-                selector = (s) => s;
-            }
+            selector ??= (s) => s;
 
             return @this.SendWithPage<TEntity, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -173,10 +164,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
         {
-            if (selector == null)
-            {
-                selector = (s) => s;
-            }
+            selector ??= (s) => s;
 
             return await @this.SendWithPage<TEntity, TKey, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }

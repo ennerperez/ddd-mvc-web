@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{52F87F
 		NOTICE.md = NOTICE.md
 		README.md = README.md
 		global.json = global.json
+		dockerfile = dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB0427-F7EC-46D1-9D9A-66DC36A3FAD8}"

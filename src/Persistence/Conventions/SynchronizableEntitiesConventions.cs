@@ -5,7 +5,7 @@ namespace Persistence.Conventions
 {
     internal static class SynchronizableEntitiesConventions
     {
-        public static void AddSynchronizableEntitiesConventions<T>(this ModelBuilder modelBuilder, string provider)
+        public static void AddSynchronizableEntitiesConventions<T>(this ModelBuilder modelBuilder)
         {
             var items = modelBuilder.Model.GetEntityTypes();
             foreach (var t in items)

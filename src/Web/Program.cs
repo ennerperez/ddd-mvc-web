@@ -16,7 +16,6 @@ namespace Web
     public static class Program
     {
         internal static string Name { get; private set; }
-        private static IServiceProvider ServiceProvider { get; set; }
         public static void Main(string[] args)
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -53,7 +52,6 @@ namespace Web
                     s.AddSerilog(logger);
                 });
                 var build = host.Build();
-                ServiceProvider = build.Services;
                 build.Run();
             }
             catch (Exception ex)
