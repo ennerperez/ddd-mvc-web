@@ -56,6 +56,9 @@ namespace Business
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             });
 
+#if USING_LOCALIZATION
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+#endif
             return services;
         }
     }
