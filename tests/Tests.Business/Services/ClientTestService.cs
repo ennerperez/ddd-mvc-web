@@ -8,6 +8,7 @@ using MediatR;
 using TechTalk.SpecFlow;
 #else
 using Test.Framework.Extended;
+
 #endif
 using Tests.Business.Interfaces;
 

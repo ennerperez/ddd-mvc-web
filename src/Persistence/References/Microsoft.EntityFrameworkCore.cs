@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -94,6 +95,9 @@ namespace Microsoft.EntityFrameworkCore
 
         public static void Initialize(this DbContext context)
         {
+            if (!context.Database.GetMigrations().Any())
+                throw new NullReferenceException("There is no migrations in the current context");
+
             context.Database.Migrate();
         }
 

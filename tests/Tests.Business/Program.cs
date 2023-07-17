@@ -102,6 +102,9 @@ namespace Tests.Business
                 Logger = factory.CreateLogger(typeof(Program));
             }
 
+            Container.GetService<CacheContext>().Initialize();
+            Container.GetService<DefaultContext>().Initialize();
+
             // Arguments
             s_arguments = new Dictionary<string, string>();
             var assembly = Assembly.GetExecutingAssembly().Location;
