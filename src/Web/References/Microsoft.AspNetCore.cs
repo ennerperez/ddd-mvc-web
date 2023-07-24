@@ -633,6 +633,12 @@ namespace Microsoft.AspNetCore
                 return false;
 #endif
             }
+
+            public static string GetControllerName<TController>(this IHtmlHelper htmlHelper) where TController : ControllerBase
+            {
+                return typeof(TController).Name.Replace(nameof(Controller), string.Empty);
+            }
+
         }
 
         namespace Rendering
@@ -733,6 +739,14 @@ namespace Microsoft.AspNetCore
 
                     output.Attributes.Add("class", $"{existingClasses} {cssClass}");
                 }
+            }
+        }
+
+        public static class MvcExtensions
+        {
+            public static string GetControllerName<TController>(this TController controller) where TController : ControllerBase
+            {
+                return typeof(TController).Name.Replace(nameof(Controller), string.Empty);
             }
         }
     }
