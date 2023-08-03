@@ -154,7 +154,11 @@ namespace Web
 #endif
 
             services.AddHttpContextAccessor();
+#if USING_IDENTITY
+            services.AddTransient<IUserAccessorService<User>, UserAccessorService>();
+#else
             services.AddTransient<IUserAccessorService, UserAccessorService>();
+#endif
 
 #if USING_IDENTITY
             services.AddTransient<IEmailSender, SmtpSender>();
