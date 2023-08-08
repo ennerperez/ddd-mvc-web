@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Template Paths">
-    <SourceDirectory>$(MSBuildThisFileDirectory)..\</SourceDirectory>
-    <_ImportDirectory>$(SourceDirectory).imports\</_ImportDirectory>
+    <SourceDirectory>$(MSBuildThisFileDirectory)..\..\</SourceDirectory>
+    <_ImportDirectory>$(SourceDirectory)src\.imports\</_ImportDirectory>
     <_FilesDirectory>$(SourceDirectory)src\.files\</_FilesDirectory>
     <TestsDirectory>$(MSBuildThisFileDirectory)..\..\tests\</TestsDirectory>
   </PropertyGroup>

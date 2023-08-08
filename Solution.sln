@@ -27,13 +27,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB04
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{559DCA76-61B1-4044-876F-1CD1C274A94A}"
 	ProjectSection(SolutionItems) = preProject
-		.imports\AssemblyInfo.props = .imports\AssemblyInfo.props
-		.imports\Features.props = .imports\Features.props
-		.imports\Features.targets = .imports\Features.targets
-		.imports\Project.props = .imports\Project.props
-		.imports\Project.targets = .imports\Project.targets
-		.imports\Template.props = .imports\Template.props
-		.imports\Template.targets = .imports\Template.targets
+		src\.imports\AssemblyInfo.props = src\.imports\AssemblyInfo.props
+		src\.imports\Features.props = src\.imports\Features.props
+		src\.imports\Features.targets = src\.imports\Features.targets
+		src\.imports\Project.props = src\.imports\Project.props
+		src\.imports\Project.targets = src\.imports\Project.targets
+		src\.imports\Template.props = src\.imports\Template.props
+		src\.imports\Template.targets = src\.imports\Template.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{8B90AFCC-AD3F-4428-9839-AA194764BB56}"
