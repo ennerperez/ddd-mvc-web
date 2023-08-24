@@ -2,7 +2,7 @@ using System;
 
 namespace Web.Models
 {
-    public class AboutViewModel
+    public class InfoViewModel
     {
         public string Name { get; set; }
         public string Title { get; set; }

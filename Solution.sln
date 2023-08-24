@@ -5,7 +5,6 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{52F87FF9-6CB4-440A-90D7-466F82BB688C}"
 	ProjectSection(SolutionItems) = preProject
-		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.editoricon.png = .editoricon.png
 		.gitattributes = .gitattributes
@@ -17,7 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{52F87F
 		NOTICE.md = NOTICE.md
 		README.md = README.md
 		global.json = global.json
-		dockerfile = dockerfile
+		docker-compose.yml = docker-compose.yml
+		.dockerignore = .dockerignore
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB0427-F7EC-46D1-9D9A-66DC36A3FAD8}"
@@ -27,13 +27,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB04
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{559DCA76-61B1-4044-876F-1CD1C274A94A}"
 	ProjectSection(SolutionItems) = preProject
-		.imports\AssemblyInfo.props = .imports\AssemblyInfo.props
-		.imports\Features.props = .imports\Features.props
-		.imports\Features.targets = .imports\Features.targets
-		.imports\Project.props = .imports\Project.props
-		.imports\Project.targets = .imports\Project.targets
-		.imports\Template.props = .imports\Template.props
-		.imports\Template.targets = .imports\Template.targets
+		src\.imports\AssemblyInfo.props = src\.imports\AssemblyInfo.props
+		src\.imports\Features.props = src\.imports\Features.props
+		src\.imports\Features.targets = src\.imports\Features.targets
+		src\.imports\Project.props = src\.imports\Project.props
+		src\.imports\Project.targets = src\.imports\Project.targets
+		src\.imports\Template.props = src\.imports\Template.props
+		src\.imports\Template.targets = src\.imports\Template.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{8B90AFCC-AD3F-4428-9839-AA194764BB56}"

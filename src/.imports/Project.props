@@ -9,6 +9,6 @@
     <Deterministic>false</Deterministic>
   </PropertyGroup>
 
-  <Import Project="$(_ImportDirectory)AssemblyInfo.props"/>
+  <Import Project="$(_ImportDirectory)AssemblyInfo.props" />
 
 </Project>

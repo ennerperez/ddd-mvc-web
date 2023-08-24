@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
@@ -100,6 +101,50 @@ namespace Web.Services
                             dbSet.AddRange(entities);
                             await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
                         }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "{Message}", e.Message);
+                }
+                finally
+                {
+                    await context.Database.CloseConnectionAsync();
+                }
+            }
+        }
+
+        private async Task FromMockaroo<T>(DefaultContext context, string id, int count, string key, string source = "Data", CancellationToken cancellationToken = default) where T : class
+        {
+            var dbSet = context.Set<T>();
+            if (!await dbSet.AnyAsync(cancellationToken: cancellationToken))
+            {
+                try
+                {
+                    List<T> entities;
+                    if (!Directory.Exists(source) && source != null)
+                        Directory.CreateDirectory(source);
+                    var targetFile = Path.Combine(source ?? string.Empty, $"{id}.json");
+                    if (!File.Exists(targetFile))
+                    {
+                        using var client = new HttpClient();
+                        var url = $"https://api.mockaroo.com/api/{id}?count={count}&key={key}";
+                        var response = await client.GetAsync(url, cancellationToken);
+                        response.EnsureSuccessStatusCode();
+                        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                        await File.WriteAllTextAsync(targetFile, responseBody, cancellationToken);
+                        entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
+                    }
+                    else
+                    {
+                        var responseBody = await File.ReadAllTextAsync(targetFile, cancellationToken);
+                        entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
+                    }
+
+                    if (entities != null && entities.Any())
+                    {
+                        dbSet.AddRange(entities);
+                        await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
                     }
                 }
                 catch (Exception e)

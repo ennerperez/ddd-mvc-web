@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  instance:
+    container_name: W0
+    build:
+      context: /
+      dockerfile: src/Web/dockerfile
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 5000:5000/tcp
+      - 5001:5001/tcp

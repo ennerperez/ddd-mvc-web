@@ -53,6 +53,7 @@
   <PropertyGroup Label="Options">
     <UsingSassWatch>true</UsingSassWatch>
     <UsingDatadog>true</UsingDatadog>
+    <UsingHealthCheck>true</UsingHealthCheck>
     <UsingCors>true</UsingCors>
     <UsingCompression>true</UsingCompression>
     <UsingSession>true</UsingSession>

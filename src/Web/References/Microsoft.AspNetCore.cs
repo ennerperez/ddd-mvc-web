@@ -26,7 +26,7 @@ using Microsoft.AspNetCore.Authentication.ApiKey;
 #if USING_COOKIES
 using Microsoft.AspNetCore.Authentication.Cookies;
 #endif
-#if USING_BEARER || USING_SMARTSCHEMA
+#if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
 #if USING_OPENID
@@ -335,10 +335,12 @@ namespace Microsoft.AspNetCore
 						//TODO: Better implementation
 						var hasOpenId = true;
 #endif
+#if USING_BEARER
                         if (hasJwtBearerhHeader)
                         {
                             return JwtBearerDefaults.AuthenticationScheme;
                         }
+#endif
 #if USING_APIKEY
 						else if (hasApiKeyHeader)
 							return ApiKeyAuthenticationDefaults.AuthenticationScheme;
@@ -633,6 +635,12 @@ namespace Microsoft.AspNetCore
                 return false;
 #endif
             }
+
+            public static string GetControllerName<TController>(this IHtmlHelper htmlHelper) where TController : ControllerBase
+            {
+                return typeof(TController).Name.Replace(nameof(Controller), string.Empty);
+            }
+
         }
 
         namespace Rendering
@@ -733,6 +741,14 @@ namespace Microsoft.AspNetCore
 
                     output.Attributes.Add("class", $"{existingClasses} {cssClass}");
                 }
+            }
+        }
+
+        public static class MvcExtensions
+        {
+            public static string GetControllerName<TController>(this TController controller) where TController : ControllerBase
+            {
+                return typeof(TController).Name.Replace(nameof(Controller), string.Empty);
             }
         }
     }
