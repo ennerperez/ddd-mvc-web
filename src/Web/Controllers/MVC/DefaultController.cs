@@ -49,9 +49,9 @@ namespace Web.Controllers.MVC
         }
 
         [AllowAnonymous]
-        [Route("Health")]
+        [Route("Info")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Health()
+        public IActionResult Info()
         {
             var domain = Assembly.GetAssembly(typeof(Domain.Extensions));
             var infrastructure = Assembly.GetAssembly(typeof(Infrastructure.Extensions));
@@ -59,7 +59,7 @@ namespace Web.Controllers.MVC
             var business = Assembly.GetAssembly(typeof(Business.Extensions));
             var web = Assembly.GetAssembly(typeof(Program));
 
-            var models = new List<AboutViewModel>();
+            var models = new List<InfoViewModel>();
 
             if (domain != null)
             {
@@ -130,7 +130,7 @@ namespace Web.Controllers.MVC
 
             foreach (var item in assemblies)
             {
-                var model = new AboutViewModel() { Name = item.Name, Version = item.Version, Dependency = true, };
+                var model = new InfoViewModel() { Name = item.Name, Version = item.Version, Dependency = true, };
                 if (models.All(m => m.Name != model.Name))
                 {
                     models.Add(model);

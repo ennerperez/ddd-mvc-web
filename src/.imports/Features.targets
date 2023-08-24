@@ -38,6 +38,7 @@
   <PropertyGroup>
     <BuildConstants Condition="'$(UsingAzureApplicationInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
     <BuildConstants Condition="'$(UsingDatadog)' == 'true'">$(BuildConstants)USING_DATADOG;</BuildConstants>
+    <BuildConstants Condition="'$(UsingHealthCheck)' == 'true'">$(BuildConstants)USING_HEALTHCHECK;</BuildConstants>
     <BuildConstants Condition="'$(UsingNewtonsoft)' == 'true'">$(BuildConstants)USING_NEWTONSOFT;</BuildConstants>
     <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
     <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>

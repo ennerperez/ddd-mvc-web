@@ -260,6 +260,10 @@ namespace Web
                 options.UseCaseSensitivePaths = true;
             });
 
+#if USING_HEALTHCHECK
+            services.AddHealthChecks();
+#endif
+
 #if USING_COMPRESSION
 
             services.AddResponseCompression(config =>
@@ -648,6 +652,9 @@ namespace Web
             app.UseResponseCompression();
 #endif
 
+#if USING_HEALTHCHECK
+            app.UseHealthChecks("/Health");
+#endif
             app.UseRouting();
 
 #if USING_SWAGGER
