@@ -100,17 +100,17 @@ namespace Web
         {
             Configuration = configuration;
 #if USING_LOCALIZATION
-			SupportedCultures = configuration.GetSection("CultureInfo:SupportedCultures").Get<string[]>().Select(m => new CultureInfo(m)).ToArray();
-			CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"] ?? "en-US");
+            SupportedCultures = configuration.GetSection("CultureInfo:SupportedCultures").Get<string[]>().Select(m => new CultureInfo(m)).ToArray();
+            CurrencyCulture = new CultureInfo(configuration["CultureInfo:CurrencyCulture"] ?? "en-US");
 #endif
         }
 
         internal IConfiguration Configuration { get; private set; }
 
 #if USING_LOCALIZATION
-		internal CultureInfo[] SupportedCultures { get; private set; }
+        internal CultureInfo[] SupportedCultures { get; private set; }
 
-		internal static CultureInfo CurrencyCulture { get; private set; }
+        internal static CultureInfo CurrencyCulture { get; private set; }
 
 #endif
 
@@ -121,11 +121,11 @@ namespace Web
             services.AddSassCompiler();
 #endif
 #if USING_INSIGHTS
-			// The following line enables Application Insights telemetry collection.
-			services.AddApplicationInsightsTelemetry(options =>
-			{
-				options.ConnectionString = Configuration["AzureSettings:ApplicationInsights:ConnectionString"];
-			});
+            // The following line enables Application Insights telemetry collection.
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ConnectionString = Configuration["AzureSettings:ApplicationInsights:ConnectionString"];
+            });
 #endif
 
 #if USING_COOKIES
@@ -144,13 +144,13 @@ namespace Web
             services.AddDatabaseDeveloperPageExceptionFilter();
 
 #if USING_LOCALIZATION
-			services.Configure<RequestLocalizationOptions>(options =>
-			{
-				options.DefaultRequestCulture = new RequestCulture(SupportedCultures.First());
-				options.SupportedCultures = SupportedCultures;
-				options.SupportedUICultures = SupportedCultures;
-			});
-			services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture(SupportedCultures.First());
+                options.SupportedCultures = SupportedCultures;
+                options.SupportedUICultures = SupportedCultures;
+            });
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
 #endif
 
             services.AddHttpContextAccessor();
@@ -231,7 +231,7 @@ namespace Web
 #if USING_NEWTONSOFT
             services.AddControllersWithViews()
 #if USING_LOCALIZATION
-				.AddViewLocalization()
+                .AddViewLocalization()
 #endif
 #if DEBUG
                 .AddRazorRuntimeCompilation()
@@ -310,9 +310,9 @@ namespace Web
                 option.Cookie.HttpOnly = true;
                 option.Cookie.IsEssential = true;
 #if DEBUG && SESSION_TEST
-		        //option.Cookie.Expiration = TimeSpan.FromMinutes(1);
-		        option.IdleTimeout = TimeSpan.FromMinutes(1);
-		        option.IOTimeout = TimeSpan.FromMinutes(1);
+                //option.Cookie.Expiration = TimeSpan.FromMinutes(1);
+                option.IdleTimeout = TimeSpan.FromMinutes(1);
+                option.IOTimeout = TimeSpan.FromMinutes(1);
 #else
                 //option.Cookie.Expiration = TimeSpan.FromHours(8);
                 option.IdleTimeout = TimeSpan.FromHours(8);
@@ -358,19 +358,19 @@ namespace Web
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {{apiKeySecurityScheme, Array.Empty<string>()}});
 #endif
 #if USING_BEARER
-				var jwtSecurityScheme = new OpenApiSecurityScheme
-				{
-					Scheme = JwtBearerDefaults.AuthenticationScheme,
-					BearerFormat = "JWT",
-					Name = "JWT Authentication",
-					In = ParameterLocation.Header,
-					Type = SecuritySchemeType.Http,
-					Description = "Put **_ONLY_** your JWT Bearer token",
-					Reference = new OpenApiReference {Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme}
-				};
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Description = "Put **_ONLY_** your JWT Bearer token",
+                    Reference = new OpenApiReference {Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme}
+                };
 
-				c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-				c.AddSecurityRequirement(new OpenApiSecurityRequirement {{jwtSecurityScheme, Array.Empty<string>()}});
+                c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {{jwtSecurityScheme, Array.Empty<string>()}});
 #endif
 #if USING_AUTH0 && !USING_BEARER
                 var auth0SecurityScheme = new OpenApiSecurityScheme
@@ -397,34 +397,34 @@ namespace Web
 #endif
 
 #if USING_OPENID
-			var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
-			{
-				Configuration.Bind("OpenIdSettings", options);
+            var openIdConnectOptions = new Action<OpenIdConnectOptions>(options =>
+            {
+                Configuration.Bind("OpenIdSettings", options);
 
 #if USING_TOKEN_VALIDATION
-				options.Events.OnTokenValidated = OpenId_OnTokenValidated;
+                options.Events.OnTokenValidated = OpenId_OnTokenValidated;
 #endif
-				options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
-					// This sets the value of User.Identity.Name to users AD username
-					NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, RoleClaimType = System.Security.Claims.ClaimTypes.Role, AuthenticationType = "Cookies", ValidateIssuer = false
-				};
-				var scopes = new List<string>();
-				Configuration.Bind("OpenIdSettings:Scopes", scopes);
-				if (scopes.Any())
-				{
-					options.Scope.Clear();
-					foreach (var item in scopes)
-						options.Scope.Add(item);
-				}
-				options.Events.OnSignedOutCallbackRedirect = context =>
-				{
-					context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
-					context.HandleResponse();
-					return Task.FromResult(true);
-				};
-			});
+                options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    // This sets the value of User.Identity.Name to users AD username
+                    NameClaimType = System.Security.Claims.ClaimTypes.WindowsAccountName, RoleClaimType = System.Security.Claims.ClaimTypes.Role, AuthenticationType = "Cookies", ValidateIssuer = false
+                };
+                var scopes = new List<string>();
+                Configuration.Bind("OpenIdSettings:Scopes", scopes);
+                if (scopes.Any())
+                {
+                    options.Scope.Clear();
+                    foreach (var item in scopes)
+                        options.Scope.Add(item);
+                }
+                options.Events.OnSignedOutCallbackRedirect = context =>
+                {
+                    context.HttpContext.Response.Redirect(context.Options.SignedOutRedirectUri);
+                    context.HandleResponse();
+                    return Task.FromResult(true);
+                };
+            });
 #endif
 
             var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
@@ -472,46 +472,46 @@ namespace Web
 #endif
 #if USING_APIKEY
 #if USING_APIKEY_TABLES
-				.AddApiKey<TableServiceApiKeyProvider>()
+                .AddApiKey<TableServiceApiKeyProvider>()
 #else
                 .AddApiKey<AppSettingsApiKeyProvider>()
 #endif
 #endif
 #if USING_BEARER
-				.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-				{
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
 #if USING_AUTH0
-					options.Authority = Configuration["Auth0Settings:Authority"];
-					options.TokenValidationParameters = new TokenValidationParameters() {ValidateAudience = false};
+                    options.Authority = Configuration["Auth0Settings:Authority"];
+                    options.TokenValidationParameters = new TokenValidationParameters() {ValidateAudience = false};
 #else
 #if DEBUG
-					options.IncludeErrorDetails = true;
+                    options.IncludeErrorDetails = true;
 #endif
-					var audiences = new List<string>();
-					Configuration.Bind("AuthSettings:Audiences", audiences);
-					options.TokenValidationParameters = new TokenValidationParameters()
-					{
-						ValidIssuer = Configuration["AuthSettings:Issuer"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"])),
-						ValidateLifetime = Configuration.GetValue<bool>("AuthSettings:Validate:Lifetime"),
-						ValidateIssuer = Configuration.GetValue<bool>("AuthSettings:Validate:Issuer"),
-						ValidateAudience = Configuration.GetValue<bool>("AuthSettings:Validate:Audience"),
-						ValidAudiences = audiences,
-						RequireAudience = Configuration.GetValue<bool>("AuthSettings:Require:Audience"),
-						RequireExpirationTime = Configuration.GetValue<bool>("AuthSettings:Require:ExpirationTime"),
-					};
-					options.SaveToken = Configuration.GetValue<bool>("AuthSettings:SaveToken");
-					options.RequireHttpsMetadata = Configuration.GetValue<bool>("AuthSettings:RequireHttpsMetadata");
+                    var audiences = new List<string>();
+                    Configuration.Bind("AuthSettings:Audiences", audiences);
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = Configuration["AuthSettings:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"])),
+                        ValidateLifetime = Configuration.GetValue<bool>("AuthSettings:Validate:Lifetime"),
+                        ValidateIssuer = Configuration.GetValue<bool>("AuthSettings:Validate:Issuer"),
+                        ValidateAudience = Configuration.GetValue<bool>("AuthSettings:Validate:Audience"),
+                        ValidAudiences = audiences,
+                        RequireAudience = Configuration.GetValue<bool>("AuthSettings:Require:Audience"),
+                        RequireExpirationTime = Configuration.GetValue<bool>("AuthSettings:Require:ExpirationTime"),
+                    };
+                    options.SaveToken = Configuration.GetValue<bool>("AuthSettings:SaveToken");
+                    options.RequireHttpsMetadata = Configuration.GetValue<bool>("AuthSettings:RequireHttpsMetadata");
 
 #endif
 
-				})
+                })
 #endif
 #if USING_SMARTSCHEMA
                 .AddSmartScheme()
 #endif
 #if USING_OPENID
-				.AddOpenIdConnect(openIdConnectOptions)
+                .AddOpenIdConnect(openIdConnectOptions)
 #endif
 #if USING_AUTH0
                 .AddAuth0WebAppAuthentication(options =>
@@ -536,33 +536,33 @@ namespace Web
         }
 
 #if (USING_OPENID) && USING_TOKEN_VALIDATION
-		private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
-		{
-			if (context.Principal != null && context.Principal.Identity != null)
-			{
-				var cllist = context.Principal.Claims.GroupBy(m => m.Type).Select(m => m.FirstOrDefault()).ToList();
-				var claims = cllist.ToDictionary(k => k.Type, v => v.Value);
-				var emails = claims["name"];
+        private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
+        {
+            if (context.Principal != null && context.Principal.Identity != null)
+            {
+                var cllist = context.Principal.Claims.GroupBy(m => m.Type).Select(m => m.FirstOrDefault()).ToList();
+                var claims = cllist.ToDictionary(k => k.Type, v => v.Value);
+                var emails = claims["name"];
 
-				//var userManager = Program.Host.Services.GetService<UserManager<Buyer>>();
-				var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
-				if (userManager != null)
-				{
-					var user = await userManager.Users.FirstOrDefaultAsync(m => m.Email == emails);
-					if (user == null)
-					{
-						var ph = new PasswordHasher<User>();
-						user = new User() {NormalizedUserName = claims["name"].ToUpper(), UserName = claims["nickname"], Email = claims["name"], EmailConfirmed = claims["email_verified"] == "true"};
+                //var userManager = Program.Host.Services.GetService<UserManager<Buyer>>();
+                var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
+                if (userManager != null)
+                {
+                    var user = await userManager.Users.FirstOrDefaultAsync(m => m.Email == emails);
+                    if (user == null)
+                    {
+                        var ph = new PasswordHasher<User>();
+                        user = new User() {NormalizedUserName = claims["name"].ToUpper(), UserName = claims["nickname"], Email = claims["name"], EmailConfirmed = claims["email_verified"] == "true"};
 #if DEBUG
-						user.PasswordHash = ph.HashPassword(user, $"Admin{DateTime.Now.Year}**");
+                        user.PasswordHash = ph.HashPassword(user, $"Admin{DateTime.Now.Year}**");
 #endif
-						await userManager.CreateAsync(user);
-						await userManager.AddClaimsAsync(user, claims.Select(m => new Claim(m.Key, m.Value)));
-					}
-					//TODO: What if user exists?, update metadata from OpenID
-				}
-			}
-		}
+                        await userManager.CreateAsync(user);
+                        await userManager.AddClaimsAsync(user, claims.Select(m => new Claim(m.Key, m.Value)));
+                    }
+                    //TODO: What if user exists?, update metadata from OpenID
+                }
+            }
+        }
 #endif
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -583,7 +583,7 @@ namespace Web
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
 #if USING_TOKEN_VALIDATION
-				IdentityModelEventSource.ShowPII = true;
+                IdentityModelEventSource.ShowPII = true;
 #endif
             }
             else
@@ -598,7 +598,7 @@ namespace Web
             app.UseSession();
 #endif
 #if !DEBUG
-			app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
 #endif
 
             if (Configuration.GetValue<bool>("AppSettings:UseHttpsRedirection"))
@@ -611,7 +611,7 @@ namespace Web
 #endif
 
 #if USING_LOCALIZATION
-			app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
+            app.UseRequestLocalization(SupportedCultures.Select(m => m.Name).ToArray());
 #endif
 
             var cacheControlInSeconds = Configuration.GetValue<int>("AppSettings:CacheControl");

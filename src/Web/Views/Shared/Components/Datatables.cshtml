@@ -1,46 +1,46 @@
 ﻿@{
-	var twoLetterIsoLanguageName = "en";
-	if (Html.UsingLocalization())
-	{
-		var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
-		twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
-	}
+    var twoLetterIsoLanguageName = "en";
+    if (Html.UsingLocalization())
+    {
+        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
+    }
 
-	// var Localizer = new Dictionary<string, string>();
-	// Localizer.Add("print", "Print");
-	// Localizer.Add("actions", "Actions");
-	// Localizer.Add("edit", "Edit");
-	// Localizer.Add("delete", "Delete");
-	// Localizer.Add("search", "Search");
-	// Localizer.Add("last_update", "Las update");
-	// Localizer.Add("last_update_null", "Never updated");
+    // var Localizer = new Dictionary<string, string>();
+    // Localizer.Add("print", "Print");
+    // Localizer.Add("actions", "Actions");
+    // Localizer.Add("edit", "Edit");
+    // Localizer.Add("delete", "Delete");
+    // Localizer.Add("search", "Search");
+    // Localizer.Add("last_update", "Las update");
+    // Localizer.Add("last_update_null", "Never updated");
 
 }
 
 @using (Html.BeginStyles())
 {
-	<environment include="Development">
-		<!-- DT -->
-		<link href="~/lib/datatables.net-bs5/dataTables.bootstrap5.css" rel="stylesheet"/>
-		<!-- BUTTONS -->
-		<link href="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.css" rel="stylesheet"/>
-		<!-- RESPONSIVE -->
-		<link href="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.css" rel="stylesheet"/>
-		<!-- SELECT -->
-		<link href="~/lib/datatables.net-select-bs5/select.bootstrap5.css" rel="stylesheet"/>
-	</environment>
-	<environment exclude="Development">
-		<!-- DT -->
-		<link href="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.css" rel="stylesheet"/>
-		<!-- BUTTONS -->
-		<link href="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.min.css" rel="stylesheet"/>
-		<!-- RESPONSIVE -->
-		<link href="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.min.css" rel="stylesheet"/>
-		<!-- SELECT -->
-		<link href="~/lib/datatables.net-select-bs5/select.bootstrap5.min.css" rel="stylesheet"/>
-	</environment>
+    <environment include="Development">
+        <!-- DT -->
+        <link href="~/lib/datatables.net-bs5/dataTables.bootstrap5.css" rel="stylesheet"/>
+        <!-- BUTTONS -->
+        <link href="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.css" rel="stylesheet"/>
+        <!-- RESPONSIVE -->
+        <link href="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.css" rel="stylesheet"/>
+        <!-- SELECT -->
+        <link href="~/lib/datatables.net-select-bs5/select.bootstrap5.css" rel="stylesheet"/>
+    </environment>
+    <environment exclude="Development">
+        <!-- DT -->
+        <link href="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.css" rel="stylesheet"/>
+        <!-- BUTTONS -->
+        <link href="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.min.css" rel="stylesheet"/>
+        <!-- RESPONSIVE -->
+        <link href="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.min.css" rel="stylesheet"/>
+        <!-- SELECT -->
+        <link href="~/lib/datatables.net-select-bs5/select.bootstrap5.min.css" rel="stylesheet"/>
+    </environment>
 
-	<style>
+    <style>
     .dataTables_length{
         padding-right: 2rem;
     }
@@ -49,48 +49,48 @@
 
 @using (Html.BeginScripts())
 {
-	<environment include="Development">
-		<script src="~/lib/jszip/jszip.js"></script>
-		<script src="~/lib/pdfmake/vfs_fonts.js"></script>
-		<script src="~/lib/pdfmake/pdfmake.js"></script>
-		<!-- DT -->
-		<script src="~/lib/datatables.net/jquery.dataTables.js"></script>
-		<script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.js"></script>
-		<!-- BUTTONS -->
-		<script src="~/lib/datatables.net-buttons/js/dataTables.buttons.js"></script>
-		<script src="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.js"></script>
-		<script src="~/lib/datatables.net-buttons/js/buttons.colVis.js"></script>
-		<script src="~/lib/datatables.net-buttons/js/buttons.html5.js"></script>
-		<script src="~/lib/datatables.net-buttons/js/buttons.print.js"></script>
-		<!-- RESPONSIVE -->
-		<script src="~/lib/datatables.net-responsive/dataTables.responsive.js"></script>
-		<script src="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.js"></script>
-		<!-- SELECT -->
-		<script src="~/lib/datatables.net-select/dataTables.select.js"></script>
-		<script src="~/lib/datatables.net-select-bs5/select.bootstrap5.js"></script>
-	</environment>
-	<environment exclude="Development">
-		<script src="~/lib/jszip/jszip.min.js"></script>
-		<script src="~/lib/pdfmake/vfs_fonts.js"></script>
-		<script src="~/lib/pdfmake/pdfmake.min.js"></script>
-		<!-- DT -->
-		<script src="~/lib/datatables.net/jquery.dataTables.min.js"></script>
-		<script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
-		<!-- BUTTONS -->
-		<script src="~/lib/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-		<script src="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.min.js"></script>
-		<script src="~/lib/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-		<script src="~/lib/datatables.net-buttons/js/buttons.html5.min.js"></script>
-		<script src="~/lib/datatables.net-buttons/js/buttons.print.min.js"></script>
-		<!-- RESPONSIVE -->
-		<script src="~/lib/datatables.net-responsive/dataTables.responsive.min.js"></script>
-		<script src="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.min.js"></script>
-		<!-- SELECT -->
-		<script src="~/lib/datatables.net-select/dataTables.select.min.js"></script>
-		<script src="~/lib/datatables.net-select-bs5/select.bootstrap5.min.js"></script>
-	</environment>
+    <environment include="Development">
+        <script src="~/lib/jszip/jszip.js"></script>
+        <script src="~/lib/pdfmake/vfs_fonts.js"></script>
+        <script src="~/lib/pdfmake/pdfmake.js"></script>
+        <!-- DT -->
+        <script src="~/lib/datatables.net/jquery.dataTables.js"></script>
+        <script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.js"></script>
+        <!-- BUTTONS -->
+        <script src="~/lib/datatables.net-buttons/js/dataTables.buttons.js"></script>
+        <script src="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.colVis.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.html5.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.print.js"></script>
+        <!-- RESPONSIVE -->
+        <script src="~/lib/datatables.net-responsive/dataTables.responsive.js"></script>
+        <script src="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.js"></script>
+        <!-- SELECT -->
+        <script src="~/lib/datatables.net-select/dataTables.select.js"></script>
+        <script src="~/lib/datatables.net-select-bs5/select.bootstrap5.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jszip/jszip.min.js"></script>
+        <script src="~/lib/pdfmake/vfs_fonts.js"></script>
+        <script src="~/lib/pdfmake/pdfmake.min.js"></script>
+        <!-- DT -->
+        <script src="~/lib/datatables.net/jquery.dataTables.min.js"></script>
+        <script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
+        <!-- BUTTONS -->
+        <script src="~/lib/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="~/lib/datatables.net-buttons-bs5/buttons.bootstrap5.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <!-- RESPONSIVE -->
+        <script src="~/lib/datatables.net-responsive/dataTables.responsive.min.js"></script>
+        <script src="~/lib/datatables.net-responsive-bs5/responsive.bootstrap5.min.js"></script>
+        <!-- SELECT -->
+        <script src="~/lib/datatables.net-select/dataTables.select.min.js"></script>
+        <script src="~/lib/datatables.net-select-bs5/select.bootstrap5.min.js"></script>
+    </environment>
 
-	<script>
+    <script>
     let __datatable_options = {
             language: '@Url.Content($"~/js/datatables/i18n/{twoLetterIsoLanguageName}.json")',
             lengthMenu: [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]],
@@ -175,11 +175,11 @@
         table_length_2.removeClass("form-select-sm");
         
         let table_filter = parent.find("#table_filter .form-control-sm");
-		table_filter.attr("type", "text").attr("role", "presentation").attr("autocomplete","off"); //.attr("readonly",true);
+        table_filter.attr("type", "text").attr("role", "presentation").attr("autocomplete","off"); //.attr("readonly",true);
         table_filter.removeClass("form-control-sm").attr("placeholder", __datatable_options.search.placeholder).appendTo($("#search"));
-		//setTimeout(function(){
-		//	table_filter.attr("readonly",false);
-		//}, 5000);
+        //setTimeout(function(){
+        //    table_filter.attr("readonly",false);
+        //}, 5000);
         
         let table_filter_2 = parent.find("#table_filter");
         table_filter_2.remove();
@@ -207,8 +207,8 @@
 
 @if (Html.IsDebug())
 {
-	<!-- DEBUG -->
-	<style>
+    <!-- DEBUG -->
+    <style>
         .dt-debug {
             display: inline-block;
             padding: 0.25rem;
@@ -242,25 +242,25 @@
                 opacity: 1;
             }
     </style>
-	<script>
-		let url = 'https://debug.datatables.net/bookmarklet/DT_Debug.js';
+    <script>
+        let url = 'https://debug.datatables.net/bookmarklet/DT_Debug.js';
         function datatableDebug() {
-			if (typeof DT_Debug != 'undefined') {
-				if (DT_Debug.instance !== null) {
-					DT_Debug.close();
-				} else {
-					new DT_Debug();
-				}
-			} else {
-				var n = document.createElement('script');
-				n.setAttribute('language', 'JavaScript');
-				n.setAttribute('src', url + '?rand=' + new Date().getTime());
-				document.body.appendChild(n);
-			}
+            if (typeof DT_Debug != 'undefined') {
+                if (DT_Debug.instance !== null) {
+                    DT_Debug.close();
+                } else {
+                    new DT_Debug();
+                }
+            } else {
+                var n = document.createElement('script');
+                n.setAttribute('language', 'JavaScript');
+                n.setAttribute('src', url + '?rand=' + new Date().getTime());
+                document.body.appendChild(n);
+            }
         }
     </script>
-	<a class="dt-debug dt-is-visible shadow" href="javascript:datatableDebug()">
-		<i class="fas fa-2x fa-bug"></i>
-	</a>
-	<!-- DEBUG -->
+    <a class="dt-debug dt-is-visible shadow" href="javascript:datatableDebug()">
+        <i class="fas fa-2x fa-bug"></i>
+    </a>
+    <!-- DEBUG -->
 }

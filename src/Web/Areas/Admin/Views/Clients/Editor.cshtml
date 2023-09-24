@@ -1,19 +1,19 @@
 ﻿<!-- Modal -->
 <div class="modal fade" id="modal-editor" tabindex="-1" aria-labelledby="modal-editor-label" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="modal-editor-label">@ViewData["Title"]</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<input type="hidden" data-field="id" id="id"/>
-				<div class="mb-3">
-					<label for="identification" class="form-label required">Identification</label>
-					<input id="identification" class="form-control" required
-					       data-field="identification"
-					       data-validate="true"
-					       data-feedback="Please enter a valid identification">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-editor-label">@ViewData["Title"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" data-field="id" id="id"/>
+                <div class="mb-3">
+                    <label for="identification" class="form-label required">Identification</label>
+                    <input id="identification" class="form-control" required
+                           data-field="identification"
+                           data-validate="true"
+            		       data-feedback="Please enter a valid identification">
 				</div>
 				<div class="mb-3">
 					<label for="fullName" class="form-label">Full Name</label>

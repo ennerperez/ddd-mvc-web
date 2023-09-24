@@ -1,22 +1,22 @@
 @model Web.Areas.Admin.Models.DashboardViewModel
 @{
-	ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Dashboard";
 }
 
 <div class="row">
-	@foreach (var item in Model.Counters)
-	{
-		<div class="col">
-			<div class="card @(item.Metadata?.TextColor ?? "text-white") @(item.Metadata?.backgroundColor ?? "bg-primary")">
-				@* <h5 class="card-header">@item.DisplayName</h5> *@
-				<div class="card-body">
-					<h5 class="card-title">@item.DisplayName</h5>
-					<p class="card-text">@item.Counter</p>
-					<p class="card-text">
-						<small class="text-muted">@item.Metadata?.Description</small>
-					</p>
-				</div>
-			</div>
-		</div>
-	}
+    @foreach (var item in Model.Counters)
+    {
+        <div class="col">
+            <div class="card @(item.Metadata?.TextColor ?? "text-white") @(item.Metadata?.backgroundColor ?? "bg-primary")">
+                @* <h5 class="card-header">@item.DisplayName</h5> *@
+                <div class="card-body">
+                    <h5 class="card-title">@item.DisplayName</h5>
+                    <p class="card-text">@item.Counter</p>
+                    <p class="card-text">
+                        <small class="text-muted">@item.Metadata?.Description</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
 </div>

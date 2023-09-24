@@ -13,7 +13,7 @@ namespace Web.Areas.Admin.Reports
 #if USING_QUESTPDF
         : IPdfDocument
 #else
-		: IDocument
+        : IDocument
 #endif
     {
         public string Title { get; set; }

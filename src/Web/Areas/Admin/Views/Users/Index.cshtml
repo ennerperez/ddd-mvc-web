@@ -1,27 +1,27 @@
 ﻿@{
-	ViewData["Title"] = "Users";
+    ViewData["Title"] = "Users";
 }
 
 <partial name="Partials/_LoaderPartial"/>
 
 <div id="content" class="page" style="display: none;">
-	<div class="page-title py-1">
-		<h3 class="m-0 p-0">
-			<i class="fas fa-users"></i> @ViewData["Title"]
-		</h3>
-	</div>
-	<div class="page-content m-2">
-		<div class="row">
-			<div class="col">
-				<button type="button" class="btn btn-labeled btn-primary" name="btn-create">
-					<span class="btn-label">
-						<i class="fa fa-plus"></i>
-					</span>Add
-				</button>
-				<table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
-					<thead>
-					<tr>
-						<th>Name</th>
+    <div class="page-title py-1">
+        <h3 class="m-0 p-0">
+            <i class="fas fa-users"></i> @ViewData["Title"]
+        </h3>
+    </div>
+    <div class="page-content m-2">
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-labeled btn-primary" name="btn-create">
+                    <span class="btn-label">
+                        <i class="fa fa-plus"></i>
+                    </span>Add
+                </button>
+                <table id="table" class="table table-sm table-striped table-bordered display nowrap" style="width:100%">
+                    <thead>
+                    <tr>
+        				<th>Name</th>
 						<th>Email</th>
 						<th>Phone</th>
 						<th>Roles</th>
