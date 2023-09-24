@@ -6,6 +6,9 @@ using Business.Abstractions;
 using Business.Exceptions;
 using Business.Models;
 using Domain.Entities;
+#if USING_IDENTITY
+using Domain.Entities.Identity;
+#endif
 using Domain.Enums;
 using FluentValidation;
 using Infrastructure.Interfaces;
@@ -31,9 +34,18 @@ namespace Business.Requests
     public class CreateBudgetRequestHandler : IRequestHandler<CreateBudgetRequest, Guid>
     {
         private readonly IGenericRepository<Budget, Guid> _repository;
-        private readonly IUserAccessorService _userAccessorService;
 
+#if USING_IDENTITY
+        private readonly IUserAccessorService<User> _userAccessorService;
+#else
+        private readonly IUserAccessorService _userAccessorService;
+#endif
+
+#if USING_IDENTITY
+        public CreateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService<User> userAccessorService)
+#else
         public CreateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
+#endif
         {
             _repository = repository;
             _userAccessorService = userAccessorService;
@@ -144,9 +156,17 @@ namespace Business.Requests
     public class UpdateBudgetRequestHandler : IRequestHandler<UpdateBudgetRequest>
     {
         private readonly IGenericRepository<Budget, Guid> _repository;
+#if USING_IDENTITY
+        private readonly IUserAccessorService<User> _userAccessorService;
+#else
         private readonly IUserAccessorService _userAccessorService;
+#endif
 
+#if USING_IDENTITY
+        public UpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService<User> userAccessorService)
+#else
         public UpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
+#endif
         {
             _repository = repository;
             _userAccessorService = userAccessorService;
@@ -214,9 +234,17 @@ namespace Business.Requests
     public class PartialUpdateBudgetRequestHandler : IRequestHandler<PartialUpdateBudgetRequest>
     {
         private readonly IGenericRepository<Budget, Guid> _repository;
+#if USING_IDENTITY
+        private readonly IUserAccessorService<User> _userAccessorService;
+#else
         private readonly IUserAccessorService _userAccessorService;
+#endif
 
+#if USING_IDENTITY
+        public PartialUpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService<User> userAccessorService)
+#else
         public PartialUpdateBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
+#endif
         {
             _repository = repository;
             _userAccessorService = userAccessorService;
@@ -303,9 +331,17 @@ namespace Business.Requests
     public class DeleteBudgetRequestHandler : IRequestHandler<DeleteBudgetRequest>
     {
         private readonly IGenericRepository<Budget, Guid> _repository;
+#if USING_IDENTITY
+        private readonly IUserAccessorService<User> _userAccessorService;
+#else
         private readonly IUserAccessorService _userAccessorService;
+#endif
 
+#if USING_IDENTITY
+        public DeleteBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService<User> userAccessorService)
+#else
         public DeleteBudgetRequestHandler(IGenericRepository<Budget, Guid> repository, IUserAccessorService userAccessorService)
+#endif
         {
             _repository = repository;
             _userAccessorService = userAccessorService;
