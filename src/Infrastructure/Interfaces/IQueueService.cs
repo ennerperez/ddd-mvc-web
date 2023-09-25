@@ -13,11 +13,11 @@ namespace Infrastructure.Interfaces
         bool CreateIfNotExists { get; set; }
 
 #if USING_QUEUES
-		Task<PeekedMessage> PeekMessageAsync(string queueName = "");
-		Task<IEnumerable<PeekedMessage>> PeekMessagesAsync(string queueName = "", int? maxMessages = default);
-		Task<QueueMessage> ReceiveMessageAsync(string queueName = "");
-		Task<IEnumerable<QueueMessage>> ReceiveMessagesAsync(string queueName = "", int? maxMessages = default);
-		Task<SendReceipt> SendMessageAsync(string queueName = "", string content = "");
+        Task<PeekedMessage> PeekMessageAsync(string queueName = "");
+        Task<IEnumerable<PeekedMessage>> PeekMessagesAsync(string queueName = "", int? maxMessages = default);
+        Task<QueueMessage> ReceiveMessageAsync(string queueName = "");
+        Task<IEnumerable<QueueMessage>> ReceiveMessagesAsync(string queueName = "", int? maxMessages = default);
+        Task<SendReceipt> SendMessageAsync(string queueName = "", string content = "");
 #else
         Task<T> PeekMessageAsync<T>(string queueName = "") where T : class;
         Task<IEnumerable<T>> PeekMessagesAsync<T>(string queueName = "") where T : class;

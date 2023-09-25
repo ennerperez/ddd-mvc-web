@@ -1,28 +1,28 @@
 ﻿@{
-	Layout = "_Empty";
+    Layout = "_Empty";
 }
 
 @section Header{
-	@await RenderSectionAsync("Header", false)
+    @await RenderSectionAsync("Header", false)
 }
 
 @section Styles{
-	@await RenderSectionAsync("Styles", false)
+    @await RenderSectionAsync("Styles", false)
 }
 
 @if (Html.UsingIdentity())
 {
-	@* ReSharper disable once Mvc.PartialViewNotResolved *@
-	<partial name="_Header.Identity"/>
+    @* ReSharper disable once Mvc.PartialViewNotResolved *@
+    <partial name="_Header.Identity"/>
 }
 else
 {
-	@* ReSharper disable once Mvc.PartialViewNotResolved *@
-	<partial name="_Header"/>
+    @* ReSharper disable once Mvc.PartialViewNotResolved *@
+    <partial name="_Header"/>
 }
 
 <main role="main" id="main-content" class="container p-0 pt-4">
-	@RenderBody()
+    @RenderBody()
 
 </main>
 
@@ -31,5 +31,5 @@ else
 <partial name="Components/Validation"/>
 
 @section Scripts{
-	@await RenderSectionAsync("Scripts", false)
+    @await RenderSectionAsync("Scripts", false)
 }

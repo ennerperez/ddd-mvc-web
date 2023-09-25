@@ -2,29 +2,29 @@
 @using System.Globalization
 @inject IConfiguration Configuration
 @{
-	ViewData["Title"] = "Budgets";
-	var currencyCulture = new CultureInfo(Configuration["CultureInfo:CurrencyCulture"]);
-	var currencyRegion = new RegionInfo(Configuration["CultureInfo:CurrencyCulture"]);
+    ViewData["Title"] = "Budgets";
+    var currencyCulture = new CultureInfo(Configuration["CultureInfo:CurrencyCulture"]);
+    var currencyRegion = new RegionInfo(Configuration["CultureInfo:CurrencyCulture"]);
 }
 
 <partial name="Partials/_LoaderPartial"/>
 
 <div id="content" class="page" style="display: none;">
-	<div class="page-title py-1">
-		<h3 class="m-0 p-0">
-			<i class="fas fa-receipt"></i> @ViewData["Title"]
-		</h3>
-	</div>
-	<div class="page-content m-2">
-		<div class="row">
-			<div class="col">
-				<button type="button" class="btn btn-labeled btn-primary" name="btn-create">
-					<span class="btn-label">
-						<i class="fa fa-plus"></i>
-					</span>Add
-				</button>
-				<button type="button" class="btn btn-labeled btn-danger" name="btn-export-table-pdf" data-format="pdf">
-					<span class="btn-label">
+    <div class="page-title py-1">
+        <h3 class="m-0 p-0">
+            <i class="fas fa-receipt"></i> @ViewData["Title"]
+        </h3>
+    </div>
+    <div class="page-content m-2">
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-labeled btn-primary" name="btn-create">
+                    <span class="btn-label">
+                        <i class="fa fa-plus"></i>
+                    </span>Add
+                </button>
+                <button type="button" class="btn btn-labeled btn-danger" name="btn-export-table-pdf" data-format="pdf">
+                	<span class="btn-label">
 						<i class="far fa-file-pdf"></i>
 					</span>PDF
 				</button>

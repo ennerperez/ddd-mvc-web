@@ -53,17 +53,17 @@ namespace Infrastructure
             services.AddTransient<IDocumentService, DocumentService>();
 
 #if USING_BLOBS
-			services.AddTransient<IFileService, FileService>();
-			services.AddTransient<IDirectoryService, DirectoryService>();
+            services.AddTransient<IFileService, FileService>();
+            services.AddTransient<IDirectoryService, DirectoryService>();
 #else
             services.AddSingleton<IFileService>(new FileSystemService() { ContainerName = "Data", CreateIfNotExists = true });
             services.AddSingleton<IDirectoryService>(new FileSystemService() { ContainerName = "Data", CreateIfNotExists = true });
 #endif
 #if USING_QUEUES
-			services.AddTransient<IQueueService, QueueService>();
+            services.AddTransient<IQueueService, QueueService>();
 #endif
 #if USING_TABLES
-			services.AddTransient<ITableService, TableService>();
+            services.AddTransient<ITableService, TableService>();
 #endif
 #if USING_VAULT
             services.AddTransient<IVaultService<KeyVaultSecret>, VaultService>();

@@ -290,33 +290,33 @@ namespace Microsoft.EntityFrameworkCore
                     break;
 #endif
 #if (USING_MYSQL) || (USING_MARIADB)
-				case DatabaseProviders.MariaDb:
-				case DatabaseProviders.MySql:
+                case DatabaseProviders.MariaDb:
+                case DatabaseProviders.MySql:
 #if USING_MARIADB
-					var serverVersion = ServerVersion.Parse("10.6");
+                    var serverVersion = ServerVersion.Parse("10.6");
 #elif USING_MYSQL
-					var serverVersion = ServerVersion.Parse("8.0");
+                    var serverVersion = ServerVersion.Parse("8.0");
 #endif
-					try
-					{
-						serverVersion = ServerVersion.AutoDetect(connectionString);
-					}
-					catch (Exception)
-					{
-						// ignore
-					}
-					optionsBuilder.UseMySql(connectionString, serverVersion, x => x.MigrationsHistoryTable(MigrationsHistoryTableName));
-					break;
+                    try
+                    {
+                        serverVersion = ServerVersion.AutoDetect(connectionString);
+                    }
+                    catch (Exception)
+                    {
+                        // ignore
+                    }
+                    optionsBuilder.UseMySql(connectionString, serverVersion, x => x.MigrationsHistoryTable(MigrationsHistoryTableName));
+                    break;
 #endif
 #if USING_POSTGRESQL
-				case DatabaseProviders.PostgreSql:
-					optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
-					break;
+                case DatabaseProviders.PostgreSql:
+                    optionsBuilder.UseNpgsql(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
+                    break;
 #endif
 #if USING_ORACLE
-				case DatabaseProviders.Oracle:
-					optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
-					break;
+                case DatabaseProviders.Oracle:
+                    optionsBuilder.UseOracle(connectionString, x => x.MigrationsHistoryTable(MigrationsHistoryTableName, Schemas.Migration));
+                    break;
 #endif
                 default:
                     break;

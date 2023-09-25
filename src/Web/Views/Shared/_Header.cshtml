@@ -5,44 +5,44 @@
 }
 
 <header class="pb-4">
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-		<div class="container-fluid">
-			<a class="navbar-brand" asp-area="" asp-controller="Default" asp-action="Index">
-				<img class="pb-1" src="~/favicon.svg" alt="" width="30" height="30">
-				@Configuration["AppSettings:Name"]
-			</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbar">
-				<ul class="navbar-nav flex-grow-1">
-					<li class="nav-item">
-						<a class="nav-link" asp-active-class="active" asp-area="" asp-controller="Default" asp-action="Index">Home</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" asp-active-class="active" asp-area="" asp-controller="Default" asp-action="Privacy">Privacy</a>
-					</li>
-					@if (User.IsInRole("Admin"))
-					{
-						<li class="nav-item">
-							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Clients" asp-action="Index">Clients</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Budgets" asp-action="Index">Budgets</a>
-						</li>
-					}
-					@if (isSignedIn && Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
-					{
-						<li class="nav-item">
-							<a class="nav-link" href="~/api">API</a>
-						</li>
-					}
-				</ul>
-				<partial name="_LoginPartial"/>
-			</div>
-		</div>
-	</nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Default" asp-action="Index">
+                <img class="pb-1" src="~/favicon.svg" alt="" width="30" height="30">
+                @Configuration["AppSettings:Name"]
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-active-class="active" asp-area="" asp-controller="Default" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-active-class="active" asp-area="" asp-controller="Default" asp-action="Privacy">Privacy</a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Clients" asp-action="Index">Clients</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-active-class="active" asp-area="Admin" asp-controller="Budgets" asp-action="Index">Budgets</a>
+                        </li>
+                    }
+                    @if (isSignedIn && Html.UsingSwagger() && Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/api">API</a>
+                        </li>
+                    }
+                </ul>
+                <partial name="_LoginPartial"/>
+            </div>
+        </div>
+    </nav>
 </header>

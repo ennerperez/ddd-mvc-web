@@ -1,15 +1,15 @@
 ﻿@inject IConfiguration Configuration
 <footer class="d-none d-sm-block mt-5">
-	<nav class="navbar navbar-light bg-light fixed-bottom border-top pb-2">
-		<div class="container-fluid">
-			<span class="navbar-text p-0 m-0">
-				&copy; @DateTime.Now.Year - @Configuration["AppSettings:Name"]
-			</span>
-			<span class="navbar-text p-0 m-0">
-				<a data-toggle="tooltip" class="ms-2" title="About" asp-area="" asp-controller="Default" asp-action="Info">
-					<i class="fas fa-info-circle"></i>
-				</a>
-			</span>
-		</div>
-	</nav>
+    <nav class="navbar navbar-light bg-light fixed-bottom border-top pb-2">
+        <div class="container-fluid">
+            <span class="navbar-text p-0 m-0">
+                &copy; @DateTime.Now.Year - @Configuration["AppSettings:Name"]
+            </span>
+            <span class="navbar-text p-0 m-0">
+                <a data-toggle="tooltip" class="ms-2" title="About" asp-area="" asp-controller="Default" asp-action="Info">
+                    <i class="fas fa-info-circle"></i>
+                </a>
+            </span>
+        </div>
+    </nav>
 </footer>

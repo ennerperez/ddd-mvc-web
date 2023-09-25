@@ -1,0 +1,74 @@
+﻿{
+  "profiles": {
+    "Build.Prepare": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Prepare"
+    },
+    "Build.Clean": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Clean"
+    },
+    "Build.Restore": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Restore"
+    },
+    "Build.Compile": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Compile"
+    },
+    "Build.Test": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Test"
+    },
+    "Build.Publish": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Publish"
+    },
+    "Build.Pack": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Pack"
+    },
+    "Migrate.FastCompile": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target FastCompile"
+    },
+    "Migrate.MigrationAdd": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target MigrationAdd"
+    },
+    "Migrate.MigrationRemove": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target MigrationRemove"
+    },
+    "Migrate.MigrationOutput": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target MigrationOutput"
+    },
+    "Migrate.DatabaseUpdate": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DatabaseUpdate"
+    },
+    "Migrate.DatabaseClear": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DatabaseClear"
+    },
+    "Migrate.DatabaseRollback": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DatabaseRollback"
+    }
+  }
+}
