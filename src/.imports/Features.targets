@@ -59,6 +59,11 @@
     <BuildConstants Condition="'$(CookieConsentNeeded)' == 'true'">$(BuildConstants)USING_COOKIE_CONSENT;</BuildConstants>
   </PropertyGroup>
 
+  <!-- App -->
+  <PropertyGroup>
+    <BuildConstants Condition="'$(UsingCommunityToolkit)' == 'true'">$(BuildConstants)USING_COMMUNITY_TOOLKIT;</BuildConstants>
+  </PropertyGroup>
+
   <!-- Testing -->
   <PropertyGroup>
     <BuildConstants Condition="'$(TestExecutionFramework)' == 'xUnit'">$(BuildConstants)XUNIT;</BuildConstants>

@@ -37,6 +37,9 @@ public partial class Build : NukeBuild
     [Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)")]
     public string Environment = IsLocalBuild ? "Development" : "Production";
 
+    [Parameter("Platform to build")]
+    readonly string Platform = "Web";
+
     [Solution]
     readonly Solution Solution;
 
@@ -56,6 +59,7 @@ public partial class Build : NukeBuild
     string _hash = string.Empty;
     readonly string[] PublishProjects = new[] { "Web" };
     readonly string[] TestsProjects = new[] { "Tests.Business" };
+    readonly string[] MobileProjects = new[] { "App" };
 
     Target Prepare => d => d
         .Before(Compile)
