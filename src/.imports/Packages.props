@@ -6,24 +6,7 @@
     <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageVersion Include="MediatR" Version="12.1.1"/>
-    <PackageVersion Include="BuildBundlerMinifierPlus" Version="5.3.0"/>
-    <PackageVersion Include="System.Net.Http" Version="4.3.4"/>
-    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.3.5"/>
-    <PackageVersion Include="Flurl" Version="3.0.7"/>
-    <PackageVersion Include="Flurl.Http" Version="3.2.4"/>
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.0.2" />
-    <PackageVersion Include="Selenium.Support" Version="4.13.1" />
-    <PackageVersion Include="Selenium.WebDriver" Version="4.13.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageVersion Include="Nuke.Common" Version="6.3.0" />
-    <PackageVersion Include="EFCore.Nuke" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup Label="EntityFramework" Condition="'$(TargetFramework)' == 'net6.0'">
+  <ItemGroup Label=".NET 6.0" Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="6.0.22"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.22"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.22"/>
@@ -33,18 +16,21 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.22"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.22"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.22"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.22" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.22"/>
+    <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2"/>
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.22"/>
+    <PackageVersion Include="Oracle.EntityFrameworkCore" Version="6.21.110"/>
     <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.22"/>
-  </ItemGroup>
-  <ItemGroup Label="AspNetCore" Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175"/>
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.22"/>
-  </ItemGroup>
-  <ItemGroup Label="FluentValidation" Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageVersion Include="FluentValidation" Version="11.7.1"/>
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
-  </ItemGroup>
-  <ItemGroup Label="Extensions" Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="6.0.1"/>
+    <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0"/>
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="3.1.0"/>
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="3.4.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="6.0.22"/>
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="6.0.22"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.22"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.22"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="6.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1"/>
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0"/>
@@ -56,100 +42,127 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0"/>
+    <PackageVersion Include="EFCore.BulkExtensions" Version="6.7.16"/>
+    <PackageVersion Include="EFCore.BulkExtensions.Sqlite" Version="6.7.16"/>
+    <PackageVersion Include="EFCore.BulkExtensions.SqlServer" Version="6.7.16"/>
+    <PackageVersion Include="EFCore.BulkExtensions.PostgreSql" Version="6.7.16"/>
+    <PackageVersion Include="EFCore.BulkExtensions.MySql" Version="6.7.16"/>
   </ItemGroup>
-  <ItemGroup Label="Tests" Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.7.30" />
+  <ItemGroup Label=".NET 7.0" Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11"/>
+    <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0"/>
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11"/>
+    <PackageVersion Include="Oracle.EntityFrameworkCore" Version="7.21.11"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.11"/>
+    <PackageVersion Include="Serilog.AspNetCore" Version="7.0.0"/>
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="7.0.0"/>
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="7.0.1"/>
+    <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Ini" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="7.0.0"/>
+    <PackageVersion Include="EFCore.BulkExtensions" Version="7.1.6"/>
+    <PackageVersion Include="EFCore.BulkExtensions.Sqlite" Version="7.1.6"/>
+    <PackageVersion Include="EFCore.BulkExtensions.SqlServer" Version="7.1.6"/>
+    <PackageVersion Include="EFCore.BulkExtensions.PostgreSql" Version="7.1.6"/>
+    <PackageVersion Include="EFCore.BulkExtensions.MySql" Version="7.1.6"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="MediatR" Version="12.1.1"/>
+    <PackageVersion Include="BuildBundlerMinifierPlus" Version="5.3.0"/>
+    <PackageVersion Include="System.Net.Http" Version="4.3.4"/>
+    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.3.5"/>
+    <PackageVersion Include="Flurl" Version="3.0.7"/>
+    <PackageVersion Include="Flurl.Http" Version="3.2.4"/>
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.0.2"/>
+    <PackageVersion Include="Selenium.Support" Version="4.13.1"/>
+    <PackageVersion Include="Selenium.WebDriver" Version="4.13.1"/>
+    <PackageVersion Include="Nuke.Common" Version="6.3.0"/>
+    <PackageVersion Include="EFCore.Nuke" Version="1.0.1"/>
+    <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175"/>
+    <PackageVersion Include="FluentValidation" Version="11.7.1"/>
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2"/>
+    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.7.30"/>
     <PackageVersion Include="Microsoft.VisualStudio.Validation" Version="17.6.11"/>
-    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.0" />
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup Label="Serilog" Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageVersion Include="FluentAssertions" Version="6.12.0"/>
     <PackageVersion Include="Serilog" Version="3.0.1"/>
     <PackageVersion Include="Serilog.Sinks.Async" Version="1.5.0"/>
-    <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0"/>
-    <PackageVersion Include="Serilog.Extensions.Logging" Version="3.1.0"/>
-    <PackageVersion Include="Serilog.Settings.Configuration" Version="3.4.0"/>
     <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0"/>
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0"/>
     <PackageVersion Include="Serilog.Sinks.PeriodicBatching" Version="3.1.0"/>
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.3.0"/>
     <PackageVersion Include="Serilog.Enrichers.Process" Version="2.0.2"/>
     <PackageVersion Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
-  </ItemGroup>
-  <ItemGroup Label="ConditionalReferences" Condition="'$(TargetFramework)' == 'net6.0'">
-    <!-- Domain -->
-    <PackageVersion Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="6.0.22"/>
-    <!-- Infrastructure -->
-    <PackageVersion Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.17.0"/>
-    <PackageVersion Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.15.0"/>
-    <PackageVersion Condition="'$(UsingAzureTables)' == 'true'" Include="Azure.Data.Tables" Version="12.8.0"/>
-    <PackageVersion Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Security.KeyVault.Secrets" Version="4.5.0"/>
-    <PackageVersion Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Identity" Version="1.9.0"/>
-    <PackageVersion Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.21.1"/>
-    <PackageVersion Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0"/>
-    <PackageVersion Condition="'$(UsingQuestPDF)' == 'true'" Include="QuestPDF" Version="2023.6.0"/>
-    <PackageVersion Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3"/>
-    <PackageVersion Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3"/>
-    <PackageVersion Condition="'$(UsingQuestPDF)' == 'true'" Include="HarfBuzzSharp.NativeAssets.Linux" Version="2.8.2.3"/>
-    <!-- Persistence -->
-    <PackageVersion Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.20"/>
-    <PackageVersion Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite"/>
-    <PackageVersion Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.20"/>
-    <PackageVersion Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2"/>
-    <PackageVersion Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8"/>
-    <PackageVersion Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="6.21.90"/>
-    <PackageVersion Condition="'$(UsingDapper)' == 'true'" Include="Dapper" Version="2.0.143"/>
-    <PackageVersion Condition="'$(UsingBulk)' == 'true'" Include="EFCore.BulkExtensions" Version="6.7.14"/>
-    <PackageVersion Condition="'$(UsingBulk)' == 'true' AND ('$(UsingSqlite)' == 'true')" Include="EFCore.BulkExtensions.Sqlite" Version="6.7.0"/>
-    <PackageVersion Condition="'$(UsingBulk)' == 'true' AND ('$(UsingSqlServer)' == 'true')" Include="EFCore.BulkExtensions.SqlServer" Version="6.7.0"/>
-    <PackageVersion Condition="'$(UsingBulk)' == 'true' AND ('($(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true')" Include="EFCore.BulkExtensions.PostgreSql" Version="6.7.0"/>
-    <PackageVersion Condition="'$(UsingBulk)' == 'true' AND ('$(UsingPostgreSql)' == 'true')" Include="EFCore.BulkExtensions.MySql" Version="6.7.0"/>
-    <!-- Business -->
-    <PackageVersion Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" Version="6.0.20"/>
-    <!-- Web -->
-    <PackageVersion Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.13.0" />
-    <PackageVersion Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="2.12.4" />
-    <PackageVersion Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.20" />
-    <PackageVersion Condition="'$(UsingAzureApplicationInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
-    <PackageVersion Condition="'$(UsingBearer)' == 'true' OR '$(UsingAuth0)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
-    <PackageVersion Condition="'$(UsingOpenId)' == 'true'" Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.13" />
-    <PackageVersion Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
-    <PackageVersion Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.20" />
-    <PackageVersion Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
-    <PackageVersion Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
-    <PackageVersion Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization.Routing" Version="2.2.0" />
-    <PackageVersion Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.2.0" />
-    <PackageVersion Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageVersion Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-    <PackageVersion Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.5.0" />
-    <PackageVersion Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.63.6" />
-    <PackageVersion Condition="'$(UsingDatadog)' == 'true'" Include="Serilog.Sinks.Datadog.Logs" Version="0.5.2" />
-    <!-- Tests -->
-    <!-- SpecFlow -->
-    <PackageVersion Condition="'$(UsingSpecFlow)' == 'true'" Include="SolidToken.SpecFlow.DependencyInjection" Version="3.9.3"/>
-    <PackageVersion Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57"/>
-    <PackageVersion Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74"/>
-    <PackageVersion Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow" Version="3.9.74"/>
-    <!-- NUnit -->
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="nunit" Version="3.13.3"/>
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" Version="4.2.1"/>
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit.ConsoleRunner" Version="3.16.0" />
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'NUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.NUnit" Version="3.9.74" />
-    <!-- xUnit -->
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.5.1" />
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0"/>
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="2.5.1" />
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.5.0" />
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.5.1" />
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.5.1" />
-    <PackageVersion Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.xUnit" Version="3.9.74" />
-    <!-- Selenium -->
-    <PackageVersion Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="114.0.5735.9000" />
-    <PackageVersion Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
-    <PackageVersion Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.10.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.18.0"/>
+    <PackageVersion Include="Azure.Storage.Queues" Version="12.16.0"/>
+    <PackageVersion Include="Azure.Data.Tables" Version="12.8.1"/>
+    <PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.5.0"/>
+    <PackageVersion Include="Azure.Identity" Version="1.10.1"/>
+    <PackageVersion Include="Auth0.ManagementApi" Version="7.21.1"/>
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0"/>
+    <PackageVersion Include="QuestPDF" Version="2023.9.0"/>
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.6"/>
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6"/>
+    <PackageVersion Include="HarfBuzzSharp.NativeAssets.Linux" Version="7.3.0"/>
+    <PackageVersion Include="Dapper" Version="2.1.4"/>
+    <PackageVersion Include="Microsoft.Identity.Web" Version="2.13.0"/>
+    <PackageVersion Include="Microsoft.Identity.Web.UI" Version="2.12.4"/>
+    <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.13"/>
+    <PackageVersion Include="Auth0.AspNetCore.Authentication" Version="1.2.0"/>
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
+    <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0"/>
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0"/>
+    <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="6.5.0"/>
+    <PackageVersion Include="AspNetCore.SassCompiler" Version="1.68.0"/>
+    <PackageVersion Include="Serilog.Sinks.Datadog.Logs" Version="0.5.2"/>
+    <PackageVersion Include="SolidToken.SpecFlow.DependencyInjection" Version="3.9.3"/>
+    <PackageVersion Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57"/>
+    <PackageVersion Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74"/>
+    <PackageVersion Include="SpecFlow" Version="3.9.74"/>
+    <PackageVersion Include="nunit" Version="3.13.3"/>
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.2.1"/>
+    <PackageVersion Include="NUnit.ConsoleRunner" Version="3.16.0"/>
+    <PackageVersion Include="SpecFlow.NUnit" Version="3.9.74"/>
+    <PackageVersion Include="xunit" Version="2.5.1"/>
+    <PackageVersion Include="xunit.runners" Version="2.0.0"/>
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.1"/>
+    <PackageVersion Include="xunit.runner.console" Version="2.5.1"/>
+    <PackageVersion Include="xunit.runner.utility" Version="2.5.1"/>
+    <PackageVersion Include="xunit.runner.reporters" Version="2.5.1"/>
+    <PackageVersion Include="SpecFlow.xUnit" Version="3.9.74"/>
+    <PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="114.0.5735.9000"/>
+    <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0"/>
+    <PackageVersion Include="Selenium.WebDriver.IEDriver" Version="4.10.0"/>
+    <PackageVersion Include="coverlet.collector" Version="6.0.0"/>
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.0"/>
   </ItemGroup>
 
 </Project>
