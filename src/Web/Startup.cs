@@ -54,9 +54,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #endif
 #if USING_AUTH0
-#if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-#endif
 using Auth0.AspNetCore.Authentication;
 #endif
 #if USING_TOKEN_VALIDATION

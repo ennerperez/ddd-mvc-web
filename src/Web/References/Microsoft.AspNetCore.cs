@@ -70,19 +70,19 @@ namespace Microsoft.AspNetCore
                 CookieAuthenticationDefaults.AuthenticationScheme,
 #endif
 #if USING_APIKEY
-                ApiKeyAuthenticationDefaults.AuthenticationScheme,
+        ApiKeyAuthenticationDefaults.AuthenticationScheme,
 #endif
 #if USING_BEARER
-                JwtBearerDefaults.AuthenticationScheme,
+        JwtBearerDefaults.AuthenticationScheme,
 #endif
 #if USING_OPENID
-                OpenIdConnectDefaults.AuthenticationScheme,
+        OpenIdConnectDefaults.AuthenticationScheme,
 #endif
 #if USING_AUTH0
                 Auth0Defaults.AuthenticationScheme,
 #endif
 #if USING_SMARTSCHEMA
-                Authentication.SmartScheme.DefaultScheme,
+        Authentication.SmartScheme.DefaultScheme,
 #endif
             };
 
@@ -188,7 +188,7 @@ namespace Microsoft.AspNetCore
 
             public class ApiKey
 #if USING_TABLES
-                : ITableEntity
+        : ITableEntity
 #endif
             {
                 public ApiKey()
@@ -212,14 +212,14 @@ namespace Microsoft.AspNetCore
                 public bool Active { get; set; }
 
 #if USING_TABLES
-                #region ITableEntity
+        #region ITableEntity
 
-                public string PartitionKey { get; set; }
-                public string RowKey { get; set; }
-                public DateTimeOffset? Timestamp { get; set; }
-                public ETag ETag { get; set; }
+        public string PartitionKey { get; set; }
+        public string RowKey { get; set; }
+        public DateTimeOffset? Timestamp { get; set; }
+        public ETag ETag { get; set; }
 
-                #endregion
+        #endregion
 #endif
             }
 
@@ -245,19 +245,19 @@ namespace Microsoft.AspNetCore
             }
 
 #if USING_TABLES
-            public class TableServiceApiKeyProvider : IApiKeyProvider
-            {
-                private readonly ITableService _tableService;
-                public TableServiceApiKeyProvider(ITableService tableService)
-                {
-                    _tableService = tableService;
-                }
-                public async Task<ApiKey> Execute(string providedApiKey)
-                {
-                    var apiKey = await _tableService.ReadAllAsync<ApiKey>(p => p.Active && p.Key == providedApiKey);
-                    return apiKey.FirstOrDefault();
-                }
-            }
+      public class TableServiceApiKeyProvider : IApiKeyProvider
+      {
+        private readonly ITableService _tableService;
+        public TableServiceApiKeyProvider(ITableService tableService)
+        {
+          _tableService = tableService;
+        }
+        public async Task<ApiKey> Execute(string providedApiKey)
+        {
+          var apiKey = await _tableService.ReadAllAsync<ApiKey>(p => p.Active && p.Key == providedApiKey);
+          return apiKey.FirstOrDefault();
+        }
+      }
 #endif
 
         }
@@ -312,49 +312,53 @@ namespace Microsoft.AspNetCore
 #endif
 
 #if USING_APIKEY
-            public static AuthenticationBuilder AddApiKey<T>(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null) where T : IApiKeyProvider
-            {
-                authenticationBuilder.Services.AddSingleton(typeof(IApiKeyProvider), typeof(T));
-                return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
-            }
+      public static AuthenticationBuilder AddApiKey<T>(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options = null) where T : IApiKeyProvider
+      {
+        authenticationBuilder.Services.AddSingleton(typeof(IApiKeyProvider), typeof(T));
+        return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationDefaults.AuthenticationScheme, options);
+      }
 #endif
 #if USING_SMARTSCHEMA
-            public static AuthenticationBuilder AddSmartScheme(this AuthenticationBuilder authenticationBuilder)
-            {
+      public static AuthenticationBuilder AddSmartScheme(this AuthenticationBuilder authenticationBuilder)
+      {
                 return authenticationBuilder.AddPolicyScheme(SmartScheme.DefaultScheme, "Smart Scheme Selector", options =>
-                {
-                    options.ForwardDefaultSelector = context =>
-                    {
-                        var hasJwtBearerhHeader = context.Request.Headers.ContainsKey("Authorization") && context.Request.Headers["Authorization"].Any(m => m.ToLower().StartsWith("bearer"));
-#if USING_APIKEY
-                        var hasApiKeyHeader = context.Request.Headers.ContainsKey(ApiKeyAuthenticationDefaults.ApiKeyHeaderName) && !string.IsNullOrWhiteSpace(context.Request.Headers[ApiKeyAuthenticationDefaults.ApiKeyHeaderName]);
+        {
+          options.ForwardDefaultSelector = context =>
+          {
+#if USING_BEARER
+            var hasJwtBearerhHeader = context.Request.Headers.ContainsKey("Authorization") && context.Request.Headers["Authorization"].Any(m => m.ToLower().StartsWith("bearer"));
 #endif
-                        // ReSharper disable once UnusedVariable
-                        var hasCookieHeader = context.Request.Headers.Any(m => m.Key.EndsWith(CookieAuthenticationDefaults.AuthenticationScheme) && !m.Key.Contains("Antiforgery"));
+#if USING_APIKEY
+            var hasApiKeyHeader = context.Request.Headers.ContainsKey(ApiKeyAuthenticationDefaults.ApiKeyHeaderName) && !string.IsNullOrWhiteSpace(context.Request.Headers[ApiKeyAuthenticationDefaults.ApiKeyHeaderName]);
+#endif
+            // ReSharper disable once UnusedVariable
+            var hasCookieHeader = context.Request.Headers.Any(m => m.Key.EndsWith(CookieAuthenticationDefaults.AuthenticationScheme) && !m.Key.Contains("Antiforgery"));
 #if USING_OPENID
-                        //TODO: Better implementation
-                        var hasOpenId = true;
+            //TODO: Better implementation
+            var hasOpenId = true;
 #endif
 #if USING_BEARER
-                        if (hasJwtBearerhHeader)
-                        {
-                            return JwtBearerDefaults.AuthenticationScheme;
-                        }
+            if (hasJwtBearerhHeader)
+            {
+              return JwtBearerDefaults.AuthenticationScheme;
+            }
 #endif
 #if USING_APIKEY
-                        else if (hasApiKeyHeader)
-                            return ApiKeyAuthenticationDefaults.AuthenticationScheme;
+            else if (hasApiKeyHeader)
+            {
+              return ApiKeyAuthenticationDefaults.AuthenticationScheme;
+            }
 #endif
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
 #if USING_OPENID
-                        else if (hasOpenId)
-                            return OpenIdConnectDefaults.AuthenticationScheme;
+            else if (hasOpenId)
+              return OpenIdConnectDefaults.AuthenticationScheme;
 #endif
 
-                        return CookieAuthenticationDefaults.AuthenticationScheme;
-                    };
-                });
-            }
+            return CookieAuthenticationDefaults.AuthenticationScheme;
+          };
+        });
+      }
 #endif
         }
     }
@@ -587,7 +591,7 @@ namespace Microsoft.AspNetCore
 #if USING_SASS
                 return true;
 #else
-                return false;
+        return false;
 #endif
             }
 
@@ -596,14 +600,14 @@ namespace Microsoft.AspNetCore
 #if USING_SWAGGER
                 return true;
 #else
-                return false;
+        return false;
 #endif
             }
 
             public static bool UsingInsights(this IHtmlHelper htmlHelper)
             {
 #if USING_INSIGHTS
-                return true;
+        return true;
 #else
                 return false;
 #endif
@@ -614,7 +618,7 @@ namespace Microsoft.AspNetCore
 #if USING_NEWTONSOFT
                 return true;
 #else
-                return false;
+        return false;
 #endif
             }
 
@@ -632,7 +636,7 @@ namespace Microsoft.AspNetCore
 #if USING_IDENTITY
                 return true;
 #else
-                return false;
+        return false;
 #endif
             }
 

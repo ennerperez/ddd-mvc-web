@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
 namespace Persistence.Migrations.Cache.Sqlite
 {
     public partial class _638251520945663848 : Migration

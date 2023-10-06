@@ -21,7 +21,7 @@
 
     <ItemGroup>
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit.ConsoleRunner" Version="3.16.0" ExcludeAssets="all" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'XUnit'" Include="xunit.runner.console" Version="2.5.0" ExcludeAssets="all" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'XUnit'" Include="xunit.runner.console" Version="2.5.1" ExcludeAssets="all" />
     </ItemGroup>
 
 </Project>

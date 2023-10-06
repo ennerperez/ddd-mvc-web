@@ -8,8 +8,10 @@ namespace Swashbuckle.AspNetCore
         [AttributeUsage(AttributeTargets.Method)]
         public class SwaggerOperationAttribute : Attribute
         {
+            public string Description { get; }
             public SwaggerOperationAttribute(string description)
             {
+                Description = description;
             }
         }
     }
