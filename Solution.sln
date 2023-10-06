@@ -34,6 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{55
 		src\.imports\Project.targets = src\.imports\Project.targets
 		src\.imports\Template.props = src\.imports\Template.props
 		src\.imports\Template.targets = src\.imports\Template.targets
+		src\.imports\Packages.props = src\.imports\Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{8B90AFCC-AD3F-4428-9839-AA194764BB56}"

@@ -11,11 +11,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="6.0.20" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">

@@ -9,7 +9,7 @@
       ]
     },
     "dotnet-ef": {
-      "version": "6.0.20",
+      "version": "6.0.22",
       "commands": [
         "dotnet-ef"
       ]
@@ -27,7 +27,7 @@
       ]
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.0.2",
+      "version": "5.1.25",
       "commands": [
         "reportgenerator"
       ]

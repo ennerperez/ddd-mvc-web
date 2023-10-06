@@ -17,13 +17,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.6.0" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
-        <PackageReference Include="MediatR" Version="12.1.1" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="MediatR" />
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" Version="6.0.20" />
+        <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">

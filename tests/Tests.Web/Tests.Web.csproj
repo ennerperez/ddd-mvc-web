@@ -20,58 +20,31 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Flurl" Version="3.0.7" />
-        <PackageReference Include="Flurl.Http" Version="3.2.4" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+        <PackageReference Include="Flurl" />
+        <PackageReference Include="Flurl.Http" />
+        <PackageReference Include="SixLabors.ImageSharp" />
+        <PackageReference Include="Selenium.Support" />
+        <PackageReference Include="Selenium.WebDriver" />
     </ItemGroup>
 
-    <!-- WebDriver -->
-    <ItemGroup>
-        <PackageReference Include="Selenium.Support" Version="4.10.0" />
-        <PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
-        <PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="114.0.5735.9000" />
-        <PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
-        <PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.10.0" />
+    <ItemGroup Label="ConditionalReferences">
+        <PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" />
+        <PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" />
+        <PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" />
     </ItemGroup>
 
     <!-- Serilog -->
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="3.0.1"/>
-        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0"/>
-        <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
-        <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="3.1.0" />
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0"/>
-        <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2"/>
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
-    </ItemGroup>
-
-    <ItemGroup Label="ConditionalReferences">
-        <!-- SpecFlow -->
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SolidToken.SpecFlow.DependencyInjection" Version="3.9.3"/>
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57"/>
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74"/>
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow" Version="3.9.74"/>
-        <!-- NUnit -->
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="nunit" Version="3.13.3"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" Version="4.2.1"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.NUnit" Version="3.9.74" />
-        <!-- xUnit -->
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.5.0"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="2.5.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.5.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.5.0"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.5.0"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.xUnit" Version="3.9.74" />
+        <PackageReference Include="Serilog" />
+        <PackageReference Include="Serilog.Sinks.Async" />
+        <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Settings.Configuration" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="Serilog.Sinks.PeriodicBatching" />
+        <PackageReference Include="Serilog.Enrichers.Environment" />
+        <PackageReference Include="Serilog.Enrichers.Process" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
     </ItemGroup>
 
     <ItemGroup>
