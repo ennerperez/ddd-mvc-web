@@ -32,6 +32,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
+using QuestPDF.Infrastructure;
 using Serilog;
 using Web.Services;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -725,6 +726,7 @@ namespace Web
             app.UseAuthorization();
 
 #if USING_QUESTPDF
+            QuestPDF.Settings.License = LicenseType.Community;
             DocumentService.RegisterFonts(Path.Combine("wwwroot", "fonts"));
 #endif
 

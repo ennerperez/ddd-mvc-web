@@ -70,9 +70,11 @@
         <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
         <PackageReference Condition="'$(UsingNewtonsoft)' == 'true'" Include="Newtonsoft.Json" />
         <PackageReference Condition="'$(UsingNewtonsoft)' == 'true' AND '$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Newtonsoft" />
+        <!--
         <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization" />
         <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Localization.Routing" />
         <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.AspNetCore.Mvc.Localization" />
+        -->
         <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" />
         <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" />
         <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" />
@@ -125,7 +127,7 @@
         <None Remove="Areas\Admin\Views\Users\**" />
 
         <Compile Remove="Services\SmtpSender.cs" />
-        <Compile Remove="Controllers\API\UserController.cs" />
+        <Compile Remove="Controllers\API\UsersController.cs" />
         <Compile Remove="Areas\Admin\Controllers\UsersController.cs" />
 
         <Content Remove="Areas\Identity\**" />

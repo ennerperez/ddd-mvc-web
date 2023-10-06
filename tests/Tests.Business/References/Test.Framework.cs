@@ -84,7 +84,7 @@ namespace Test.Framework.Extended
             }
             set
             {
-                var keyIndex = _table.GetHeaderIndex(header, true);
+                var keyIndex = _table.GetHeaderIndex(header);
                 _items[keyIndex] = value;
             }
         }
@@ -108,7 +108,9 @@ namespace Test.Framework.Extended
             return GetEnumerator();
         }
 
+#pragma warning disable CA1822
         private Exception ThrowTableStructureCannotBeModified()
+#pragma warning restore CA1822
         {
             return new Exception("The table rows must contain the same number of items as the header count of the table. The structure cannot be modified.");
         }
@@ -300,10 +302,10 @@ namespace Test.Framework.Extended
 
         public override string ToString()
         {
-            return ToString(false, true);
+            return ToString(false);
         }
 
-        public string ToString(bool headersOnly = false, bool withNewline = true)
+        public string ToString(bool headersOnly, bool withNewline = true)
         {
             var columnWidths = new int[_header.Length];
             for (var colIndex = 0; colIndex < _header.Length; colIndex++)
@@ -336,7 +338,9 @@ namespace Test.Framework.Extended
             return builder.ToString();
         }
 
+#pragma warning disable CA1822
         private void AddTableRow(StringBuilder builder, IEnumerable<string> cells, int[] widths)
+#pragma warning restore CA1822
         {
             const string margin = " ";
             const string separator = "|";

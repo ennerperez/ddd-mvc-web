@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 #if USING_IDENTITY
+using System.Threading.Tasks;
 using Domain.Entities.Identity;
 using System.Linq;
 #endif

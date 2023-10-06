@@ -85,14 +85,18 @@ namespace Infrastructure.Services
 
         }
 
+#pragma warning disable CA1822
         private string NormalizePath(string targetPath)
+#pragma warning restore CA1822
         {
             if (targetPath.StartsWith(@"app/") || targetPath.StartsWith(@"app\")) targetPath = targetPath.Substring(4);
             targetPath = targetPath.Replace(Path.DirectorySeparatorChar, '/');
             return targetPath;
         }
 
+#pragma warning disable CA1822
         private string NormalizeFilePath(string targetPath)
+#pragma warning restore CA1822
         {
             var fileName = Path.GetFileName(targetPath);
             targetPath = Path.GetDirectoryName(targetPath);

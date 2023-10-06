@@ -1,5 +1,7 @@
 using System.Security.Principal;
+#if USING_IDENTITY
 using System.Threading.Tasks;
+#endif
 
 namespace Infrastructure.Interfaces
 {
@@ -8,6 +10,7 @@ namespace Infrastructure.Interfaces
     {
 
     }
+    // ReSharper disable once UnusedTypeParameter
     public interface IUserAccessorService<TUser> where TUser : class
     {
         string Scheme { get; }

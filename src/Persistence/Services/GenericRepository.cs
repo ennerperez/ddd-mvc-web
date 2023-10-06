@@ -59,7 +59,10 @@ namespace Persistence.Services
                     var prop = typeof(TEntity).GetProperty("IsDeleted");
                     var type = prop?.PropertyType;
                     var constant = Expression.Constant(false);
-                    var methodInfo = type?.GetMethod("Equals", new[] { type });
+                    var methodInfo = type?.GetMethod("Equals", new[]
+                    {
+                        type
+                    });
                     var member = Expression.Property(predicate.Parameters[0], prop);
                     var callExp = Expression.Call(member, methodInfo, constant);
                     var body = Expression.AndAlso(callExp, predicate.Body);
@@ -222,10 +225,16 @@ namespace Persistence.Services
                     if (value != null && value != type.GetDefault())
                     {
                         constant = Expression.Constant(value);
-                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
+                        var methods = new[]
+                        {
+                            "Contains", "IndexOf", "Equals", "CompareTo"
+                        };
                         foreach (var method in methods)
                         {
-                            var methodInfo = type.GetMethod(method, new[] { type });
+                            var methodInfo = type.GetMethod(method, new[]
+                            {
+                                type
+                            });
                             if (methodInfo != null)
                             {
                                 var member = item;
@@ -537,7 +546,10 @@ namespace Persistence.Services
             var list = new List<TEntity>();
             foreach (var item in keys)
             {
-                var entity = await _dbSet.FindAsync(new object[] { item }, cancellationToken: cancellationToken);
+                var entity = await _dbSet.FindAsync(new object[]
+                {
+                    item
+                }, cancellationToken: cancellationToken);
                 if (entity != null)
                 {
                     list.Add(entity);
@@ -579,7 +591,10 @@ namespace Persistence.Services
 
         public virtual async Task DeleteAsync<T>(T key, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>
         {
-            var entity = await _dbSet.FindAsync(new object[] { key }, cancellationToken: cancellationToken);
+            var entity = await _dbSet.FindAsync(new object[]
+            {
+                key
+            }, cancellationToken: cancellationToken);
             if (entity != null)
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
@@ -844,10 +859,16 @@ namespace Persistence.Services
                     if (value != null && value != type.GetDefault())
                     {
                         constant = Expression.Constant(value);
-                        var methods = new[] {"Contains", "IndexOf", "Equals", "CompareTo"};
+                        var methods = new[]
+                        {
+                            "Contains", "IndexOf", "Equals", "CompareTo"
+                        };
                         foreach (var method in methods)
                         {
-                            var methodInfo = type.GetMethod(method, new[] {type});
+                            var methodInfo = type.GetMethod(method, new[]
+                            {
+                                type
+                            });
                             if (methodInfo != null)
                             {
                                 var member = item;

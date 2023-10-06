@@ -1,10 +1,10 @@
-using System.Linq;
 using System.Security.Principal;
-using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 #if USING_IDENTITY
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Security.Claims;
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;

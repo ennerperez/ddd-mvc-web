@@ -263,9 +263,10 @@ namespace Microsoft.EntityFrameworkCore
                 providerName = connectionStrings.First().Key.Split(".").Last();
             }
 
+#if USING_DATABASE_PROVIDER
+
             var connectionString = config.GetConnectionString($"{contextName}.{providerName}");
 
-#if USING_DATABASE_PROVIDER
             const string MigrationsHistoryTableName = "__EFMigrationsHistory";
             if (string.IsNullOrWhiteSpace(connectionString))
             {

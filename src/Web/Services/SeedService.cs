@@ -5,8 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+#if USING_DATABASE_PROVIDER
 using Domain.Entities;
 using Domain.Entities.Cache;
+#endif
 #if USING_IDENTITY
 using Domain.Entities.Identity;
 #endif
@@ -23,6 +25,7 @@ namespace Web.Services
     public class SeedService : IHostedService
     {
         private readonly ILogger _logger;
+        // ReSharper disable once NotAccessedField.Local
         private readonly IServiceScopeFactory _scopeFactory;
 
         public SeedService(ILoggerFactory logger, IServiceScopeFactory scopeFactory)

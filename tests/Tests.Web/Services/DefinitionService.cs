@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -791,7 +790,9 @@ namespace Tests.Web.Services
             return false;
         }
 
+#pragma warning disable CA1822
         private Definition GetCurrentScenarioDefinitions()
+#pragma warning restore CA1822
         {
 #if USING_SPECFLOW
             var basePath = Program.GetCurrentDirectory();
