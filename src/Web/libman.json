@@ -3,19 +3,19 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.6.3",
+      "library": "jquery@3.7.1",
       "destination": "wwwroot/lib/jquery"
     },
     {
-      "library": "popper.js@2.11.6",
+      "library": "popper.js@2.11.8",
       "destination": "wwwroot/lib/popper.js"
     },
     {
-      "library": "bootstrap@5.2.3",
+      "library": "bootstrap@5.3.2",
       "destination": "wwwroot/lib/bootstrap"
     },
     {
-      "library": "bootstrap-icons@1.9.1",
+      "library": "bootstrap-icons@1.11.1",
       "destination": "wwwroot/lib/bootstrap-icons"
     },
     {
@@ -27,7 +27,7 @@
       "destination": "wwwroot/lib/jquery-validate-unobtrusive"
     },
     {
-      "library": "font-awesome@6.2.0",
+      "library": "font-awesome@6.4.2",
       "destination": "wwwroot/lib/font-awesome"
     },
     {
@@ -35,15 +35,15 @@
       "destination": "wwwroot/lib/datatables.net"
     },
     {
-      "library": "datatables.net-bs5@1.12.1",
+      "library": "datatables.net-bs5@1.13.6",
       "destination": "wwwroot/lib/datatables.net-bs5"
     },
     {
-      "library": "datatables.net-buttons@2.2.3",
+      "library": "datatables.net-buttons@2.4.2",
       "destination": "wwwroot/lib/datatables.net-buttons"
     },
     {
-      "library": "datatables.net-buttons-bs5@2.2.3",
+      "library": "datatables.net-buttons-bs5@2.4.2",
       "destination": "wwwroot/lib/datatables.net-buttons-bs5"
     },
     {
@@ -55,23 +55,23 @@
       "destination": "wwwroot/lib/pdfmake"
     },
     {
-      "library": "datatables.net-responsive@2.3.0",
+      "library": "datatables.net-responsive@2.5.0",
       "destination": "wwwroot/lib/datatables.net-responsive"
     },
     {
-      "library": "datatables.net-responsive-bs5@2.3.0",
+      "library": "datatables.net-responsive-bs5@2.5.0",
       "destination": "wwwroot/lib/datatables.net-responsive-bs5"
     },
     {
-      "library": "datatables.net-select@1.4.0",
+      "library": "datatables.net-select@1.7.0",
       "destination": "wwwroot/lib/datatables.net-select"
     },
     {
-      "library": "datatables.net-select-bs5@1.4.0",
+      "library": "datatables.net-select-bs5@1.7.0",
       "destination": "wwwroot/lib/datatables.net-select-bs5"
     },
     {
-      "library": "limonte-sweetalert2@11.4.37",
+      "library": "limonte-sweetalert2@11.7.32",
       "destination": "wwwroot/lib/sweetalert2"
     },
     {
@@ -87,11 +87,11 @@
       "destination": "wwwroot/lib/tempusdominus-bootstrap-4"
     },
     {
-      "library": "bootstrap-datepicker@1.9.0",
+      "library": "bootstrap-datepicker@1.10.0",
       "destination": "wwwroot/lib/bootstrap-datepicker"
     },
     {
-      "library": "lightbox2@2.11.3",
+      "library": "lightbox2@2.11.4",
       "destination": "wwwroot/lib/lightbox2"
     }
   ]
