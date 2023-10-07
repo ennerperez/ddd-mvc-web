@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ItemGroup Label=".NET 7.0" Condition="'$(TargetFramework)' == 'net7.0'">
+  <ItemGroup Label=".NET 7.0" Condition="$(TargetFramework.Contains('net7.0'))">
     <PackageVersion Include="Nuke.Common" Version="7.0.6"/>
     <PackageVersion Include="EFCore.Nuke" Version="1.0.2"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="7.0.11"/>
@@ -36,12 +36,15 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Ini" Version="7.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="7.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1"/>
     <PackageVersion Include="EFCore.BulkExtensions" Version="7.1.6"/>
     <PackageVersion Include="EFCore.BulkExtensions.Sqlite" Version="7.1.6"/>
     <PackageVersion Include="EFCore.BulkExtensions.SqlServer" Version="7.1.6"/>
     <PackageVersion Include="EFCore.BulkExtensions.PostgreSql" Version="7.1.6"/>
     <PackageVersion Include="EFCore.BulkExtensions.MySql" Version="7.1.6"/>
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.0.2"/>
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -83,8 +86,8 @@
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.15.1"/>
     <PackageVersion Include="Microsoft.Identity.Web.UI" Version="2.15.1"/>
     <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0"/>
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16"/>
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.13"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.11"/>
     <PackageVersion Include="Auth0.AspNetCore.Authentication" Version="1.2.0"/>
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
     <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0"/>
