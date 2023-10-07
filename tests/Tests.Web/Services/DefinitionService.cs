@@ -6,6 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if USING_SPECFLOW
+using System.Text.RegularExpressions;
+#endif
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;

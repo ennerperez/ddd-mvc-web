@@ -58,6 +58,7 @@ namespace Infrastructure.Services
             }
 
         }
+        // ReSharper disable once UnusedMember.Local
         private async Task<BlobContainerClient> GetClientAsync(string containerName = "", CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(containerName)) containerName = ContainerName;

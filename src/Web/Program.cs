@@ -35,18 +35,21 @@ namespace Web
             serviceName = !string.IsNullOrWhiteSpace(serviceName) ? serviceName : Name;
 #endif
             // Initialize Logger
-            var logger = Log.Logger = new LoggerConfiguration()
+            var loggerConfiguration = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
-                .Enrich.WithProperty("ApplicationName", Name)
+                .Enrich.WithProperty("ApplicationName", Name);
 #if USING_DATADOG
-                .WriteTo.Async(a =>
+            if (!string.IsNullOrWhiteSpace(config["Datadog:ApiKey"]))
+            {
+                loggerConfiguration = loggerConfiguration.WriteTo.Async(a =>
                     a.DatadogLogs(config["Datadog:ApiKey"],
                         service: serviceName,
                         host: config["Datadog:Host"],
                         tags: tags
-                    ))
+                    ));
+            }
 #endif
-                .CreateLogger();
+            var logger = Log.Logger = loggerConfiguration.CreateLogger();
 
 #if USING_SASS && USING_SASS_WATCH
             var darts = Process.GetProcessesByName("dart");
