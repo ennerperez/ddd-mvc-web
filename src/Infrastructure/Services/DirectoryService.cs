@@ -10,6 +10,7 @@ using Azure.Storage.Blobs.Models;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+// ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
 
 namespace Infrastructure.Services
 {
@@ -20,6 +21,7 @@ namespace Infrastructure.Services
 
         private List<BlobContainerClient> clients;
 
+        // ReSharper disable once NotNullOrRequiredMemberIsNotInitialized
         public DirectoryService(IConfiguration configuration, ILoggerFactory logger)
         {
             _configuration = configuration;

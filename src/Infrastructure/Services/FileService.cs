@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -293,7 +292,7 @@ namespace Infrastructure.Services
                 }
         }
         private FileStream InternalCreate(string path, int bufferSize, FileOptions options, bool overwrite = false)
-         => throw new NotImplementedException();
+            => throw new NotImplementedException();
         private FileStream InternalOpen(string path, FileMode mode, FileAccess access, FileShare share)
         {
             var client = GetClient();
@@ -306,13 +305,11 @@ namespace Infrastructure.Services
                 using (var stream = blob.OpenRead())
                 {
                     var tempFile = Path.GetTempFileName();
-                    using (var writer = File.Open(tempFile, FileMode.OpenOrCreate))
-                    {
-                        using (var reader = new StreamReader(stream))
-                            while (!reader.EndOfStream)
-                                stream.CopyTo(writer);
-                        return writer;
-                    }
+                    var writer = File.Open(tempFile, FileMode.OpenOrCreate);
+                    using (var reader = new StreamReader(stream))
+                        while (!reader.EndOfStream)
+                            stream.CopyTo(writer);
+                    return writer;
                 }
 
             return null;

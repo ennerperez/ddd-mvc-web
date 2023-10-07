@@ -32,7 +32,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
-using QuestPDF.Infrastructure;
 using Serilog;
 using Web.Services;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -40,6 +39,7 @@ using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 #if USING_QUESTPDF
 using System.IO;
 using Infrastructure.Services;
+using QuestPDF.Infrastructure;
 #endif
 #if USING_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
