@@ -28,10 +28,24 @@ namespace Web
 
             Name = config["AppSettings:Name"];
 
+#if USING_DATADOG
+            var tags = Array.Empty<string>();
+            config.Bind("Datadog:Tags", tags);
+            var serviceName = config["Datadog:Service"];
+            serviceName = !string.IsNullOrWhiteSpace(serviceName) ? serviceName : Name;
+#endif
             // Initialize Logger
             var logger = Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
                 .Enrich.WithProperty("ApplicationName", Name)
+#if USING_DATADOG
+                .WriteTo.Async(a =>
+                    a.DatadogLogs(config["Datadog:ApiKey"],
+                        service: serviceName,
+                        host: config["Datadog:Host"],
+                        tags: tags
+                    ))
+#endif
                 .CreateLogger();
 
 #if USING_SASS && USING_SASS_WATCH
@@ -67,7 +81,7 @@ namespace Web
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseSerilog()// Uses Serilog instead of default .NET Logger
+                .UseSerilog() // Uses Serilog instead of default .NET Logger
                 .ConfigureServices(service =>
                 {
                     service.AddHostedService<SeedService>();
