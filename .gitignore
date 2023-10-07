@@ -594,6 +594,9 @@ package-lock.json
 *.min.*
 *.map
 
+# Sass Output
+**/css
+
 # SQLite files
 *.db
 *.sqlite3
