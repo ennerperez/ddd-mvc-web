@@ -29,7 +29,7 @@
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>CFBundleIdentifier</key>
-	<string>solution.dev</string>
+	<string>dev.solution</string>
 	<key>CFBundleExecutable</key>
 	<string></string>
 </dict>
