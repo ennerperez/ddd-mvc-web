@@ -19,7 +19,9 @@ using Microsoft.Maui;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Hosting;
+#if IOS
 using Microsoft.Maui.Platform;
+#endif
 using Persistence;
 using Persistence.Contexts;
 using Serilog;
