@@ -115,12 +115,12 @@ public partial class Build : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            EnsureCleanDirectory(PublishDirectory);
-            EnsureCleanDirectory(ArtifactsDirectory);
-            EnsureCleanDirectory(TestResultsDirectory);
-            EnsureCleanDirectory(ScriptsDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach((path) => path.DeleteDirectory());
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach((path) => path.DeleteDirectory());
+            AbsolutePath.Create(PublishDirectory).CreateOrCleanDirectory();
+            AbsolutePath.Create(ArtifactsDirectory).CreateOrCleanDirectory();
+            AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
+            AbsolutePath.Create(ScriptsDirectory).CreateOrCleanDirectory();
         });
 
     Target Restore => d => d
@@ -148,7 +148,7 @@ public partial class Build : NukeBuild
         .Executes(() =>
         {
             var testCombinations =
-                from project in TestsProjects.Select(m => Solution.GetProject(m))
+                from project in TestsProjects.Select(m => Solution.AllProjects.FirstOrDefault(o=> o.Name == m))
                 from framework in project.GetTargetFrameworks()
                 select new { project, framework };
 
@@ -170,9 +170,9 @@ public partial class Build : NukeBuild
         .DependsOn(Clean)
         .Executes(() =>
         {
-            var persistence = Solution.GetProject("Persistence")?.Path;
-            var startup = Solution.GetProject("Web")?.Path;
-            var startupPath = Solution.GetProject("Web")?.Directory ?? string.Empty;
+            var persistence = Solution.AllProjects.FirstOrDefault(m=> m.Name == "Persistence")?.Path;
+            var startup = Solution.AllProjects.FirstOrDefault(m=> m.Name == "Web")?.Path;
+            var startupPath = Solution.AllProjects.FirstOrDefault(m=> m.Name == "Web")?.Directory ?? string.Empty;
 
             var config = new ConfigurationBuilder()
                 .AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
@@ -200,15 +200,15 @@ public partial class Build : NukeBuild
 
                 DotNetEf(_ => new MigrationsSettings(Migrations.Script)
                     .EnableIdempotent()
-                    .SetProjectFile(Solution.GetProject(persistence))
-                    .SetStartupProjectFile(Solution.GetProject(startup))
+                    .SetProjectFile(persistence)
+                    .SetStartupProjectFile(startup)
                     .SetContext(item.Context)
                     .SetOutput(fileName)
                 );
             }
 
             var publishCombinations =
-                from project in PublishProjects.Select(m => Solution.GetProject(m))
+                from project in PublishProjects.Select(m => Solution.AllProjects.FirstOrDefault(p=> p.Name == m))
                 from framework in project.GetTargetFrameworks()
                 select new { project, framework };
 
@@ -234,9 +234,9 @@ public partial class Build : NukeBuild
                 ZipFile.CreateFromDirectory($"{PublishDirectory}/{project}", $"{ArtifactsDirectory}/{project}.zip");
             }
 
-            EnsureCleanDirectory(PublishDirectory);
-            EnsureCleanDirectory(TestResultsDirectory);
-            EnsureCleanDirectory(ScriptsDirectory);
+            AbsolutePath.Create(PublishDirectory).CreateOrCleanDirectory();
+            AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
+            AbsolutePath.Create(ScriptsDirectory).CreateOrCleanDirectory();
             Log.Information($"Output: {ArtifactsDirectory}");
         });
 }

@@ -16,8 +16,8 @@ using static Nuke.Common.Tools.DotNet.EF.Tasks;
 #pragma warning disable IDE0051 // Remove unused private members
 public partial class Build
 {
-    Project Persistence => Solution.GetProject("Persistence");
-    Project Startup => Solution.GetProject("Web");
+    Project Persistence => Solution.AllProjects.FirstOrDefault(m=> m.Name == "Persistence");
+    Project Startup => Solution.AllProjects.FirstOrDefault(m=> m.Name == "Web");
 
     static string MigrationsPath => "Migrations";
 
