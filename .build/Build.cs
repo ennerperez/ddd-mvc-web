@@ -18,6 +18,7 @@ using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.DotNet.EF.Tasks;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 #pragma warning disable IDE1006 // Naming Styles
@@ -34,11 +35,11 @@ public partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)")]
-    public string Environment = IsLocalBuild ? "Development" : "Production";
-
     [Parameter("Platform to build")]
     readonly string Platform = "Web";
+
+    [Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)")]
+    public string Environment = IsLocalBuild ? "Development" : "Production";
 
     [Solution]
     readonly Solution Solution;
@@ -55,27 +56,62 @@ public partial class Build : NukeBuild
 
     static AbsolutePath ScriptsDirectory => RootDirectory / "scripts";
 
+    static string Author => string.Empty;
+
+    static string Product => string.Empty;
+
+    static string ProjectUrl => string.Empty;
+
     Version _version = new("1.0.0.0");
     string _hash = string.Empty;
-    readonly string[] PublishProjects = new[] { "Web" };
-    readonly string[] TestsProjects = new[] { "Tests.Business" };
-    readonly string[] MobileProjects = new[] { "App" };
+
+    bool _useMaui = false;
+    string _platformOS = string.Empty;
+    string _platformName = string.Empty;
+
+    readonly string[] WebProjects = new[]
+    {
+        "Web"
+    };
+
+    readonly string[] DesktopProjects = Array.Empty<string>();
+
+    readonly string[] MobileProjects = new[]
+    {
+        "App"
+    };
+
+    readonly string[] PackageProjects = Array.Empty<string>();
+
+    readonly string[] TestsProjects = new[]
+    {
+        "Test.Business"
+    };
+
+    IEnumerable<Project> Projects = Array.Empty<Project>();
+    IEnumerable<Project> Tests = Array.Empty<Project>();
 
     Target Prepare => d => d
         .Before(Compile)
         .Executes(() =>
         {
-            var assemblyInfoVersionFile = Path.Combine(SourceDirectory, ".files", "AssemblyInfo.Version.cs");
+            #region Version
+
+            var assemblyInfoVersionFile = Path.Combine(SourceDirectory, path2: ".files", path3: "AssemblyInfo.Version.cs");
             if (File.Exists(assemblyInfoVersionFile))
             {
-                Log.Information("Patching: {File}", assemblyInfoVersionFile);
+
+                Log.Information(messageTemplate: "Patching: {File}", assemblyInfoVersionFile);
 
                 using (var gitTag = new Process())
                 {
-                    gitTag.StartInfo = new ProcessStartInfo("git", "tag --sort=-v:refname") { WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false };
+                    gitTag.StartInfo = new ProcessStartInfo(fileName: "git", arguments: "tag --sort=-v:refname")
+                    {
+                        WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false
+                    };
                     gitTag.Start();
                     var value = gitTag.StandardOutput.ReadToEnd().Trim();
-                    value = new Regex(@"((?:[0-9]{1,}\.{0,}){1,})", RegexOptions.Compiled).Match(value).Captures.LastOrDefault()?.Value;
+                    value = new Regex(pattern: @"((?:[0-9]{1,}\.{0,}){1,})", RegexOptions.Compiled).Match(value).Captures.LastOrDefault()?.Value;
                     if (value != null)
                     {
                         _version = Version.Parse(value);
@@ -86,18 +122,21 @@ public partial class Build : NukeBuild
 
                 using (var gitLog = new Process())
                 {
-                    gitLog.StartInfo = new ProcessStartInfo("git", "rev-parse --verify HEAD") { WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false };
+                    gitLog.StartInfo = new ProcessStartInfo(fileName: "git", arguments: "rev-parse --verify HEAD")
+                    {
+                        WorkingDirectory = SourceDirectory, RedirectStandardOutput = true, UseShellExecute = false
+                    };
                     gitLog.Start();
-                    _hash = gitLog.StandardOutput.ReadLine()?.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                    _hash = gitLog.StandardOutput.ReadLine()?.Trim().Split(separator: " ", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
                     gitLog.WaitForExit();
                 }
 
                 if (_version != null)
                 {
                     var content = File.ReadAllText(assemblyInfoVersionFile);
-                    var assemblyVersionRegEx = new Regex(@"\[assembly: AssemblyVersion\(.*\)\]", RegexOptions.Compiled);
-                    var assemblyFileVersionRegEx = new Regex(@"\[assembly: AssemblyFileVersion\(.*\)\]", RegexOptions.Compiled);
-                    var assemblyInformationalVersionRegEx = new Regex(@"\[assembly: AssemblyInformationalVersion\(.*\)\]", RegexOptions.Compiled);
+                    var assemblyVersionRegEx = new Regex(pattern: @"\[assembly: AssemblyVersion\(.*\)\]", RegexOptions.Compiled);
+                    var assemblyFileVersionRegEx = new Regex(pattern: @"\[assembly: AssemblyFileVersion\(.*\)\]", RegexOptions.Compiled);
+                    var assemblyInformationalVersionRegEx = new Regex(pattern: @"\[assembly: AssemblyInformationalVersion\(.*\)\]", RegexOptions.Compiled);
 
                     content = assemblyVersionRegEx.Replace(content, $"[assembly: AssemblyVersion(\"{_version}\")]");
                     content = assemblyFileVersionRegEx.Replace(content, $"[assembly: AssemblyFileVersion(\"{_version}\")]");
@@ -105,14 +144,48 @@ public partial class Build : NukeBuild
 
                     File.WriteAllText(assemblyInfoVersionFile, content);
 
-                    Log.Information("Version: {Version}", _version);
-                    Log.Information("Hash: {Hash}", _hash);
+                    Log.Information(messageTemplate: "Version: {Version}", _version);
+                    Log.Information(messageTemplate: "Hash: {Hash}", _hash);
+
                 }
                 else
                 {
                     Log.Warning("Version was not found");
                 }
             }
+
+            #endregion
+            #region Projects
+
+            var platformInfo = Platform.Contains("1:") ? Platform.Split(":") : new[]
+            {
+                Platform
+            };
+            _platformName = platformInfo.FirstOrDefault();
+            _platformOS = platformInfo.LastOrDefault();
+
+            Projects = _platformName switch
+            {
+                "Web" => Solution.AllProjects.Where(m => WebProjects.Contains(m.Name)).ToArray(),
+                "Desktop" => Solution.AllProjects.Where(m => DesktopProjects.Contains(m.Name)).ToArray(),
+                "Mobile" => Solution.AllProjects.Where(m => MobileProjects.Contains(m.Name)).ToArray(),
+                "Package" => Solution.AllProjects.Where(m => PackageProjects.Contains(m.Name)).ToArray(),
+                _ => Projects
+            };
+            if (Platform.StartsWith("Mobile")) Projects = Solution.AllProjects.Where(m => MobileProjects.Contains(m.Name)).ToArray();
+            Tests = Solution.AllProjects.Where(m => TestsProjects.Contains(m.Name)).ToArray();
+
+            #endregion
+            #region Properties
+
+            _useMaui = Projects.Select(m =>
+            {
+                var evaluatedValue = m.GetMSBuildProject()?.GetProperty("UseMaui")?.EvaluatedValue;
+                return evaluatedValue != null && bool.Parse(evaluatedValue);
+            }).Any(m => m);
+
+            #endregion
+
         });
 
     Target Clean => d => d
@@ -128,11 +201,17 @@ public partial class Build : NukeBuild
         });
 
     Target Restore => d => d
+        .After(Prepare)
         .Executes(() =>
         {
             DotNetToolRestore();
+
+            if (_useMaui) DotNet($"workload restore");
+
             DotNetRestore(s => s
-                .SetProjectFile(Solution));
+                .CombineWith(Projects, configurator: (x, v) => x
+                    .SetProjectFile(v)));
+
         });
 
     Target Compile => d => d
@@ -141,10 +220,14 @@ public partial class Build : NukeBuild
         .DependsOn(Prepare)
         .Executes(() =>
         {
-            DotNetBuild(s => s
-                .SetProjectFile(Solution)
-                .SetConfiguration(Configuration)
-                .EnableNoRestore());
+            if (!_useMaui)
+            {
+                DotNetBuild(s => s
+                    .CombineWith(Projects, configurator: (x, v) => x
+                        .SetProjectFile(v.Path)
+                        .SetConfiguration(Configuration)
+                        .EnableNoRestore()));
+            }
         });
 
     Target Test => d => d
@@ -160,12 +243,11 @@ public partial class Build : NukeBuild
                 .EnableNoRestore()
                 .EnableNoBuild()
                 .SetConfiguration(Configuration)
-                .When(true, x => x
+                .When(true, configurator: x => x
                     .SetLoggers("trx")
                     .SetResultsDirectory(TestResultsDirectory))
-                .CombineWith(testCombinations, (x, v) => x
-                    .SetProjectFile(v.project.Path)
-                    .SetFramework(v.framework)));
+                .CombineWith(Tests, configurator: (x, v) => x
+                    .SetProjectFile(v.Path)));
         });
 
     Target Publish => d => d
@@ -178,28 +260,52 @@ public partial class Build : NukeBuild
             var startup = Solution.AllProjects.FirstOrDefault(m=> m.Name == "Web")?.Path;
             var startupPath = Solution.AllProjects.FirstOrDefault(m=> m.Name == "Web")?.Directory ?? string.Empty;
 
-            var config = new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
-                .AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
-                .Build();
+            var publishProjects =
+                (from project in Projects
+                 from framework in project.GetTargetFrameworks()
+                 select new
+                 {
+                     project, framework
+                 }).Where(m => _platformOS == Platform || m.framework.Contains(_platformOS, StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
-            var connectionStrings = new Dictionary<string, string>();
-            config.Bind("ConnectionStrings", connectionStrings);
+            if (Platform.StartsWith("Web"))
+            {
+                var startupPath = Startup?.Directory ?? string.Empty;
 
-            var combinations = from item in connectionStrings
+                var config = new ConfigurationBuilder()
+                    .AddJsonFile(Path.Combine(startupPath, path2: "appsettings.json"), false, true)
+                    .AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
+                    .Build();
+
+                var connectionStrings = new Dictionary<string, string>();
+                config.Bind(key: "ConnectionStrings", connectionStrings);
+
+                var contexts = from item in connectionStrings
                                let split = item.Key.Split(".")
                                where split.Length > 1
                                let context = split.First()
                                let provider = split.Last()
                                where provider != "Sqlite"
-                               select new { Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value };
+                               select new
+                               {
+                                   Context = context, Name = context.Replace(oldValue: "Context", newValue: ""), Provider = provider, item.Value
+                               };
 
-            foreach (var item in combinations)
-            {
-                var fileName = Path.Combine(ScriptsDirectory, $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.sql");
-                if (File.Exists(fileName))
+                foreach (var item in contexts)
                 {
-                    File.Delete(fileName);
+                    var fileName = Path.Combine(ScriptsDirectory, $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.sql");
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
+
+                    DotNetEf(_ => new MigrationsSettings(Migrations.Script)
+                        .EnableIdempotent()
+                        .SetProjectFile(Persistence.Path)
+                        .SetStartupProjectFile(Startup.Path)
+                        .SetContext(item.Context)
+                        .SetOutput(fileName)
+                    );
                 }
 
                 DotNetEf(_ => new MigrationsSettings(Migrations.Script)
@@ -210,6 +316,18 @@ public partial class Build : NukeBuild
                     .SetOutput(fileName)
                 );
             }
+            else if (Platform.StartsWith("Desktop") || Platform.StartsWith("Mobile"))
+            {
+                foreach (var item in publishProjects)
+                {
+                    if (_useMaui)
+                    {
+                        var project = item.project.GetMSBuildProject();
+                        project.SetProperty("ApplicationDisplayVersion", _version.ToString(3));
+                        project.SetProperty("ApplicationVersion", (_version.Build + (_version.Build == 0 ? 1 : 0)).ToString());
+                        project.Save(item.project.Path);
+                    }
+                }
 
             var publishCombinations =
                 from project in PublishProjects.Select(m => Solution.AllProjects.FirstOrDefault(p=> p.Name == m))
@@ -231,17 +349,28 @@ public partial class Build : NukeBuild
         .DependsOn(Publish)
         .Executes(() =>
         {
-            CopyDirectoryRecursively(ScriptsDirectory, $"{ArtifactsDirectory}/Scripts");
-            CopyDirectoryRecursively(TestResultsDirectory, $"{ArtifactsDirectory}/Tests");
-            foreach (var project in PublishProjects)
+            CopyDirectoryRecursively(ScriptsDirectory, $"{ArtifactsDirectory}", DirectoryExistsPolicy.Merge);
+            foreach (var project in Projects)
             {
-                ZipFile.CreateFromDirectory($"{PublishDirectory}/{project}", $"{ArtifactsDirectory}/{project}.zip");
+                AbsolutePathExtensions.DeleteFile($"{ArtifactsDirectory}/{project.Name}.zip");
+                ZipFile.CreateFromDirectory($"{PublishDirectory}/{project.Name}", $"{ArtifactsDirectory}/{project.Name}.zip");
             }
 
             AbsolutePath.Create(PublishDirectory).CreateOrCleanDirectory();
             AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
             AbsolutePath.Create(ScriptsDirectory).CreateOrCleanDirectory();
             Log.Information($"Output: {ArtifactsDirectory}");
+        });
+
+    Target XamlStyler => d => d
+        .Executes(() =>
+        {
+            DotNetToolRestore();
+            SourceDirectory.GetFiles("*.xaml", int.MaxValue)
+                .ForEach(m =>
+                {
+                    DotNet($"xstyler -f {m}");
+                });
         });
 }
 #pragma warning restore CA1050 // Declare types in namespaces

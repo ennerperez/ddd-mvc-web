@@ -59,6 +59,10 @@
           "type": "boolean",
           "description": "Shows the execution plan (HTML)"
         },
+        "Platform": {
+          "type": "string",
+          "description": "Platform to build"
+        },
         "Profile": {
           "type": "array",
           "description": "Defines the profiles to load",
@@ -89,7 +93,8 @@
               "Prepare",
               "Publish",
               "Restore",
-              "Test"
+              "Test",
+              "XamlStyler"
             ]
           }
         },
@@ -116,7 +121,8 @@
               "Prepare",
               "Publish",
               "Restore",
-              "Test"
+              "Test",
+              "XamlStyler"
             ]
           }
         },

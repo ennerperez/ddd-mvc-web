@@ -30,6 +30,11 @@
       "dotnetRunMessages": true,
       "commandLineArgs": "--target Publish"
     },
+    "Xaml.Styler": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target XamlStyler"
+    },
     "Build.Pack": {
       "commandName": "Project",
       "dotnetRunMessages": true,
