@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.Maui.Accessibility;
-using Microsoft.Maui.Controls;
 namespace App
 {
 
-    public partial class MainPage : ContentPage
+    public partial class MainPage
     {
-        int count = 0;
+        int _count = 0;
 
         public MainPage()
         {
@@ -15,12 +14,12 @@ namespace App
 
         private void OnCounterClicked(object sender, EventArgs e)
         {
-            count++;
+            _count++;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
+            if (_count == 1)
+                CounterBtn.Text = $"Clicked {_count} time";
             else
-                CounterBtn.Text = $"Clicked {count} times";
+                CounterBtn.Text = $"Clicked {_count} times";
 
             SemanticScreenReader.Announce(CounterBtn.Text);
         }

@@ -14,9 +14,6 @@ namespace App.Services
 {
     public class UserAccessorService : IUserAccessorService<User>
     {
-        public UserAccessorService()
-        {
-        }
 
         public string Scheme => string.Empty;
 

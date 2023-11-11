@@ -1,8 +1,7 @@
-﻿using Microsoft.Maui.Controls;
-namespace App
+﻿namespace App
 {
 
-    public partial class App : Application
+    public partial class App
     {
         public App()
         {

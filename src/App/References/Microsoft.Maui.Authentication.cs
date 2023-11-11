@@ -108,8 +108,8 @@ namespace Microsoft.Maui.Authentication
                         Email = identity.FindFirstValue("email"),
                         EmailConfirmed = true,
                         UserName = identity.FindFirstValue("email"),
-                        NormalizedEmail = identity.FindFirstValue("email").ToUpper(),
-                        NormalizedUserName = identity.FindFirstValue("email").ToUpper(),
+                        NormalizedEmail = identity.FindFirstValue("email")?.ToUpper(),
+                        NormalizedUserName = identity.FindFirstValue("email")?.ToUpper(),
                     };
 
                     user.UserClaims = identity.Claims.Select(a => new UserClaim(a.Type, a.Value)).ToList();

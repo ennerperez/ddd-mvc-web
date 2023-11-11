@@ -1,8 +1,7 @@
-﻿using Microsoft.Maui.Controls;
-namespace App
+﻿namespace App
 {
 
-    public partial class AppShell : Shell
+    public partial class AppShell
     {
         public AppShell()
         {
