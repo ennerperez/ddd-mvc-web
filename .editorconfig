@@ -6,13 +6,13 @@ root = true
 # Don't use tabs for indentation.
 [*]
 indent_style = space
+charset = utf-8
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
-charset = utf-8
 
 # Xml project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -22,9 +22,21 @@ indent_size = 4
 [*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
 indent_size = 2
 
+# Solution files
+[*.sln]
+indent_size = 4
+
 # JSON files
 [*.json]
 indent_size = 2
+
+# XML files
+[*.{xml,xlt,xsd}]
+indent_size = 2
+
+# XAML files
+[*.xaml]
+indent_size = 4
 
 [*.sh]
 end_of_line = lf
@@ -189,7 +201,7 @@ dotnet_diagnostic.IDE0060.severity = warning
 dotnet_diagnostic.CA1012.severity = warning
 
 # CA1822: Make member static
-dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1822.severity = suggestion
 
 # IDE0005: Using directive is unnecessary
 dotnet_diagnostic.IDE0005.severity = warning
@@ -331,3 +343,4 @@ csharp_style_prefer_extended_property_pattern = true:suggestion
 csharp_style_prefer_not_pattern = true:suggestion
 csharp_style_prefer_pattern_matching = true:silent
 csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_primary_constructor = false:error

@@ -14,6 +14,5 @@
 
   <Import Project="$(_ImportDirectory)Features.props"/>
   <Import Project="$(_ImportDirectory)Project.props"/>
-  <Import Project="$(_ImportDirectory)Packages.props" />
 
 </Project>

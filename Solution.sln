@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{52F87F
 		docker-compose.yml = docker-compose.yml
 		.dockerignore = .dockerignore
 		Directory.Packages.props = Directory.Packages.props
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB0427-F7EC-46D1-9D9A-66DC36A3FAD8}"
@@ -35,7 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{55
 		src\.imports\Project.targets = src\.imports\Project.targets
 		src\.imports\Template.props = src\.imports\Template.props
 		src\.imports\Template.targets = src\.imports\Template.targets
-		src\.imports\Packages.props = src\.imports\Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{8B90AFCC-AD3F-4428-9839-AA194764BB56}"
