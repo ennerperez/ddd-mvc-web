@@ -8,7 +8,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS run
 WORKDIR /app
 COPY --from=build /app/publish .
 ENV DOTNET_GENERATE_ASPNET_CERTIFICATE=true
-ENV ASPNETCORE_URLS=http://+:5000;https://+:5001
+ENV ASPNETCORE_URLS=http://+:9000;https://+:9001
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="0ca271cdf1764804a136eba180f02673"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/publish/.aspnet/https/aspnetapp.pfx
 EXPOSE 5000

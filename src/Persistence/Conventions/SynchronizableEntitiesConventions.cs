@@ -25,8 +25,8 @@ namespace Persistence.Conventions
                 var key = properties.First(m => m.Name == "RowKey");
                 var version = properties.First(m => m.Name == "RowVersion");
 
-                var keyProperty = modelBuilder.Entity(key.DeclaringEntityType.ClrType).Property(key.Name);
-                var versionProperty = modelBuilder.Entity(key.DeclaringEntityType.ClrType).Property(version.Name);
+                var keyProperty = modelBuilder.Entity(key.DeclaringType.ClrType).Property(key.Name);
+                var versionProperty = modelBuilder.Entity(key.DeclaringType.ClrType).Property(version.Name);
 
                 keyProperty.ValueGeneratedOnAdd();
                 versionProperty.IsRowVersion().ValueGeneratedOnAddOrUpdate();

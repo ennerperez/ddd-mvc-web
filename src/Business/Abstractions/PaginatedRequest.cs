@@ -7,13 +7,9 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Business.Abstractions
 {
-    public class PaginatedRequest<TResult> : IPaginatedRequest<TResult>
-    {
-    }
+    public class PaginatedRequest<TResult> : IPaginatedRequest<TResult>;
 
-    public class PaginatedRequest<TEntity, TResult> : PaginatedRequest<TEntity, int, TResult> where TEntity : class, IEntity<int>
-    {
-    }
+    public class PaginatedRequest<TEntity, TResult> : PaginatedRequest<TEntity, int, TResult> where TEntity : class, IEntity<int>;
 
     public class PaginatedRequest<TEntity, TKey, TResult> : IPaginatedRequest<TResult> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {

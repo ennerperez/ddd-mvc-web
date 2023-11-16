@@ -19,7 +19,5 @@ namespace Domain.Interfaces
 #endif
     }
 
-    public interface IExtendedSoftDelete : IExtendedSoftDelete<int>
-    {
-    }
+    public interface IExtendedSoftDelete : IExtendedSoftDelete<int>;
 }

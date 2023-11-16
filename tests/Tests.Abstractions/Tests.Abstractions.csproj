@@ -15,23 +15,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Ini" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-        <PackageReference Include="Microsoft.Extensions.Logging" />
-        <PackageReference Include="Microsoft.VisualStudio.Threading" />
-        <PackageReference Include="Microsoft.VisualStudio.Validation" />
-        <PackageReference Include="FluentAssertions" />
-        <PackageReference Include="coverlet.collector" >
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="8.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.8.14" />
+        <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
+        <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.msbuild" >
+        <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -43,19 +47,19 @@
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.NUnit" />
         <!-- xUnit -->
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" >
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.6.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="2.5.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" >
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.6.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.xUnit" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.6.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.6.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.xUnit" Version="3.9.74" />
     </ItemGroup>
 
     <ItemGroup Label="SpecFlow Files" Condition="'$(UsingSpecFlow)' == 'false'">

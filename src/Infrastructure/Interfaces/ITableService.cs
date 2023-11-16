@@ -11,10 +11,7 @@ using Azure.Data.Tables;
 namespace Infrastructure.Interfaces
 {
 #if !USING_TABLES
-    public interface ITableEntity
-    {
-
-    }
+    public interface ITableEntity;
 #endif
     public interface ITableService
     {

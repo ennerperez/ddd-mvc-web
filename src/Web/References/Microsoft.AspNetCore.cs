@@ -124,8 +124,7 @@ namespace Microsoft.AspNetCore
                     IOptionsMonitor<ApiKeyAuthenticationOptions> options,
                     ILoggerFactory logger,
                     UrlEncoder encoder,
-                    ISystemClock clock,
-                    IApiKeyProvider apiKeyProvider) : base(options, logger, encoder, clock)
+                    IApiKeyProvider apiKeyProvider) : base(options, logger, encoder)
                 {
                     _apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
                 }

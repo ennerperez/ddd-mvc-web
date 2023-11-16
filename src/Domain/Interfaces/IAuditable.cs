@@ -31,7 +31,5 @@ namespace Domain.Interfaces
 #endif
     }
 
-    public interface IExtendedAuditable : IExtendedAuditable<int>
-    {
-    }
+    public interface IExtendedAuditable : IExtendedAuditable<int>;
 }
