@@ -17,7 +17,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls.Hosting;
+#if IOS || ANDROID
 using Microsoft.Maui.Controls.Platform;
+#endif
 using Microsoft.Maui.Hosting;
 #if IOS
 using Microsoft.Maui.Platform;
@@ -33,7 +35,6 @@ namespace App
 {
     public static class MauiProgram
     {
-
         private static string Name => Assembly.GetAssembly(typeof(MauiProgram)).Product();
         public static MauiApp CreateMauiApp()
         {
@@ -106,7 +107,6 @@ namespace App
 
             return builder.Build();
         }
-
         private static MauiAppBuilder RegisterViewModels(this MauiAppBuilder mauiAppBuilder)
         {
             return mauiAppBuilder;
