@@ -40,7 +40,7 @@
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="3.1.0" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
@@ -60,8 +60,8 @@
     </Target>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.15.3" />
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="2.15.3" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.16.0" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="2.16.0" />
         <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
         <PackageReference Condition="'$(UsingAzureApplicationInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
         <PackageReference Condition="'$(UsingBearer)' == 'true' OR '$(UsingAuth0)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />

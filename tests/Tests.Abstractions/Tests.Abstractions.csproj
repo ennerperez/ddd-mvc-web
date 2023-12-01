@@ -47,18 +47,18 @@
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.NUnit" />
         <!-- xUnit -->
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.6.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.6.2" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="2.5.3">
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="2.5.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.6.1">
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.6.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.6.1" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.6.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.6.2" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.6.2" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.xUnit" Version="3.9.74" />
     </ItemGroup>
 
