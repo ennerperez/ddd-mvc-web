@@ -15,18 +15,12 @@ namespace Infrastructure.Interfaces
     }
 
 #if USING_QUESTPDF
-    public interface IPdfDocument : IDocument, QuestPDF.Infrastructure.IDocument
-    {
-    }
+    public interface IPdfDocument : IDocument, QuestPDF.Infrastructure.IDocument;
 
-    public interface IPdfDocument<TModel> : IDocument<TModel>, QuestPDF.Infrastructure.IDocument
-    {
-    }
+    public interface IPdfDocument<TModel> : IDocument<TModel>, QuestPDF.Infrastructure.IDocument;
 #endif
 
-    public interface IDocumentService : IDocumentService<IDocument>
-    {
-    }
+    public interface IDocumentService : IDocumentService<IDocument>;
 
     public interface IDocumentService<in TDocument> where TDocument : IDocument
     {

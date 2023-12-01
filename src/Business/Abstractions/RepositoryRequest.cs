@@ -13,9 +13,7 @@ namespace Business.Abstractions
 {
 
     public class RepositoryRequest<TEntity, TResult> : RepositoryRequest<TEntity, int, TResult>
-        where TEntity : class, IEntity<int>
-    {
-    }
+        where TEntity : class, IEntity<int>;
 
     public class RepositoryRequest<TEntity, TKey, TResult> : IRepositoryRequest<TEntity, TKey, TResult>
         where TEntity : class, IEntity<TKey>

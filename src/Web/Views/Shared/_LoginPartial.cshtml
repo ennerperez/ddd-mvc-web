@@ -1,28 +1,28 @@
-@using System.Security.Claims
+@* @using System.Security.Claims *@
 
 @{
-    var isSignedIn = User.Identity?.IsAuthenticated ?? false;
-    var name = "";
-    if (isSignedIn)
-    {
-        name = @User.GetUserFullName();
-    }
+    // var isSignedIn = User.Identity?.IsAuthenticated ?? false;
+    // var name = "";
+    // if (isSignedIn)
+    // {
+    //     name = @User.GetUserFullName();
+    // }
 }
 
 <ul class="navbar-nav">
-    @if (isSignedIn)
-    {
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Account" asp-action="Profile" title="Manage">@name</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
-        </li>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
-        </li>
-    }
+    @* @if (isSignedIn) *@
+    @* { *@
+    @*     <li class="nav-item"> *@
+    @*         <a class="nav-link" asp-controller="Account" asp-action="Profile" title="Manage">@name</a> *@
+    @*     </li> *@
+    @*     <li class="nav-item"> *@
+    @*         <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a> *@
+    @*     </li> *@
+    @* } *@
+    @* else *@
+    @* { *@
+    @*     <li class="nav-item"> *@
+    @*         <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a> *@
+    @*     </li> *@
+    @* } *@
 </ul>

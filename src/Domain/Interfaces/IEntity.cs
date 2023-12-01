@@ -5,9 +5,7 @@ namespace Domain.Interfaces
     /// <summary>
     /// Default entity with int key implementation
     /// </summary>
-    public interface IEntity : IEntity<int>
-    {
-    }
+    public interface IEntity : IEntity<int>;
 
     /// <summary>
     /// Generic entity with key implementation

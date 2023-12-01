@@ -57,7 +57,7 @@ namespace Persistence.Conventions
                     .ToArray();
                 foreach (var p in datetimeProperties)
                 {
-                    var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
+                    var property = modelBuilder.Entity(p.DeclaringType.ClrType).Property(p.Name);
                     property.HasConversion(new DateTimeOffsetToBinaryConverter());
                 }
 
@@ -69,7 +69,7 @@ namespace Persistence.Conventions
 
                 foreach (var p in guidProperties)
                 {
-                    var property = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
+                    var property = modelBuilder.Entity(p.DeclaringType.ClrType).Property(p.Name);
                     if (p.IsColumnNullable())
                     {
                         property.HasDefaultValue(null);
@@ -112,12 +112,12 @@ namespace Persistence.Conventions
             var items1 = modelBuilder.Model.GetEntityTypes().Where(m => !options.Exclude.Contains(m.Name)).SelectMany(t => t.GetProperties()).ToArray();
             foreach (var p in items1)
             {
-                if (p.DeclaringEntityType.ClrType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(p.DeclaringEntityType.ClrType))
+                if (p.DeclaringType.ClrType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(p.DeclaringType.ClrType))
                 {
                     continue;
                 }
 
-                var entity = modelBuilder.Entity(p.DeclaringEntityType.ClrType).Property(p.Name);
+                var entity = modelBuilder.Entity(p.DeclaringType.ClrType).Property(p.Name);
                 var columnType = p.GetColumnType();
                 if (columnType != null)
                 {

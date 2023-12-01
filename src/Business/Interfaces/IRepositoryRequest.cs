@@ -7,9 +7,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Business.Interfaces
 {
-    public interface IRepositoryRequest<TEntity, TResult> : IRepositoryRequest<TEntity, int, TResult> where TEntity : class, IEntity<int>
-    {
-    }
+    public interface IRepositoryRequest<TEntity, TResult> : IRepositoryRequest<TEntity, int, TResult> where TEntity : class, IEntity<int>;
 
     public interface IRepositoryRequest<TEntity, TKey, TResult> : IRequest<TResult[]> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
@@ -26,16 +24,10 @@ namespace Business.Interfaces
 
     public interface IRepositoryRequestHandler<TRequest, TEntity, TResult> : IRepositoryRequestHandler<TRequest, TEntity, int, TResult>
         where TRequest : IRepositoryRequest<TEntity, TResult>
-        where TEntity : class, IEntity<int>
-    {
-
-    }
+        where TEntity : class, IEntity<int>;
 
     public interface IRepositoryRequestHandler<TRequest, TEntity, TKey, TResult> : IRequestHandler<TRequest, TResult[]>
         where TRequest : IRepositoryRequest<TEntity, TKey, TResult>
         where TEntity : class, IEntity<TKey>
-        where TKey : struct, IComparable<TKey>, IEquatable<TKey>
-    {
-
-    }
+        where TKey : struct, IComparable<TKey>, IEquatable<TKey>;
 }

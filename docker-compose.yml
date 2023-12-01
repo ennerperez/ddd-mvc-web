@@ -10,5 +10,5 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - 5000:5000/tcp
-      - 5001:5001/tcp
+      - 9000:9000/tcp
+      - 9001:9001/tcp

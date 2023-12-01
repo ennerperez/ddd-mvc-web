@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 namespace Infrastructure.Interfaces
 {
 
-    public interface IUserAccessorService : IUserAccessorService<object>
-    {
-
-    }
+    public interface IUserAccessorService : IUserAccessorService<object>;
     // ReSharper disable once UnusedTypeParameter
     public interface IUserAccessorService<TUser> where TUser : class
     {
