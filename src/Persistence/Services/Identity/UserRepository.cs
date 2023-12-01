@@ -67,10 +67,10 @@ namespace Persistence.Services.Identity
                 throw new InvalidOperationException("Cannot delete all users");
             }
 
-            if (keys.Cast<int>().Contains(1))
-            {
-                throw new InvalidOperationException("Cannot delete the first user");
-            }
+            // if (keys.Cast<int>().Contains(1))
+            // {
+            //     throw new InvalidOperationException("Cannot delete the first user");
+            // }
 
             await base.DeleteAsync(keys, cancellationToken);
         }
