@@ -28,9 +28,15 @@
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" />
-        <PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" />
-        <PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" />
+        <!-- SpecFlow -->
+        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SolidToken.SpecFlow.DependencyInjection" Version="3.9.3" />
+        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74" />
+        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow" Version="3.9.74" />
+        <!-- WebDriver -->
+        <PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="119.0.6045.10500" />
+        <PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
+        <PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.14.0" />
     </ItemGroup>
 
     <!-- Serilog -->

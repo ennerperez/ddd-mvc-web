@@ -1,3 +1,4 @@
+#if USING_SPECFLOW
 using System.Linq;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
@@ -26,3 +27,4 @@ namespace Tests.Abstractions.Hooks
         }
     }
 }
+#endif

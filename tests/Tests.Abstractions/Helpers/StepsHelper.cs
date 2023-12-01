@@ -1,9 +1,10 @@
+#if USING_SPECFLOW
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
+using TechTalk.SpecFlow;
 
 namespace Tests.Abstractions.Helpers
 {
@@ -173,3 +174,4 @@ namespace Tests.Abstractions.Helpers
 
     }
 }
+#endif

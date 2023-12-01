@@ -38,11 +38,6 @@
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <!-- SpecFlow -->
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SolidToken.SpecFlow.DependencyInjection" />
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Plus.LivingDocPlugin" />
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow.Tools.MsBuild.Generation" />
-        <PackageReference Condition="'$(UsingSpecFlow)' == 'true'" Include="SpecFlow" />
         <!-- NUnit -->
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="nunit" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" />
@@ -70,6 +65,7 @@
         <Compile Remove="Hooks/*.cs" />
         <Compile Remove="Steps/*.cs" />
         <Compile Remove="Features/*.cs" />
+        <Compile Remove="Settings/*Specflow*.cs" />
     </ItemGroup>
 
     <ItemGroup>

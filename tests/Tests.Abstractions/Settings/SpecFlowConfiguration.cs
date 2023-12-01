@@ -1,3 +1,4 @@
+#if USING_SPECFLOW
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Tests.Abstractions.Interfaces;
@@ -20,3 +21,4 @@ namespace Tests.Abstractions.Settings
         public List<string> RequiredTagPrefixes { get; }
     }
 }
+#endif

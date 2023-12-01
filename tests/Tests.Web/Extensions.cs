@@ -16,8 +16,8 @@ namespace Tests.Web
     {
         public static IServiceCollection AddTests(this IServiceCollection services)
         {
-            services.AddScoped<IAutomationConfiguration, Abstractions.Settings.SpecFlowConfiguration>();
 #if USING_SPECFLOW
+            services.AddScoped<IAutomationConfiguration, Abstractions.Settings.SpecFlowConfiguration>();
             services.AddScoped<IFeatureContext, FeatureContext>();
             services.AddScoped<IScenarioContext, ScenarioContext>();
 #endif

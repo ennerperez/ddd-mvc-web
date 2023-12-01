@@ -1,3 +1,4 @@
+#if USING_SPECFLOW
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using TechTalk.SpecFlow;
@@ -64,3 +65,4 @@ namespace Tests.Abstractions.Hooks
         }
     }
 }
+#endif
