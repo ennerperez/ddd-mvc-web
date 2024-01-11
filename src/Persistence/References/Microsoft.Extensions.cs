@@ -81,63 +81,6 @@ namespace Microsoft.Extensions
                 }
             }
 
-            private static bool IsOpenGeneric(this Type type)
-            {
-                return type.GetTypeInfo().IsGenericTypeDefinition || type.GetTypeInfo().ContainsGenericParameters;
-            }
-
-            private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
-            {
-                return FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
-            }
-
-            private static IEnumerable<Type> FindInterfacesThatClosesCore(this Type pluggedType, Type templateType)
-            {
-                if (pluggedType == null)
-                {
-                    yield break;
-                }
-
-                if (!pluggedType.IsConcrete())
-                {
-                    yield break;
-                }
-
-                if (templateType.GetTypeInfo().IsInterface)
-                {
-                    foreach (
-                        var interfaceType in
-                        pluggedType.GetInterfaces()
-                            .Where(type => type.GetTypeInfo().IsGenericType && (type.GetGenericTypeDefinition() == templateType)))
-                    {
-                        yield return interfaceType;
-                    }
-                }
-                else
-                {
-                    var memberInfo = pluggedType.GetTypeInfo().BaseType;
-                    if (memberInfo != null && memberInfo.GetTypeInfo().IsGenericType && (memberInfo.GetGenericTypeDefinition() == templateType))
-                    {
-                        yield return pluggedType.GetTypeInfo().BaseType;
-                    }
-                }
-
-                if (pluggedType.GetTypeInfo().BaseType == typeof(object))
-                {
-                    yield break;
-                }
-
-                foreach (var interfaceType in FindInterfacesThatClosesCore(pluggedType.GetTypeInfo().BaseType, templateType))
-                {
-                    yield return interfaceType;
-                }
-            }
-
-            private static bool IsConcrete(this Type type)
-            {
-                return !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
-            }
-
             private static void Fill<T>(this IList<T> list, T value)
             {
                 if (list.Contains(value))
@@ -148,51 +91,6 @@ namespace Microsoft.Extensions
                 list.Add(value);
             }
 
-            private static bool CanBeCastTo(this Type pluggedType, Type pluginType)
-            {
-                if (pluggedType == null)
-                {
-                    return false;
-                }
-
-                if (pluggedType == pluginType)
-                {
-                    return true;
-                }
-
-                return pluginType.GetTypeInfo().IsAssignableFrom(pluggedType.GetTypeInfo());
-            }
-
-            private static bool IsMatchingWithInterface(this Type handlerType, Type handlerInterface)
-            {
-                if (handlerType == null || handlerInterface == null)
-                {
-                    return false;
-                }
-
-                if (handlerType.IsInterface)
-                {
-                    if (handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments))
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    return IsMatchingWithInterface(handlerType.GetInterface(handlerInterface.Name), handlerInterface);
-                }
-
-                return false;
-            }
-
-            private static bool CouldCloseTo(this Type openConcretion, Type closedInterface)
-            {
-                var openInterface = closedInterface.GetGenericTypeDefinition();
-                var arguments = closedInterface.GenericTypeArguments;
-
-                var concreteArguments = openConcretion.GenericTypeArguments;
-                return arguments.Length == concreteArguments.Length && openConcretion.CanBeCastTo(openInterface);
-            }
         }
     }
 }

@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /app
+COPY . .
+WORKDIR /app/src/Web
+RUN dotnet dev-certs https -ep /app/publish/.aspnet/https/aspnetapp.pfx -p 0ca271cdf1764804a136eba180f02673
+RUN dotnet publish "Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS run
+WORKDIR /app
+COPY --from=build /app/publish .
+ENV DOTNET_GENERATE_ASPNET_CERTIFICATE=true
+ENV ASPNETCORE_URLS=http://+:9000;https://+:9001
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="0ca271cdf1764804a136eba180f02673"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/publish/.aspnet/https/aspnetapp.pfx
+EXPOSE 5000
+EXPOSE 5001
+ENTRYPOINT ["dotnet", "Web.dll"]
+
