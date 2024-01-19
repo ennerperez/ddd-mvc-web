@@ -58,8 +58,8 @@ namespace Persistence.Contexts
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 #if DEBUG
-            optionsBuilder?.EnableDetailedErrors();
-            optionsBuilder?.EnableSensitiveDataLogging();
+            optionsBuilder.EnableDetailedErrors();
+            optionsBuilder.EnableSensitiveDataLogging();
 #endif
         }
 

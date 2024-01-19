@@ -61,7 +61,7 @@ namespace Business.Requests
                 Taxes = request.Taxes,
                 Total = request.Total,
 
-                CreatedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId())
+                CreatedById = int.Parse((_userAccessorService.User as ClaimsPrincipal).GetUserId())
             };
 
             await _repository.CreateAsync(entity, cancellationToken);
@@ -183,7 +183,7 @@ namespace Business.Requests
             entity.Total = request.Total;
 
             entity.ModifiedAt = DateTime.Now;
-            entity.ModifiedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId());
+            entity.ModifiedById = int.Parse((_userAccessorService.User as ClaimsPrincipal).GetUserId());
 
             await _repository.UpdateAsync(entity, cancellationToken);
         }
@@ -284,7 +284,7 @@ namespace Business.Requests
             }
 
             entity.ModifiedAt = DateTime.Now;
-            entity.ModifiedById = int.Parse((_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId());
+            entity.ModifiedById = int.Parse((_userAccessorService.User as ClaimsPrincipal).GetUserId());
 
             await _repository.UpdateAsync(entity, cancellationToken);
         }
@@ -370,7 +370,7 @@ namespace Business.Requests
             }
 
             entity.DeletedAt = DateTime.Now;
-            var userId = (_userAccessorService.GetActiveUser() as ClaimsPrincipal).GetUserId();
+            var userId = (_userAccessorService.User as ClaimsPrincipal).GetUserId();
             _ = int.TryParse(userId, out var deletedById);
             if (deletedById != 0)
             {

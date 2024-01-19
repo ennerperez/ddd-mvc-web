@@ -154,7 +154,7 @@ namespace Serilog
 
             private string GetRemoteIpAddress()
             {
-                return _contextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+                return _contextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
             }
             private string GetForwardedFor()
             {

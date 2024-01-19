@@ -46,6 +46,10 @@ using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
 #if USING_BEARER
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+#endif
+#if USING_AUTH0 && !USING_BEARER
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
 #if USING_COOKIES || !USING_IDENTITY
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -55,12 +59,13 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 #endif
 #if USING_AUTH0
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Auth0.AspNetCore.Authentication;
 #endif
 #if USING_TOKEN_VALIDATION
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 #endif
 #if USING_NEWTONSOFT
 using Microsoft.AspNetCore.Mvc;
@@ -270,7 +275,10 @@ namespace Web
                 config.EnableForHttps = true;
                 config.Providers.Add<BrotliCompressionProvider>();
                 config.Providers.Add<GzipCompressionProvider>();
-                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml", "text/css", "text/javascript" });
+                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+                {
+                    "image/svg+xml", "text/css", "text/javascript"
+                });
             });
 
             services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
@@ -292,7 +300,7 @@ namespace Web
                 options.Cookie = new CookieBuilder
                 {
                     Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}",
-                    IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
+                    IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
 #if USING_SWAGGER
                 options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -330,17 +338,22 @@ namespace Web
 #endif
 
 #if USING_SWAGGER
-            // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
+            if (Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
             {
-                var versions = new List<string>();
-                Configuration.Bind("SwaggerSettings:Versions", versions);
-                foreach (var version in versions)
+                // Register the Swagger generator, defining 1 or more Swagger documents
+                services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}" });
-                }
+                    var versions = new List<string>();
+                    Configuration.Bind("SwaggerSettings:Versions", versions);
+                    foreach (var version in versions)
+                    {
+                        c.SwaggerDoc(version, new OpenApiInfo
+                        {
+                            Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}"
+                        });
+                    }
 
-                c.DocInclusionPredicate((_, _) => true);
+                    c.DocInclusionPredicate((_, _) => true);
 
 #if USING_APIKEY
                 var apiKeySecurityScheme = new OpenApiSecurityScheme
@@ -386,13 +399,14 @@ namespace Web
                 c.AddSecurityDefinition(auth0SecurityScheme.Reference.Id, auth0SecurityScheme);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { auth0SecurityScheme, Array.Empty<string>() } });
 #endif
-                c.ResolveConflictingActions(apiDescription => apiDescription.First());
-                c.CustomSchemaIds(type => type.ToString());
-                c.EnableAnnotations();
-            });
+                    c.ResolveConflictingActions(apiDescription => apiDescription.First());
+                    c.CustomSchemaIds(type => type.ToString());
+                    c.EnableAnnotations();
+                });
 #if USING_NEWTONSOFT
-            services.AddSwaggerGenNewtonsoftSupport();
+                services.AddSwaggerGenNewtonsoftSupport();
 #endif
+            }
 #endif
 
 #if USING_OPENID
@@ -400,7 +414,7 @@ namespace Web
             {
                 Configuration.Bind("OpenIdSettings", options);
 
-#if USING_TOKEN_VALIDATION
+#if USING_TOKEN_VALIDATION && USING_IDENTITY
                 options.Events.OnTokenValidated = OpenId_OnTokenValidated;
 #endif
                 options.MetadataAddress = $"{Configuration["OpenIdSettings:Authority"]}/.well-known/openid-configuration";
@@ -428,7 +442,10 @@ namespace Web
 
             var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
             {
-                options.Cookie = new CookieBuilder() { Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration };
+                options.Cookie = new CookieBuilder()
+                {
+                    Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration
+                };
             });
             services.AddAntiforgery(antiforgeryOptions);
 
@@ -462,7 +479,7 @@ namespace Web
                     options.Cookie = new CookieBuilder
                     {
                         Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}",
-                        IsEssential = true// required for auth to work without explicit user consent; adjust to suit your privacy policy
+                        IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                     };
 #if USING_SWAGGER
                     options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -481,8 +498,8 @@ namespace Web
                 {
 #if USING_AUTH0
                     options.Authority = Configuration["Auth0Settings:Authority"];
+#endif
                     options.TokenValidationParameters = new TokenValidationParameters() {ValidateAudience = false};
-#else
 #if DEBUG
                     options.IncludeErrorDetails = true;
 #endif
@@ -490,8 +507,9 @@ namespace Web
                     Configuration.Bind("AuthSettings:Audiences", audiences);
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
+                        ValidateIssuerSigningKey = Configuration.GetValue<bool>("AuthSettings:Validate:IssuerSigningKey"),
                         ValidIssuer = Configuration["AuthSettings:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"] ?? string.Empty)),
                         ValidateLifetime = Configuration.GetValue<bool>("AuthSettings:Validate:Lifetime"),
                         ValidateIssuer = Configuration.GetValue<bool>("AuthSettings:Validate:Issuer"),
                         ValidateAudience = Configuration.GetValue<bool>("AuthSettings:Validate:Audience"),
@@ -501,9 +519,6 @@ namespace Web
                     };
                     options.SaveToken = Configuration.GetValue<bool>("AuthSettings:SaveToken");
                     options.RequireHttpsMetadata = Configuration.GetValue<bool>("AuthSettings:RequireHttpsMetadata");
-
-#endif
-
                 })
 #endif
 #if USING_SMARTSCHEMA
@@ -522,6 +537,10 @@ namespace Web
                     {
                         options.Scope = string.Join(" ", scopes);
                     }
+#if USING_TOKEN_VALIDATION && USING_IDENTITY
+                    options.OpenIdConnectEvents = new OpenIdConnectEvents();
+                    options.OpenIdConnectEvents.OnTokenValidated = OpenId_OnTokenValidated ;
+#endif
                 })
                 .WithAccessToken(options =>
                 {
@@ -534,7 +553,7 @@ namespace Web
             services.AddAuthorization();
         }
 
-#if (USING_OPENID) && USING_TOKEN_VALIDATION
+#if (USING_OPENID || USING_AUTH0) && USING_TOKEN_VALIDATION && USING_IDENTITY
         private async Task OpenId_OnTokenValidated(Microsoft.AspNetCore.Authentication.OpenIdConnect.TokenValidatedContext context)
         {
             if (context.Principal != null && context.Principal.Identity != null)
@@ -543,7 +562,6 @@ namespace Web
                 var claims = cllist.ToDictionary(k => k.Type, v => v.Value);
                 var emails = claims["name"];
 
-                //var userManager = Program.Host.Services.GetService<UserManager<Buyer>>();
                 var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
                 if (userManager != null)
                 {
@@ -652,17 +670,17 @@ namespace Web
 #endif
 
 #if USING_HEALTHCHECK
-            app.UseHealthChecks("/Health");
+            app.UseHealthChecks(Configuration["AppSettings:HealthCheckPath"]);
 #endif
             app.UseRouting();
 
 #if USING_SWAGGER
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Program.Name.Normalize(false, false, true)}.json"; });
-
             if (Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
             {
+                // Enable middleware to serve generated Swagger as a JSON endpoint.
+                app.UseSwagger(c => { c.RouteTemplate = $"api/{{documentName}}/{Program.Name.Normalize(false, false, true)}.json"; });
+
                 var uiEngine = Configuration["SwaggerSettings:UIEngine"];
                 var swaggerRoutePrefix = Configuration["SwaggerSettings:RoutePrefix"];
                 var swaggerDocumentTitle = Configuration["SwaggerSettings:DocumentTitle"] ?? Program.Name;
@@ -698,24 +716,26 @@ namespace Web
                         c.RoutePrefix = swaggerRoutePrefix;
 
 #if USING_AUTH0
-                        c.OAuthClientId(Configuration["Auth0Settings:ClientId"]);
-                        c.OAuthClientSecret(Configuration["Auth0Settings:ClientSecret"]);
+                    	c.OAuthClientId(Configuration["Auth0Settings:ClientId"]);
+                    	c.OAuthClientSecret(Configuration["Auth0Settings:ClientSecret"]);
 #endif
 
                         c.DefaultModelsExpandDepth(-1);
 
                         c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
-                        c.InjectJavascript($"../lib/jquery/jquery{(env.IsDevelopment() ? "" : ".min")}.js");
+            			c.InjectJavascript($"../lib/jquery/jquery.slim{(env.IsDevelopment() ? "" : ".min")}.js");
                         c.InjectJavascript($"../js/swagger{(env.IsDevelopment() ? "" : ".min")}.js");
                     });
                 }
             }
-
 #endif
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                });
             }
 
 #if USING_CORS
@@ -736,8 +756,8 @@ namespace Web
                     "areas",
                     "{area:exists}/{controller=Default}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Default}/{action=Index}/{id?}");
+                    "default",
+                    "{controller=Default}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

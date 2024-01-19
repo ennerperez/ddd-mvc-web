@@ -1,11 +1,12 @@
+using System;
+using System.Linq;
+using System.Globalization;
 using System.Security.Principal;
+using System.Security.Claims;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 #if USING_IDENTITY
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Security.Claims;
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 #endif
@@ -63,18 +64,17 @@ namespace Web.Services
         }
 #endif
 
-        public IPrincipal GetActiveUser()
-        {
-            if (_httpContext.HttpContext != null)
-            {
-                return _httpContext.HttpContext.User;
-            }
+        public IPrincipal User => _httpContext.HttpContext?.User;
+        public string UserId => FindLastValue("oid");
 
-            return null;
-        }
+        public CultureInfo Culture => CultureInfo.CurrentCulture;
+
+        public string IdentityToken => throw new NotImplementedException();
+        public string AccessToken => throw new NotImplementedException();
+        public string RefreshToken => throw new NotImplementedException();
 
 #if USING_IDENTITY
-        public async Task<User> GetLocalActiveUserAsync()
+        public async Task<User> GetIdentityUserAsync()
         {
             if (_httpContext.HttpContext != null)
             {
@@ -87,6 +87,11 @@ namespace Web.Services
             }
             return null;
         }
+        public User GetIdentityUser()
+        {
+            throw new NotImplementedException();
+        }
+#endif
         public string FindFirstValue(string claimType)
         {
             if (_httpContext.HttpContext != null)
@@ -115,6 +120,5 @@ namespace Web.Services
 
             return Array.Empty<string>();
         }
-#endif
     }
 }

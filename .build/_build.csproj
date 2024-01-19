@@ -5,10 +5,11 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <RootNamespace></RootNamespace>
-        <NoWarn>CS0649;CS0169</NoWarn>
+        <NoWarn>CS0649;CS0169;CA1050;CA1822;CA2211;IDE1006</NoWarn>
         <NukeRootDirectory>..</NukeRootDirectory>
         <NukeScriptDirectory>..</NukeScriptDirectory>
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,8 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nuke.Common" Version="7.0.6"/>
-        <PackageReference Include="EFCore.Nuke" Version="1.0.2"/>
+        <PackageReference Include="Nuke.Common" Version="8.0.0" />
+        <PackageReference Include="EFCore.Nuke" Version="1.2.3"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0"/>
@@ -25,7 +26,7 @@
 
     <ItemGroup>
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit.ConsoleRunner" ExcludeAssets="all" Version="3.16.3"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'XUnit'" Include="xunit.runner.console" ExcludeAssets="all" Version="2.6.2" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'XUnit'" Include="xunit.runner.console" ExcludeAssets="all" Version="2.6.6" />
     </ItemGroup>
 
 </Project>

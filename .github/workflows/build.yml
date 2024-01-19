@@ -17,8 +17,8 @@ jobs:
           fetch-depth: 3
       - name: Permissions
         run: chmod +x build.sh
-      - name: Nuke
-        run: ./build.sh
+      - name: Pack
+        run: ./build.sh --target Pack
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Migrations

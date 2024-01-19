@@ -37,6 +37,8 @@ namespace Web
             // Initialize Logger
             var loggerConfiguration = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
+                .Enrich.WithClientIp()
+                .Enrich.WithClientAgent()
                 .Enrich.WithProperty("ApplicationName", Name);
 #if USING_DATADOG
             if (!string.IsNullOrWhiteSpace(config["Datadog:ApiKey"]))
