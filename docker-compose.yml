@@ -3,7 +3,7 @@ services:
     container_name: W0
     build:
       context: /
-      dockerfile: src/Web/dockerfile
+      dockerfile: src/Web/Dockerfile
     working_dir: /app
     restart: unless-stopped
     privileged: true

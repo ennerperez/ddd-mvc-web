@@ -6,7 +6,7 @@
     "build": {
       "type": "object",
       "properties": {
-        "Configuration": {
+        "configuration": {
           "type": "string",
           "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
           "enum": [
@@ -18,9 +18,15 @@
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
         },
-        "Environment": {
+        "environment": {
           "type": "string",
-          "description": "Environment to build - Default is 'Development' (local) or 'Production' (server)"
+          "description": "Environment to build - Default is 'Development' (local) or 'Production' (server)",
+          "enum": [
+            "Development",
+            "Production",
+            "Staging",
+            "Test"
+          ]
         },
         "Help": {
           "type": "boolean",
@@ -89,7 +95,8 @@
               "Prepare",
               "Publish",
               "Restore",
-              "Test"
+              "Test",
+              "Versioning"
             ]
           }
         },
@@ -116,7 +123,8 @@
               "Prepare",
               "Publish",
               "Restore",
-              "Test"
+              "Test",
+              "Versioning"
             ]
           }
         },
@@ -129,6 +137,10 @@
             "Quiet",
             "Verbose"
           ]
+        },
+        "warningLevel": {
+          "type": "integer",
+          "description": "Warning Level"
         }
       }
     }

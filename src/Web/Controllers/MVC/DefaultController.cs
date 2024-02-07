@@ -49,7 +49,7 @@ namespace Web.Controllers.MVC
         }
 
         [AllowAnonymous]
-        [Route("Info")]
+        [Route("System/Info")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Info()
         {

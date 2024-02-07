@@ -30,7 +30,7 @@ namespace Serilog
 
             if (!string.IsNullOrEmpty(xForwardHeaderName))
             {
-                ClinetIpConfiguration.XForwardHeaderName = xForwardHeaderName;
+                ClientIpConfiguration.XForwardHeaderName = xForwardHeaderName;
             }
 
             return enrichmentConfiguration.With<ClientIpEnricher>();
@@ -55,7 +55,7 @@ namespace Serilog
 
     namespace Enrichers.ClientInfo
     {
-        internal class ClinetIpConfiguration
+        internal class ClientIpConfiguration
         {
             public static string XForwardHeaderName { get; set; } = "X-forwarded-for";
         }

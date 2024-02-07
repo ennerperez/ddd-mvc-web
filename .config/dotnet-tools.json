@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "nuke.globaltool": {
-      "version": "7.0.6",
+      "version": "8.0.0",
       "commands": [
         "nuke"
       ]
@@ -14,16 +14,10 @@
         "dotnet-ef"
       ]
     },
-    "coverlet.console": {
-      "version": "6.0.0",
+    "trx2junit": {
+      "version": "2.0.4",
       "commands": [
-        "coverlet"
-      ]
-    },
-    "dotnet-reportgenerator-globaltool": {
-      "version": "5.1.25",
-      "commands": [
-        "reportgenerator"
+        "trx2junit"
       ]
     }
   }
