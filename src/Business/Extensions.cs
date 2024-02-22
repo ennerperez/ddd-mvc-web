@@ -5,6 +5,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.Interfaces;
+using Persistence.Services;
 
 namespace Business
 {
@@ -46,7 +48,10 @@ namespace Business
         /// <returns></returns>
         public static IServiceCollection AddBusiness(this IServiceCollection services)
         {
-            var assemblies = new[] { Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly() };
+            var assemblies = new[]
+            {
+                Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly()
+            };
             services.AddValidatorsFromAssembly(assemblies[0]);
             services.AddMediatR(cfg =>
             {
@@ -59,6 +64,23 @@ namespace Business
 #if USING_LOCALIZATION
             services.AddLocalization(options => options.ResourcesPath = "Resources");
 #endif
+            return services;
+        }
+
+        public static IServiceCollection WithRepositories(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        {
+            switch (serviceLifetime)
+            {
+                case ServiceLifetime.Transient:
+                    services.AddTransient<ISettingRepository, SettingRepository>();
+                    break;
+                case ServiceLifetime.Singleton:
+                    services.AddSingleton<ISettingRepository, SettingRepository>();
+                    break;
+                default:
+                    services.AddScoped<ISettingRepository, SettingRepository>();
+                    break;
+            }
             return services;
         }
     }

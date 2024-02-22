@@ -92,7 +92,7 @@ namespace Tests.Business
                 .AddInfrastructure()
                 .AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
                 .AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
-                .AddBusiness()
+                .AddBusiness().WithRepositories()
                 .AddTests();
 
             Container = Services.BuildServiceProvider();

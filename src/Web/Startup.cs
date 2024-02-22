@@ -173,7 +173,7 @@ namespace Web
                 .AddInfrastructure()
                 .AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
                 .AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
-                .AddBusiness();
+                .AddBusiness().WithRepositories();
 
 #if USING_IDENTITY
             services
