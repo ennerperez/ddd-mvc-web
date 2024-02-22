@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -34,15 +35,15 @@ namespace Persistence.Services
             return default;
         }
 
-        public async Task<string> GetValueAsync(string key)
+        public async Task<string> GetValueAsync(string key, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync();
+            return await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<TValue> GetValueAsync<TValue>(string key) where TValue : struct
+        public async Task<TValue> GetValueAsync<TValue>(string key, CancellationToken cancellationToken = default) where TValue : struct
         {
             var currencyCulture = new CultureInfo(Configuration["CultureInfo:CurrencyCulture"] ?? CultureInfo.CurrentCulture.Name);
-            object value = await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync();
+            object value = await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
             if (value != null)
             {
                 return (TValue)Convert.ChangeType(value, typeof(TValue), currencyCulture);
