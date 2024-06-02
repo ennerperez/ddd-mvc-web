@@ -32,6 +32,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
+using QuestPDF;
 using Serilog;
 using Web.Services;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -109,7 +110,7 @@ namespace Web
 #endif
         }
 
-        internal IConfiguration Configuration { get; private set; }
+        internal IConfiguration Configuration { get; }
 
 #if USING_LOCALIZATION
         internal CultureInfo[] SupportedCultures { get; private set; }
@@ -173,7 +174,7 @@ namespace Web
                 .AddInfrastructure()
                 .AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
                 .AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
-                .AddBusiness().WithRepositories();
+                .AddBusiness().WithRepositories().WithMediatR();
 
 #if USING_IDENTITY
             services
@@ -218,7 +219,7 @@ namespace Web
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 DateTimeZoneHandling = DateTimeZoneHandling.Utc
             };
-            var jsonOptions = new Action<MvcNewtonsoftJsonOptions>((option) =>
+            var jsonOptions = new Action<MvcNewtonsoftJsonOptions>(option =>
             {
 #if DEBUG
                 option.SerializerSettings.Formatting = Formatting.Indented;
@@ -275,10 +276,7 @@ namespace Web
                 config.EnableForHttps = true;
                 config.Providers.Add<BrotliCompressionProvider>();
                 config.Providers.Add<GzipCompressionProvider>();
-                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
-                {
-                    "image/svg+xml", "text/css", "text/javascript"
-                });
+                config.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml", "text/css", "text/javascript" });
             });
 
             services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
@@ -299,8 +297,7 @@ namespace Web
 
                 options.Cookie = new CookieBuilder
                 {
-                    Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}",
-                    IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
+                    Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                 };
 #if USING_SWAGGER
                 options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -311,7 +308,7 @@ namespace Web
 #endif
 
 #if USING_SESSION
-            var sessionOptions = new Action<SessionOptions>((option) =>
+            var sessionOptions = new Action<SessionOptions>(option =>
             {
                 option.Cookie.Name = $"{Program.Name.Normalize(false)}.Session".ToUpperInvariant();
                 option.Cookie.HttpOnly = true;
@@ -347,10 +344,7 @@ namespace Web
                     Configuration.Bind("SwaggerSettings:Versions", versions);
                     foreach (var version in versions)
                     {
-                        c.SwaggerDoc(version, new OpenApiInfo
-                        {
-                            Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}"
-                        });
+                        c.SwaggerDoc(version, new OpenApiInfo { Title = $"{Program.Name}", Description = $"{Program.Name} API", Version = $"{version}" });
                     }
 
                     c.DocInclusionPredicate((_, _) => true);
@@ -442,10 +436,7 @@ namespace Web
 
             var antiforgeryOptions = new Action<AntiforgeryOptions>(options =>
             {
-                options.Cookie = new CookieBuilder()
-                {
-                    Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration
-                };
+                options.Cookie = new CookieBuilder { Name = $"{Program.Name.Normalize(false)}.AntiforgeryCookie", Expiration = AntiforgeryExpiration };
             });
             services.AddAntiforgery(antiforgeryOptions);
 
@@ -478,8 +469,7 @@ namespace Web
 
                     options.Cookie = new CookieBuilder
                     {
-                        Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}",
-                        IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
+                        Name = $"{Program.Name.Normalize(false)}.{CookieAuthenticationDefaults.AuthenticationScheme}", IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
                     };
 #if USING_SWAGGER
                     options.Events = new CustomCookieAuthenticationEvents(Configuration["SwaggerSettings:RoutePrefix"]);
@@ -723,7 +713,7 @@ namespace Web
                         c.DefaultModelsExpandDepth(-1);
 
                         c.InjectStylesheet($"../css/swagger{(env.IsDevelopment() ? "" : ".min")}.css");
-            			c.InjectJavascript($"../lib/jquery/jquery.slim{(env.IsDevelopment() ? "" : ".min")}.js");
+                        c.InjectJavascript($"../lib/jquery/jquery.slim{(env.IsDevelopment() ? "" : ".min")}.js");
                         c.InjectJavascript($"../js/swagger{(env.IsDevelopment() ? "" : ".min")}.js");
                     });
                 }
@@ -732,10 +722,7 @@ namespace Web
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                app.UseForwardedHeaders(new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-                });
+                app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
             }
 
 #if USING_CORS
@@ -746,7 +733,7 @@ namespace Web
             app.UseAuthorization();
 
 #if USING_QUESTPDF
-            QuestPDF.Settings.License = LicenseType.Community;
+            Settings.License = LicenseType.Community;
             DocumentService.RegisterFonts(Path.Combine("wwwroot", "fonts"));
 #endif
 

@@ -14,9 +14,9 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
         public DeletePersonalDataModel(
             UserManager<User> userManager,
@@ -29,30 +29,73 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-        }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public bool RequirePassword { get; set; }
 
@@ -90,7 +133,7 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Unexpected error occurred deleting user.");
+                throw new InvalidOperationException("Unexpected error occurred deleting user.");
             }
 
             await _signInManager.SignOutAsync();
@@ -98,6 +141,79 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             _logger.LogInformation("User with ID '{UserId}' deleted themselves", userId);
 
             return Redirect("~/");
+        }
+
+        /// <summary>
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
+        /// </summary>
+        public class InputModel
+        {
+            /// <summary>
+            ///     This
+            ///     API
+            ///     supports
+            ///     the
+            ///     ASP.NET
+            ///     Core
+            ///     Identity
+            ///     default
+            ///     UI
+            ///     infrastructure
+            ///     and
+            ///     is
+            ///     not
+            ///     intended
+            ///     to
+            ///     be
+            ///     used
+            ///     directly
+            ///     from
+            ///     your
+            ///     code.
+            ///     This
+            ///     API
+            ///     may
+            ///     change
+            ///     or
+            ///     be
+            ///     removed
+            ///     in
+            ///     future
+            ///     releases.
+            /// </summary>
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
         }
     }
 }

@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
+using Tests.Abstractions.Interfaces;
 #if USING_SPECFLOW
 using TechTalk.SpecFlow;
+
 #else
 using Test.Framework.Extended;
 #endif
-using Tests.Abstractions.Interfaces;
 
 namespace Tests.Business.Interfaces
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Business.Models;
 using Business.Requests.Identity;
@@ -83,7 +84,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithPage<User>(skip: ((page - 1) * size), take: size);
+                var collection = await Mediator.SendWithPage<User>(skip: (page - 1) * size, take: size);
                 return new JsonResult(collection);
             }
             catch (ValidationException v)
@@ -181,7 +182,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Mediator.Send(new DeleteUserRequest() { Id = id });
+                await Mediator.Send(new DeleteUserRequest { Id = id });
                 return Ok(id);
             }
             catch (ValidationException v)
@@ -201,7 +202,7 @@ namespace Web.Controllers.API
         [HttpPost("Table")]
         public async Task<JsonResult> Table(TableInfo model)
         {
-            var selector = (new User()).Select(t => new
+            var selector = new User().Select(t => new
             {
                 t.Id,
                 t.UserName,
@@ -211,8 +212,8 @@ namespace Web.Controllers.API
                 t.PhoneNumberConfirmed,
                 t.TwoFactorEnabled,
                 Roles = t.UserRoles.Select(m => m.Role.Name).ToArray(),
-                GivenName = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName).ClaimValue,
-                Surname = t.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname).ClaimValue,
+                GivenName = t.UserClaims.FirstOrDefault(c => c.ClaimType == ClaimTypes.GivenName).ClaimValue,
+                Surname = t.UserClaims.FirstOrDefault(c => c.ClaimType == ClaimTypes.Surname).ClaimValue
             });
 
             return await base.Table(model, selector, include: i => i.Include(m => m.UserClaims));

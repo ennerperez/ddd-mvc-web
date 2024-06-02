@@ -1,3 +1,7 @@
+#if USING_SPECFLOW
+using SolidToken.SpecFlow.DependencyInjection;
+using TechTalk.SpecFlow;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,10 +16,7 @@ using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Serilog;
-#if USING_SPECFLOW
-using SolidToken.SpecFlow.DependencyInjection;
-using TechTalk.SpecFlow;
-#endif
+using Tests.Abstractions.Resources;
 using Tests.Web.Settings;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -27,27 +28,12 @@ namespace Tests.Web
 #endif
     internal class Program
     {
-        #region IOC
-
-        public static IConfiguration Configuration { get; private set; }
-        public static ILogger Logger { get; private set; }
-
-        public static ServiceCollection Services { get; private set; }
-        public static ServiceProvider Container { get; private set; }
-
-        public static IWebDriver Driver { get; private set; }
-
-        #endregion
-
-        public static void Main(string[] args)
-        {
-            Initialize("", args);
-        }
-
         // ReSharper disable once CollectionNeverQueried.Local
         private static Dictionary<string, string> s_arguments;
 
         public static bool IsInitialized { get; private set; }
+
+        public static void Main(string[] args) => Initialize("", args);
 
         public static void Initialize(string browser = "", string[] args = null)
         {
@@ -58,27 +44,27 @@ namespace Tests.Web
 
             var currentDirectory = string.Empty;
             Configuration = new ConfigurationBuilder()
-              .AddJsonFile(Path.Combine(currentDirectory, "appsettings.json"), false, true)
-              .AddJsonFile(Path.Combine(currentDirectory, "specflow.json"), false, true)
-              .AddJsonFile(Path.Combine(currentDirectory, "specflow.Timeouts.json"), false, true)
+                .AddJsonFile(Path.Combine(currentDirectory, "appsettings.json"), false, true)
+                .AddJsonFile(Path.Combine(currentDirectory, "specflow.json"), false, true)
+                .AddJsonFile(Path.Combine(currentDirectory, "specflow.Timeouts.json"), false, true)
 #if DEBUG
-              .AddJsonFile(Path.Combine(currentDirectory, "appsettings.Development.json"), true, true)
-              .AddJsonFile(Path.Combine(currentDirectory, "specflow.Development.json"), true, true)
-              .AddJsonFile(Path.Combine(currentDirectory, "specflow.Timeouts.Development.json"), false, true)
+                .AddJsonFile(Path.Combine(currentDirectory, "appsettings.Development.json"), true, true)
+                .AddJsonFile(Path.Combine(currentDirectory, "specflow.Development.json"), true, true)
+                .AddJsonFile(Path.Combine(currentDirectory, "specflow.Timeouts.Development.json"), false, true)
 #endif
-              .AddEnvironmentVariables()
-              .Build();
+                .AddEnvironmentVariables()
+                .Build();
 
             // Initialize Logger
             var logger = Log.Logger = new LoggerConfiguration()
-              .ReadFrom.Configuration(Configuration)
-              .CreateLogger();
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
 
             // Language
             var language = Configuration.GetValue<string>("language:feature") ?? "en";
             CultureInfo.CurrentCulture = new CultureInfo(language);
             CultureInfo.CurrentUICulture = new CultureInfo(language);
-            Abstractions.Resources.Keywords.Culture = new CultureInfo(language);
+            Keywords.Culture = new CultureInfo(language);
 
             Services = new ServiceCollection();
             Services.AddSingleton(Configuration);
@@ -120,7 +106,6 @@ namespace Tests.Web
 
         internal static void LoadBrowserDriver(string browser = "")
         {
-
             if (string.IsNullOrWhiteSpace(browser) || browser == "Chrome")
             {
                 var options = new ChromeOptions();
@@ -191,5 +176,17 @@ namespace Tests.Web
             Driver?.Dispose();
             Driver = null;
         }
+
+        #region IOC
+
+        public static IConfiguration Configuration { get; private set; }
+        public static ILogger Logger { get; private set; }
+
+        public static ServiceCollection Services { get; private set; }
+        public static ServiceProvider Container { get; private set; }
+
+        public static IWebDriver Driver { get; private set; }
+
+        #endregion
     }
 }

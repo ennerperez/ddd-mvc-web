@@ -9,9 +9,6 @@ namespace Web.Areas.Admin.Controllers
     [Area("Admin")]
     public class ClientsController : MvcControllerBase
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
     }
 }

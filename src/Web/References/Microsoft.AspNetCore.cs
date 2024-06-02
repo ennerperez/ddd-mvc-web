@@ -1,40 +1,42 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Diagnostics;
 #if USING_TABLES
 using Azure;
 using Azure.Data.Tables;
 using Infrastructure.Interfaces;
 #endif
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 #if USING_APIKEY
 using Microsoft.AspNetCore.Authentication.ApiKey;
 #endif
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 #if USING_COOKIES
 using Microsoft.AspNetCore.Authentication.Cookies;
 #endif
+
 #if USING_BEARER
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
 #if USING_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 #endif
-using Microsoft.AspNetCore.Mvc.ViewEngines;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -61,7 +63,7 @@ namespace Microsoft.AspNetCore
     {
         public class SmartAuthorizeAttribute : AuthorizeAttribute
         {
-            private readonly string[] _schemes = new string[]
+            private readonly string[] _schemes =
             {
 #if USING_IDENTITY
                 "Identity.Application",
@@ -92,6 +94,7 @@ namespace Microsoft.AspNetCore
             }
         }
     }
+
     namespace Authentication
     {
         public sealed class SmartScheme
@@ -150,7 +153,7 @@ namespace Microsoft.AspNetCore
                         return AuthenticateResult.Fail("Invalid API Key provided.");
                     }
 
-                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, existingApiKey.Owner) };
+                    var claims = new List<Claim> { new(ClaimTypes.Name, existingApiKey.Owner) };
 
                     if (existingApiKey.Roles != null)
                     {
@@ -192,7 +195,6 @@ namespace Microsoft.AspNetCore
             {
                 public ApiKey()
                 {
-
                 }
 
                 public ApiKey(int id, string owner, string key, bool active, string roles) : this()
@@ -258,7 +260,6 @@ namespace Microsoft.AspNetCore
         }
       }
 #endif
-
         }
 
         namespace Cookies
@@ -298,11 +299,7 @@ namespace Microsoft.AspNetCore
 
         public static class AuthenticationBuilderExtensions
         {
-
-            public static AuthenticationBuilder Close(this AuthenticationBuilder authenticationBuilder)
-            {
-                return authenticationBuilder;
-            }
+            public static AuthenticationBuilder Close(this AuthenticationBuilder authenticationBuilder) => authenticationBuilder;
 #if USING_AUTH0
             public static Auth0WebAppWithAccessTokenAuthenticationBuilder Close(this Auth0WebAppWithAccessTokenAuthenticationBuilder authenticationBuilder)
             {
@@ -366,10 +363,7 @@ namespace Microsoft.AspNetCore
     {
         public static class SessionExtensions
         {
-            public static void SetObjectAsJson(this ISession session, string key, object value)
-            {
-                session.SetString(key, JsonSerializer.Serialize(value));
-            }
+            public static void SetObjectAsJson(this ISession session, string key, object value) => session.SetString(key, JsonSerializer.Serialize(value));
 
             public static T GetObjectFromJson<T>(this ISession session, string key)
             {
@@ -378,7 +372,7 @@ namespace Microsoft.AspNetCore
                 return value == null ? default : JsonSerializer.Deserialize<T>(value);
             }
 
-            public static T GetFromSession<T>(this Mvc.ControllerBase controller, string key = null) where T : class
+            public static T GetFromSession<T>(this ControllerBase controller, string key = null) where T : class
             {
                 if (string.IsNullOrEmpty(key))
                 {
@@ -437,23 +431,21 @@ namespace Microsoft.AspNetCore
             private const string ScriptsKey = "scripts_";
             private const string StylesKey = "styles_";
 
-            public static Dictionary<string, Queue<string>> PageList { get; } = new Dictionary<string, Queue<string>>();
+            public static Dictionary<string, Queue<string>> PageList { get; } = new();
 
-            public static IDisposable BeginBlock(this IHtmlHelper helper, string key, Func<HttpContext, List<string>> getPageList = null)
-            {
-                return new HtmlBlock(helper.ViewContext, key, getPageList);
-            }
+            public static IDisposable BeginBlock(this IHtmlHelper helper, string key, Func<HttpContext, List<string>> getPageList = null) => new HtmlBlock(helper.ViewContext, key, getPageList);
 
 #pragma warning disable IDE0060 // Remove unused parameter
             public static HtmlString PageBlocks(this IHtmlHelper helper, string key)
 #pragma warning restore IDE0060 // Remove unused parameter
             {
-                if (PageList == null || !PageList.Any(m => m.Key.StartsWith(key)))
+                var pageList = PageList?.ToList();
+                if (pageList == null || !pageList.Any(m => m.Key.StartsWith(key)))
                 {
                     return HtmlString.Empty;
                 }
 
-                var items = PageList.Where(m => m.Key.StartsWith(key)).Select(m => m.Value);
+                var items = pageList.Where(m => m.Key.StartsWith(key)).Select(m => m.Value);
                 var result = new List<string>();
                 foreach (var qitem in items)
                 {
@@ -468,7 +460,6 @@ namespace Microsoft.AspNetCore
                 }
 
                 return new HtmlString(string.Join(Environment.NewLine, result.ToArray()));
-
             }
 
             public static List<string> GetPageBlocksList(HttpContext httpContext, string key)
@@ -486,44 +477,26 @@ namespace Microsoft.AspNetCore
             }
 
             /** Scripts **/
-            public static IDisposable BeginScripts(this IHtmlHelper helper, string key = ScriptsKey)
-            {
-                return BeginBlock(helper, key, m => GetPageScriptsList(m, key));
-            }
+            public static IDisposable BeginScripts(this IHtmlHelper helper, string key = ScriptsKey) => BeginBlock(helper, key, m => GetPageScriptsList(m, key));
 
-            public static HtmlString PageScripts(this IHtmlHelper helper, string key = ScriptsKey)
-            {
-                return PageBlocks(helper, key);
-            }
+            public static HtmlString PageScripts(this IHtmlHelper helper, string key = ScriptsKey) => PageBlocks(helper, key);
 
-            public static List<string> GetPageScriptsList(HttpContext httpContext, string key = ScriptsKey)
-            {
-                return GetPageBlocksList(httpContext, key);
-            }
+            public static List<string> GetPageScriptsList(HttpContext httpContext, string key = ScriptsKey) => GetPageBlocksList(httpContext, key);
 
             /** Styles **/
-            public static IDisposable BeginStyles(this IHtmlHelper helper, string key = StylesKey)
-            {
-                return BeginBlock(helper, key, m => GetPageStylesList(m, key));
-            }
+            public static IDisposable BeginStyles(this IHtmlHelper helper, string key = StylesKey) => BeginBlock(helper, key, m => GetPageStylesList(m, key));
 
-            public static HtmlString PageStyles(this IHtmlHelper helper, string key = StylesKey)
-            {
-                return PageBlocks(helper, key);
-            }
+            public static HtmlString PageStyles(this IHtmlHelper helper, string key = StylesKey) => PageBlocks(helper, key);
 
-            public static List<string> GetPageStylesList(HttpContext httpContext, string key = StylesKey)
-            {
-                return GetPageBlocksList(httpContext, key);
-            }
+            public static List<string> GetPageStylesList(HttpContext httpContext, string key = StylesKey) => GetPageBlocksList(httpContext, key);
 
             private class HtmlBlock : IDisposable
             {
                 private readonly StringWriter _blockWriter;
+                private readonly string _key;
                 private readonly TextWriter _originalWriter;
 
                 private readonly ViewContext _viewContext;
-                private readonly string _key;
 
                 public HtmlBlock(ViewContext viewContext, string key, Func<HttpContext, List<string>> getPageList = null)
                 {
@@ -639,26 +612,16 @@ namespace Microsoft.AspNetCore
 #endif
             }
 
-            public static string GetControllerName<TController>(this IHtmlHelper htmlHelper) where TController : ControllerBase
-            {
-                return typeof(TController).Name.Replace(nameof(Controller), string.Empty);
-            }
-
+            public static string GetControllerName<TController>(this IHtmlHelper htmlHelper) where TController : ControllerBase => typeof(TController).Name.Replace(nameof(Controller), string.Empty);
         }
 
         namespace Rendering
         {
             public static class ViewContextExtensions
             {
-                public static bool IsPost(this ViewContext viewContext)
-                {
-                    return viewContext.HttpContext.Request.Method == "POST";
-                }
+                public static bool IsPost(this ViewContext viewContext) => viewContext.HttpContext.Request.Method == "POST";
 
-                public static SelectList ToSelectList<TKey>(this Dictionary<TKey, string> source, string dataValueField = "Key", string dataTextField = "Value")
-                {
-                    return new SelectList(source.OrderBy(m => m.Key), dataValueField, dataTextField);
-                }
+                public static SelectList ToSelectList<TKey>(this Dictionary<TKey, string> source, string dataValueField = "Key", string dataTextField = "Value") => new(source.OrderBy(m => m.Key), dataValueField, dataTextField);
 
                 public static async Task<string> ToHtmlAsync(this Controller @this, string viewToRender, ViewDataDictionary viewData)
                 {
@@ -692,15 +655,14 @@ namespace Microsoft.AspNetCore
             [HtmlTargetElement(Attributes = ActiveClassAttributeName)]
             public class ActiveClassTagHelper : AnchorTagHelper
             {
-
                 private const string ActiveClassAttributeName = "asp-active-class";
-
-                [HtmlAttributeName(ActiveClassAttributeName)]
-                private string ActiveClass { get; set; }
 
                 public ActiveClassTagHelper(IHtmlGenerator generator) : base(generator)
                 {
                 }
+
+                [HtmlAttributeName(ActiveClassAttributeName)]
+                private string ActiveClass { get; }
 
                 public override void Process(TagHelperContext context, TagHelperOutput output)
                 {
@@ -735,7 +697,7 @@ namespace Microsoft.AspNetCore
                         return;
                     }
 
-                    var @cssClass = ActiveClass ?? "active";
+                    var cssClass = ActiveClass ?? "active";
                     var existingClasses = output.Attributes["class"].Value.ToString();
                     if (output.Attributes["class"] != null)
                     {
@@ -749,10 +711,7 @@ namespace Microsoft.AspNetCore
 
         public static class MvcExtensions
         {
-            public static string GetControllerName<TController>(this TController controller) where TController : ControllerBase
-            {
-                return typeof(TController).Name.Replace(nameof(Controller), string.Empty);
-            }
+            public static string GetControllerName<TController>(this TController controller) where TController : ControllerBase => typeof(TController).Name.Replace(nameof(Controller), string.Empty);
         }
     }
 }

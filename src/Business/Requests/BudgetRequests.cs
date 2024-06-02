@@ -6,15 +6,15 @@ using Business.Abstractions;
 using Business.Exceptions;
 using Business.Models;
 using Domain.Entities;
-#if USING_IDENTITY
-using Domain.Entities.Identity;
-#endif
 using Domain.Enums;
 using FluentValidation;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Interfaces;
+#if USING_IDENTITY
+using Domain.Entities.Identity;
+#endif
 
 namespace Business.Requests
 {
@@ -60,7 +60,6 @@ namespace Business.Requests
                 Subtotal = request.Subtotal,
                 Taxes = request.Taxes,
                 Total = request.Total,
-
                 CreatedById = int.Parse((_userAccessorService.User as ClaimsPrincipal).GetUserId())
             };
 

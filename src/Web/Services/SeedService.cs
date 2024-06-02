@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Persistence.Contexts;
 #if USING_DATABASE_PROVIDER
 using Domain.Entities;
 using Domain.Entities.Cache;
@@ -12,11 +18,6 @@ using Domain.Entities.Cache;
 #if USING_IDENTITY
 using Domain.Entities.Identity;
 #endif
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Persistence.Contexts;
 
 // ReSharper disable UnusedMember.Local
 
@@ -25,6 +26,7 @@ namespace Web.Services
     public class SeedService : IHostedService
     {
         private readonly ILogger _logger;
+
         // ReSharper disable once NotAccessedField.Local
         private readonly IServiceScopeFactory _scopeFactory;
 
@@ -76,13 +78,15 @@ namespace Web.Services
             await StopAsync(cancellationToken);
         }
 
+        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
         private async Task FromLocal<T>(DbContext context, string source = "Data", int minRows = 0, CancellationToken cancellationToken = default) where T : class
         {
             var dbSet = context.Set<T>();
-            var hasRow = await dbSet.AnyAsync(cancellationToken: cancellationToken);
+            var hasRow = await dbSet.AnyAsync(cancellationToken);
             if (minRows > 0)
             {
-                hasRow = await dbSet.CountAsync(cancellationToken: cancellationToken) > minRows;
+                hasRow = await dbSet.CountAsync(cancellationToken) > minRows;
             }
 
             if (!hasRow)
@@ -98,7 +102,7 @@ namespace Web.Services
                     if (File.Exists(targetFile))
                     {
                         var responseBody = await File.ReadAllTextAsync(targetFile, cancellationToken);
-                        var entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
+                        var entities = JsonSerializer.Deserialize<List<T>>(responseBody);
                         if (entities != null && entities.Any())
                         {
                             dbSet.AddRange(entities);
@@ -120,13 +124,16 @@ namespace Web.Services
         private async Task FromMockaroo<T>(DefaultContext context, string id, int count, string key, string source = "Data", CancellationToken cancellationToken = default) where T : class
         {
             var dbSet = context.Set<T>();
-            if (!await dbSet.AnyAsync(cancellationToken: cancellationToken))
+            if (!await dbSet.AnyAsync(cancellationToken))
             {
                 try
                 {
                     List<T> entities;
                     if (!Directory.Exists(source) && source != null)
+                    {
                         Directory.CreateDirectory(source);
+                    }
+
                     var targetFile = Path.Combine(source ?? string.Empty, $"{id}.json");
                     if (!File.Exists(targetFile))
                     {
@@ -136,12 +143,12 @@ namespace Web.Services
                         response.EnsureSuccessStatusCode();
                         var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
                         await File.WriteAllTextAsync(targetFile, responseBody, cancellationToken);
-                        entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
+                        entities = JsonSerializer.Deserialize<List<T>>(responseBody);
                     }
                     else
                     {
                         var responseBody = await File.ReadAllTextAsync(targetFile, cancellationToken);
-                        entities = System.Text.Json.JsonSerializer.Deserialize<List<T>>(responseBody);
+                        entities = JsonSerializer.Deserialize<List<T>>(responseBody);
                     }
 
                     if (entities != null && entities.Any())
@@ -159,11 +166,6 @@ namespace Web.Services
                     await context.Database.CloseConnectionAsync();
                 }
             }
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }

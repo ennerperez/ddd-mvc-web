@@ -21,6 +21,12 @@ namespace Persistence.Contexts
         private static string ProviderName { get; set; }
         internal static bool HasSchema => DbContextExtensions.HasSchema(ProviderName);
 
+        #region DbSet
+
+        public DbSet<Country> Countries { get; set; }
+
+        #endregion DbSet
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             if (modelBuilder == null)
@@ -53,11 +59,5 @@ namespace Persistence.Contexts
             optionsBuilder?.EnableSensitiveDataLogging();
         }
 #endif
-
-        #region DbSet
-
-        public DbSet<Country> Countries { get; set; }
-
-        #endregion DbSet
     }
 }

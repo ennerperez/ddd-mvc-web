@@ -9,6 +9,7 @@ using OpenQA.Selenium.Interactions;
 using TechTalk.SpecFlow;
 using Test.Framework.Extended;
 using Tests.Abstractions.Interfaces;
+
 // ReSharper disable UnusedParameter.Local
 #pragma warning disable IDE0060 // Remove unused parameter
 
@@ -167,10 +168,8 @@ namespace Tests.Web.Steps
                 }
             }
         }
-        private void ElementAppeared(string name, string type, [CallerMemberName] string method = "")
-        {
-            _definitionService.FindElement(name, true);
-        }
+
+        private void ElementAppeared(string name, string type, [CallerMemberName] string method = "") => _definitionService.FindElement(name, true);
 
         private bool ElementVisible(string name, string type, [CallerMemberName] string method = "")
         {
@@ -438,7 +437,7 @@ namespace Tests.Web.Steps
             try
             {
                 var result = ElementVisible(name, type);
-                if (state == "visible" && !result || state == "hidden" && result)
+                if ((state == "visible" && !result) || (state == "hidden" && result))
                 {
                     throw new InvalidElementStateException($"Element {name} is not '{state}'");
                 }
@@ -458,7 +457,7 @@ namespace Tests.Web.Steps
             try
             {
                 var result = ElementEnabled(name, type);
-                if (state == "enabled" && !result || state == "disabled" && result)
+                if ((state == "enabled" && !result) || (state == "disabled" && result))
                 {
                     throw new InvalidElementStateException($"Element {name} is not '{state}'");
                 }
@@ -478,7 +477,7 @@ namespace Tests.Web.Steps
             try
             {
                 var result = ElementEnabledAt(position, name, type);
-                if (state == "enabled" && !result || state == "disabled" && result)
+                if ((state == "enabled" && !result) || (state == "disabled" && result))
                 {
                     throw new InvalidElementStateException($"The {position} {name} is not '{state}'");
                 }
@@ -544,7 +543,7 @@ namespace Tests.Web.Steps
             try
             {
                 var result = ElementSelected(name, type);
-                if (state == "selected" && !result || state == "unselected" && result)
+                if ((state == "selected" && !result) || (state == "unselected" && result))
                 {
                     throw new InvalidElementStateException($"Element {name} is not '{state}'");
                 }
@@ -564,7 +563,7 @@ namespace Tests.Web.Steps
             try
             {
                 var result = ElementEmpty(name, type);
-                if (state == "empty" && !result || state == "not empty" && result)
+                if ((state == "empty" && !result) || (state == "not empty" && result))
                 {
                     throw new InvalidElementStateException($"Element {name} is not '{state}'");
                 }
@@ -645,7 +644,8 @@ namespace Tests.Web.Steps
             }
         }
 
-        [When(@"the user will wait (.*) (seconds|minutes|hours|days)"), Scope(Tag = "ExplicitWaitTimes")]
+        [When(@"the user will wait (.*) (seconds|minutes|hours|days)")]
+        [Scope(Tag = "ExplicitWaitTimes")]
         public static void ThenWait(int time, string interval)
         {
             var timeSpan = TimeSpan.Zero;
@@ -686,17 +686,15 @@ namespace Tests.Web.Steps
 
         #region When Steps
 
-        [When(@"the User waits for (.*) second"), Scope(Tag = "ExplicitWaitTimes")]
-        [When(@"the User waits for (.*) seconds"), Scope(Tag = "ExplicitWaitTimes")]
-        public static void WhenTheUserWaitsForSeconds(int numberOfSeconds)
-        {
-            Thread.Sleep(numberOfSeconds * 1000);
-        }
+        [When(@"the User waits for (.*) second")]
+        [Scope(Tag = "ExplicitWaitTimes")]
+        [When(@"the User waits for (.*) seconds")]
+        [Scope(Tag = "ExplicitWaitTimes")]
+        public static void WhenTheUserWaitsForSeconds(int numberOfSeconds) => Thread.Sleep(numberOfSeconds * 1000);
 
         #endregion
 
         #endregion
-
     }
 }
 #pragma warning restore IDE0060 // Remove unused parameter

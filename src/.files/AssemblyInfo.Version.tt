@@ -12,10 +12,26 @@ using System.Reflection;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.0.<#= _revisionNumber #>")]
-[assembly: AssemblyFileVersion("1.0.0.<#= _revisionNumber #>")]
+[assembly: AssemblyVersion("1.0.0.<#=
+                        _revisionNumber #>")]
+[assembly: AssemblyFileVersion("1.0.0.<#=
+                        _revisionNumber #>")]
 [assembly: AssemblyInformationalVersion("1.0.0+0")]
 
 <#+
-	int _revisionNumber = (int)(DateTime.UtcNow - new DateTime(2022, 09, 01)).TotalDays;
+    private
+        readonly
+        int
+    _revisionNumber
+        =
+        (
+            int
+            )
+            (DateTime
+                .UtcNow -
+             new DateTime
+                 (2022,
+                     09,
+                     01))
+                .TotalDays;
 #>

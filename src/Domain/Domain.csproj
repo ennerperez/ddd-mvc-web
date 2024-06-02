@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\src\.imports\Template.props" />
-    <Import Condition="Exists('Options.props')" Project="Options.props" />
-    <Import Project="..\..\src\.imports\Template.targets" />
-    <Import Condition="Exists('Options.targets')" Project="Options.targets" />
+    <Import Project="..\..\src\.imports\Template.props"/>
+    <Import Condition="Exists('Options.props')" Project="Options.props"/>
+    <Import Project="..\..\src\.imports\Template.targets"/>
+    <Import Condition="Exists('Options.targets')" Project="Options.targets"/>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DebugSymbols>true</DebugSymbols>
@@ -11,17 +11,33 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="8.0.6" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
-        <Compile Remove="Entities\Identity\**" />
-        <EmbeddedResource Remove="Entities\Identity\**" />
-        <None Remove="Entities\Identity\**" />
+        <Compile Remove="Entities\Identity\**"/>
+        <EmbeddedResource Remove="Entities\Identity\**"/>
+        <None Remove="Entities\Identity\**"/>
+        <None Update="..\.files\AssemblyInfo.Version.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
+            <DependentUpon>AssemblyInfo.cs</DependentUpon>
+        </None>
+        <Compile Update="..\.files\AssemblyInfo.Version.cs">
+            <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
+        </Compile>
+        <None Update="..\.files\AssemblyInfo.General.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>AssemblyInfo.General.cs</LastGenOutput>
+            <DependentUpon>AssemblyInfo.cs</DependentUpon>
+        </None>
+        <Compile Update="..\.files\AssemblyInfo.General.cs">
+            <DependentUpon>AssemblyInfo.General.tt</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

@@ -8,10 +8,7 @@ namespace OpenQA.Selenium
         public static string GetText(this IWebElement @this) => @this.GetAttribute("text");
         public static bool GetCheckable(this IWebElement @this) => bool.Parse(@this.GetAttribute("checkable"));
 
-        public static bool GetChecked(this IWebElement @this)
-        {
-            return int.Parse(@this.GetAttribute("value")) == 1;
-        }
+        public static bool GetChecked(this IWebElement @this) => int.Parse(@this.GetAttribute("value")) == 1;
 
         public static bool GetClickable(this IWebElement @this) => bool.Parse(@this.GetAttribute("clickable"));
         public static bool GetFocusable(this IWebElement @this) => bool.Parse(@this.GetAttribute("focusable"));

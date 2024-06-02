@@ -1,5 +1,8 @@
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable once CheckNamespace
+
+using System.Net.Security;
+
 namespace System.Net.Http
 {
     public static class Methods
@@ -18,7 +21,7 @@ namespace System.Net.Http
                         return true;
                     }
 
-                    return errors == Security.SslPolicyErrors.None;
+                    return errors == SslPolicyErrors.None;
 #else
                     return true;
 #endif

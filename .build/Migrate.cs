@@ -16,32 +16,12 @@ using static Nuke.Common.Tools.DotNet.EF.Tasks;
 #pragma warning disable IDE0051 // Remove unused private members
 public partial class Build
 {
-    Project Persistence => Solution.AllProjects.FirstOrDefault(m=> m.Name == "Persistence");
-    Project Startup => Solution.AllProjects.FirstOrDefault(m=> m.Name == "Web");
+    Project Persistence => Solution.AllProjects.FirstOrDefault(m => m.Name == "Persistence");
+    Project Startup => Solution.AllProjects.FirstOrDefault(m => m.Name == "Web");
 
     static string MigrationsPath => "Migrations";
 
     static string ScriptsPath => "Scripts";
-
-    IEnumerable<Tuple<string, string, string, string>> GetConnectionStringsCombinations()
-    {
-        var config = new ConfigurationBuilder()
-            .AddJsonFile(Path.Combine(Startup.Directory, "appsettings.json"), false, true)
-            .AddJsonFile(Path.Combine(Startup.Directory, $"appsettings.{Environment}.json"), true, true)
-            .Build();
-
-        var connectionStrings = new Dictionary<string, string>();
-        config.Bind("ConnectionStrings", connectionStrings);
-
-        var combinations = from item in connectionStrings
-                           let split = item.Key.Split(".")
-                           where split.Length > 1
-                           let context = split.First()
-                           let provider = split.Last()
-                           select new Tuple<string, string, string, string>(context, context.Replace("Context", ""), provider, item.Value);
-
-        return combinations;
-    }
 
     Target FastCompile => d => d
         .DependsOn(Restore)
@@ -52,7 +32,7 @@ public partial class Build
                 .Where(m => new[] { Persistence, Startup }.Contains(m))
                 .ToArray();
             DotNetBuild(s => s
-                .CombineWith(projects, configurator: (buildSettings, v) => buildSettings
+                .CombineWith(projects, (buildSettings, v) => buildSettings
                     .SetProjectFile(v)
                     .SetConfiguration(Configuration)
                     .EnableNoRestore()));
@@ -65,7 +45,7 @@ public partial class Build
             var combinations = GetConnectionStringsCombinations();
             foreach (var item in combinations)
             {
-                var folderName = (item.Item2 == item.Item3 ? "" : item.Item3);
+                var folderName = item.Item2 == item.Item3 ? "" : item.Item3;
                 DotNetEf(_ => new MigrationsSettings(Migrations.Add)
                     .EnableNoBuild()
                     .SetProjectFile(Persistence)
@@ -76,6 +56,7 @@ public partial class Build
                 );
             }
         });
+
     Target MigrationRemove => d => d
         .DependsOn(FastCompile)
         .Executes(() =>
@@ -83,7 +64,7 @@ public partial class Build
             var combinations = GetConnectionStringsCombinations();
             foreach (var item in combinations)
             {
-                var folderName = (item.Item2 == item.Item3 ? "" : item.Item3);
+                var folderName = item.Item2 == item.Item3 ? "" : item.Item3;
                 DotNetEf(_ => new MigrationsSettings(Migrations.Remove)
                     .EnableNoBuild()
                     .SetProjectFile(Persistence)
@@ -102,7 +83,7 @@ public partial class Build
             var combinations = GetConnectionStringsCombinations().Where(i => i.Item3 != "Sqlite");
             foreach (var item in combinations)
             {
-                var folderName = (item.Item2 == item.Item3 ? "" : item.Item3);
+                var folderName = item.Item2 == item.Item3 ? "" : item.Item3;
                 var fileName = Path.Combine(Persistence?.Directory ?? string.Empty, ScriptsPath, item.Item2, folderName, $"{DateTime.Now:yyyyMMdd}.sql");
                 if (File.Exists(fileName))
                 {
@@ -185,5 +166,25 @@ public partial class Build
                 }
             }
         });
+
+    IEnumerable<Tuple<string, string, string, string>> GetConnectionStringsCombinations()
+    {
+        var config = new ConfigurationBuilder()
+            .AddJsonFile(Path.Combine(Startup.Directory, "appsettings.json"), false, true)
+            .AddJsonFile(Path.Combine(Startup.Directory, $"appsettings.{Environment}.json"), true, true)
+            .Build();
+
+        var connectionStrings = new Dictionary<string, string>();
+        config.Bind("ConnectionStrings", connectionStrings);
+
+        var combinations = from item in connectionStrings
+            let split = item.Key.Split(".")
+            where split.Length > 1
+            let context = split.First()
+            let provider = split.Last()
+            select new Tuple<string, string, string, string>(context, context.Replace("Context", ""), provider, item.Value);
+
+        return combinations;
+    }
 }
 #pragma warning restore IDE0051 // Remove unused private members

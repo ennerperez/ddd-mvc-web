@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +24,22 @@ namespace Infrastructure.Services
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage) => await InternalSendEmailAsync(email, null, subject, htmlMessage);
+
+        public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, Stream> attachments = null) => await InternalSendEmailAsync(email, userFullName, subject, htmlMessage, useThread, bcc, attachments);
+
+        public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, byte[]> attachments = null)
+        {
+            var attachs = attachments?.Select(m => m).ToDictionary(k => k.Key, v => (Stream)new MemoryStream(v.Value));
+            await InternalSendEmailAsync(email, userFullName, subject, htmlMessage, useThread, bcc, attachs);
+        }
+
         private async Task InternalSendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, Stream> attachments = null)
         {
             var smtpSettings = _configuration.GetSection("SmtpSettings");
 
             var name = smtpSettings["Name"];
-            var @from = smtpSettings["From"];
+            var from = smtpSettings["From"];
             var server = smtpSettings["Server"];
             var port = int.Parse(smtpSettings["Port"]);
             var username = smtpSettings["Username"];
@@ -42,9 +53,9 @@ namespace Infrastructure.Services
                 client.Credentials = new NetworkCredential(username, password);
             }
 
-            var sender = new MailAddress(@from, name, System.Text.Encoding.UTF8);
+            var sender = new MailAddress(from, name, Encoding.UTF8);
 
-            var target = new MailAddress(email, userFullName, System.Text.Encoding.UTF8);
+            var target = new MailAddress(email, userFullName, Encoding.UTF8);
             var html = AlternateView.CreateAlternateViewFromString(htmlMessage, null, MediaTypeNames.Text.Html);
 
             var message = new MailMessage(sender, target) { IsBodyHtml = true, Subject = subject };
@@ -93,19 +104,6 @@ namespace Infrastructure.Services
                     _logger?.LogError(e, "{Message}", e.Message);
                 }
             }
-        }
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
-        {
-            await InternalSendEmailAsync(email, null, subject, htmlMessage);
-        }
-        public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, Stream> attachments = null)
-        {
-            await InternalSendEmailAsync(email, userFullName, subject, htmlMessage, useThread, bcc, attachments);
-        }
-        public async Task SendEmailAsync(string email, string userFullName, string subject, string htmlMessage, bool useThread = false, string bcc = "", Dictionary<string, byte[]> attachments = null)
-        {
-            var attachs = attachments?.Select(m => m).ToDictionary(k => k.Key, v => (Stream)new MemoryStream(v.Value));
-            await InternalSendEmailAsync(email, userFullName, subject, htmlMessage, useThread, bcc, attachs);
         }
     }
 }

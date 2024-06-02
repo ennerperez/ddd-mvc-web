@@ -1,15 +1,15 @@
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
-#if USING_SPECFLOW
-using TechTalk.SpecFlow;
-using Tests.Abstractions.Helpers;
-using Tests.Abstractions.Settings;
-#endif
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Services;
 using Tests.Business.Contexts;
 using Tests.Business.Interfaces;
 using Tests.Business.Services;
+#if USING_SPECFLOW
+using TechTalk.SpecFlow;
+using Tests.Abstractions.Helpers;
+using Tests.Abstractions.Settings;
+#endif
 
 namespace Tests.Business
 {

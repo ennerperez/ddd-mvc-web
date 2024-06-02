@@ -5,7 +5,6 @@ namespace Tests.Abstractions.Interfaces
 {
     public interface IDefinitionService<TElement>
     {
-
         TElement FindElement(string selector, bool waitForElementToBeDisplayed = false);
         TElement FindDynamicElement(string selector, string token, string type = "item", bool waitForElementToBeDisplayed = false);
 

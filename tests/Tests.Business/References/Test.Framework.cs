@@ -13,15 +13,9 @@ namespace Test.Framework.Extended
     internal static class Assert
     {
 #if XUNIT
-        public static void Result(bool value, string message = "")
-        {
-            Xunit.Assert.True(!value, message);
-        }
+        public static void Result(bool value, string message = "") => Xunit.Assert.True(!value, message);
 
-        public static void Fail(string message = "")
-        {
-            Xunit.Assert.Fail(message);
-        }
+        public static void Fail(string message = "") => Xunit.Assert.Fail(message);
 
         public static void Fail(Exception exception, bool stack = false)
         {
@@ -29,10 +23,7 @@ namespace Test.Framework.Extended
             Fail(message);
         }
 
-        public static void Pass(string message = "")
-        {
-            Xunit.Assert.True(true, message);
-        }
+        public static void Pass(string message = "") => Xunit.Assert.True(true, message);
 #else
         public static void Result(bool value, string message = "")
         {
@@ -59,7 +50,6 @@ namespace Test.Framework.Extended
     }
 
 #if !USING_SPECFLOW
-
     [Serializable]
     public class TableRow : IDictionary<string, string>
     {

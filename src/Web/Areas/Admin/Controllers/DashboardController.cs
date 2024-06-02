@@ -9,7 +9,6 @@ using Web.Controllers;
 
 namespace Web.Areas.Admin.Controllers
 {
-
     [Authorize(Roles = Roles.Admin)]
     [Area("Admin")]
     public class DashboardController : MvcControllerBase
@@ -22,10 +21,10 @@ namespace Web.Areas.Admin.Controllers
             // var clients = await Mediator.SendWithRepository<Client>(s => new Client() {Id = s.Id});
             // var budgets = await Mediator.SendWithRepository<Budget, Guid>(s => new Budget() {Id = s.Id});
 
-            var clientCounter = new DashboardCounterViewModel() { DisplayName = "Clients", Counter = clients };
-            var budgetCounter = new DashboardCounterViewModel() { DisplayName = "Budgets", Counter = budgets };
+            var clientCounter = new DashboardCounterViewModel { DisplayName = "Clients", Counter = clients };
+            var budgetCounter = new DashboardCounterViewModel { DisplayName = "Budgets", Counter = budgets };
 
-            var model = new DashboardViewModel() { Counters = new[] { clientCounter, budgetCounter } };
+            var model = new DashboardViewModel { Counters = new[] { clientCounter, budgetCounter } };
 
             return View(model);
         }

@@ -24,25 +24,31 @@ using static Nuke.Common.Tools.DotNet.EF.Tasks;
 // ReSharper disable UnusedMember.Local
 public partial class Build : NukeBuild
 {
-    /// Support plugins are available for:
-    ///   - JetBrains ReSharper        https://nuke.build/resharper
-    ///   - JetBrains Rider            https://nuke.build/rider
-    ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
-    ///   - Microsoft VSCode           https://nuke.build/vscode
-    public static int Main() => Execute<Build>(x => x.Pack);
+    readonly string[] _publishProjects = { "Web" };
+
+    readonly string[] _testsProjects = { "Tests.Business" };
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)", Name = "configuration")]
     public readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
     [Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)", Name = "environment")]
     public readonly Environment Environment = IsLocalBuild ? Environment.Development : Environment.Production;
 
-    [Parameter("Warning Level", Name = "warningLevel")]
-    public readonly int WarningLevel = 0;
+    [GitRepository]
+    public readonly GitRepository Repository;
 
     [Solution]
     public readonly Solution Solution;
-    [GitRepository]
-    public readonly GitRepository Repository;
+
+    [Parameter("Warning Level", Name = "warningLevel")]
+    public readonly int WarningLevel;
+
+    string _hash = string.Empty;
+
+    IEnumerable<PublishProjectRecord> _projects = Array.Empty<PublishProjectRecord>();
+    IEnumerable<Project> _tests = Array.Empty<Project>();
+
+    Version _version = new("1.0.0.0");
 
     static AbsolutePath SourceDirectory => RootDirectory / "src";
 
@@ -56,23 +62,6 @@ public partial class Build : NukeBuild
 
     static AbsolutePath ScriptsDirectory => RootDirectory / "scripts";
 
-    public record PublishProjectRecord(Project project);
-
-    IEnumerable<PublishProjectRecord> _projects = Array.Empty<PublishProjectRecord>();
-    IEnumerable<Project> _tests = Array.Empty<Project>();
-
-    Version _version = new("1.0.0.0");
-    string _hash = string.Empty;
-
-    readonly string[] _publishProjects = new[]
-    {
-        "Web"
-    };
-    readonly string[] _testsProjects = new[]
-    {
-        "Tests.Business"
-    };
-
     Target Prepare => d => d
         .Before(Compile)
         .Before(Publish)
@@ -81,7 +70,7 @@ public partial class Build : NukeBuild
         {
             #region Version
 
-            var versionRegex = new Regex(pattern: @"v?\=?((?:[0-9]{1,}\.{0,}){1,})", RegexOptions.Compiled);
+            var versionRegex = new Regex(@"v?\=?((?:[0-9]{1,}\.{0,}){1,})", RegexOptions.Compiled);
             _version = Repository.Tags
                 .Select(m => versionRegex.Match(m))
                 .Where(m => m.Success)
@@ -105,15 +94,9 @@ public partial class Build : NukeBuild
                     Log.Warning("Unable to get repository tags using CLI");
                     using (var gitTag = new Process())
                     {
-                        gitTag.StartInfo = new ProcessStartInfo(fileName: "git", arguments: "tag --sort=-v:refname")
-                        {
-                            WorkingDirectory = RootDirectory, RedirectStandardOutput = true, UseShellExecute = false
-                        };
+                        gitTag.StartInfo = new ProcessStartInfo("git", "tag --sort=-v:refname") { WorkingDirectory = RootDirectory, RedirectStandardOutput = true, UseShellExecute = false };
                         gitTag.Start();
-                        _version = new[]
-                            {
-                                gitTag.StandardOutput.ReadToEnd().Trim()
-                            }
+                        _version = new[] { gitTag.StandardOutput.ReadToEnd().Trim() }
                             .Select(m => versionRegex.Match(m))
                             .Where(m => m.Success)
                             .Select(m => Version.Parse(m.Groups[1].Value))
@@ -141,11 +124,16 @@ public partial class Build : NukeBuild
                 {
                     // Variables
                     var pg1 = options.ImportedProject.PropertyGroups.FirstOrDefault(m => m.Label == "Environment");
-                    if (pg1 != null) pg1.SetProperty("Environment", Environment.ToString());
+                    if (pg1 != null)
+                    {
+                        pg1.SetProperty("Environment", Environment.ToString());
+                    }
+
                     if (options.ImportedProject.HasUnsavedChanges)
                     {
                         options.ImportedProject.Save();
                     }
+
                     options.ImportedProject.Reload();
                 }
                 else
@@ -156,14 +144,15 @@ public partial class Build : NukeBuild
                         project.Save();
                     }
                 }
+
                 project.ReevaluateIfNecessary();
             }
 
             _projects = (from project in internalProjects
-                         let info = project.GetMSBuildProject()
-                         select new PublishProjectRecord(
-                             project
-                         )).ToArray();
+                let info = project.GetMSBuildProject()
+                select new PublishProjectRecord(
+                    project
+                )).ToArray();
 
             Log.Information("Projects: {Projects}", _projects.Count());
 
@@ -183,8 +172,8 @@ public partial class Build : NukeBuild
         .Executes(() =>
         {
             Log.Information("Cleaning bin/obj Directories");
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach((path) => path.DeleteDirectory());
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach((path) => path.DeleteDirectory());
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(path => path.DeleteDirectory());
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(path => path.DeleteDirectory());
 
             Log.Information("Cleaning Test Results Directory");
             AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
@@ -203,7 +192,7 @@ public partial class Build : NukeBuild
             DotNetToolRestore();
 
             DotNetRestore(s => s
-                .CombineWith(_projects, configurator: (x, v) => x
+                .CombineWith(_projects, (x, v) => x
                     .SetProjectFile(v.project)));
         });
 
@@ -214,17 +203,14 @@ public partial class Build : NukeBuild
         .Executes(() =>
         {
             var target = from item in _projects
-                         from framework in item.project.GetTargetFrameworks()
-                         select new
-                         {
-                             framework, item.project
-                         };
+                from framework in item.project.GetTargetFrameworks()
+                select new { framework, item.project };
 
             DotNetBuild(s => s
                 .SetWarningLevel(WarningLevel)
                 .SetProperty("Environment", Environment.ToString())
                 .EnableNoRestore()
-                .CombineWith(target, configurator: (x, v) => x
+                .CombineWith(target, (x, v) => x
                     .SetProjectFile(v.project.Path)
                     .SetFramework(v.framework)
                     .SetConfiguration(Configuration)
@@ -241,13 +227,13 @@ public partial class Build : NukeBuild
                 var assemblyInfoFiles = SourceDirectory.GetFiles("AssemblyInfo*.cs", int.MaxValue);
                 foreach (var assemblyInfoVersionFile in assemblyInfoFiles)
                 {
-                    Log.Information(messageTemplate: "Patching: {File}", assemblyInfoVersionFile);
+                    Log.Information("Patching: {File}", assemblyInfoVersionFile);
                     if (_version != null)
                     {
                         var content = File.ReadAllText(assemblyInfoVersionFile);
-                        var assemblyVersionRegEx = new Regex(pattern: @"\[assembly: AssemblyVersion\(.*\)\]", RegexOptions.Compiled);
-                        var assemblyFileVersionRegEx = new Regex(pattern: @"\[assembly: AssemblyFileVersion\(.*\)\]", RegexOptions.Compiled);
-                        var assemblyInformationalVersionRegEx = new Regex(pattern: @"\[assembly: AssemblyInformationalVersion\(.*\)\]", RegexOptions.Compiled);
+                        var assemblyVersionRegEx = new Regex(@"\[assembly: AssemblyVersion\(.*\)\]", RegexOptions.Compiled);
+                        var assemblyFileVersionRegEx = new Regex(@"\[assembly: AssemblyFileVersion\(.*\)\]", RegexOptions.Compiled);
+                        var assemblyInformationalVersionRegEx = new Regex(@"\[assembly: AssemblyInformationalVersion\(.*\)\]", RegexOptions.Compiled);
 
                         content = assemblyVersionRegEx.Replace(content, $"[assembly: AssemblyVersion(\"{_version}\")]");
                         content = assemblyFileVersionRegEx.Replace(content, $"[assembly: AssemblyFileVersion(\"{_version}\")]");
@@ -263,7 +249,7 @@ public partial class Build : NukeBuild
             }
             else
             {
-                Log.Information(messageTemplate: "Skiping on {Environment}", Environment);
+                Log.Information("Skiping on {Environment}", Environment);
             }
         });
 
@@ -271,7 +257,6 @@ public partial class Build : NukeBuild
         .DependsOn(Prepare)
         .Executes(() =>
         {
-
             DotNetToolRestore();
             AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
 
@@ -280,7 +265,7 @@ public partial class Build : NukeBuild
                 .When(true, x => x
                     .SetLoggers("trx")
                     .SetResultsDirectory(TestResultsDirectory))
-                .CombineWith(_tests, configurator: (x, v) => x
+                .CombineWith(_tests, (x, v) => x
                     .SetProjectFile(v.Path)));
 
             TestResultsDirectory.GlobFiles("*.trx")
@@ -310,15 +295,12 @@ public partial class Build : NukeBuild
             config.Bind("ConnectionStrings", connectionStrings);
 
             var combinations = from item in connectionStrings
-                               let split = item.Key.Split(".")
-                               where split.Length > 1
-                               let context = split.First()
-                               let provider = split.Last()
-                               where provider != "Sqlite"
-                               select new
-                               {
-                                   Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value
-                               };
+                let split = item.Key.Split(".")
+                where split.Length > 1
+                let context = split.First()
+                let provider = split.Last()
+                where provider != "Sqlite"
+                select new { Context = context, Name = context.Replace("Context", ""), Provider = provider, item.Value };
 
             foreach (var item in combinations)
             {
@@ -340,10 +322,7 @@ public partial class Build : NukeBuild
             var publishCombinations =
                 from project in _publishProjects.Select(m => Solution.AllProjects.FirstOrDefault(p => p.Name == m))
                 from framework in project.GetTargetFrameworks()
-                select new
-                {
-                    project, framework
-                };
+                select new { project, framework };
 
             DotNetPublish(s => s
                 .SetWarningLevel(WarningLevel)
@@ -362,10 +341,7 @@ public partial class Build : NukeBuild
             var publishCombinations =
                 from project in _publishProjects.Select(m => Solution.AllProjects.FirstOrDefault(p => p.Name == m))
                 from framework in project.GetTargetFrameworks()
-                select new
-                {
-                    project, framework
-                };
+                select new { project, framework };
 
             CopyDirectoryRecursively(ScriptsDirectory, ArtifactsDirectory / "Scripts");
             CopyDirectoryRecursively(TestResultsDirectory, ArtifactsDirectory / "Tests");
@@ -379,4 +355,13 @@ public partial class Build : NukeBuild
             AbsolutePath.Create(ScriptsDirectory).CreateOrCleanDirectory();
             Log.Information($"Output: {ArtifactsDirectory}");
         });
+
+    /// Support plugins are available for:
+    /// - JetBrains ReSharper        https://nuke.build/resharper
+    /// - JetBrains Rider            https://nuke.build/rider
+    /// - Microsoft VisualStudio     https://nuke.build/visualstudio
+    /// - Microsoft VSCode           https://nuke.build/vscode
+    public static int Main() => Execute<Build>(x => x.Pack);
+
+    public record PublishProjectRecord(Project project);
 }

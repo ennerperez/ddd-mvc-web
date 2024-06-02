@@ -23,20 +23,107 @@ namespace Web.Areas.Identity.Pages.Account
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public bool DisplayConfirmAccountLink { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public string EmailConfirmationUrl { get; set; }
 
@@ -65,9 +152,9 @@ namespace Web.Areas.Identity.Pages.Account
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 EmailConfirmationUrl = Url.Page(
                     "/Account/ConfirmEmail",
-                    pageHandler: null,
-                    values: new { area = "Identity", userId, code, returnUrl },
-                    protocol: Request.Scheme);
+                    null,
+                    new { area = "Identity", userId, code, returnUrl },
+                    Request.Scheme);
             }
 
             return Page();

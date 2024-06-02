@@ -7,7 +7,8 @@ GET {{url}}/api/Client/0
 X-Api-Key: {{apiKey}}
 
 ### Read Client By Pages
-GET {{url}}/api/Client/Page/1?size=10
+GET {{url}}/api/Client/Page/1?
+    size=10
 X-Api-Key: {{apiKey}}
 
 ### Update Client By Id
@@ -99,7 +100,8 @@ GET {{url}}/api/Setting/0
 X-Api-Key: {{apiKey}}
 
 ### Read Setting By Pages
-GET {{url}}/api/Setting/Page/1?size=10
+GET {{url}}/api/Setting/Page/1?
+    size=10
 X-Api-Key: {{apiKey}}
 
 ### Update Setting By Id
@@ -185,7 +187,8 @@ GET {{url}}/api/User/0
 X-Api-Key: {{apiKey}}
 
 ### Read User By Pages
-GET {{url}}/api/User/Page/1?size=10
+GET {{url}}/api/User/Page/1?
+    size=10
 X-Api-Key: {{apiKey}}
 
 ### Update User By Id

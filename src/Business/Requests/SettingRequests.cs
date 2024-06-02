@@ -32,12 +32,7 @@ namespace Business.Requests
 
         public async Task<int> Handle(CreateSettingRequest request, CancellationToken cancellationToken)
         {
-            var entity = new Setting
-            {
-                Key = request.Key,
-                Type = request.Type,
-                Value = request.Value
-            };
+            var entity = new Setting { Key = request.Key, Type = request.Type, Value = request.Value };
 
             await _repository.CreateAsync(entity, cancellationToken);
 
@@ -98,7 +93,7 @@ namespace Business.Requests
         public async Task<Setting[]> Handle(RepositoryRequest<Setting, Setting> request, CancellationToken cancellationToken)
         {
             var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);
-            var items = await entities.ToArrayAsync(cancellationToken: cancellationToken);
+            var items = await entities.ToArrayAsync(cancellationToken);
             return items;
         }
     }

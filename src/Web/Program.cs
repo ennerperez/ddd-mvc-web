@@ -1,12 +1,11 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Serilog;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using Web.Services;
-
 #if USING_SASS && USING_SASS_WATCH
 using System.Diagnostics;
 #endif
@@ -16,6 +15,7 @@ namespace Web
     public static class Program
     {
         internal static string Name { get; private set; }
+
         public static void Main(string[] args)
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

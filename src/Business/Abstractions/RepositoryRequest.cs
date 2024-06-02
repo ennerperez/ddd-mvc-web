@@ -11,7 +11,6 @@ using Persistence.Interfaces;
 
 namespace Business.Abstractions
 {
-
     public class RepositoryRequest<TEntity, TResult> : RepositoryRequest<TEntity, int, TResult>
         where TEntity : class, IEntity<int>;
 
@@ -45,7 +44,6 @@ namespace Business.Abstractions
         where TEntity : class, IEntity<TKey>
         where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-
         private readonly IGenericRepository<TEntity, TKey> _repository;
 
         protected RepositoryRequestHandler(IGenericRepository<TEntity, TKey> repository)

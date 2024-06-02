@@ -97,6 +97,7 @@ namespace Business.Requests
         {
             _repository = repository;
         }
+
         public async Task<Client[]> Handle(RepositoryRequest<Client, Client> request, CancellationToken cancellationToken)
         {
             var entities = await _repository.ReadAsync(request.Selector, request.Predicate, request.OrderBy, request.Include, request.Skip, request.Take, request.DisableTracking, request.IgnoreQueryFilters, request.IncludeDeleted, cancellationToken);

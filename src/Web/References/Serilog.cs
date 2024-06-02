@@ -8,19 +8,81 @@ using Serilog.Events;
 namespace Serilog
 {
     /// <summary>
-    ///     Extension methods for setting up client IP and client agent enrichers <see cref="LoggerEnrichmentConfiguration"/>.
+    ///     Extension
+    ///     methods
+    ///     for
+    ///     setting
+    ///     up
+    ///     client
+    ///     IP
+    ///     and
+    ///     client
+    ///     agent
+    ///     enrichers
+    ///     <see
+    ///         cref="LoggerEnrichmentConfiguration" />
+    ///     .
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        ///     Registers the client IP enricher to enrich logs with client IP with 'X-forwarded-for' header information.
+        ///     Registers
+        ///     the
+        ///     client
+        ///     IP
+        ///     enricher
+        ///     to
+        ///     enrich
+        ///     logs
+        ///     with
+        ///     client
+        ///     IP
+        ///     with
+        ///     'X-forwarded-for'
+        ///     header
+        ///     information.
         /// </summary>
-        /// <param name="enrichmentConfiguration"> The enrichment configuration. </param>
-        /// <param name="xForwardHeaderName">
-        ///     Set the 'X-Forwarded-For' header in case if service is behind proxy server. Default value is 'X-forwarded-for'.
+        /// <param
+        ///     name="enrichmentConfiguration">
+        ///     The
+        ///     enrichment
+        ///     configuration.
         /// </param>
-        /// <exception cref="ArgumentNullException"> enrichmentConfiguration </exception>
-        /// <returns> The logger configuration so that multiple calls can be chained. </returns>
+        /// <param
+        ///     name="xForwardHeaderName">
+        ///     Set
+        ///     the
+        ///     'X-Forwarded-For'
+        ///     header
+        ///     in
+        ///     case
+        ///     if
+        ///     service
+        ///     is
+        ///     behind
+        ///     proxy
+        ///     server.
+        ///     Default
+        ///     value
+        ///     is
+        ///     'X-forwarded-for'.
+        /// </param>
+        /// <exception
+        ///     cref="ArgumentNullException">
+        ///     enrichmentConfiguration
+        /// </exception>
+        /// <returns>
+        ///     The
+        ///     logger
+        ///     configuration
+        ///     so
+        ///     that
+        ///     multiple
+        ///     calls
+        ///     can
+        ///     be
+        ///     chained.
+        /// </returns>
         public static LoggerConfiguration WithClientIp(this LoggerEnrichmentConfiguration enrichmentConfiguration, string xForwardHeaderName = null)
         {
             if (enrichmentConfiguration == null)
@@ -37,11 +99,41 @@ namespace Serilog
         }
 
         /// <summary>
-        ///     Registers the client Agent enricher to enrich logs with 'User-Agent' header information.
+        ///     Registers
+        ///     the
+        ///     client
+        ///     Agent
+        ///     enricher
+        ///     to
+        ///     enrich
+        ///     logs
+        ///     with
+        ///     'User-Agent'
+        ///     header
+        ///     information.
         /// </summary>
-        /// <param name="enrichmentConfiguration"> The enrichment configuration. </param>
-        /// <exception cref="ArgumentNullException"> enrichmentConfiguration </exception>
-        /// <returns> The logger configuration so that multiple calls can be chained. </returns>
+        /// <param
+        ///     name="enrichmentConfiguration">
+        ///     The
+        ///     enrichment
+        ///     configuration.
+        /// </param>
+        /// <exception
+        ///     cref="ArgumentNullException">
+        ///     enrichmentConfiguration
+        /// </exception>
+        /// <returns>
+        ///     The
+        ///     logger
+        ///     configuration
+        ///     so
+        ///     that
+        ///     multiple
+        ///     calls
+        ///     can
+        ///     be
+        ///     chained.
+        /// </returns>
         public static LoggerConfiguration WithClientAgent(this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
             if (enrichmentConfiguration == null)
@@ -152,10 +244,8 @@ namespace Serilog
                 logEvent.AddPropertyIfAbsent(ipAddressForwaredForProperty);
             }
 
-            private string GetRemoteIpAddress()
-            {
-                return _contextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
-            }
+            private string GetRemoteIpAddress() => _contextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
             private string GetForwardedFor()
             {
                 if (!string.IsNullOrEmpty(_contextAccessor.HttpContext?.Request.Headers["X-Forwarded-For"]))

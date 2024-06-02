@@ -1,8 +1,9 @@
+using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 #if DEBUG
 using System.Diagnostics;
 #endif
-using System.Linq;
 
 namespace Persistence.Conventions
 {
@@ -16,7 +17,7 @@ namespace Persistence.Conventions
 #endif
             if (exclude == null || exclude.Length == 0)
             {
-                exclude = System.Array.Empty<string>();
+                exclude = Array.Empty<string>();
             }
 
             var defaultDateFunction = provider switch

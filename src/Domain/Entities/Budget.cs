@@ -1,9 +1,9 @@
 using System;
+using Domain.Enums;
+using Domain.Interfaces;
 #if USING_IDENTITY
 using Domain.Entities.Identity;
 #endif
-using Domain.Enums;
-using Domain.Interfaces;
 
 namespace Domain.Entities
 {
@@ -14,7 +14,6 @@ namespace Domain.Entities
             CreatedAt = DateTime.Now;
             Status = Status.Draft;
         }
-        public Guid Id { get; set; }
 
         public string Code { get; set; }
 
@@ -28,17 +27,18 @@ namespace Domain.Entities
         public decimal Total { get; set; }
 
         public DateTime? ExpireAt { get; set; }
-        public bool IsDeleted { get; set; }
-
-        public int? CreatedById { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
+        public DateTime? ModifiedAt { get; set; }
+        public Guid Id { get; set; }
+
+        public int? CreatedById { get; set; }
+
         public int? ModifiedById { get; set; }
 
-        public DateTime? ModifiedAt { get; set; }
-
         public int? DeletedById { get; set; }
+        public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
 
 #if USING_IDENTITY
@@ -46,6 +46,5 @@ namespace Domain.Entities
         public User ModifiedBy { get; set; }
         public User DeletedBy { get; set; }
 #endif
-
     }
 }

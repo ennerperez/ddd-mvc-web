@@ -4,7 +4,7 @@
     var twoLetterIsoLanguageName = "en";
     if (Html.UsingLocalization())
     {
-        IRequestCultureFeature requestCulture = Context.Features.Get<IRequestCultureFeature>();
+        var requestCulture = Context.Features.Get<IRequestCultureFeature>();
         twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
     }
 }
@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <environment include="development">
-        @if (@Html.UsingSass())
+        @if (Html.UsingSass())
         {
             <link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true"/>
         }
@@ -52,7 +52,7 @@
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     </environment>
     <environment exclude="development">
-        @if (@Html.UsingSass())
+        @if (Html.UsingSass())
         {
             <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
         }

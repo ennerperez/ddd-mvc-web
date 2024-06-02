@@ -31,6 +31,5 @@ namespace Domain.Entities.Identity
         public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable
-
     }
 }

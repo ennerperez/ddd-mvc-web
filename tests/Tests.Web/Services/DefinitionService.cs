@@ -6,33 +6,25 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-#if USING_SPECFLOW
-using System.Text.RegularExpressions;
-#endif
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using Tests.Abstractions.Entities;
 using Tests.Abstractions.Enums;
 using Tests.Abstractions.Interfaces;
+#if USING_SPECFLOW
+using System.Text.RegularExpressions;
+#endif
 
 namespace Tests.Web.Services
 {
     public class DefinitionService : IDefinitionService<IWebElement>, IDisposable
     {
         private readonly IAutomationContext _automationContext;
-        private readonly IConfigurationRoot _globalConfiguration;
-
-        private Definition GlobalDefinitions { get; }
-        private Definition ScenarioDefinitions { get; }
-        private Definition PageDefinitions { get; set; }
-
-        private Definition[] Definitions => new[] { GlobalDefinitions, ScenarioDefinitions, PageDefinitions }.Where(m => m != null).ToArray();
-
-        internal static IWebDriver Driver => Program.Driver;
-        internal IEnumerable<MethodInfo> _methods;
 
         private readonly IDefinitionConfiguration _definitionConfiguration;
+        private readonly IConfigurationRoot _globalConfiguration;
+        internal IEnumerable<MethodInfo> _methods;
 
         public DefinitionService(IAutomationContext automationContext, IDefinitionConfiguration definitionConfiguration)
         {
@@ -61,124 +53,27 @@ namespace Tests.Web.Services
             _globalConfiguration.Bind(GlobalDefinitions);
             GlobalDefinitions.PrepareAndValidate(_definitionConfiguration);
 
-            Console.WriteLine($@"DEFINITION_FILE[ Global.ini ]DEFINITION_FILE");
+            Console.WriteLine(@"DEFINITION_FILE[ Global.ini ]DEFINITION_FILE");
 
             ScenarioDefinitions = GetCurrentScenarioDefinitions();
 
             _methods = Driver.GetType().GetInterface(nameof(IWebDriver)).GetExtensionMethods(GetType().Assembly).ToArray();
         }
 
-        public bool ValidateAllUniqueElements(params Definition[] definitions)
-        {
-            var source = definitions.SelectMany(m => m.UniqueElements).ToArray();
-            foreach (var item in source)
-            {
-                var element = TryFindElement(item.Key);
-                if (element == null)
-                {
-                    return false;
-                }
-            }
+        private Definition GlobalDefinitions { get; }
+        private Definition ScenarioDefinitions { get; }
+        private Definition PageDefinitions { get; set; }
 
-            return true;
-        }
+        private Definition[] Definitions => new[] { GlobalDefinitions, ScenarioDefinitions, PageDefinitions }.Where(m => m != null).ToArray();
 
-        #region Privates
-
-        public KeyValuePair<SelectBy, string> GetStrategy(string selector, string token = "", string name = "")
-        {
-            var result = new KeyValuePair<SelectBy, string>(SelectBy.Id, selector);
-
-            var key = selector;
-
-            if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(name))
-            {
-                key = name;
-            }
-
-            key = key.Replace(new[] { "&", "-", " ", "'" }, "");
-
-            if (selector.StartsWith(_definitionConfiguration.ElementUniquenessIdentifier))
-            {
-                key = selector;
-            }
-
-            var sources = Definitions;
-            foreach (var source in sources)
-            {
-                if (source.Ids.TryGetValue(key, out var id))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.Id, id);
-                }
-                else if (source.AutomationIds.TryGetValue(key, out var automationId))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.AccessibilityId, automationId);
-                }
-                else if (source.AutomationNames.TryGetValue(key, out var automationName))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.Name, automationName);
-                }
-                else if (source.AutomationCSSes.TryGetValue(key, out var se))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.CssSelector, se);
-                }
-                else if (source.AutomationXPaths.TryGetValue(key, out var path))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.XPath, path);
-                }
-                else if (source.AutomationClassNames.TryGetValue(key, out var className))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.ClassName, className);
-                }
-                else if (source.AutomationLinkTexts.TryGetValue(key, out var text))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.LinkText, text);
-                }
-                else if (source.AutomationPartialLinkTexts.TryGetValue(key, out var linkText))
-                {
-                    result = new KeyValuePair<SelectBy, string>(SelectBy.PartialLinkText, linkText);
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(name))
-            {
-                var value = result.Value.Replace(token, selector);
-                result = new KeyValuePair<SelectBy, string>(result.Key, value);
-            }
-
-            if (result.Value.Contains(@"@automation-id"))
-            {
-                var value = result.Value;
-                result = new KeyValuePair<SelectBy, string>(result.Key, value);
-            }
-
-            Console.WriteLine($@"STRATEGY[ {selector} | {result.Key} | {result.Value} ]STRATEGY");
-
-            return result;
-        }
-
-        private T InvokeMethod<T>(KeyValuePair<SelectBy, string> location, [CallerMemberName] string method = "", params object[] values)
-        {
-            method = method.Replace("Dynamic", "");
-            var methodName = $"{method}By{Enum.GetName(location.Key)}";
-            var methodInfo = (_methods.FirstOrDefault(m => m.Name == methodName) ?? Driver.GetType().GetMethods().FirstOrDefault(m => m.Name == methodName)) ?? throw new NotImplementedException(methodName);
-            var value = location.Value;
-            var valuesList = new List<object>(values);
-            valuesList.Insert(0, Driver);
-            valuesList.Insert(1, value);
-            var result = (T)methodInfo.Invoke(Driver, valuesList.ToArray());
-
-            return result;
-        }
-
-        #endregion
+        internal static IWebDriver Driver => Program.Driver;
 
         // FindElement
 
         public IWebElement FindElement(string selector, bool waitForElementToBeDisplayed = false)
         {
             IWebElement element = null;
-            var explicitElementWaitTime = (60 / _definitionConfiguration.ElementSearchRetryFactor) * 1000;
+            var explicitElementWaitTime = 60 / _definitionConfiguration.ElementSearchRetryFactor * 1000;
             var currentWait = 0;
             var location = GetStrategy(selector);
 
@@ -793,6 +688,21 @@ namespace Tests.Web.Services
             return false;
         }
 
+        public bool ValidateAllUniqueElements(params Definition[] definitions)
+        {
+            var source = definitions.SelectMany(m => m.UniqueElements).ToArray();
+            foreach (var item in source)
+            {
+                var element = TryFindElement(item.Key);
+                if (element == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
 #pragma warning disable CA1822
         private Definition GetCurrentScenarioDefinitions()
 #pragma warning restore CA1822
@@ -830,7 +740,7 @@ namespace Tests.Web.Services
                 var basePageFile = Path.Combine(basePath, featureDefinitionsDirectory, $"{scenarioFile}.ini");
 
                 scenarioBuilder
-                  .AddIniFile(basePageFile, true, true);
+                    .AddIniFile(basePageFile, true, true);
 
                 if (!string.IsNullOrWhiteSpace(scenarioFile))
                 {
@@ -851,12 +761,105 @@ namespace Tests.Web.Services
 #endif
         }
 
+        #region Privates
+
+        public KeyValuePair<SelectBy, string> GetStrategy(string selector, string token = "", string name = "")
+        {
+            var result = new KeyValuePair<SelectBy, string>(SelectBy.Id, selector);
+
+            var key = selector;
+
+            if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(name))
+            {
+                key = name;
+            }
+
+            key = key.Replace(new[] { "&", "-", " ", "'" }, "");
+
+            if (selector.StartsWith(_definitionConfiguration.ElementUniquenessIdentifier))
+            {
+                key = selector;
+            }
+
+            var sources = Definitions;
+            foreach (var source in sources)
+            {
+                if (source.Ids.TryGetValue(key, out var id))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.Id, id);
+                }
+                else if (source.AutomationIds.TryGetValue(key, out var automationId))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.AccessibilityId, automationId);
+                }
+                else if (source.AutomationNames.TryGetValue(key, out var automationName))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.Name, automationName);
+                }
+                else if (source.AutomationCSSes.TryGetValue(key, out var se))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.CssSelector, se);
+                }
+                else if (source.AutomationXPaths.TryGetValue(key, out var path))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.XPath, path);
+                }
+                else if (source.AutomationClassNames.TryGetValue(key, out var className))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.ClassName, className);
+                }
+                else if (source.AutomationLinkTexts.TryGetValue(key, out var text))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.LinkText, text);
+                }
+                else if (source.AutomationPartialLinkTexts.TryGetValue(key, out var linkText))
+                {
+                    result = new KeyValuePair<SelectBy, string>(SelectBy.PartialLinkText, linkText);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(name))
+            {
+                var value = result.Value.Replace(token, selector);
+                result = new KeyValuePair<SelectBy, string>(result.Key, value);
+            }
+
+            if (result.Value.Contains(@"@automation-id"))
+            {
+                var value = result.Value;
+                result = new KeyValuePair<SelectBy, string>(result.Key, value);
+            }
+
+            Console.WriteLine($@"STRATEGY[ {selector} | {result.Key} | {result.Value} ]STRATEGY");
+
+            return result;
+        }
+
+        private T InvokeMethod<T>(KeyValuePair<SelectBy, string> location, [CallerMemberName] string method = "", params object[] values)
+        {
+            method = method.Replace("Dynamic", "");
+            var methodName = $"{method}By{Enum.GetName(location.Key)}";
+            var methodInfo = (_methods.FirstOrDefault(m => m.Name == methodName) ?? Driver.GetType().GetMethods().FirstOrDefault(m => m.Name == methodName)) ?? throw new NotImplementedException(methodName);
+            var value = location.Value;
+            var valuesList = new List<object>(values);
+            valuesList.Insert(0, Driver);
+            valuesList.Insert(1, value);
+            var result = (T)methodInfo.Invoke(Driver, valuesList.ToArray());
+
+            return result;
+        }
+
+        #endregion
+
         #region IDisposable
 
         // To detect redundant calls
         private bool _disposed;
 
-        ~DefinitionService() => Dispose(false);
+        ~DefinitionService()
+        {
+            Dispose(false);
+        }
 
         public void Dispose(bool disposing)
         {

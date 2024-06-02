@@ -19,7 +19,7 @@ namespace System.Security
 
             public static string GetUserFullName(this ClaimsPrincipal principal)
             {
-                var displayName = string.Join(' ', new[] { principal.FindFirst(ClaimTypes.GivenName)?.Value, principal.FindFirst(ClaimTypes.Surname)?.Value });
+                var displayName = string.Join(' ', principal.FindFirst(ClaimTypes.GivenName)?.Value, principal.FindFirst(ClaimTypes.Surname)?.Value);
                 if (string.IsNullOrWhiteSpace(displayName))
                 {
                     displayName = principal.FindFirst(ClaimTypes.Name)?.Value;

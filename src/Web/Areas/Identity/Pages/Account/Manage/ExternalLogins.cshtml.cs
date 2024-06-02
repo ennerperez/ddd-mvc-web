@@ -15,8 +15,8 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
         private readonly IUserStore<User> _userStore;
 
         public ExternalLoginsModel(
@@ -30,26 +30,142 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public IList<UserLoginInfo> CurrentLogins { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public IList<AuthenticationScheme> OtherLogins { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         public bool ShowRemoveButton { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
@@ -103,7 +219,7 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             // Request a redirect to the external login provider to link a login for the current user
-            var redirectUrl = Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
+            var redirectUrl = Url.Page("./ExternalLogins", "LinkLoginCallback");
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
             return new ChallengeResult(provider, properties);
         }
@@ -117,7 +233,7 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             }
 
             var userId = await _userManager.GetUserIdAsync(user);
-            var info = await _signInManager.GetExternalLoginInfoAsync(userId) ?? throw new InvalidOperationException($"Unexpected error occurred loading external login info.");
+            var info = await _signInManager.GetExternalLoginInfoAsync(userId) ?? throw new InvalidOperationException("Unexpected error occurred loading external login info.");
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {

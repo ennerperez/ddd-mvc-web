@@ -1,5 +1,4 @@
 using Infrastructure.Interfaces;
-
 #if USING_QUESTPDF
 using System.Collections;
 using QuestPDF.Fluent;
@@ -18,7 +17,7 @@ namespace Web.Areas.Admin.Reports
     {
         public string Title { get; set; }
         public string FileName { get; set; }
-        public object Model { get; private set; }
+        public object Model { get; }
 
         public BudgetDocument(object model)
         {
@@ -27,6 +26,7 @@ namespace Web.Areas.Admin.Reports
 
 #if USING_QUESTPDF
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+
         public void Compose(IDocumentContainer container)
         {
             if (typeof(IEnumerable).IsAssignableFrom(Model.GetType()))
@@ -42,6 +42,7 @@ namespace Web.Areas.Admin.Reports
         }
 
         private readonly TextStyle _titleStyle = TextStyle.Default.FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
+
         private void BuildSingleReport(PageDescriptor page)
         {
             page.Margin(25);
@@ -50,7 +51,6 @@ namespace Web.Areas.Admin.Reports
             var record = (dynamic)Model;
             page.Header().Element(container =>
             {
-
                 container.Row(row =>
                 {
                     row.RelativeItem().Column(column =>
@@ -86,6 +86,7 @@ namespace Web.Areas.Admin.Reports
                     });
             });
         }
+
         private void BuildMultipleReport(PageDescriptor page)
         {
             page.Margin(25);
@@ -133,9 +134,13 @@ namespace Web.Areas.Admin.Reports
 
                     var index = 1;
                     float fontSizeContent = 8;
-                    static IContainer CellStyle(IContainer container) => container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
 
-                    foreach (var item in ((IEnumerable)Model))
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
+                    }
+
+                    foreach (var item in (IEnumerable)Model)
                     {
                         table.Cell().Element(CellStyle).Text(index.ToString()).FontSize(fontSizeContent);
                         foreach (var prop in props)
@@ -154,6 +159,5 @@ namespace Web.Areas.Admin.Reports
         }
 
 #endif
-
     }
 }

@@ -9,8 +9,5 @@ public class Environment : Enumeration
     public static Environment Staging = new() { Value = nameof(Staging) };
     public static Environment Production = new() { Value = nameof(Production) };
 
-    public static implicit operator string(Environment environment)
-    {
-        return environment.Value;
-    }
+    public static implicit operator string(Environment environment) => environment.Value;
 }

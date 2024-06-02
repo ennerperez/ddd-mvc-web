@@ -6,12 +6,10 @@ namespace Domain.Entities
 {
     public class Client : IEntity, IAuditable
     {
-
         public Client()
         {
             CreatedAt = DateTime.Now;
         }
-        public int Id { get; set; }
 
         public string Identification { get; set; }
         public string FullName { get; set; }
@@ -20,6 +18,7 @@ namespace Domain.Entities
         public string Category { get; set; }
 
         public ICollection<Budget> Budgets { get; set; }
+        public int Id { get; set; }
 
         #region IAuditable
 
@@ -27,6 +26,5 @@ namespace Domain.Entities
         public DateTime? ModifiedAt { get; set; }
 
         #endregion
-
     }
 }

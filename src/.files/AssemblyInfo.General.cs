@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Resources;
 
 // General Information about an assembly is controlled through the following
@@ -7,7 +7,7 @@ using System.Resources;
 
 [assembly: AssemblyCompany("Company")]
 [assembly: AssemblyProduct("Product")]
-[assembly: AssemblyCopyright("Copyright © 2023")]
+[assembly: AssemblyCopyright("Copyright © 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyConfiguration("")]

@@ -15,6 +15,18 @@ namespace Tests.Web.Settings
             _configuration = configuration;
         }
 
+        public string GetApplicationDefinitionsLocation()
+        {
+            var path = _configuration["DefinitionSettings:Location"];
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+                Path.Combine(assemblyName ?? throw new InvalidOperationException("AssemblyName"), "Definitions");
+            }
+
+            return path;
+        }
+
         #region DefinitionSettings
 
         public string ElementUniquenessIdentifier => _configuration["DefinitionSettings:ElementUniquenessIdentifier"];
@@ -28,17 +40,5 @@ namespace Tests.Web.Settings
         public int ElementSearchRetryFactor => _configuration?.GetValue<int>("DefinitionSettings:ElementSearchRetryFactor") ?? 0;
 
         #endregion
-
-        public string GetApplicationDefinitionsLocation()
-        {
-            var path = _configuration["DefinitionSettings:Location"];
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-                Path.Combine(assemblyName ?? throw new InvalidOperationException("AssemblyName"), "Definitions");
-            }
-
-            return path;
-        }
     }
 }

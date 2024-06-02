@@ -51,15 +51,9 @@ namespace System.Text
             return $"{leadWord}{result}";
         }
 
-        public static string ToSentence(this string @this)
-        {
-            return $"{@this[0].ToString().ToUpper()}{@this[1..].ToLower()}";
-        }
+        public static string ToSentence(this string @this) => $"{@this[0].ToString().ToUpper()}{@this[1..].ToLower()}";
 
-        public static string ToSentenceInvariant(this string @this)
-        {
-            return $"{@this[0].ToString().ToUpperInvariant()}{@this[1..].ToLowerInvariant()}";
-        }
+        public static string ToSentenceInvariant(this string @this) => $"{@this[0].ToString().ToUpperInvariant()}{@this[1..].ToLowerInvariant()}";
 
         public static string Replace(this string @this, string[] oldValues, string newValues)
         {

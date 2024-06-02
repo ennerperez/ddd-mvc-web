@@ -35,9 +35,9 @@ namespace Persistence.Services.Identity
                 var users = await _dbContext.Set<User>().Select(m => new { m.Id, m.NormalizedEmail }).ToArrayAsync(cancellationToken);
 
                 var joint = from item in users
-                            join old in olds on item.NormalizedEmail equals old.NormalizedEmail
-                            where item.Id != old.Id
-                            select item;
+                    join old in olds on item.NormalizedEmail equals old.NormalizedEmail
+                    where item.Id != old.Id
+                    select item;
 
                 var jointIds = joint.Select(m => m.Id).ToArray();
                 var invalidId = await _dbContext.Set<User>().Select(m => new { m.Id, m.NormalizedEmail }).FirstOrDefaultAsync(m => jointIds.Contains(m.Id), cancellationToken);
@@ -62,7 +62,7 @@ namespace Persistence.Services.Identity
 
         public override async Task DeleteAsync<T>(T[] keys, CancellationToken cancellationToken = default)
         {
-            if ((await _dbContext.Set<User>().CountAsync(cancellationToken) == 1))
+            if (await _dbContext.Set<User>().CountAsync(cancellationToken) == 1)
             {
                 throw new InvalidOperationException("Cannot delete all users");
             }

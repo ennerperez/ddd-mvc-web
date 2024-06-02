@@ -13,10 +13,13 @@ namespace Business
     public static class Extensions
     {
         /// <summary>
-        ///
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="optionsBuilder"></param>
+        /// <param
+        ///     name="services">
+        /// </param>
+        /// <param
+        ///     name="optionsBuilder">
+        /// </param>
         /// <returns></returns>
         public static IServiceCollection AddBusiness(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
         {
@@ -27,11 +30,16 @@ namespace Business
         }
 
         /// <summary>
-        ///
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
-        /// <typeparam name="T"></typeparam>
+        /// <param
+        ///     name="services">
+        /// </param>
+        /// <param
+        ///     name="configureOptions">
+        /// </param>
+        /// <typeparam
+        ///     name="T">
+        /// </typeparam>
         /// <returns></returns>
         public static IServiceCollection AddBusiness<T>(this IServiceCollection services, Action<T> configureOptions = null)
         {
@@ -42,17 +50,24 @@ namespace Business
         }
 
         /// <summary>
-        ///
         /// </summary>
-        /// <param name="services"></param>
+        /// <param
+        ///     name="services">
+        /// </param>
         /// <returns></returns>
         public static IServiceCollection AddBusiness(this IServiceCollection services)
         {
-            var assemblies = new[]
-            {
-                Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly()
-            };
+#if USING_LOCALIZATION
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+#endif
+            return services;
+        }
+
+        public static IServiceCollection WithMediatR(this IServiceCollection services)
+        {
+            var assemblies = new[] { Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly() };
             services.AddValidatorsFromAssembly(assemblies[0]);
+            services.AddValidatorsFromAssembly(assemblies[1]);
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssemblies(assemblies);
@@ -60,10 +75,6 @@ namespace Business
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             });
-
-#if USING_LOCALIZATION
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-#endif
             return services;
         }
 
@@ -81,6 +92,7 @@ namespace Business
                     services.AddScoped<ISettingRepository, SettingRepository>();
                     break;
             }
+
             return services;
         }
     }

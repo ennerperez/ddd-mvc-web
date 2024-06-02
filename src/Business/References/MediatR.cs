@@ -12,7 +12,6 @@ namespace MediatR
 {
     public static class ISenderExtensions
     {
-
         public static async Task<TEntity[]> SendWithRepository<TEntity>(this ISender @this,
             Expression<Func<TEntity, TEntity>> selector = null,
             Expression<Func<TEntity, bool>> predicate = null,
@@ -23,7 +22,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<int>
         {
-            selector ??= (s) => s;
+            selector ??= s => s;
 
             return await @this.SendWithRepository<TEntity, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -38,7 +37,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<int>
         {
-            var request = new RepositoryRequest<TEntity, TResult>()
+            var request = new RepositoryRequest<TEntity, TResult>
             {
                 Selector = selector,
                 Predicate = predicate,
@@ -70,7 +69,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
         {
-            selector ??= (s) => s;
+            selector ??= s => s;
 
             return await @this.SendWithRepository<TEntity, TKey, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -85,7 +84,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
         {
-            var request = new RepositoryRequest<TEntity, TKey, TResult>()
+            var request = new RepositoryRequest<TEntity, TKey, TResult>
             {
                 Selector = selector,
                 Predicate = predicate,
@@ -117,7 +116,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<int>
         {
-            selector ??= (s) => s;
+            selector ??= s => s;
 
             return @this.SendWithPage<TEntity, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -132,7 +131,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<int>
         {
-            var request = new PaginatedRequest<TEntity, TResult>()
+            var request = new PaginatedRequest<TEntity, TResult>
             {
                 Selector = selector,
                 Predicate = predicate,
@@ -164,7 +163,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
         {
-            selector ??= (s) => s;
+            selector ??= s => s;
 
             return await @this.SendWithPage<TEntity, TKey, TEntity>(selector, predicate, orderBy, include, skip, take, disableTracking, ignoreQueryFilters, includeDeleted);
         }
@@ -179,7 +178,7 @@ namespace MediatR
             bool ignoreQueryFilters = false,
             bool includeDeleted = false) where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
         {
-            var request = new PaginatedRequest<TEntity, TKey, TResult>()
+            var request = new PaginatedRequest<TEntity, TKey, TResult>
             {
                 Selector = selector,
                 Predicate = predicate,

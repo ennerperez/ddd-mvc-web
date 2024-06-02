@@ -41,7 +41,7 @@ namespace System.Linq
                     {
                         var pn = item[0];
                         var pi = props.FirstOrDefault(m => m.Name.ToLower() == pn.ToLower()) ?? props[0];
-                        var direction = (item.Length > 1) ? item[1] : "asc";
+                        var direction = item.Length > 1 ? item[1] : "asc";
                         result = (IOrderedQueryable<TEntityType>)query.Provider.CreateQuery(
                             Expression.Call(
                                 typeof(Queryable),
@@ -64,7 +64,7 @@ namespace System.Linq
                 var property = Expression.Property(arg, propertyName);
                 // return the property as object
                 var conv = Expression.Convert(property, typeof(Te));
-                var exp = Expression.Lambda<Func<T, Te>>(conv, new ParameterExpression[] { arg });
+                var exp = Expression.Lambda<Func<T, Te>>(conv, arg);
                 return exp;
             }
 
@@ -76,7 +76,7 @@ namespace System.Linq
                 var property = Expression.Property(arg, propertyInfo.Name);
                 // return the property as object
                 var conv = Expression.Convert(property, typeof(string));
-                var exp = Expression.Lambda<Func<T, string>>(conv, new ParameterExpression[] { arg });
+                var exp = Expression.Lambda<Func<T, string>>(conv, arg);
                 return exp;
             }
         }

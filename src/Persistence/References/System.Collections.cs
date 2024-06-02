@@ -21,7 +21,7 @@ namespace System.Collections
                 var result = new List<IEnumerable<T>>();
                 var temp = Array.Empty<T>();
                 var t = data.Length;
-                var size = (int)Math.Ceiling(((decimal)t / parts));
+                var size = (int)Math.Ceiling((decimal)t / parts);
 
                 for (var i = 0; i < t; i++)
                 {

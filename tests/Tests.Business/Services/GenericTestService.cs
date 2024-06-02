@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
+using Tests.Abstractions.Interfaces;
+using Tests.Business.Interfaces;
 #if USING_SPECFLOW
 using TechTalk.SpecFlow;
+
 #else
 using Test.Framework.Extended;
 #endif
-using Tests.Abstractions.Interfaces;
-using Tests.Business.Interfaces;
 
 namespace Tests.Business.Services
 {
@@ -40,6 +41,7 @@ namespace Tests.Business.Services
         public abstract Task UpdateAsync(Table table);
         public abstract Task PartialUpdateAsync(Table table);
         public abstract Task DeleteAsync(Table table);
+
         protected async Task ExecuteAsync<T>(string type, Table table, Action<T> customProps = null)
         {
             var entities = new List<T>();

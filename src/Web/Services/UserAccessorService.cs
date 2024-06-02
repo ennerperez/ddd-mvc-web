@@ -1,8 +1,8 @@
 using System;
-using System.Linq;
 using System.Globalization;
-using System.Security.Principal;
+using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 #if USING_IDENTITY
@@ -85,12 +85,11 @@ namespace Web.Services
                     return user;
                 }
             }
+
             return null;
         }
-        public User GetIdentityUser()
-        {
-            throw new NotImplementedException();
-        }
+
+        public User GetIdentityUser() => throw new NotImplementedException();
 #endif
         public string FindFirstValue(string claimType)
         {
@@ -101,6 +100,7 @@ namespace Web.Services
 
             return string.Empty;
         }
+
         public string FindLastValue(string claimType)
         {
             if (_httpContext.HttpContext != null)

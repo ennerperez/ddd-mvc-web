@@ -18,10 +18,7 @@ namespace Persistence.Services
         {
         }
 
-        public string GetValue(string key)
-        {
-            return _dbSet.FirstOrDefault(m => m.Key == key)?.Value;
-        }
+        public string GetValue(string key) => _dbSet.FirstOrDefault(m => m.Key == key)?.Value;
 
         public TValue GetValue<TValue>(string key) where TValue : struct
         {
@@ -35,10 +32,7 @@ namespace Persistence.Services
             return default;
         }
 
-        public async Task<string> GetValueAsync(string key, CancellationToken cancellationToken = default)
-        {
-            return await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
-        }
+        public async Task<string> GetValueAsync(string key, CancellationToken cancellationToken = default) => await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
 
         public async Task<TValue> GetValueAsync<TValue>(string key, CancellationToken cancellationToken = default) where TValue : struct
         {

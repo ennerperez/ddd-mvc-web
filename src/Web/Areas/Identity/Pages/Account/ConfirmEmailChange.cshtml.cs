@@ -13,8 +13,8 @@ namespace Web.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
         public ConfirmEmailChangeModel(UserManager<User> userManager, SignInManager<User> signInManager)
         {
@@ -23,8 +23,37 @@ namespace Web.Areas.Identity.Pages.Account
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }

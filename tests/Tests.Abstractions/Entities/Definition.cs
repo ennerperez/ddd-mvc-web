@@ -9,12 +9,12 @@ namespace Tests.Abstractions.Entities
 {
     public sealed class Definition : IDisposable
     {
-
         public Definition(string name, string type) : this()
         {
             Name = name;
             Type = type;
         }
+
         public Definition()
         {
             Ids = new Dictionary<string, string>();
@@ -31,13 +31,13 @@ namespace Tests.Abstractions.Entities
             OptionalElements = new Dictionary<string, string>();
         }
 
-        public Dictionary<string, string> MustAwaitElements { get; private set; }
-        public Dictionary<string, string> UniqueElements { get; private set; }
-        public Dictionary<string, string> OptionalElements { get; private set; }
+        public Dictionary<string, string> MustAwaitElements { get; }
+        public Dictionary<string, string> UniqueElements { get; }
+        public Dictionary<string, string> OptionalElements { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string Type { get; private set; }
+        public string Type { get; }
 
         public Dictionary<string, string> Ids { get; set; }
         public Dictionary<string, string> AutomationIds { get; set; }
@@ -116,28 +116,30 @@ namespace Tests.Abstractions.Entities
                 {
                     throw new InvalidDataException($"Neither a Unique Element, designated by a '{configuration.ElementUniquenessIdentifier}', nor an Awaitable Element, designated by a '{configuration.MustAwaitElementLoadIdentifier}', has been specified in the Page Definition file {Name}.ini.  At least one of both types must be specified in the file.");
                 }
-                else if (!isAUniqueElementDefined)
+
+                if (!isAUniqueElementDefined)
                 {
                     throw new InvalidDataException($"A Unique Element, designated by a '{configuration.ElementUniquenessIdentifier}', has not been specified in the Page Definition file {Name}.ini.  At least one globally unique element or unique combination of elements must be designated for each page defined.");
                 }
-                else if (!isAnAwaitableElementDefined)
+
+                if (!isAnAwaitableElementDefined)
                 {
                     throw new InvalidDataException($"An Awaitable Element, designated by a '{configuration.MustAwaitElementLoadIdentifier}', has not been specified in the Page Definition file {Name}.ini.  At least one element must be defined to indicate when a page has completed loading.");
                 }
             }
         }
 
-        public override string ToString()
-        {
-            return $"{Name} ({Type})";
-        }
+        public override string ToString() => $"{Name} ({Type})";
 
         #region IDisposable
 
         // To detect redundant calls
         private bool _disposed;
 
-        ~Definition() => Dispose(false);
+        ~Definition()
+        {
+            Dispose(false);
+        }
 
         public void Dispose(bool disposing)
         {

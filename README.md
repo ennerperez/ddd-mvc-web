@@ -6,7 +6,10 @@
 
 ---------------------------------------
 
-See the [changelog](CHANGELOG.md) for changes.
+See
+the [changelog](CHANGELOG.md)
+for
+changes.
 
 ## Contents
 
@@ -18,24 +21,51 @@ See the [changelog](CHANGELOG.md) for changes.
 
 ### Build
 
-No more implementation instructions for now.
+No
+more
+implementation
+instructions
+for
+now.
 
 ### Implementing
 
-No more implementation instructions for now.
+No
+more
+implementation
+instructions
+for
+now.
 
 ### Usage
 
-No more implementation instructions for now.
+No
+more
+implementation
+instructions
+for
+now.
 
 ### Contributing
 
-No more contributing information for now.
+No
+more
+contributing
+information
+for
+now.
 
 ### Documentation
 
-No more documentation required for now.
+No
+more
+documentation
+required
+for
+now.
 
 ### License
 
-Code released under [License](LICENSE)
+Code
+released
+under [License](LICENSE)

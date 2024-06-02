@@ -30,7 +30,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s));
+                var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>(new Budget().Select(s => s));
                 if (collection == null || !collection.Any())
                 {
                     return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Budget>() });
@@ -57,7 +57,7 @@ namespace Web.Controllers.API
             {
                 try
                 {
-                    var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>((new Budget()).Select(s => s), p => p.Id == id);
+                    var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>(new Budget().Select(s => s), p => p.Id == id);
 
                     return new JsonResult(collection);
                 }
@@ -81,8 +81,8 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithPage<Budget, Guid, Budget>((new Budget()).Select(s => s),
-                    skip: ((page - 1) * size), take: size);
+                var collection = await Mediator.SendWithPage<Budget, Guid, Budget>(new Budget().Select(s => s),
+                    skip: (page - 1) * size, take: size);
                 return new JsonResult(collection);
             }
             catch (ValidationException v)
@@ -180,7 +180,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Mediator.Send(new DeleteBudgetRequest() { Id = id });
+                await Mediator.Send(new DeleteBudgetRequest { Id = id });
                 return Ok(id);
             }
             catch (ValidationException v)
@@ -200,7 +200,7 @@ namespace Web.Controllers.API
         [HttpPost("Table")]
         public async Task<JsonResult> Table(TableInfo model)
         {
-            var selector = (new Budget()).Select(t => new
+            var selector = new Budget().Select(t => new
             {
                 t.Id,
                 t.Code,

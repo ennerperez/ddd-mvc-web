@@ -1,3 +1,7 @@
+#if USING_SPECFLOW
+using SolidToken.SpecFlow.DependencyInjection;
+using TechTalk.SpecFlow;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,10 +19,7 @@ using Microsoft.Extensions.Logging;
 using Persistence;
 using Persistence.Contexts;
 using Serilog;
-#if USING_SPECFLOW
-using SolidToken.SpecFlow.DependencyInjection;
-using TechTalk.SpecFlow;
-#endif
+using Tests.Abstractions.Resources;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Tests.Business
@@ -28,25 +29,12 @@ namespace Tests.Business
 #endif
     internal class Program
     {
-        #region IOC
-
-        public static IConfiguration Configuration { get; private set; }
-        public static ILogger Logger { get; private set; }
-
-        public static IServiceCollection Services { get; private set; }
-        public static IServiceProvider Container { get; private set; }
-
-        #endregion
-
-        public static void Main(string[] args)
-        {
-            Initialize(args);
-        }
-
         // ReSharper disable once CollectionNeverQueried.Local
         private static Dictionary<string, string> s_arguments;
 
         public static bool IsInitialized { get; private set; }
+
+        public static void Main(string[] args) => Initialize(args);
 
         private static void Initialize(string[] args = null)
         {
@@ -77,7 +65,7 @@ namespace Tests.Business
             var language = Configuration.GetValue<string>("language:feature") ?? "en";
             CultureInfo.CurrentCulture = new CultureInfo(language);
             CultureInfo.CurrentUICulture = new CultureInfo(language);
-            Abstractions.Resources.Keywords.Culture = new CultureInfo(language);
+            Keywords.Culture = new CultureInfo(language);
 
             Services = new ServiceCollection();
             Services.AddSingleton(Configuration);
@@ -92,7 +80,7 @@ namespace Tests.Business
                 .AddInfrastructure()
                 .AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
                 .AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
-                .AddBusiness().WithRepositories()
+                .AddBusiness().WithRepositories().WithMediatR()
                 .AddTests();
 
             Container = Services.BuildServiceProvider();
@@ -153,9 +141,16 @@ namespace Tests.Business
             }
         }
 
-        public static void Dispose()
-        {
-            IsInitialized = false;
-        }
+        public static void Dispose() => IsInitialized = false;
+
+        #region IOC
+
+        public static IConfiguration Configuration { get; private set; }
+        public static ILogger Logger { get; private set; }
+
+        public static IServiceCollection Services { get; private set; }
+        public static IServiceProvider Container { get; private set; }
+
+        #endregion
     }
 }

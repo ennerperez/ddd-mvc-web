@@ -18,8 +18,8 @@ namespace Web.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ResendEmailConfirmationModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly UserManager<User> _userManager;
 
         public ResendEmailConfirmationModel(UserManager<User> userManager, IEmailSender emailSender)
         {
@@ -28,26 +28,40 @@ namespace Web.Areas.Identity.Pages.Account
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-        }
 
         public void OnGet()
         {
@@ -72,9 +86,9 @@ namespace Web.Areas.Identity.Pages.Account
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { userId, code },
-                protocol: Request.Scheme);
+                null,
+                new { userId, code },
+                Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.Email,
                 "Confirm your email",
@@ -82,6 +96,79 @@ namespace Web.Areas.Identity.Pages.Account
 
             ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
             return Page();
+        }
+
+        /// <summary>
+        ///     This
+        ///     API
+        ///     supports
+        ///     the
+        ///     ASP.NET
+        ///     Core
+        ///     Identity
+        ///     default
+        ///     UI
+        ///     infrastructure
+        ///     and
+        ///     is
+        ///     not
+        ///     intended
+        ///     to
+        ///     be
+        ///     used
+        ///     directly
+        ///     from
+        ///     your
+        ///     code.
+        ///     This
+        ///     API
+        ///     may
+        ///     change
+        ///     or
+        ///     be
+        ///     removed
+        ///     in
+        ///     future
+        ///     releases.
+        /// </summary>
+        public class InputModel
+        {
+            /// <summary>
+            ///     This
+            ///     API
+            ///     supports
+            ///     the
+            ///     ASP.NET
+            ///     Core
+            ///     Identity
+            ///     default
+            ///     UI
+            ///     infrastructure
+            ///     and
+            ///     is
+            ///     not
+            ///     intended
+            ///     to
+            ///     be
+            ///     used
+            ///     directly
+            ///     from
+            ///     your
+            ///     code.
+            ///     This
+            ///     API
+            ///     may
+            ///     change
+            ///     or
+            ///     be
+            ///     removed
+            ///     in
+            ///     future
+            ///     releases.
+            /// </summary>
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
         }
     }
 }
