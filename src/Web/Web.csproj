@@ -37,16 +37,16 @@
 
     <ItemGroup Label="Serilog">
         <PackageReference Include="Serilog" Version="4.0.0" />
-        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0"/>
+        <PackageReference Include="Serilog.Sinks.Async" Version="2.0.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0"/>
-        <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
-        <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="4.1.1" />
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0"/>
-        <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2"/>
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
+        <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.1" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="5.0.0" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+        <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     </ItemGroup>
 
     <!--https://github.com/dotnet/aspnetcore/issues/16862-->
@@ -61,8 +61,8 @@
     </Target>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.19.0" />
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="2.19.0" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web" Version="2.19.1" />
+        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Identity.Web.UI" Version="2.19.1" />
         <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.6" />
         <PackageReference Condition="'$(UsingAzureApplicationInsights)' == 'true'" Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0"/>
         <PackageReference Condition="'$(UsingBearer)' == 'true' OR '$(UsingAuth0)' == 'true'" Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
@@ -74,8 +74,10 @@
         <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore" Version="6.6.2" />
         <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
         <PackageReference Condition="'$(UsingSwagger)' == 'true'" Include="Swashbuckle.AspNetCore.ReDoc" Version="6.6.2" />
-        <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.77.3" />
+        <PackageReference Condition="'$(UsingSass)' == 'true'" Include="AspNetCore.SassCompiler" Version="1.77.5" />
         <PackageReference Condition="'$(UsingDatadog)' == 'true'" Include="Serilog.Sinks.Datadog.Logs" Version="0.5.2"/>
+        <PackageReference Condition="'$(UsingAzureAppConfiguration)' == 'true'" Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="7.2.0" />
+        <PackageReference Condition="'$(UsingFeatureFlag)' == true AND '$(UsingAzureAppConfiguration)' == 'true'" Include="Microsoft.FeatureManagement.AspNetCore" Version="3.4.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingSass)' == 'false'">

@@ -28,6 +28,7 @@
     <UsingAzureQueues>false</UsingAzureQueues>
     <UsingAzureTables>false</UsingAzureTables>
     <UsingAzureKeyVault>false</UsingAzureKeyVault>
+    <UsingAzureAppConfiguration>false</UsingAzureAppConfiguration>
   </PropertyGroup>
 
   <PropertyGroup Label="Services">
@@ -51,6 +52,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Options">
+    <UsingFeatureFlag>false</UsingFeatureFlag>
     <UsingSassWatch>true</UsingSassWatch>
     <UsingDatadog>true</UsingDatadog>
     <UsingHealthCheck>true</UsingHealthCheck>
@@ -100,6 +102,7 @@
     <BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
     <BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
     <BuildConstants Condition="'$(UsingAzureKeyVault)' == 'true'">$(BuildConstants)USING_VAULT;</BuildConstants>
+    <BuildConstants Condition="'$(UsingAzureAppConfiguration)' == 'true'">$(BuildConstants)USING_APPCONFIGURATION;</BuildConstants>
   </PropertyGroup>
 
   <!-- Web -->
@@ -110,6 +113,7 @@
     <BuildConstants Condition="'$(UsingNewtonsoft)' == 'true'">$(BuildConstants)USING_NEWTONSOFT;</BuildConstants>
     <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
     <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
+    <BuildConstants Condition="'$(UsingFeatureFlag)' == 'true'">$(BuildConstants)USING_FEATURE_FLAG;</BuildConstants>
     <BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
     <BuildConstants Condition="'$(UsingSassWatch)' == 'true'">$(BuildConstants)USING_SASS_WATCH;</BuildConstants>
     <BuildConstants Condition="'$(UsingSmartSchema)' == 'true'">$(BuildConstants)USING_SMARTSCHEMA;</BuildConstants>

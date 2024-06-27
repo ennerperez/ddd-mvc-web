@@ -301,7 +301,7 @@ namespace Microsoft.AspNetCore
         {
             public static AuthenticationBuilder Close(this AuthenticationBuilder authenticationBuilder) => authenticationBuilder;
 #if USING_AUTH0
-            public static Auth0WebAppWithAccessTokenAuthenticationBuilder Close(this Auth0WebAppWithAccessTokenAuthenticationBuilder authenticationBuilder)
+            public static Auth0WebAppAuthenticationBuilder Close(this Auth0WebAppAuthenticationBuilder authenticationBuilder)
             {
                 return authenticationBuilder;
             }
