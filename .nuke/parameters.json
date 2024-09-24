@@ -1,4 +1,7 @@
 {
   "$schema": "./build.schema.json",
-  "Solution": "Solution.sln"
+  "Solution": "Solution.sln",
+  "Platform": "Web",
+  "TargetProject": "Persistence",
+  "StartupProject": "Tests.Business"
 }

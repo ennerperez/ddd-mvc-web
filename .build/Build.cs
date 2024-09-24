@@ -24,21 +24,35 @@ using static Nuke.Common.Tools.DotNet.EF.Tasks;
 // ReSharper disable UnusedMember.Local
 public partial class Build : NukeBuild
 {
+    
+    /// Support plugins are available for:
+    /// - JetBrains ReSharper        https://nuke.build/resharper
+    /// - JetBrains Rider            https://nuke.build/rider
+    /// - Microsoft VisualStudio     https://nuke.build/visualstudio
+    /// - Microsoft VSCode           https://nuke.build/vscode
+    public static int Main() => Execute<Build>(x => x.Pack);
+    
     readonly string[] _publishProjects = { "Web" };
 
     readonly string[] _testsProjects = { "Tests.Business" };
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)", Name = "configuration")]
     public readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    
+    [Parameter("Platform to build")]
+    public readonly string Platform;
 
     [Parameter("Environment to build - Default is 'Development' (local) or 'Production' (server)", Name = "environment")]
     public readonly Environment Environment = IsLocalBuild ? Environment.Development : Environment.Production;
-
-    [GitRepository]
-    public readonly GitRepository Repository;
+    
+    [Parameter("Dry Run", Name = "dryrun")]
+    public readonly bool DryRun;
 
     [Solution]
     public readonly Solution Solution;
+    
+    [GitRepository]
+    public readonly GitRepository Repository;
 
     [Parameter("Warning Level", Name = "warningLevel")]
     public readonly int WarningLevel;
@@ -355,13 +369,6 @@ public partial class Build : NukeBuild
             AbsolutePath.Create(ScriptsDirectory).CreateOrCleanDirectory();
             Log.Information($"Output: {ArtifactsDirectory}");
         });
-
-    /// Support plugins are available for:
-    /// - JetBrains ReSharper        https://nuke.build/resharper
-    /// - JetBrains Rider            https://nuke.build/rider
-    /// - Microsoft VisualStudio     https://nuke.build/visualstudio
-    /// - Microsoft VSCode           https://nuke.build/vscode
-    public static int Main() => Execute<Build>(x => x.Pack);
 
     public record PublishProjectRecord(Project project);
 }
