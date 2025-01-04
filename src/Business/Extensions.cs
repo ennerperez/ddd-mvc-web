@@ -12,15 +12,7 @@ namespace Business
 {
     public static class Extensions
     {
-        /// <summary>
-        /// </summary>
-        /// <param
-        ///     name="services">
-        /// </param>
-        /// <param
-        ///     name="optionsBuilder">
-        /// </param>
-        /// <returns></returns>
+        
         public static IServiceCollection AddBusiness(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
         {
             var options = new DbContextOptionsBuilder();
@@ -29,18 +21,6 @@ namespace Business
             return services;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param
-        ///     name="services">
-        /// </param>
-        /// <param
-        ///     name="configureOptions">
-        /// </param>
-        /// <typeparam
-        ///     name="T">
-        /// </typeparam>
-        /// <returns></returns>
         public static IServiceCollection AddBusiness<T>(this IServiceCollection services, Action<T> configureOptions = null)
         {
             var options = Activator.CreateInstance<T>();
@@ -49,12 +29,6 @@ namespace Business
             return services;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param
-        ///     name="services">
-        /// </param>
-        /// <returns></returns>
         public static IServiceCollection AddBusiness(this IServiceCollection services)
         {
 #if USING_LOCALIZATION

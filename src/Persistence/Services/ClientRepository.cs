@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 using Domain.Entities;
-using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Persistence.Contexts;
+using Persistence.Interfaces;
 
 namespace Persistence.Services
 {

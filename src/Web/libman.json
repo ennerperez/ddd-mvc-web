@@ -47,14 +47,6 @@
       "destination": "wwwroot/lib/datatables.net-buttons-bs5"
     },
     {
-      "library": "jszip@3.10.1",
-      "destination": "wwwroot/lib/jszip"
-    },
-    {
-      "library": "pdfmake@0.2.5",
-      "destination": "wwwroot/lib/pdfmake"
-    },
-    {
       "library": "datatables.net-responsive@2.5.0",
       "destination": "wwwroot/lib/datatables.net-responsive"
     },
@@ -69,6 +61,14 @@
     {
       "library": "datatables.net-select-bs5@1.7.0",
       "destination": "wwwroot/lib/datatables.net-select-bs5"
+    },
+    {
+      "library": "jszip@3.10.1",
+      "destination": "wwwroot/lib/jszip"
+    },
+    {
+      "library": "pdfmake@0.2.5",
+      "destination": "wwwroot/lib/pdfmake"
     },
     {
       "library": "limonte-sweetalert2@11.7.32",

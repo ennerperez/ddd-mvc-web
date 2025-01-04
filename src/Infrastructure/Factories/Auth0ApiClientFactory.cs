@@ -1,3 +1,4 @@
+#if USING_AUTH0
 using System;
 using System.IO;
 using System.Net.Http;
@@ -57,3 +58,4 @@ namespace Infrastructure.Factories
         }
     }
 }
+#endif
