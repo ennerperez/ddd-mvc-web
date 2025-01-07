@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using QuestPDF.Drawing;
 #if USING_QUESTPDF
+using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 #endif
 
