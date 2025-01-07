@@ -7,13 +7,13 @@ namespace Persistence.Migrations.Cache.Sqlite
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "db_default_Countries",
-                columns: table => new
+                "db_default_Countries",
+                table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>("INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "varchar(500)", nullable: false, defaultValue: "100"),
-                    ISO3166 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: false)
+                    Name = table.Column<string>("varchar(500)", nullable: false, defaultValue: "100"),
+                    ISO3166 = table.Column<string>("varchar(2)", maxLength: 2, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -21,21 +21,19 @@ namespace Persistence.Migrations.Cache.Sqlite
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_db_default_Countries_ISO3166",
-                table: "db_default_Countries",
-                column: "ISO3166",
+                "IX_db_default_Countries_ISO3166",
+                "db_default_Countries",
+                "ISO3166",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_db_default_Countries_Name",
-                table: "db_default_Countries",
-                column: "Name");
+                "IX_db_default_Countries_Name",
+                "db_default_Countries",
+                "Name");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) =>
             migrationBuilder.DropTable(
-                name: "db_default_Countries");
-        }
+                "db_default_Countries");
     }
 }

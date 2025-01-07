@@ -17,8 +17,6 @@ namespace Tests.Business.Services
     public class UserAccessorService : IUserAccessorService
 #endif
     {
-        private readonly IPrincipal _testUser;
-
         // ReSharper disable once UnassignedGetOnlyAutoProperty
         public string Scheme { get; }
 
@@ -27,13 +25,10 @@ namespace Tests.Business.Services
 
         public UserAccessorService()
         {
-            _testUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, "TestUser"), new Claim(ClaimTypes.NameIdentifier, 1.ToString()),
-            }));
+            User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "TestUser"), new Claim(ClaimTypes.NameIdentifier, 1.ToString()) }));
         }
 
-        public IPrincipal User => _testUser;
+        public IPrincipal User { get; }
 
         public CultureInfo Culture => CultureInfo.CurrentCulture;
         public string UserId => FindLastValue("oid");
@@ -42,34 +37,16 @@ namespace Tests.Business.Services
         public string RefreshToken => throw new NotImplementedException();
 
 #if USING_IDENTITY
-        public Task<User> GetIdentityUserAsync()
-        {
-            return Task.FromResult(new User()
-            {
-                Id = 1
-            });
-        }
-        public User GetIdentityUser()
-        {
-            return new User()
-            {
-                Id = 1
-            };
-        }
+        public Task<User> GetIdentityUserAsync() =>
+            Task.FromResult(new User { Id = 1 });
+
+        public User GetIdentityUser() =>
+            new() { Id = 1 };
 #endif
-        public string FindFirstValue(string claimType)
-        {
-            return ((ClaimsPrincipal)_testUser).FindFirst(claimType)?.Value;
-        }
+        public string FindFirstValue(string claimType) => ((ClaimsPrincipal)User).FindFirst(claimType)?.Value;
 
-        public string FindLastValue(string claimType)
-        {
-            return ((ClaimsPrincipal)_testUser).FindAll(claimType).LastOrDefault()?.Value;
-        }
+        public string FindLastValue(string claimType) => ((ClaimsPrincipal)User).FindAll(claimType).LastOrDefault()?.Value;
 
-        public string[] FindValues(string claimType)
-        {
-            return ((ClaimsPrincipal)_testUser).FindAll(claimType).Select(m => m.Value).ToArray();
-        }
+        public string[] FindValues(string claimType) => ((ClaimsPrincipal)User).FindAll(claimType).Select(m => m.Value).ToArray();
     }
 }

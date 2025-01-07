@@ -7,7 +7,6 @@ namespace Tests.Abstractions.Settings
 {
     public class SpecFlowConfiguration : IAutomationConfiguration
     {
-
         public SpecFlowConfiguration(IConfiguration configuration)
         {
             RequiredTags = new List<string>();

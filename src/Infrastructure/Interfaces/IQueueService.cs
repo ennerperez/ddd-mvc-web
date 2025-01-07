@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 #if USING_QUEUES
 using Azure.Storage.Queues.Models;
 #endif

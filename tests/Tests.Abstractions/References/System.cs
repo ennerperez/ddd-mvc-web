@@ -8,7 +8,8 @@ namespace System
     {
         private static int seedCounter = new Random().Next();
 
-        [ThreadStatic] private static Random rng;
+        [ThreadStatic]
+        private static Random rng;
 
         internal static Random Instance
         {
@@ -24,24 +25,14 @@ namespace System
             }
         }
 
-        public static int Random()
-        {
-            return Instance.Next();
-        }
+        public static int Random() => Instance.Next();
 
-        public static int Random(int maxValue)
-        {
-            return Instance.Next(maxValue);
-        }
+        public static int Random(int maxValue) => Instance.Next(maxValue);
 
-        public static int Random(int minValue, int maxValue)
-        {
-            return Instance.Next(minValue, maxValue);
-        }
+        public static int Random(int minValue, int maxValue) => Instance.Next(minValue, maxValue);
 
         /// <summary>
-        /// Returns an Int32 with a random value across the entire range of
-        /// possible values.
+        /// Returns an Int32 with a random value across the entire range of possible values.
         /// </summary>
         public static int NextInt32(this Random @this)
         {
@@ -49,53 +40,6 @@ namespace System
             var lastBits = @this.Next(0, 1 << 28);
             return firstBits | lastBits;
         }
-
-        #region NextLong
-
-        public static long NextLong(this Random @this)
-        {
-            return @this.NextInt64();
-        }
-
-        public static long NextLong(this Random @this, long maxValue)
-        {
-            return @this.NextInt64(0, maxValue);
-        }
-
-        public static long NextLong(this Random @this, long minValue, long maxValue)
-        {
-            return @this.NextInt64(minValue, maxValue);
-        }
-
-        #endregion
-
-        #region NextDecimal
-
-        public static decimal NextDecimal(this Random random)
-        {
-            return NextDecimal(random, decimal.MaxValue);
-        }
-
-        public static decimal NextDecimal(this Random random, decimal maxValue)
-        {
-            return NextDecimal(random, decimal.Zero, maxValue);
-        }
-
-        public static decimal NextDecimal(this Random random, decimal minValue, decimal maxValue)
-        {
-            var nextDecimalSample = 1m;
-            while (nextDecimalSample >= 1)
-            {
-                var a = random.NextInt32();
-                var b = random.NextInt32();
-                var c = random.Next(542101087);
-                nextDecimalSample = new decimal(a, b, c, false, 28);
-            }
-
-            return maxValue * nextDecimalSample + minValue * (1 - nextDecimalSample);
-        }
-
-        #endregion
 
         #region NextShort
 
@@ -120,7 +64,7 @@ namespace System
         {
             if (!string.IsNullOrWhiteSpace(@this))
             {
-                return (T)Enum.Parse(typeof(T), @this, ignoreCase: ignoreCase);
+                return (T)Enum.Parse(typeof(T), @this, ignoreCase);
             }
 
             return default;
@@ -130,7 +74,7 @@ namespace System
         {
             if (!string.IsNullOrWhiteSpace(@this))
             {
-                return Enum.Parse(type, @this, ignoreCase: ignoreCase);
+                return Enum.Parse(type, @this, ignoreCase);
             }
 
             return default;
@@ -142,14 +86,45 @@ namespace System
             {
                 return @this.Equals(value, comparison);
             }
-            else if (!string.IsNullOrWhiteSpace(value))
+
+            if (!string.IsNullOrWhiteSpace(value))
             {
                 return false;
             }
-            else
-            {
-                return @this == value;
-            }
+
+            return @this == value;
         }
+
+        #region NextLong
+
+        public static long NextLong(this Random @this) => @this.NextInt64();
+
+        public static long NextLong(this Random @this, long maxValue) => @this.NextInt64(0, maxValue);
+
+        public static long NextLong(this Random @this, long minValue, long maxValue) => @this.NextInt64(minValue, maxValue);
+
+        #endregion
+
+        #region NextDecimal
+
+        public static decimal NextDecimal(this Random random) => NextDecimal(random, decimal.MaxValue);
+
+        public static decimal NextDecimal(this Random random, decimal maxValue) => NextDecimal(random, decimal.Zero, maxValue);
+
+        public static decimal NextDecimal(this Random random, decimal minValue, decimal maxValue)
+        {
+            var nextDecimalSample = 1m;
+            while (nextDecimalSample >= 1)
+            {
+                var a = random.NextInt32();
+                var b = random.NextInt32();
+                var c = random.Next(542101087);
+                nextDecimalSample = new decimal(a, b, c, false, 28);
+            }
+
+            return (maxValue * nextDecimalSample) + (minValue * (1 - nextDecimalSample));
+        }
+
+        #endregion
     }
 }

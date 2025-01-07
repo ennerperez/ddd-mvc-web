@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Interfaces
 {
-
     public interface IUserAccessorService : IUserAccessorService<object>;
 
     // ReSharper disable once UnusedTypeParameter
@@ -21,13 +20,13 @@ namespace Infrastructure.Interfaces
         public string IdentityToken { get; }
         public string AccessToken { get; }
         public string RefreshToken { get; }
+        string FindFirstValue(string claimType);
+        string FindLastValue(string claimType);
+        string[] FindValues(string claimType);
 
 #if USING_IDENTITY
         Task<TUser> GetIdentityUserAsync();
         TUser GetIdentityUser();
 #endif
-        string FindFirstValue(string claimType);
-        string FindLastValue(string claimType);
-        string[] FindValues(string claimType);
     }
 }

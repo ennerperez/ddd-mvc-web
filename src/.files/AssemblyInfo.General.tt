@@ -8,12 +8,20 @@ using System.Resources;
 
 [assembly: AssemblyCompany("Company")]
 [assembly: AssemblyProduct("Product")]
-[assembly: AssemblyCopyright("Copyright © <#= _year #>")]
+[assembly: AssemblyCopyright("Copyright © <#=
+                        _year #>")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: NeutralResourcesLanguage("en")]
 
 <#+
-	int _year = DateTime.Now.Year;
+    private
+        readonly
+        int
+    _year
+        =
+        DateTime
+            .Now
+            .Year;
 #>

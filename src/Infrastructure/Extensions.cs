@@ -1,27 +1,21 @@
 using System;
 using System.Linq;
 using System.Reflection;
-#if USING_VAULT
-using Azure.Security.KeyVault.Secrets;
-#endif
-#if USING_AUTH0
-using Infrastructure.Factories;
-#endif
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
+#if USING_VAULT
+using Azure.Security.KeyVault.Secrets;
+#endif
+
+#if USING_AUTH0
+using Infrastructure.Factories;
+#endif
 
 namespace Infrastructure
 {
     public static class Extensions
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static IServiceCollection AddInfrastructure<T>(this IServiceCollection services, Action<T> configureOptions = null)
         {
             var options = Activator.CreateInstance<T>();
@@ -30,11 +24,6 @@ namespace Infrastructure
             return services;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<IEmailService, SmtpService>();
@@ -56,8 +45,8 @@ namespace Infrastructure
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IDirectoryService, DirectoryService>();
 #else
-            services.AddSingleton<IFileService>(new FileSystemService() { ContainerName = "Data", CreateIfNotExists = true });
-            services.AddSingleton<IDirectoryService>(new FileSystemService() { ContainerName = "Data", CreateIfNotExists = true });
+            services.AddSingleton<IFileService>(new FileSystemService { ContainerName = "Data", CreateIfNotExists = true });
+            services.AddSingleton<IDirectoryService>(new FileSystemService { ContainerName = "Data", CreateIfNotExists = true });
 #endif
 #if USING_QUEUES
             services.AddTransient<IQueueService, QueueService>();

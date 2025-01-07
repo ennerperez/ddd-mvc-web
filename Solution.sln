@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{52F87F
 		global.json = global.json
 		docker-compose.yml = docker-compose.yml
 		Directory.Build.props = Directory.Build.props
+		.dockerignore = .dockerignore
+		Makefile = Makefile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB0427-F7EC-46D1-9D9A-66DC36A3FAD8}"
@@ -119,6 +121,7 @@ Global
 		{146B584D-2857-40B0-8E47-81F60C349F0E} = {C78F3CE2-1175-4841-B617-2AF391E5D780}
 		{B255D19C-5A8B-4675-9FE7-6CCED0706D16} = {8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}
 		{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB} = {C78F3CE2-1175-4841-B617-2AF391E5D780}
+		{559DCA76-61B1-4044-876F-1CD1C274A94A} = {8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C58BC0B-8614-406A-AEDB-9B8BFFB86C08}

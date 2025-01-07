@@ -8,7 +8,6 @@ namespace Infrastructure.Interfaces
 {
     public interface IDirectoryService
     {
-
         string ContainerName { get; set; }
         bool CreateIfNotExists { get; set; }
         string DirectoryExtension { get; set; }

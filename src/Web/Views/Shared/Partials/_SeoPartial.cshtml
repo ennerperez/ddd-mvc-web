@@ -1,7 +1,31 @@
-﻿@inject IConfiguration Configuration
+﻿@using Microsoft.AspNetCore.Http
+@using OpenGraphNet
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor ContextAccessor
+
+@{
+    var request = ContextAccessor.HttpContext?.Request;
+    OpenGraph graph = null;
+    if (request != null)
+    {
+        var url = $"{request.Scheme}://{request.Host}/";
+        graph = OpenGraph.MakeGraph(
+            title: Configuration["AppSettings:Title"] ?? string.Empty,
+            type: "website",
+            image: $"{url}favicon.svg",
+            url: url,
+            description: Configuration["AppSettings:Description"] ?? string.Empty,
+            siteName: Configuration["AppSettings:Title"] ?? string.Empty);
+    }
+}
 
 <!-- SEO Meta Tags -->
-<meta name="title" content="@Configuration["AppSettings:Title"] | @Configuration["AppSettings:Name"] | @ViewData["Title"]">
+<meta name="title" content="@Configuration["AppSettings:Title"] | @ViewData["Title"]">
 <meta name="description" content="@Configuration["AppSettings:Description"]">
 <meta name="keywords" content="@Configuration["AppSettings:Keywords"]">
-<meta name="author" content="@Configuration["AppSettings:Name"]">
+<meta name="author" content="@Configuration["AppSettings:Title"]">
+
+@if (graph != null)
+{
+    @Html.Raw(graph.ToString())
+}

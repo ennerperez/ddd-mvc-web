@@ -11,9 +11,9 @@ namespace Domain.Entities.Identity
             CreatedAt = DateTime.Now;
         }
 
-        public int Id { get; set; }
-
         public virtual User User { get; set; }
+
+        public int Id { get; set; }
 
         #region IAuditable
 

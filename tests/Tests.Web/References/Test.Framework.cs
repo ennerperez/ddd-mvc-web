@@ -12,23 +12,16 @@ namespace Test.Framework.Extended
     internal static class Assert
     {
 #if XUNIT
-        public static void Result(bool value, string message = "")
-        {
-            Xunit.Assert.True(!value, message);
-        }
-        public static void Fail(string message = "")
-        {
-            Xunit.Assert.Fail(message);
-        }
+        public static void Result(bool value, string message = "") => Xunit.Assert.True(!value, message);
+        public static void Fail(string message = "") => Xunit.Assert.Fail(message);
+
         public static void Fail(Exception exception, bool stack = false)
         {
             var message = $"{exception.Message}{(stack ? $"\r\n\r\n{exception.StackTrace}" : "")}";
             Fail(message);
         }
-        public static void Pass(string message = "")
-        {
-            Xunit.Assert.True(true, message);
-        }
+
+        public static void Pass(string message = "") => Xunit.Assert.True(true, message);
 #else
         [DebuggerStepThrough]
         public static void Result(bool value, string message = "")
@@ -61,7 +54,8 @@ namespace Test.Framework.Extended
     [DebuggerStepThrough]
     public static class WebDriver
     {
-        private static string AccessibilityId { get; set; } = "data-accessibility-id";
+        private static long s_counter = 1;
+        private static string AccessibilityId { get; } = "data-accessibility-id";
 
         public static IWebElement FindElementBy(this IWebDriver @this, By by) => @this.FindElement(by);
         public static IWebElement FindElementByAccessibilityId(this IWebDriver @this, string selector) => @this.FindElement(By.CssSelector($"[{AccessibilityId}='{selector}']"));
@@ -161,8 +155,6 @@ namespace Test.Framework.Extended
         public static bool WaitForElementsByName(this IWebDriver @this, string name, int amount = 1, int timeout = 3000, int attempts = 5) => @this.WaitForElementsBy(By.Name(name), amount, timeout, attempts);
         public static bool WaitForElementsByPartialLinkText(this IWebDriver @this, string partialLinkText, int amount = 1, int timeout = 3000, int attempts = 5) => @this.WaitForElementsBy(By.PartialLinkText(partialLinkText), amount, timeout, attempts);
         public static bool WaitForElementsByTagName(this IWebDriver @this, string tagName, int amount = 1, int timeout = 3000, int attempts = 5) => @this.WaitForElementsBy(By.TagName(tagName), amount, timeout, attempts);
-
-        private static long s_counter = 1;
 
         public static void SaveScreenshot(this IWebDriver @this, string path)
         {

@@ -6,6 +6,6 @@ namespace Domain.Enums
         Unknown = 0,
         Created = 10,
         Approved = 20,
-        Rejected = 30,
+        Rejected = 30
     }
 }

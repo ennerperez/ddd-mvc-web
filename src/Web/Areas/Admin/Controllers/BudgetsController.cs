@@ -1,4 +1,5 @@
 using System;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Entities;
@@ -15,18 +16,16 @@ namespace Web.Areas.Admin.Controllers
     [Area("Admin")]
     public class BudgetsController : MvcControllerBase
     {
-        private readonly IDocumentService _documentService;
         private readonly IGenericRepository<Budget, Guid> _budgetRepository;
+        private readonly IDocumentService _documentService;
 
         public BudgetsController(IDocumentService documentService, IGenericRepository<Budget, Guid> budgetRepository)
         {
             _documentService = documentService;
             _budgetRepository = budgetRepository;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
+        public IActionResult Index() => View();
 
         public async Task<IActionResult> Export(Guid? id = null, string format = "pdf", bool download = true)
         {
@@ -72,7 +71,7 @@ namespace Web.Areas.Admin.Controllers
             switch (format)
             {
                 case "pdf":
-                    contentType = System.Net.Mime.MediaTypeNames.Application.Pdf;
+                    contentType = MediaTypeNames.Application.Pdf;
                     break;
             }
 
@@ -80,10 +79,8 @@ namespace Web.Areas.Admin.Controllers
             {
                 return File(report, contentType, definition.FileName);
             }
-            else
-            {
-                return File(report, contentType);
-            }
+
+            return File(report, contentType);
         }
     }
 }

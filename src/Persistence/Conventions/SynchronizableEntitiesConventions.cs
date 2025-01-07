@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Persistence.Conventions
 {
@@ -26,7 +27,7 @@ namespace Persistence.Conventions
                 var version = properties.First(m => m.Name == "RowVersion");
 
                 var keyProperty = modelBuilder.Entity(key.DeclaringType.ClrType).Property(key.Name);
-                var versionProperty = modelBuilder.Entity(key.DeclaringType.ClrType).Property(version.Name);
+                var versionProperty = modelBuilder.Entity(key.DeclaringType.ClrType).Property(version.Name).HasConversion<NumberToBytesConverter<long>>();
 
                 keyProperty.ValueGeneratedOnAdd();
                 versionProperty.IsRowVersion().ValueGeneratedOnAddOrUpdate();

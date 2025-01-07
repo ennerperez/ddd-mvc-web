@@ -10,7 +10,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
-  <Import Project="$(_ImportDirectory)AssemblyInfo.props" />
+  <Import Project="$(_ImportDirectory)AssemblyInfo.props"/>
 
   <!-- DefineConstants -->
   <PropertyGroup>

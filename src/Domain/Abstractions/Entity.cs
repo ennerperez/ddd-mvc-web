@@ -14,20 +14,12 @@ namespace Domain.Abstractions
 
         public abstract override string ToString();
 
-        public override bool Equals(object obj)
-        {
-            return obj != null && obj is Entity<TKey> entity && Id.Equals(entity.Id);
-        }
+        public override bool Equals(object obj) => obj != null && obj is Entity<TKey> entity && Id.Equals(entity.Id);
 
-        protected bool Equals(Entity<TKey> other)
-        {
-            return Id.Equals(other.Id);
-        }
+        protected bool Equals(Entity<TKey> other) => Id.Equals(other.Id);
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() =>
             // ReSharper disable once NonReadonlyMemberInGetHashCode
-            return Id.GetHashCode();
-        }
+            Id.GetHashCode();
     }
 }

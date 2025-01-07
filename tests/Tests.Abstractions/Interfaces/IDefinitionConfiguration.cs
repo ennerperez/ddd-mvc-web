@@ -13,6 +13,5 @@ namespace Tests.Abstractions.Interfaces
         int DefaultScenarioRunSlowdownTime { get; }
         int ElementSearchRetryFactor { get; }
         string GetApplicationDefinitionsLocation();
-
     }
 }

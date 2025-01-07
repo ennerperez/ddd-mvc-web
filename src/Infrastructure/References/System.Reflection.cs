@@ -7,6 +7,21 @@ namespace System.Reflection
     public static class AssemblyExtensions
     {
         private static string s_copyright;
+
+        private static string s_product;
+
+        private static string s_company;
+
+        private static string s_title;
+
+        private static string s_description;
+
+        private static Version? s_version;
+
+        private static Version? s_fileVersion;
+
+        private static string s_informationalVersion;
+
         public static string Copyright(this Assembly @this)
         {
             if (string.IsNullOrWhiteSpace(s_copyright))
@@ -17,7 +32,6 @@ namespace System.Reflection
             return s_copyright;
         }
 
-        private static string s_product;
         public static string Product(this Assembly @this)
         {
             if (string.IsNullOrWhiteSpace(s_product))
@@ -28,7 +42,6 @@ namespace System.Reflection
             return s_product;
         }
 
-        private static string s_company;
         public static string Company(this Assembly @this)
         {
             if (string.IsNullOrWhiteSpace(s_company))
@@ -39,7 +52,6 @@ namespace System.Reflection
             return s_company;
         }
 
-        private static string s_title;
         public static string Title(this Assembly @this)
         {
             if (string.IsNullOrWhiteSpace(s_title))
@@ -50,7 +62,6 @@ namespace System.Reflection
             return s_title;
         }
 
-        private static string s_description;
         public static string Description(this Assembly @this)
         {
             if (string.IsNullOrWhiteSpace(s_description))
@@ -61,7 +72,6 @@ namespace System.Reflection
             return s_description;
         }
 
-        private static Version? s_version;
         public static Version? Version(this Assembly @this)
         {
             if (s_version == null)
@@ -73,7 +83,6 @@ namespace System.Reflection
             return s_version;
         }
 
-        private static Version? s_fileVersion;
         public static Version? FileVersion(this Assembly @this)
         {
             if (s_fileVersion == null)
@@ -85,7 +94,6 @@ namespace System.Reflection
             return s_version;
         }
 
-        private static string s_informationalVersion;
         public static string InformationalVersion(this Assembly @this)
         {
             if (string.IsNullOrWhiteSpace(s_informationalVersion))

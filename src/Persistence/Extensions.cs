@@ -52,6 +52,5 @@ namespace Persistence
         }
 
         #endregion
-
     }
 }

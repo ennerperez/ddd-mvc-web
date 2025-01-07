@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.401 AS build
 
 ARG configuration=Debug
 WORKDIR /app
@@ -7,7 +7,7 @@ RUN chmod +x build.sh
 RUN ./build.sh --configuration $configuration --target Publish
 RUN dotnet dev-certs https -ep /app/publish/Web/certificate.pfx -p 0ca271cdf1764804a136eba180f02673
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS run
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.401 AS run
 RUN apt-get update && apt-get install -y libfontconfig1
 EXPOSE 5000/tcp
 EXPOSE 5001/tcp

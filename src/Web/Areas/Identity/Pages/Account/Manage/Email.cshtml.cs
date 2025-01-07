@@ -16,8 +16,8 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly UserManager<User> _userManager;
 
         public EmailModel(UserManager<User> userManager, IEmailSender emailSender)
         {
@@ -26,53 +26,37 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public bool IsEmailConfirmed { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [EmailAddress]
-            [Display(Name = "New email")]
-            public string NewEmail { get; set; }
-        }
 
         private async Task LoadAsync(User user)
         {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;
 
-            Input = new InputModel { NewEmail = email, };
+            Input = new InputModel { NewEmail = email };
 
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
         }
@@ -111,9 +95,9 @@ namespace Web.Areas.Identity.Pages.Account.Manage
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmailChange",
-                    pageHandler: null,
-                    values: new { area = "Identity", userId, email = Input.NewEmail, code },
-                    protocol: Request.Scheme);
+                    null,
+                    new { area = "Identity", userId, email = Input.NewEmail, code },
+                    Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
                     "Confirm your email",
@@ -147,9 +131,9 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { area = "Identity", userId, code },
-                protocol: Request.Scheme);
+                null,
+                new { area = "Identity", userId, code },
+                Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
                 "Confirm your email",
@@ -157,6 +141,22 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();
+        }
+
+        /// <summary>
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
+        /// </summary>
+        public class InputModel
+        {
+            /// <summary>
+            /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+            /// This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [EmailAddress]
+            [Display(Name = "New email")]
+            public string NewEmail { get; set; }
         }
     }
 }

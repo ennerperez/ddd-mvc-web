@@ -1,16 +1,17 @@
 // ReSharper disable once CheckNamespace
+
 namespace System.Reflection
 {
-  public static class Extensions
-  {
-    public static object GetDefault(this Type type)
+    public static class Extensions
     {
-      if (type.IsValueType)
-      {
-        return Activator.CreateInstance(type);
-      }
+        public static object GetDefault(this Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
 
-      return null;
+            return null;
+        }
     }
-  }
 }

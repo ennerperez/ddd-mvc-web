@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\src\.imports\Template.props" />
-    <Import Condition="Exists('Options.props')" Project="Options.props" />
-    <Import Project="..\..\src\.imports\Template.targets" />
-    <Import Condition="Exists('Options.targets')" Project="Options.targets" />
+    <Import Project="..\..\src\.imports\Template.props"/>
+    <Import Condition="Exists('Options.props')" Project="Options.props"/>
+    <Import Project="..\..\src\.imports\Template.targets"/>
+    <Import Condition="Exists('Options.targets')" Project="Options.targets"/>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DebugSymbols>true</DebugSymbols>
@@ -11,25 +11,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Domain\Domain.csproj" />
-        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
-        <ProjectReference Include="..\Persistence\Persistence.csproj" />
+        <ProjectReference Include="..\Domain\Domain.csproj"/>
+        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
+        <ProjectReference Include="..\Persistence\Persistence.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.8.1" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
-        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+        <PackageReference Include="MediatR" Version="12.4.1" />
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" Version="8.0.0" />
+        <PackageReference Condition="'$(UsingLocalization)' == 'true'" Include="Microsoft.Extensions.Localization" Version="8.0.0"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
-        <Compile Remove="Requests\Identity\**" />
-        <EmbeddedResource Remove="Requests\Identity\**" />
-        <None Remove="Requests\Identity\**" />
+        <Compile Remove="Requests\Identity\**"/>
+        <EmbeddedResource Remove="Requests\Identity\**"/>
+        <None Remove="Requests\Identity\**"/>
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Abstractions;
@@ -58,11 +59,10 @@ namespace Business.Requests.Identity
                 PhoneNumberConfirmed = request.PhoneNumberConfirmed,
                 TwoFactorEnabled = request.TwoFactorEnabled,
                 SecurityStamp = Guid.NewGuid().ToString(),
-
                 UserClaims = new List<UserClaim>()
             };
-            entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.GivenName, request.GivenName));
-            entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.Surname, request.Surname));
+            entity.UserClaims.Add(new UserClaim(ClaimTypes.GivenName, request.GivenName));
+            entity.UserClaims.Add(new UserClaim(ClaimTypes.Surname, request.Surname));
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
@@ -203,24 +203,24 @@ namespace Business.Requests.Identity
                 entity.UserClaims = new List<UserClaim>();
             }
 
-            var givenName = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName);
+            var givenName = entity.UserClaims.FirstOrDefault(c => c.ClaimType == ClaimTypes.GivenName);
             if (givenName != null)
             {
                 givenName.ClaimValue = request.GivenName;
             }
             else
             {
-                entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.GivenName, request.GivenName));
+                entity.UserClaims.Add(new UserClaim(ClaimTypes.GivenName, request.GivenName));
             }
 
-            var surname = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname);
+            var surname = entity.UserClaims.FirstOrDefault(c => c.ClaimType == ClaimTypes.Surname);
             if (surname != null)
             {
                 surname.ClaimValue = request.Surname;
             }
             else
             {
-                entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.Surname, request.Surname));
+                entity.UserClaims.Add(new UserClaim(ClaimTypes.Surname, request.Surname));
             }
 
             #endregion
@@ -245,7 +245,6 @@ namespace Business.Requests.Identity
             }
 
             #endregion
-
         }
     }
 
@@ -356,27 +355,27 @@ namespace Business.Requests.Identity
 
             if (request.GivenName != null)
             {
-                var givenName = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.GivenName);
+                var givenName = entity.UserClaims.FirstOrDefault(c => c.ClaimType == ClaimTypes.GivenName);
                 if (givenName != null)
                 {
                     givenName.ClaimValue = request.GivenName;
                 }
                 else
                 {
-                    entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.GivenName, request.GivenName));
+                    entity.UserClaims.Add(new UserClaim(ClaimTypes.GivenName, request.GivenName));
                 }
             }
 
             if (request.Surname != null)
             {
-                var surname = entity.UserClaims.FirstOrDefault(c => c.ClaimType == System.Security.Claims.ClaimTypes.Surname);
+                var surname = entity.UserClaims.FirstOrDefault(c => c.ClaimType == ClaimTypes.Surname);
                 if (surname != null)
                 {
                     surname.ClaimValue = request.Surname;
                 }
                 else
                 {
-                    entity.UserClaims.Add(new UserClaim(System.Security.Claims.ClaimTypes.Surname, request.Surname));
+                    entity.UserClaims.Add(new UserClaim(ClaimTypes.Surname, request.Surname));
                 }
             }
 
@@ -402,7 +401,6 @@ namespace Business.Requests.Identity
             }
 
             #endregion
-
         }
     }
 

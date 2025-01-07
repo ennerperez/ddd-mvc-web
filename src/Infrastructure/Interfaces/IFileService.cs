@@ -65,7 +65,9 @@ namespace Infrastructure.Interfaces
         void Move(string sourceFileName, string destFileName);
         void Move(string sourceFileName, string destFileName, bool overwrite);
         void Encrypt(string path);
+
         void Decrypt(string path);
+
         /* ASYNC */
         Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken = default);
         Task<string> ReadAllTextAsync(string path, Encoding encoding, CancellationToken cancellationToken = default);
@@ -102,6 +104,5 @@ namespace Infrastructure.Interfaces
         string GetUrl(string path);
 
         #endregion
-
     }
 }

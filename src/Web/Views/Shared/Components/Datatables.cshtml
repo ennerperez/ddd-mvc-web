@@ -1,8 +1,9 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Localization
+@{
     var twoLetterIsoLanguageName = "en";
     if (Html.UsingLocalization())
     {
-        var requestCulture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+        var requestCulture = Context.Features.Get<IRequestCultureFeature>();
         twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
     }
 
@@ -14,7 +15,6 @@
     // Localizer.Add("search", "Search");
     // Localizer.Add("last_update", "Las update");
     // Localizer.Add("last_update_null", "Never updated");
-
 }
 
 @using (Html.BeginStyles())

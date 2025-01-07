@@ -26,14 +26,14 @@ namespace Tests.Business.Steps
         private readonly IAutomationContext _automationContext;
         protected readonly LoremIpsumService _loremIpsumService;
 
-        // ReSharper disable once UnusedMember.Local
-        private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
-
         public ScopedSteps(IAutomationContext automationContext, LoremIpsumService loremIpsumService)
         {
             _automationContext = automationContext;
             _loremIpsumService = loremIpsumService;
         }
+
+        // ReSharper disable once UnusedMember.Local
+        private string _scenarioCode => _automationContext.ScenarioContext.ScenarioInfo.GetHashCode().ToString();
 
         #region New Methods
 
@@ -68,7 +68,7 @@ namespace Tests.Business.Steps
             {
                 await GivenManipulateEntityAsync(type, denied, operation, (Table)result);
             }
-            else if (result != null && (result.GetType().IsAssignableTo(typeof(IEnumerable))) && (((result as IEnumerable) ?? throw new InvalidOperationException()).ToDynamicArray().Length == 0))
+            else if (result != null && result.GetType().IsAssignableTo(typeof(IEnumerable)) && (result as IEnumerable ?? throw new InvalidOperationException()).ToDynamicArray().Length == 0)
             {
                 if (isDenied)
                 {
@@ -121,22 +121,22 @@ namespace Tests.Business.Steps
             try
             {
                 var serviceType = Assembly.GetExecutingAssembly().DefinedTypes.FirstOrDefault(m => m.Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase));
-                var serviceInterface = (serviceType?.ImplementedInterfaces.FirstOrDefault()) ?? throw NotNullException.ForNullValue();
+                var serviceInterface = serviceType?.ImplementedInterfaces.FirstOrDefault() ?? throw NotNullException.ForNullValue();
                 var service = (ITestService)Program.Container.GetServices(serviceInterface)
                     .FirstOrDefault(s => s != null && s.GetType().Name.Equals($"{type}TestService", StringComparison.InvariantCultureIgnoreCase)) ?? throw NotNullException.ForNullValue();
                 service.AutomationContext = _automationContext;
 
                 var methodName = operation switch
                 {
-                    "created" => $"CreateAsync",
-                    "updated" => $"UpdateAsync",
-                    "partially updated" => $"PartialUpdateAsync",
-                    "deleted" => $"DeleteAsync",
+                    "created" => "CreateAsync",
+                    "updated" => "UpdateAsync",
+                    "partially updated" => "PartialUpdateAsync",
+                    "deleted" => "DeleteAsync",
                     _ => throw new ArgumentException("Method is not allowed")
                 };
 
                 var method = service.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                dynamic awaitable = (method?.Invoke(service, new object[] { table })) ?? throw NotNullException.ForNullValue();
+                dynamic awaitable = method?.Invoke(service, new object[] { table }) ?? throw NotNullException.ForNullValue();
                 await awaitable;
 
                 Assert.Pass();
@@ -159,6 +159,5 @@ namespace Tests.Business.Steps
         }
 
         #endregion
-
     }
 }

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\src\.imports\Template.props" />
-    <Import Condition="Exists('Options.props')" Project="Options.props" />
-    <Import Project="..\..\src\.imports\Template.targets" />
-    <Import Condition="Exists('Options.targets')" Project="Options.targets" />
+    <Import Project="..\..\src\.imports\Template.props"/>
+    <Import Condition="Exists('Options.props')" Project="Options.props"/>
+    <Import Project="..\..\src\.imports\Template.targets"/>
+    <Import Condition="Exists('Options.targets')" Project="Options.targets"/>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DebugSymbols>true</DebugSymbols>
@@ -11,41 +11,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.19.1" />
-        <PackageReference Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.17.1" />
-        <PackageReference Condition="'$(UsingAzureTables)' == 'true'" Include="Azure.Data.Tables" Version="12.8.2" />
-        <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
-        <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Identity" Version="1.10.4" />
-        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.24.0" />
-        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
-        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="QuestPDF" Version="2023.12.4" />
-        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux" Version="2.88.6" />
-        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
-        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="HarfBuzzSharp.NativeAssets.Linux" Version="7.3.0.1" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(UsingAzureBlobs)' == 'false'">
-        <Compile Remove="Services\FileService.cs" />
-        <Compile Remove="Services\DirectoryService.cs" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(UsingAzureQueues)' == 'false'">
-        <Compile Remove="Services\QueueService.cs" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(UsingAzureTables)' == 'false'">
-        <Compile Remove="Services\TableService.cs" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(UsingAzureKeyVault)' == 'false'">
-        <Compile Remove="Services\VaultService.cs" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(UsingAuth0)' == 'false'">
-        <Compile Remove="Factories\Auth0ApiClientFactory.cs" />
-        <Compile Remove="Interfaces\IAuth0ApiClientFactory.cs" />
+        <PackageReference Condition="'$(UsingAzureBlobs)' == 'true'" Include="Azure.Storage.Blobs" Version="12.19.1"/>
+        <PackageReference Condition="'$(UsingAzureQueues)' == 'true'" Include="Azure.Storage.Queues" Version="12.17.1"/>
+        <PackageReference Condition="'$(UsingAzureTables)' == 'true'" Include="Azure.Data.Tables" Version="12.8.2"/>
+        <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Security.KeyVault.Secrets" Version="4.5.0"/>
+        <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Identity" Version="1.10.4"/>
+        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.24.0"/>
+        <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3"/>
+        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="QuestPDF" Version="2024.12.2" />
+        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
+        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.116.1" />
+        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="HarfBuzzSharp.NativeAssets.Linux" Version="8.3.0.1" />
     </ItemGroup>
 
 </Project>

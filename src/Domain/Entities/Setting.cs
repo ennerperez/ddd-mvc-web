@@ -27,10 +27,11 @@ namespace Domain.Entities
             Value = value;
         }
 
-        public int Id { get; set; }
         public string Key { get; set; }
         public Data Type { get; set; }
         public string Value { get; set; }
+
+        public int Id { get; set; }
 
         #region IAuditable
 

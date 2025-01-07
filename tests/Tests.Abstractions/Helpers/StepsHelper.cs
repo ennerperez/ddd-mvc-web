@@ -3,18 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Tests.Abstractions.Interfaces;
 using TechTalk.SpecFlow;
+using Tests.Abstractions.Interfaces;
+using Tests.Abstractions.Resources;
 
 namespace Tests.Abstractions.Helpers
 {
     public class StepsHelper : IStepHelper
     {
-        protected readonly IAutomationContext _automationContext;
         protected readonly IAutomationConfiguration _automationConfigurations;
-
-        public IAutomationContext AutomationContext => _automationContext;
-        public IAutomationConfiguration AutomationConfigurations => _automationConfigurations;
+        protected readonly IAutomationContext _automationContext;
 
         public StepsHelper(IAutomationContext automationContext, IAutomationConfiguration automationConfigurations)
         {
@@ -23,6 +21,12 @@ namespace Tests.Abstractions.Helpers
 
             Initialize();
         }
+
+        public IAutomationContext AutomationContext => _automationContext;
+        public IAutomationConfiguration AutomationConfigurations => _automationConfigurations;
+
+        public virtual void CaptureTakeScreenshot(object driver, string method = "", bool trace = false)
+            => throw new NotImplementedException();
 
         public bool DoesFeatureContainTag(string tag)
         {
@@ -66,25 +70,13 @@ namespace Tests.Abstractions.Helpers
             return result;
         }
 
-        public static List<string> GetColumnValuesFromTable(string columnName, Table dataTable)
-        {
-            return new List<string>(dataTable.Rows.Select(m => m[columnName]).ToArray());
-        }
+        public static List<string> GetColumnValuesFromTable(string columnName, Table dataTable) => new(dataTable.Rows.Select(m => m[columnName]).ToArray());
 
-        public static List<string> GetUniqueColumnValuesFromTable(string columnName, Table dataTable)
-        {
-            return GetColumnValuesFromTable(columnName, dataTable).Distinct().ToList();
-        }
+        public static List<string> GetUniqueColumnValuesFromTable(string columnName, Table dataTable) => GetColumnValuesFromTable(columnName, dataTable).Distinct().ToList();
 
-        public static List<string> GetUniqueColumnValuesFromTableWithoutEmptyStrings(string columnName, Table dataTable)
-        {
-            return GetColumnValuesFromTable(columnName, dataTable).Distinct().Where(m => !string.IsNullOrWhiteSpace(m)).ToList();
-        }
+        public static List<string> GetUniqueColumnValuesFromTableWithoutEmptyStrings(string columnName, Table dataTable) => GetColumnValuesFromTable(columnName, dataTable).Distinct().Where(m => !string.IsNullOrWhiteSpace(m)).ToList();
 
-        public static bool DoesTableContainColumn(string columnName, Table dataTable)
-        {
-            return dataTable.ContainsColumn(columnName);
-        }
+        public static bool DoesTableContainColumn(string columnName, Table dataTable) => dataTable.ContainsColumn(columnName);
 
         public string GetCompleteTagFromTagPrefix(string tagPrefix)
         {
@@ -104,10 +96,7 @@ namespace Tests.Abstractions.Helpers
             return tags.Any() ? tags.First().Groups[1].Value : null;
         }
 
-        public static bool IsSubstringFoundInStringArray(string substring, string[] stringArray)
-        {
-            return stringArray.Any(m => m.Contains(substring));
-        }
+        public static bool IsSubstringFoundInStringArray(string substring, string[] stringArray) => stringArray.Any(m => m.Contains(substring));
 
         /* EXCEPTIONS */
 
@@ -144,7 +133,7 @@ namespace Tests.Abstractions.Helpers
             if (string.IsNullOrWhiteSpace(environmentTarget))
             {
                 //Default to the last Environment Tag that was found in the Feature File, either at the Feature or Scenario level
-                environmentTarget = GetTagParameterForTagPrefix(Resources.Keywords.EnvironmentTarget);
+                environmentTarget = GetTagParameterForTagPrefix(Keywords.EnvironmentTarget);
             }
 
             return environmentTarget;
@@ -156,22 +145,18 @@ namespace Tests.Abstractions.Helpers
 
             if (!AutomationContext.IsInitialized)
             {
-                AutomationContext.AutomationType = GetTagParameterForTagPrefix(Resources.Keywords.AutomationType);
-                AutomationContext.PlatformTarget = GetTagParameterForTagPrefix(Resources.Keywords.PlatformTarget);
-                AutomationContext.ApplicationTarget = GetTagParameterForTagPrefix(Resources.Keywords.ApplicationTarget);
+                AutomationContext.AutomationType = GetTagParameterForTagPrefix(Keywords.AutomationType);
+                AutomationContext.PlatformTarget = GetTagParameterForTagPrefix(Keywords.PlatformTarget);
+                AutomationContext.ApplicationTarget = GetTagParameterForTagPrefix(Keywords.ApplicationTarget);
                 AutomationContext.EnvironmentTarget = DetermineEnvironmentTarget();
-                AutomationContext.Priority = GetTagParameterForTagPrefix(Resources.Keywords.Priority);
+                AutomationContext.Priority = GetTagParameterForTagPrefix(Keywords.Priority);
 
-                AutomationContext.TestPlanTarget = GetTagParameterForTagPrefix(Resources.Keywords.TestPlan);
-                AutomationContext.TestSuiteTarget = GetTagParameterForTagPrefix(Resources.Keywords.TestSuite);
-                AutomationContext.TestCaseTarget = GetTagParameterForTagPrefix(Resources.Keywords.TestCase);
+                AutomationContext.TestPlanTarget = GetTagParameterForTagPrefix(Keywords.TestPlan);
+                AutomationContext.TestSuiteTarget = GetTagParameterForTagPrefix(Keywords.TestSuite);
+                AutomationContext.TestCaseTarget = GetTagParameterForTagPrefix(Keywords.TestCase);
                 AutomationContext.IsInitialized = true;
             }
         }
-
-        public virtual void CaptureTakeScreenshot(object driver, string method = "", bool trace = false)
-            => throw new NotImplementedException();
-
     }
 }
 #endif

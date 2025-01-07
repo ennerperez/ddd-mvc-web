@@ -15,6 +15,9 @@ namespace Persistence.Providers
 
         private Dictionary<string, object> _cache;
         private Dictionary<string, DateTime> _expires;
+
+        private bool _isTimerRunning;
+
         public MemoryCacheProvider(IConfiguration configuration)
         {
             _cache = new Dictionary<string, object>();
@@ -25,22 +28,6 @@ namespace Persistence.Providers
             _timer.Start();
         }
 
-        private bool _isTimerRunning = false;
-        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
-        {
-            if (_isTimerRunning)
-            {
-                return;
-            }
-
-            _isTimerRunning = true;
-            foreach (var key in _expires.Where(m => (DateTime.Now > m.Value)))
-            {
-                InvalidateCache(key.Key);
-            }
-
-            _isTimerRunning = false;
-        }
         public T GetObjectFromCache<T>(string key, Func<T> nullValueCallback, long? expires = null) where T : class
         {
             try
@@ -69,6 +56,7 @@ namespace Persistence.Providers
                 return nullValueCallback();
             }
         }
+
         public async Task<T> GetObjectFromCacheAsync<T>(string key, Func<T> nullValueCallback, long? expires = null) where T : class
         {
             try
@@ -112,6 +100,7 @@ namespace Persistence.Providers
 
             return Task.FromResult(result);
         }
+
         public bool KeyExists<T>(string key, Func<T> nullValueCallback, long? expires = null) where T : class
         {
             try
@@ -123,6 +112,7 @@ namespace Persistence.Providers
                 return false;
             }
         }
+
         public bool KeyExists(string key)
             => throw new NotImplementedException();
 
@@ -150,6 +140,7 @@ namespace Persistence.Providers
                 // Ignore
             }
         }
+
         public void InvalidateCache(IEnumerable<string> keys)
         {
             foreach (var key in keys)
@@ -157,8 +148,31 @@ namespace Persistence.Providers
                 InvalidateCache(key);
             }
         }
+
         public void InvalidateCachePattern(string pattern)
             => throw new NotImplementedException();
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_isTimerRunning)
+            {
+                return;
+            }
+
+            _isTimerRunning = true;
+            foreach (var key in _expires.Where(m => DateTime.Now > m.Value))
+            {
+                InvalidateCache(key.Key);
+            }
+
+            _isTimerRunning = false;
+        }
 
         private Task<T> AddToCacheAsync<T>(string key, T value, long? expires = null)
         {
@@ -166,6 +180,7 @@ namespace Persistence.Providers
             _expires.TryAdd(key, DateTime.Now.AddSeconds(expires ?? _defaultExpiration));
             return Task.FromResult(value);
         }
+
         private T AddToCache<T>(string key, T value, long? expires = null)
         {
             _cache.TryAdd(key, value);
@@ -173,6 +188,7 @@ namespace Persistence.Providers
 
             return value;
         }
+
         private void Dispose(bool disposing)
         {
             if (disposing)
@@ -183,11 +199,7 @@ namespace Persistence.Providers
                 _timer.Dispose();
             }
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         ~MemoryCacheProvider()
         {
             Dispose(false);

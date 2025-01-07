@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
 
@@ -8,8 +9,8 @@ namespace Persistence.Interfaces
         string GetValue(string key);
         TValue GetValue<TValue>(string key) where TValue : struct;
 
-        Task<TValue> GetValueAsync<TValue>(string key) where TValue : struct;
+        Task<TValue> GetValueAsync<TValue>(string key, CancellationToken cancellationToken = default) where TValue : struct;
 
-        Task<string> GetValueAsync(string key);
+        Task<string> GetValueAsync(string key, CancellationToken cancellationToken = default);
     }
 }

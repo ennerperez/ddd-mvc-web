@@ -1,12 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 #if DEBUG
 using System.Diagnostics;
 #endif
-using System.Linq;
 
 namespace Persistence.Conventions
 {
@@ -64,7 +64,7 @@ namespace Persistence.Conventions
                 var guidProperties = modelBuilder.Model.GetEntityTypes()
                     .Where(m => !m.IsOwned())
                     .SelectMany(m => m.GetProperties())
-                    .Where(m => m.IsPrimaryKey() && m.ClrType == typeof(Guid) || m.ClrType == typeof(Guid?))
+                    .Where(m => (m.IsPrimaryKey() && m.ClrType == typeof(Guid)) || m.ClrType == typeof(Guid?))
                     .ToArray();
 
                 foreach (var p in guidProperties)
@@ -152,9 +152,9 @@ namespace Persistence.Conventions
                     columnType = p.GetColumnType();
                     entity.HasColumnType(columnType);
                 }
-                else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
+                else if (p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?))
                 {
-                    if (options.UseDateTime || (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider)))
+                    if (options.UseDateTime || new[] { DatabaseProviders.Sqlite }.Contains(options.Provider))
                     {
                         p.SetColumnType("datetime");
                         columnType = p.GetColumnType();
@@ -168,15 +168,15 @@ namespace Persistence.Conventions
 
                     if (new[] { DatabaseProviders.MySql, DatabaseProviders.MariaDb }.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
                     {
-                        p.SetColumnType(max == "max" ? $"longtext" : $"text");
+                        p.SetColumnType(max == "max" ? "longtext" : "text");
                     }
                     else if (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider))
                     {
-                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : "varchar(500)");
                     }
                     else if (new[] { DatabaseProviders.PostgreSql }.Contains(options.Provider))
                     {
-                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : "text");
                     }
                     else
                     {

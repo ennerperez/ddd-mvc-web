@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-
+using QuestPDF.Drawing;
 #if USING_QUESTPDF
 using QuestPDF.Fluent;
 #endif
@@ -48,6 +48,7 @@ namespace Infrastructure.Services
             var instance = Compose<T>(model);
             return Task.FromResult(instance);
         }
+
         public Task<byte[]> GenerateAsync<T>(T instance, string format) where T : IDocument
         {
             var data = Generate(instance, format);
@@ -63,7 +64,7 @@ namespace Infrastructure.Services
                 foreach (var font in fonts)
                 {
                     using var fs = File.OpenRead(font);
-                    QuestPDF.Drawing.FontManager.RegisterFont(fs);
+                    FontManager.RegisterFont(fs);
                 }
             }
 #endif

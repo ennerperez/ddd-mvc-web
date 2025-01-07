@@ -5,22 +5,22 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Configuration;
 #if USING_SQLITE
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 #endif
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
+
 // ReSharper disable IdentifierTypo
 // ReSharper disable once CheckNamespace
 // ReSharper disable StringLiteralTypo
 
 namespace Microsoft.EntityFrameworkCore
 {
-
     public static class DatabaseProviders
     {
         public const string Sqlite = "Sqlite";
@@ -95,7 +95,9 @@ namespace Microsoft.EntityFrameworkCore
         public static void Initialize(this DbContext context)
         {
             if (!context.Database.GetMigrations().Any())
+            {
                 throw new NullReferenceException("There is no migrations in the current context");
+            }
 
             context.Database.Migrate();
         }
@@ -184,10 +186,7 @@ namespace Microsoft.EntityFrameworkCore
             }
         }
 
-        public static void Clear<TEntity>(this DbSet<TEntity> dbSet) where TEntity : class
-        {
-            dbSet.RemoveRange(dbSet);
-        }
+        public static void Clear<TEntity>(this DbSet<TEntity> dbSet) where TEntity : class => dbSet.RemoveRange(dbSet);
 
         public static async Task<int> SaveChangesWithIdentityInsertAsync<TEntity>(this DbContext context, CancellationToken cancellationToken = default)
         {
@@ -231,10 +230,8 @@ namespace Microsoft.EntityFrameworkCore
             var providerName = context.Database.ProviderName?.Split('.').Last();
             return HasSchema(providerName);
         }
-        public static bool HasSchema(string providerName)
-        {
-            return !(new[] { DatabaseProviders.Sqlite, DatabaseProviders.MySql, DatabaseProviders.MariaDb }).Contains(providerName);
-        }
+
+        public static bool HasSchema(string providerName) => !new[] { DatabaseProviders.Sqlite, DatabaseProviders.MySql, DatabaseProviders.MariaDb }.Contains(providerName);
 
         public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string contextName = "", string providerName = "")
         {
@@ -277,7 +274,7 @@ namespace Microsoft.EntityFrameworkCore
             {
 #if USING_SQLITE
                 case DatabaseProviders.Sqlite:
-                    DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder() { ConnectionString = connectionString };
+                    DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder { ConnectionString = connectionString };
                     var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(data source ?= ?)(.*)(;?)").Groups[2].Value;
                     var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
                     csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);

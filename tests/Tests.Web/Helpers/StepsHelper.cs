@@ -5,6 +5,7 @@ using System.Threading;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using TechTalk.SpecFlow;
 using Tests.Abstractions.Interfaces;
@@ -13,21 +14,20 @@ namespace Tests.Web.Helpers
 {
     public class StepsHelper : Abstractions.Helpers.StepsHelper
     {
-
-        private FeatureContext _featureContext => _automationContext.FeatureContext;
-        private ScenarioContext _scenarioContext => _automationContext.ScenarioContext;
+        private static int _counter = 1;
 
         public StepsHelper(IAutomationContext automationContext, IAutomationConfiguration automationConfigurations) : base(automationContext, automationConfigurations)
         {
         }
 
-        private static int _counter = 1;
+        private FeatureContext _featureContext => _automationContext.FeatureContext;
+        private ScenarioContext _scenarioContext => _automationContext.ScenarioContext;
 
         private string GetScreenshotFileName(string method = "")
         {
             //if (string.IsNullOrWhiteSpace(method)) method = scenarioContext.StepContext.StepInfo.Text;
-            var featureTitle = (_featureContext != null && _featureContext.FeatureInfo != null ? _featureContext.FeatureInfo.Title : string.Empty);
-            var scenarioTitle = (_scenarioContext != null && _scenarioContext.ScenarioInfo != null ? _scenarioContext.ScenarioInfo.Title : string.Empty);
+            var featureTitle = _featureContext != null && _featureContext.FeatureInfo != null ? _featureContext.FeatureInfo.Title : string.Empty;
+            var scenarioTitle = _scenarioContext != null && _scenarioContext.ScenarioInfo != null ? _scenarioContext.ScenarioInfo.Title : string.Empty;
 
             var l = 3;
             if (_counter.ToString().Length > l)
@@ -68,7 +68,7 @@ namespace Tests.Web.Helpers
                         using var image = Image.Load(buffer);
                         var width = 192;
                         image.Mutate(x => x.Resize(width, 0));
-                        imageBase64 = image.ToBase64String(SixLabors.ImageSharp.Formats.Jpeg.JpegFormat.Instance);
+                        imageBase64 = image.ToBase64String(JpegFormat.Instance);
                     }
                     catch (Exception e)
                     {
@@ -80,6 +80,7 @@ namespace Tests.Web.Helpers
                     {
                         Console.WriteLine($@"SCREENSHOT[ {imageBase64} ]SCREENSHOT");
                     }
+
                     //Console.WriteLine($"SCREENSHOT_PATH[ {path} ]SCREENSHOT_PATH");
                     screenshot.SaveAsFile(fileName);
                 }

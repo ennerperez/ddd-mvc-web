@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Business.Models
 {
-
     public class TableResult : TableResult<object>;
 
     public class TableResult<T> where T : class

@@ -1,19 +1,19 @@
-using Microsoft.EntityFrameworkCore.Query;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Linq.Dynamic.Core;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Persistence.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Domain.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Persistence.Interfaces;
 #if USING_BULK
 using EFCore.BulkExtensions;
 #endif
@@ -59,10 +59,7 @@ namespace Persistence.Services
                     var prop = typeof(TEntity).GetProperty("IsDeleted");
                     var type = prop?.PropertyType;
                     var constant = Expression.Constant(false);
-                    var methodInfo = type?.GetMethod("Equals", new[]
-                    {
-                        type
-                    });
+                    var methodInfo = type?.GetMethod("Equals", new[] { type });
                     var member = Expression.Property(predicate.Parameters[0], prop);
                     var callExp = Expression.Call(member, methodInfo, constant);
                     var body = Expression.AndAlso(callExp, predicate.Body);
@@ -175,7 +172,7 @@ namespace Persistence.Services
             bool includeDeleted = false,
             CancellationToken cancellationToken = default)
         {
-            var searchs = criteria.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+            var searchs = criteria.Split(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
             var args = Array.Empty<MemberExpression>();
 
             Expression searchPredicate = null;
@@ -194,14 +191,13 @@ namespace Persistence.Services
                 {
                     return expression2;
                 }
-                else if (me.Expression is MemberExpression expression3)
+
+                if (me.Expression is MemberExpression expression3)
                 {
                     return NestedMember(expression3);
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
 
             var parameter = NestedMember(args.First());
@@ -225,16 +221,10 @@ namespace Persistence.Services
                     if (value != null && value != type.GetDefault())
                     {
                         constant = Expression.Constant(value);
-                        var methods = new[]
-                        {
-                            "Contains", "IndexOf", "Equals", "CompareTo"
-                        };
+                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
                         foreach (var method in methods)
                         {
-                            var methodInfo = type.GetMethod(method, new[]
-                            {
-                                type
-                            });
+                            var methodInfo = type.GetMethod(method, new[] { type });
                             if (methodInfo != null)
                             {
                                 var member = item;
@@ -447,6 +437,7 @@ namespace Persistence.Services
 #if USING_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
+            {
                 foreach (var item in entities)
                 {
                     if (item.Id.Equals(default))
@@ -458,6 +449,7 @@ namespace Persistence.Services
                         await UpdateAsync(item, cancellationToken);
                     }
                 }
+            }
 #if USING_BULK
             else
             {
@@ -506,7 +498,9 @@ namespace Persistence.Services
 #if USING_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
+            {
                 _dbSet.RemoveRange(list);
+            }
 #if USING_BULK
             else
             {
@@ -546,10 +540,7 @@ namespace Persistence.Services
             var list = new List<TEntity>();
             foreach (var item in keys)
             {
-                var entity = await _dbSet.FindAsync(new object[]
-                {
-                    item
-                }, cancellationToken: cancellationToken);
+                var entity = await _dbSet.FindAsync(new object[] { item }, cancellationToken);
                 if (entity != null)
                 {
                     list.Add(entity);
@@ -578,7 +569,9 @@ namespace Persistence.Services
 #if USING_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
+            {
                 _dbSet.RemoveRange(list);
+            }
 #if USING_BULK
             else
             {
@@ -591,10 +584,7 @@ namespace Persistence.Services
 
         public virtual async Task DeleteAsync<T>(T key, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>
         {
-            var entity = await _dbSet.FindAsync(new object[]
-            {
-                key
-            }, cancellationToken: cancellationToken);
+            var entity = await _dbSet.FindAsync(new object[] { key }, cancellationToken);
             if (entity != null)
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))

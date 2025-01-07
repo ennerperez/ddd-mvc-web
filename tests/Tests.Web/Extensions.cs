@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium;
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Services;
+using Tests.Abstractions.Settings;
 using Tests.Web.Contexts;
 using Tests.Web.Services;
 using Tests.Web.Settings;
@@ -17,7 +18,7 @@ namespace Tests.Web
         public static IServiceCollection AddTests(this IServiceCollection services)
         {
 #if USING_SPECFLOW
-            services.AddScoped<IAutomationConfiguration, Abstractions.Settings.SpecFlowConfiguration>();
+            services.AddScoped<IAutomationConfiguration, SpecFlowConfiguration>();
             services.AddScoped<IFeatureContext, FeatureContext>();
             services.AddScoped<IScenarioContext, ScenarioContext>();
 #endif

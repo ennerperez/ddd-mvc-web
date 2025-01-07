@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-#if USING_SPECFLOW
-using TechTalk.SpecFlow;
-#endif
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Settings;
 using Xunit.Sdk;
+#if USING_SPECFLOW
+using TechTalk.SpecFlow;
+#endif
 
 namespace Tests.Business.Contexts
 {
     public class AutomationContext : IAutomationContext
     {
+        private Dictionary<string, object> _attributeLibrary;
 #if USING_SPECFLOW
         public AutomationContext(IConfiguration configuration, IAutomationConfiguration automationConfiguration, FeatureContext featureContext, ScenarioContext scenarioContext)
 #else
@@ -29,57 +30,13 @@ namespace Tests.Business.Contexts
             configuration.Bind("ScreenshotSettings", ScreenshotConfiguration);
         }
 
-        #region Tags
-
-        public string AutomationType { get; set; }
-        public string PlatformTarget { get; set; }
-
-        public string ApplicationTarget { get; set; }
-        public string EnvironmentTarget { get; set; }
-
-        public string TestSuiteTarget { get; set; }
-        public string TestPlanTarget { get; set; }
-        public string TestCaseTarget { get; set; }
-        public string Priority { get; set; }
-
-        public string Code { get; set; }
-
-        #endregion
-
         public string CurrentPage { get; set; }
         public Stack<string> NavigationStack { get; }
 
         public IAutomationConfiguration AutomationConfiguration { get; }
         public ScreenshotConfiguration ScreenshotConfiguration { get; }
 
-#if USING_SPECFLOW
-        public FeatureContext FeatureContext { get; }
-        public ScenarioContext ScenarioContext { get; }
-#endif
-
         public bool IsInitialized { get; set; }
-
-        private Dictionary<string, object> _attributeLibrary;
-
-        #region Exceptions
-
-        private List<Exception> _exceptions;
-        public IEnumerable<Exception> GetExceptions()
-        {
-            return _exceptions?.ToArray();
-        }
-        public void AddException(Exception e)
-        {
-            _exceptions ??= new List<Exception>();
-
-            _exceptions.Add(e);
-        }
-        public bool HasExceptions()
-        {
-            return _exceptions?.Any() ?? false;
-        }
-
-        #endregion
 
         public object GetAttribute(string attributeKey, bool throwException = true)
         {
@@ -92,14 +49,13 @@ namespace Tests.Business.Contexts
             {
                 return attributeObject;
             }
-            else if (throwException)
+
+            if (throwException)
             {
                 throw new KeyNotFoundException($"The {attributeKey} Attribute Key is not defined anywhere within the Feature.");
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public void SetAttribute(string attributeKey, object attributeObject)
@@ -119,11 +75,49 @@ namespace Tests.Business.Contexts
                     var i = 0;
                     //return new AllException(_exceptions.Count, _exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray());
                     return AllException.ForFailures(_exceptions.Count, _exceptions.Select(m => new Tuple<int, string, Exception>(i++, m.Message, m)).ToArray());
-
                 }
 
                 return null;
             }
         }
+
+        #region Tags
+
+        public string AutomationType { get; set; }
+        public string PlatformTarget { get; set; }
+
+        public string ApplicationTarget { get; set; }
+        public string EnvironmentTarget { get; set; }
+
+        public string TestSuiteTarget { get; set; }
+        public string TestPlanTarget { get; set; }
+        public string TestCaseTarget { get; set; }
+        public string Priority { get; set; }
+
+        public string Code { get; set; }
+
+        #endregion
+
+#if USING_SPECFLOW
+        public FeatureContext FeatureContext { get; }
+        public ScenarioContext ScenarioContext { get; }
+#endif
+
+        #region Exceptions
+
+        private List<Exception> _exceptions;
+
+        public IEnumerable<Exception> GetExceptions() => _exceptions?.ToArray();
+
+        public void AddException(Exception e)
+        {
+            _exceptions ??= new List<Exception>();
+
+            _exceptions.Add(e);
+        }
+
+        public bool HasExceptions() => _exceptions?.Any() ?? false;
+
+        #endregion
     }
 }

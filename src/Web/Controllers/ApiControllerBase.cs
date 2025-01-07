@@ -32,15 +32,14 @@ namespace Web.Controllers
         private ISender _mediator = null!;
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
+        protected bool IsAdmin => User.IsInRole(Roles.Admin);
+        protected int UserId => User.GetUserId<int>();
+
         protected IGenericRepository<E, K> Repository<E, K>() where E : class, IEntity<K> where K : struct, IComparable<K>, IEquatable<K>
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<E, K>>();
 
         protected IGenericRepository<E> Repository<E>() where E : class, IEntity<int>
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<E>>();
-
-        protected bool IsAdmin => User.IsInRole(Roles.Admin);
-        protected int UserId => User.GetUserId<int>();
-
     }
 
 #if USING_SMARTSCHEMA
@@ -94,14 +93,13 @@ namespace Web.Controllers
                 {
                     return expression1;
                 }
-                else if (me.Expression is MemberExpression expression2)
+
+                if (me.Expression is MemberExpression expression2)
                 {
                     return NestedMember(expression2);
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
 
             if (model.Columns != null)
@@ -186,22 +184,22 @@ namespace Web.Controllers
 
             if (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value))
             {
-                rows = await Repository().SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order), include: include,
-                    skip: model.Start, take: model.Length, includeDeleted: includeDeleted);
+                rows = await Repository().SearchAsync(selector, expression, model.Search.Value, o => o.SortDynamically(order), include,
+                    model.Start, model.Length, includeDeleted: includeDeleted);
             }
             else
             {
-                rows = await Repository().ReadAsync(selector, expression, o => o.SortDynamically(order), include: include,
-                    skip: model.Start, take: model.Length, includeDeleted: includeDeleted);
+                rows = await Repository().ReadAsync(selector, expression, o => o.SortDynamically(order), include,
+                    model.Start, model.Length, includeDeleted: includeDeleted);
             }
 
             var data = await ((IQueryable<object>)rows).ToListAsync();
 
             var total = await Repository().CountAsync();
-            var isFiltered = (model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value));
+            var isFiltered = model.Search != null && !string.IsNullOrWhiteSpace(model.Search.Value);
             var stotal = isFiltered ? data.Count : total;
 
-            return new JsonResult(new TableResult() { iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data });
+            return new JsonResult(new TableResult { iTotalRecords = total, iTotalDisplayRecords = stotal, aaData = data });
         }
     }
 
@@ -216,6 +214,5 @@ namespace Web.Controllers
     {
         protected new IGenericRepository<TEntity> Repository()
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity>>();
-
     }
 }

@@ -12,7 +12,6 @@ using Persistence.Interfaces;
 
 namespace Web.Controllers
 {
-
 #if USING_SMARTSCHEMA
     [SmartAuthorize]
 #else
@@ -26,16 +25,16 @@ namespace Web.Controllers
         private ISender _mediator = null!;
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
+        protected bool IsAdmin => User.IsInRole(Roles.Admin);
+        protected int UserId => User.GetUserId<int>();
+
         protected IGenericRepository<TEntity> Repository<TEntity>()
             where TEntity : class, IEntity<int>
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity>>();
+
         protected IGenericRepository<TEntity, TKey> Repository<TEntity, TKey>()
             where TKey : struct, IComparable<TKey>, IEquatable<TKey>
             where TEntity : class, IEntity<TKey>
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
-
-        protected bool IsAdmin => User.IsInRole(Roles.Admin);
-        protected int UserId => User.GetUserId<int>();
-
     }
 }

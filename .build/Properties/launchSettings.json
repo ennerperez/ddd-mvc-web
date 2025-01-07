@@ -93,6 +93,11 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "commandLineArgs": "--target DatabaseRollback"
+    },
+    "Migrate.DbContextOptimize": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DbContextOptimize"
     }
   }
 }

@@ -1,57 +1,76 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$ref": "#/definitions/build",
-  "title": "Build Schema",
   "definitions": {
-    "build": {
-      "type": "object",
+    "Host": {
+      "type": "string",
+      "enum": [
+        "AppVeyor",
+        "AzurePipelines",
+        "Bamboo",
+        "Bitbucket",
+        "Bitrise",
+        "GitHubActions",
+        "GitLab",
+        "Jenkins",
+        "Rider",
+        "SpaceAutomation",
+        "TeamCity",
+        "Terminal",
+        "TravisCI",
+        "VisualStudio",
+        "VSCode"
+      ]
+    },
+    "ExecutableTarget": {
+      "type": "string",
+      "enum": [
+        "Clean",
+        "Compile",
+        "Coverage",
+        "DatabaseClear",
+        "DatabaseRollback",
+        "DatabaseUpdate",
+        "DbContextOptimize",
+        "DockerBuild",
+        "DockerLogin",
+        "DockerPrune",
+        "DockerPush",
+        "FastCompile",
+        "MigrationAdd",
+        "MigrationOutput",
+        "MigrationRemove",
+        "Pack",
+        "Prepare",
+        "Publish",
+        "Restore",
+        "Test",
+        "UITest",
+        "Versioning"
+      ]
+    },
+    "Verbosity": {
+      "type": "string",
+      "description": "",
+      "enum": [
+        "Verbose",
+        "Normal",
+        "Minimal",
+        "Quiet"
+      ]
+    },
+    "NukeBuild": {
       "properties": {
-        "configuration": {
-          "type": "string",
-          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
-          "enum": [
-            "Debug",
-            "Release"
-          ]
-        },
         "Continue": {
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
-        },
-        "environment": {
-          "type": "string",
-          "description": "Environment to build - Default is 'Development' (local) or 'Production' (server)",
-          "enum": [
-            "Development",
-            "Production",
-            "Staging",
-            "Test"
-          ]
         },
         "Help": {
           "type": "boolean",
           "description": "Shows the help text for this build assembly"
         },
         "Host": {
-          "type": "string",
           "description": "Host for execution. Default is 'automatic'",
-          "enum": [
-            "AppVeyor",
-            "AzurePipelines",
-            "Bamboo",
-            "Bitbucket",
-            "Bitrise",
-            "GitHubActions",
-            "GitLab",
-            "Jenkins",
-            "Rider",
-            "SpaceAutomation",
-            "TeamCity",
-            "Terminal",
-            "TravisCI",
-            "VisualStudio",
-            "VSCode"
-          ]
+          "$ref": "#/definitions/Host"
         },
         "NoLogo": {
           "type": "boolean",
@@ -80,69 +99,174 @@
           "type": "array",
           "description": "List of targets to be skipped. Empty list skips all dependencies",
           "items": {
-            "type": "string",
-            "enum": [
-              "Clean",
-              "Compile",
-              "DatabaseClear",
-              "DatabaseRollback",
-              "DatabaseUpdate",
-              "FastCompile",
-              "MigrationAdd",
-              "MigrationOutput",
-              "MigrationRemove",
-              "Pack",
-              "Prepare",
-              "Publish",
-              "Restore",
-              "Test",
-              "Versioning"
-            ]
+            "$ref": "#/definitions/ExecutableTarget"
           }
-        },
-        "Solution": {
-          "type": "string",
-          "description": "Path to a solution file that is automatically loaded"
         },
         "Target": {
           "type": "array",
           "description": "List of targets to be invoked. Default is '{default_target}'",
           "items": {
-            "type": "string",
-            "enum": [
-              "Clean",
-              "Compile",
-              "DatabaseClear",
-              "DatabaseRollback",
-              "DatabaseUpdate",
-              "FastCompile",
-              "MigrationAdd",
-              "MigrationOutput",
-              "MigrationRemove",
-              "Pack",
-              "Prepare",
-              "Publish",
-              "Restore",
-              "Test",
-              "Versioning"
-            ]
+            "$ref": "#/definitions/ExecutableTarget"
           }
         },
         "Verbosity": {
-          "type": "string",
           "description": "Logging verbosity during build execution. Default is 'Normal'",
-          "enum": [
-            "Minimal",
-            "Normal",
-            "Quiet",
-            "Verbose"
-          ]
-        },
-        "warningLevel": {
-          "type": "integer",
-          "description": "Warning Level"
+          "$ref": "#/definitions/Verbosity"
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "AndroidSigningKeyAlias": {
+          "type": "string",
+          "description": "Android Signing Key Alias",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
+        "AndroidSigningKeyPass": {
+          "type": "string",
+          "description": "Android Signing Key Pass",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
+        "AndroidSigningStorePass": {
+          "type": "string",
+          "description": "Android Signing Store Pass",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
+        "Author": {
+          "type": "string"
+        },
+        "Configuration": {
+          "type": "string",
+          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
+          "enum": [
+            "Debug",
+            "Release"
+          ]
+        },
+        "ContainerName": {
+          "type": "string",
+          "description": "Container Name"
+        },
+        "DesktopProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "DryRun": {
+          "type": "boolean",
+          "description": "Dry Run"
+        },
+        "Environment": {
+          "type": "string",
+          "description": "Environment to build - Default is 'Development' (local) or 'Production' (server)",
+          "enum": [
+            "Development",
+            "Production",
+            "Staging",
+            "Test"
+          ]
+        },
+        "MauiWorkloadVersion": {
+          "type": "string",
+          "description": "MAUI Workload Version"
+        },
+        "MobileProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "PackageId": {
+          "type": "string"
+        },
+        "PackageProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Platform": {
+          "type": "string",
+          "description": "Platform to build - Default is 'AnyCPU'"
+        },
+        "Product": {
+          "type": "string"
+        },
+        "Project": {
+          "type": "string",
+          "description": "Project Name to Build and Deploy"
+        },
+        "ProjectName": {
+          "type": "string",
+          "description": "Project Name"
+        },
+        "ProjectUrl": {
+          "type": "string"
+        },
+        "RegistryHost": {
+          "type": "string",
+          "description": "Registry Host"
+        },
+        "RegistryName": {
+          "type": "string",
+          "description": "Registry Name"
+        },
+        "RegistryPassword": {
+          "type": "string",
+          "description": "Registry Password",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
+        "RegistryUsername": {
+          "type": "string",
+          "description": "Registry Username",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
+        "ServiceProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Signing": {
+          "type": "boolean",
+          "description": "Package Signing"
+        },
+        "Solution": {
+          "type": "string",
+          "description": "Path to a solution file that is automatically loaded"
+        },
+        "StartupProject": {
+          "type": "string",
+          "description": "The startup project is the one that the tools build and run"
+        },
+        "TargetProject": {
+          "type": "string",
+          "description": "The project is also known as the target project because it's where the commands add or remove files"
+        },
+        "TestsProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "WarningLevel": {
+          "type": "integer",
+          "description": "Warning Level",
+          "format": "int32"
+        },
+        "WebProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "$ref": "#/definitions/NukeBuild"
+    }
+  ]
 }

@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Interfaces
 {
-
     public interface IDocument
     {
         string Title { get; set; }
@@ -30,6 +29,5 @@ namespace Infrastructure.Interfaces
         byte[] Generate<T>(T instance, string format) where T : TDocument;
 
         Task<byte[]> GenerateAsync<T>(T instance, string format) where T : TDocument;
-
     }
 }

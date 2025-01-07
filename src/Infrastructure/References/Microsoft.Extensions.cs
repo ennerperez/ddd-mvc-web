@@ -106,7 +106,6 @@ namespace Microsoft.Extensions
                                 services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
                                 break;
                         }
-
                     }
                     catch (Exception)
                     {
@@ -115,15 +114,9 @@ namespace Microsoft.Extensions
                 }
             }
 
-            private static bool IsOpenGeneric(this Type type)
-            {
-                return type.GetTypeInfo().IsGenericTypeDefinition || type.GetTypeInfo().ContainsGenericParameters;
-            }
+            private static bool IsOpenGeneric(this Type type) => type.GetTypeInfo().IsGenericTypeDefinition || type.GetTypeInfo().ContainsGenericParameters;
 
-            private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
-            {
-                return FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
-            }
+            private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType) => FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
 
             private static IEnumerable<Type> FindInterfacesThatClosesCore(this Type pluggedType, Type templateType)
             {
@@ -142,7 +135,7 @@ namespace Microsoft.Extensions
                     foreach (
                         var interfaceType in
                         pluggedType.GetInterfaces()
-                            .Where(type => type.GetTypeInfo().IsGenericType && (type.GetGenericTypeDefinition() == templateType)))
+                            .Where(type => type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == templateType))
                     {
                         yield return interfaceType;
                     }
@@ -150,7 +143,7 @@ namespace Microsoft.Extensions
                 else
                 {
                     var memberInfo = pluggedType.GetTypeInfo().BaseType;
-                    if (memberInfo != null && memberInfo.GetTypeInfo().IsGenericType && (memberInfo.GetGenericTypeDefinition() == templateType))
+                    if (memberInfo != null && memberInfo.GetTypeInfo().IsGenericType && memberInfo.GetGenericTypeDefinition() == templateType)
                     {
                         yield return pluggedType.GetTypeInfo().BaseType;
                     }
@@ -167,10 +160,7 @@ namespace Microsoft.Extensions
                 }
             }
 
-            private static bool IsConcrete(this Type type)
-            {
-                return !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
-            }
+            private static bool IsConcrete(this Type type) => !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
 
             private static void Fill<T>(this IList<T> list, T value)
             {

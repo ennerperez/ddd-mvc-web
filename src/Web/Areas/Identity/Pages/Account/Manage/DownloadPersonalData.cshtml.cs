@@ -16,8 +16,8 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
+        private readonly UserManager<User> _userManager;
 
         public DownloadPersonalDataModel(
             UserManager<User> userManager,
@@ -27,10 +27,7 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
-        public IActionResult OnGet()
-        {
-            return NotFound();
-        }
+        public IActionResult OnGet() => NotFound();
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -57,7 +54,7 @@ namespace Web.Areas.Identity.Pages.Account.Manage
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 
-            personalData.Add($"Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
+            personalData.Add("Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
 
             Response.Headers["Content-Disposition"] = "attachment; filename=PersonalData.json";
             return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");

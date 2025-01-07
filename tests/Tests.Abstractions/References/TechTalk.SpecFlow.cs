@@ -1,6 +1,7 @@
 #if USING_SPECFLOW
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -8,31 +9,23 @@ namespace TechTalk.SpecFlow
 {
     public static class Extensions
     {
-        public static T GetTagValue<T>(this FeatureInfo source, string name)
-        {
-            return source.Tags.GetTagValue<T>(name);
-        }
+        public static T GetTagValue<T>(this FeatureInfo source, string name) => source.Tags.GetTagValue<T>(name);
 
-        public static T GetTagValue<T>(this ScenarioInfo source, string name)
-        {
-            return source.Tags.GetTagValue<T>(name);
-        }
+        public static T GetTagValue<T>(this ScenarioInfo source, string name) => source.Tags.GetTagValue<T>(name);
 
         private static T GetTagValue<T>(this string[] stringArray, string name)
         {
             var type = typeof(T);
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
 
-            if (type.IsEnum || isNullable && Nullable.GetUnderlyingType(type)!.IsEnum)
+            if (type.IsEnum || (isNullable && Nullable.GetUnderlyingType(type)!.IsEnum))
             {
                 if (!isNullable)
                 {
                     return stringArray.GetTagValue<string>(name).AsEnum<T>();
                 }
-                else
-                {
-                    return (T)stringArray.GetTagValue<string>(name).AsEnum(Nullable.GetUnderlyingType(type));
-                }
+
+                return (T)stringArray.GetTagValue<string>(name).AsEnum(Nullable.GetUnderlyingType(type));
             }
 
             var regEx = new Regex(@$"{name}\((.*)\)", RegexOptions.Compiled);
@@ -46,41 +39,33 @@ namespace TechTalk.SpecFlow
                     return default;
                 }
 
-                return (T)Convert.ChangeType(result, conversionType: Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
+                return (T)Convert.ChangeType(result, Nullable.GetUnderlyingType(type) ?? throw new InvalidOperationException());
             }
 
             return (T)Convert.ChangeType(result, type);
         }
 
-        public static IEnumerable<T> GetTagValues<T>(this FeatureInfo source, string name)
-        {
-            return source.Tags.GetTagValues<T>(name);
-        }
+        public static IEnumerable<T> GetTagValues<T>(this FeatureInfo source, string name) => source.Tags.GetTagValues<T>(name);
 
-        public static IEnumerable<T> GetTagValues<T>(this ScenarioInfo source, string name)
-        {
-            return source.Tags.GetTagValues<T>(name);
-        }
+        public static IEnumerable<T> GetTagValues<T>(this ScenarioInfo source, string name) => source.Tags.GetTagValues<T>(name);
 
         private static IEnumerable<T> GetTagValues<T>(this string[] stringArray, string name)
         {
             var type = typeof(T);
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
 
-            if (type.IsEnum || isNullable && Nullable.GetUnderlyingType(type)!.IsEnum)
+            if (type.IsEnum || (isNullable && Nullable.GetUnderlyingType(type)!.IsEnum))
             {
                 if (!isNullable)
                 {
                     return stringArray.GetTagValues<string>(name)?.Select(m => m.AsEnum<T>()).ToArray();
                 }
-                else
-                {
-                    return stringArray.GetTagValues<string>(name)?.Select(m => (T)m.AsEnum(Nullable.GetUnderlyingType(type))).ToArray();
-                }
+
+                return stringArray.GetTagValues<string>(name)?.Select(m => (T)m.AsEnum(Nullable.GetUnderlyingType(type))).ToArray();
             }
 
             var regEx = new Regex(@$"{name}\((.*)\)", RegexOptions.Compiled);
-            var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).SelectMany(o => o.Groups[1].Value.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator)).ToArray();
+            var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).SelectMany(o => o.Groups[1].Value.Split(CultureInfo.CurrentCulture.TextInfo.ListSeparator)).ToArray();
             var result = tags.Any()
                 ? tags.Select(m =>
                 {
@@ -106,16 +91,14 @@ namespace TechTalk.SpecFlow
             var type = typeof(T);
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
 
-            if (type.IsEnum || isNullable && Nullable.GetUnderlyingType(type)!.IsEnum)
+            if (type.IsEnum || (isNullable && Nullable.GetUnderlyingType(type)!.IsEnum))
             {
                 if (!isNullable)
                 {
                     return table.GetValue<string>(key).AsEnum<T>();
                 }
-                else
-                {
-                    return (T)table.GetValue<string>(key).AsEnum(Nullable.GetUnderlyingType(type));
-                }
+
+                return (T)table.GetValue<string>(key).AsEnum(Nullable.GetUnderlyingType(type));
             }
 
             var stringComparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.Ordinal;
@@ -143,16 +126,14 @@ namespace TechTalk.SpecFlow
         {
             var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>).GetGenericTypeDefinition();
 
-            if (type.IsEnum || isNullable && Nullable.GetUnderlyingType(type)!.IsEnum)
+            if (type.IsEnum || (isNullable && Nullable.GetUnderlyingType(type)!.IsEnum))
             {
                 if (!isNullable)
                 {
                     return table.GetValue<string>(key).AsEnum(type);
                 }
-                else
-                {
-                    return table.GetValue<string>(key).AsEnum(Nullable.GetUnderlyingType(type));
-                }
+
+                return table.GetValue<string>(key).AsEnum(Nullable.GetUnderlyingType(type));
             }
 
             var stringComparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.Ordinal;
@@ -216,10 +197,8 @@ namespace TechTalk.SpecFlow
             return result;
         }
 
-        public static string Evaluate(this string @this, int maxLenght = 10, string nullValue = "")
-        {
-            return @this.Evaluate<string>(maxLenght, nullValue);
-        }
+        public static string Evaluate(this string @this, int maxLenght = 10, string nullValue = "") => @this.Evaluate<string>(maxLenght, nullValue);
+
         public static T Evaluate<T>(this string @this, int maxLenght = 10, T nullValue = default)
         {
             if (string.IsNullOrWhiteSpace(@this))
@@ -239,19 +218,22 @@ namespace TechTalk.SpecFlow
                 {
                     return (T)Convert.ChangeType(DateTime.Now, typeof(T));
                 }
-                else if (@this.Equals("{Today}", StringComparison.InvariantCultureIgnoreCase))
+
+                if (@this.Equals("{Today}", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return (T)Convert.ChangeType(DateTime.Today, typeof(T));
                 }
-                else if (@this.Equals("{Tomorrow}", StringComparison.InvariantCultureIgnoreCase))
+
+                if (@this.Equals("{Tomorrow}", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return (T)Convert.ChangeType(DateTime.Today.AddDays(1), typeof(T));
                 }
-                else if (@this.Equals("{Yesterday}", StringComparison.InvariantCultureIgnoreCase))
+
+                if (@this.Equals("{Yesterday}", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return (T)Convert.ChangeType(DateTime.Today.AddDays(-1), typeof(T));
                 }
-                else
+
                 {
                     //TODO: Translate keywords
                     var regex = new Regex(@"\{([0-9]{1,})([y,M,d,m])(Ago|Ahead)}", RegexOptions.Compiled);
@@ -577,7 +559,7 @@ namespace TechTalk.SpecFlow
                         var arrayRegexMatch = arrayRegex.Match(@this);
                         if (arrayRegexMatch.Success)
                         {
-                            var values = arrayRegexMatch.Groups[1].Value.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+                            var values = arrayRegexMatch.Groups[1].Value.Split(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
                             if (values.Length > 1)
                             {
                                 var rnd = new Random();
@@ -623,7 +605,7 @@ namespace TechTalk.SpecFlow
                     var arrayRegexMatch = arrayRegex.Match(@this);
                     if (arrayRegexMatch.Success)
                     {
-                        var values = arrayRegexMatch.Groups[1].Value.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+                        var values = arrayRegexMatch.Groups[1].Value.Split(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
                         if (values.Length > 1)
                         {
                             var rnd = new Random();

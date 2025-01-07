@@ -4,7 +4,7 @@
     var twoLetterIsoLanguageName = "en";
     if (Html.UsingLocalization())
     {
-        IRequestCultureFeature requestCulture = Context.Features.Get<IRequestCultureFeature>();
+        var requestCulture = Context.Features.Get<IRequestCultureFeature>();
         twoLetterIsoLanguageName = requestCulture?.RequestCulture.UICulture.TwoLetterISOLanguageName.ToLower() ?? "en";
     }
 }
@@ -14,7 +14,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@Configuration["AppSettings:Name"] - @ViewData["Title"]</title>
+    <title>@Configuration["AppSettings:Title"] - @ViewData["Title"]</title>
 
     <partial name="Partials/_SeoPartial"/>
 
@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <environment include="development">
-        @if (@Html.UsingSass())
+        @if (Html.UsingSass())
         {
             <link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true"/>
         }
@@ -52,7 +52,7 @@
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     </environment>
     <environment exclude="development">
-        @if (@Html.UsingSass())
+        @if (Html.UsingSass())
         {
             <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
         }

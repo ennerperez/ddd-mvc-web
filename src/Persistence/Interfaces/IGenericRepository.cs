@@ -12,7 +12,6 @@ namespace Persistence.Interfaces
 
     public interface IGenericRepository<TEntity, TKey> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-
         Task<IQueryable<TResult>> ReadAsync<TResult>(
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,

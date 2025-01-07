@@ -81,7 +81,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithPage<Client>(skip: ((page - 1) * size), take: size);
+                var collection = await Mediator.SendWithPage<Client>(skip: (page - 1) * size, take: size);
                 return new JsonResult(collection);
             }
             catch (ValidationException v)
@@ -179,7 +179,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                await Mediator.Send(new DeleteClientRequest() { Id = id });
+                await Mediator.Send(new DeleteClientRequest { Id = id });
                 return Ok(id);
             }
             catch (ValidationException v)
@@ -199,7 +199,7 @@ namespace Web.Controllers.API
         [HttpPost("Table")]
         public async Task<JsonResult> Table(TableInfo model)
         {
-            var selector = (new Client()).Select(t => new
+            var selector = new Client().Select(t => new
             {
                 t.Id,
                 t.Identification,
