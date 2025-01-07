@@ -26,9 +26,9 @@
     <ItemGroup>
         <PackageReference Include="Flurl" Version="4.0.0" />
         <PackageReference Include="Flurl.Http" Version="4.0.2" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
-        <PackageReference Include="Selenium.Support" Version="4.25.0" />
-        <PackageReference Include="Selenium.WebDriver" Version="4.25.0" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+        <PackageReference Include="Selenium.Support" Version="4.27.0" />
+        <PackageReference Include="Selenium.WebDriver" Version="4.27.0" />
     </ItemGroup>
 
     <ItemGroup Label="ConditionalReferences">
@@ -42,23 +42,23 @@
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter"/>
         <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.NUnit"/>
         <!-- xUnit -->
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.9.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.9.2" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0"/>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="2.8.2">
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="3.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.9.1">
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.9.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.9.1" />
-        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.9.1" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.9.2" />
+        <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.9.2" />
         <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingSpecFlow)' == 'true'" Include="SpecFlow.xUnit" Version="3.9.74"/>
         <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="Xunit.Extensions.Ordering" Version="1.4.5"/>
         <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="Xunit.Microsoft.DependencyInjection" Version="8.2.2" />
         <!-- WebDriver -->
-        <PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="129.0.6668.5800" />
+        <PackageReference Condition="'$(UsingChromeDriver)' == 'true'" Include="Selenium.WebDriver.ChromeDriver" Version="131.0.6778.20400" />
         <PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.35.0" />
         <PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.14.0"/>
     </ItemGroup>
@@ -68,7 +68,7 @@
         <PackageReference Include="Serilog" Version="4.0.1" />
         <PackageReference Include="Serilog.Sinks.Async" Version="2.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0"/>
-        <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
         <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="5.0.0" />

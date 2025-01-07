@@ -1,4 +1,11 @@
 {
   "$schema": "./build.schema.json",
-  "Solution": "Solution.sln"
+  "Solution": "Solution.sln",
+  "Author": "Enner Pérez",
+  "Product": "DDD",
+  "ProjectUrl": "https://ennerperez.dev/",
+  "Project": "Web",
+  "TargetProject": "Persistence",
+  "StartupProject": "Web",
+  "WebProjects": ["Web"]
 }

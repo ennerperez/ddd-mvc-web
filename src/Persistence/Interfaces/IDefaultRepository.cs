@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace Domain.Interfaces
+namespace Persistence.Interfaces
 {
     public interface IDefaultRepository<TEntity>
     {

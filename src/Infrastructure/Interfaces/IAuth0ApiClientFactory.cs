@@ -1,3 +1,4 @@
+#if USING_AUTH0
 using Auth0.ManagementApi;
 
 namespace Infrastructure.Interfaces
@@ -7,3 +8,4 @@ namespace Infrastructure.Interfaces
         IManagementApiClient CreateClient();
     }
 }
+#endif
