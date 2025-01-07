@@ -32,20 +32,7 @@ namespace System
         public static int Random(int minValue, int maxValue) => Instance.Next(minValue, maxValue);
 
         /// <summary>
-        ///     Returns
-        ///     an
-        ///     Int32
-        ///     with
-        ///     a
-        ///     random
-        ///     value
-        ///     across
-        ///     the
-        ///     entire
-        ///     range
-        ///     of
-        ///     possible
-        ///     values.
+        /// Returns an Int32 with a random value across the entire range of possible values.
         /// </summary>
         public static int NextInt32(this Random @this)
         {

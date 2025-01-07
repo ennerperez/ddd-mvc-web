@@ -26,143 +26,27 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public bool IsEmailConfirmed { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
@@ -260,72 +144,14 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public class InputModel
         {
             /// <summary>
-            ///     This
-            ///     API
-            ///     supports
-            ///     the
-            ///     ASP.NET
-            ///     Core
-            ///     Identity
-            ///     default
-            ///     UI
-            ///     infrastructure
-            ///     and
-            ///     is
-            ///     not
-            ///     intended
-            ///     to
-            ///     be
-            ///     used
-            ///     directly
-            ///     from
-            ///     your
-            ///     code.
-            ///     This
-            ///     API
-            ///     may
-            ///     change
-            ///     or
-            ///     be
-            ///     removed
-            ///     in
-            ///     future
-            ///     releases.
+            /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+            /// This API may change or be removed in future releases.
             /// </summary>
             [Required]
             [EmailAddress]

@@ -24,7 +24,7 @@
         <PackageReference Condition="'$(UsingAzureKeyVault)' == 'true'" Include="Azure.Identity" Version="1.10.4"/>
         <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="Auth0.ManagementApi" Version="7.24.0"/>
         <PackageReference Condition="'$(UsingAuth0)' == 'true'" Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3"/>
-        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="QuestPDF" Version="2024.12.1" />
+        <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="QuestPDF" Version="2024.12.2" />
         <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
         <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.116.1" />
         <PackageReference Condition="'$(UsingQuestPDF)' == 'true'" Include="HarfBuzzSharp.NativeAssets.Linux" Version="8.3.0.1" />

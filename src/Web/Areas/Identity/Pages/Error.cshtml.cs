@@ -46,107 +46,17 @@ namespace Web.Areas.Identity.Pages
     public class ErrorModel : PageModel
     {
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string RequestId { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public void OnGet() => RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
     }

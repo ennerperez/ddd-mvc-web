@@ -34,179 +34,34 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public string SharedKey { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public string AuthenticatorUri { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [TempData]
         public string[] RecoveryCodes { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
@@ -310,72 +165,14 @@ namespace Web.Areas.Identity.Pages.Account.Manage
                 unformattedKey);
 
         /// <summary>
-        ///     This
-        ///     API
-        ///     supports
-        ///     the
-        ///     ASP.NET
-        ///     Core
-        ///     Identity
-        ///     default
-        ///     UI
-        ///     infrastructure
-        ///     and
-        ///     is
-        ///     not
-        ///     intended
-        ///     to
-        ///     be
-        ///     used
-        ///     directly
-        ///     from
-        ///     your
-        ///     code.
-        ///     This
-        ///     API
-        ///     may
-        ///     change
-        ///     or
-        ///     be
-        ///     removed
-        ///     in
-        ///     future
-        ///     releases.
+        /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+        /// This API may change or be removed in future releases.
         /// </summary>
         public class InputModel
         {
             /// <summary>
-            ///     This
-            ///     API
-            ///     supports
-            ///     the
-            ///     ASP.NET
-            ///     Core
-            ///     Identity
-            ///     default
-            ///     UI
-            ///     infrastructure
-            ///     and
-            ///     is
-            ///     not
-            ///     intended
-            ///     to
-            ///     be
-            ///     used
-            ///     directly
-            ///     from
-            ///     your
-            ///     code.
-            ///     This
-            ///     API
-            ///     may
-            ///     change
-            ///     or
-            ///     be
-            ///     removed
-            ///     in
-            ///     future
-            ///     releases.
+            /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used directly from your code.
+            /// This API may change or be removed in future releases.
             /// </summary>
             [Required]
             [StringLength(7, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

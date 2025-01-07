@@ -16,7 +16,7 @@ namespace Domain.Interfaces
     public interface IEntity<TKey> where TKey : struct, IComparable<TKey>
     {
         /// <summary>
-        ///     Entity key
+        /// Entity key
         /// </summary>
         public TKey Id { get; set; }
     }
