@@ -340,15 +340,17 @@ namespace Microsoft.AspNetCore
             }
 #endif
 #if USING_APIKEY
-            else if (hasApiKeyHeader)
+            if (hasApiKeyHeader)
             {
               return ApiKeyAuthenticationDefaults.AuthenticationScheme;
             }
 #endif
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
 #if USING_OPENID
-            else if (hasOpenId)
+            if (hasOpenId)
+            {
               return OpenIdConnectDefaults.AuthenticationScheme;
+            }
 #endif
 
             return CookieAuthenticationDefaults.AuthenticationScheme;

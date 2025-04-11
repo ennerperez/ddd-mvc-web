@@ -20,10 +20,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
-using QuestPDF;
 using Serilog;
 using Web.Services;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -39,6 +39,7 @@ using System.IO.Compression;
 #if USING_QUESTPDF
 using System.IO;
 using Infrastructure.Services;
+using QuestPDF;
 using QuestPDF.Infrastructure;
 #endif
 #if USING_APIKEY
@@ -79,14 +80,6 @@ using Microsoft.OpenApi.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 #endif
-using System;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Web.Services;
 #if USING_SASS && USING_SASS_WATCH
 using System.Diagnostics;
 #endif
