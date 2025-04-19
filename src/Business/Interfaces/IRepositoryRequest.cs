@@ -22,11 +22,11 @@ namespace Business.Interfaces
         bool IncludeDeleted { get; set; }
     }
 
-    public interface IRepositoryRequestHandler<TRequest, TEntity, TResult> : IRepositoryRequestHandler<TRequest, TEntity, int, TResult>
+    public interface IRepositoryRequestHandler<in TRequest, TEntity, TResult> : IRepositoryRequestHandler<TRequest, TEntity, int, TResult>
         where TRequest : IRepositoryRequest<TEntity, TResult>
         where TEntity : class, IEntity<int>;
 
-    public interface IRepositoryRequestHandler<TRequest, TEntity, TKey, TResult> : IRequestHandler<TRequest, TResult[]>
+    public interface IRepositoryRequestHandler<in TRequest, TEntity, TKey, TResult> : IRequestHandler<TRequest, TResult[]>
         where TRequest : IRepositoryRequest<TEntity, TKey, TResult>
         where TEntity : class, IEntity<TKey>
         where TKey : struct, IComparable<TKey>, IEquatable<TKey>;

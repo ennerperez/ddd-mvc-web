@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Tests.Abstractions.Settings;
-#if USING_SPECFLOW
-using TechTalk.SpecFlow;
+#if USING_REQNROLL
+using Reqnroll;
 #endif
 
 namespace Tests.Abstractions.Interfaces
 {
     public interface IAutomationContext : IAttributeLibrary
-#if USING_SPECFLOW
-        , ISpecFlowContext
+#if USING_REQNROLL
+        , IReqnrollContext
 #endif
     {
         string AutomationType { get; set; }
@@ -18,8 +18,11 @@ namespace Tests.Abstractions.Interfaces
         string ApplicationTarget { get; set; }
         string Priority { get; set; }
 
+        IApplicationFactory ApplicationFactory { get; }
         IAutomationConfiguration AutomationConfiguration { get; }
         ScreenshotConfiguration ScreenshotConfiguration { get; }
+
+        IServiceProvider Container { get; }
 
         bool IsInitialized { get; set; }
 
@@ -34,7 +37,7 @@ namespace Tests.Abstractions.Interfaces
         bool HasExceptions();
         IEnumerable<Exception> GetExceptions();
 
-#if USING_SPECFLOW
+#if USING_REQNROLL
         FeatureContext FeatureContext { get; }
         ScenarioContext ScenarioContext { get; }
 #endif

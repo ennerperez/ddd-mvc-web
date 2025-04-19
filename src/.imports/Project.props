@@ -12,10 +12,4 @@
 
   <Import Project="$(_ImportDirectory)AssemblyInfo.props"/>
 
-  <!-- DefineConstants -->
-  <PropertyGroup>
-    <DefineConstants Condition="'$(BuildConstants)' != ''">$(BuildConstants)$(DefineConstants)</DefineConstants>
-    <DefineConstants Condition="'$(BuildConstants)' == ''">$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
-
 </Project>

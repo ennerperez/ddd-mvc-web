@@ -1,5 +1,4 @@
-﻿#if USING_VAULT
-using System;
+﻿using System;
 using System.Threading;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
@@ -53,4 +52,3 @@ namespace Infrastructure.Services
         }
     }
 }
-#endif

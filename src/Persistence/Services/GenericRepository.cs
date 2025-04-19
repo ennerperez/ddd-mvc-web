@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
@@ -17,7 +16,9 @@ using Persistence.Interfaces;
 #if USING_BULK
 using EFCore.BulkExtensions;
 #endif
-
+// ReSharper disable MemberCanBeProtected.Global
+// ReSharper disable CanSimplifyIsAssignableFrom
+// ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable RedundantCast
 // ReSharper disable AssignNullToNotNullAttribute
@@ -33,8 +34,8 @@ namespace Persistence.Services
 
     public abstract class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {
-        protected DbContext _dbContext;
-        protected DbSet<TEntity> _dbSet;
+        private readonly DbContext _dbContext;
+        protected readonly DbSet<TEntity> DbSet;
         protected readonly ILogger Logger;
         protected readonly IConfiguration Configuration;
 
@@ -48,24 +49,28 @@ namespace Persistence.Services
 
         private static Expression<Func<TEntity, bool>> PreparePredicate(Expression<Func<TEntity, bool>> predicate = null)
         {
-            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
+            if (!typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                if (predicate == null)
-                {
-                    predicate = m => (m as ISoftDelete).IsDeleted == false;
-                }
-                else
-                {
-                    var prop = typeof(TEntity).GetProperty("IsDeleted");
-                    var type = prop?.PropertyType;
-                    var constant = Expression.Constant(false);
-                    var methodInfo = type?.GetMethod("Equals", new[] { type });
-                    var member = Expression.Property(predicate.Parameters[0], prop);
-                    var callExp = Expression.Call(member, methodInfo, constant);
-                    var body = Expression.AndAlso(callExp, predicate.Body);
-                    var lambda = Expression.Lambda<Func<TEntity, bool>>(body, predicate.Parameters[0]);
-                    predicate = lambda;
-                }
+                return predicate;
+            }
+
+            if (predicate == null)
+            {
+                predicate = m => (m as ISoftDelete).IsDeleted == false;
+            }
+            else
+            {
+                var prop = typeof(TEntity).GetProperty("IsDeleted");
+                var type = prop?.PropertyType;
+                var constant = Expression.Constant(false);
+                var methodInfo = type?.GetMethod("Equals", [
+                    type
+                ]);
+                var member = Expression.Property(predicate.Parameters[0], prop);
+                var callExp = Expression.Call(member, methodInfo, constant);
+                var body = Expression.AndAlso(callExp, predicate.Body);
+                var lambda = Expression.Lambda<Func<TEntity, bool>>(body, predicate.Parameters[0]);
+                predicate = lambda;
             }
 
             return predicate;
@@ -74,7 +79,7 @@ namespace Persistence.Services
         protected GenericRepository(DbContext context, ILoggerFactory logger, IConfiguration configuration)
         {
             _dbContext = context;
-            _dbSet = _dbContext.Set<TEntity>();
+            DbSet = _dbContext.Set<TEntity>();
             Logger = logger.CreateLogger(GetType());
 #if USING_BULK
             MinRowsToBulk = ushort.Parse(configuration["RepositorySettings:MinRowsToBulk"] ?? "1000");
@@ -96,7 +101,7 @@ namespace Persistence.Services
             bool includeDeleted = false,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -133,16 +138,16 @@ namespace Persistence.Services
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
             }
 
-            var stprop = _dbSet.EntityType.GetProperties()
+            var stprop = DbSet.EntityType.GetProperties()
                 .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
-            if (skip != null && skip <= 0)
+            if (skip is <= 0)
             {
                 skip = null;
             }
 
-            if (take != null && take <= 0)
+            if (take is <= 0)
             {
                 take = null;
             }
@@ -172,15 +177,15 @@ namespace Persistence.Services
             bool includeDeleted = false,
             CancellationToken cancellationToken = default)
         {
-            var searchs = criteria.Split(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+            var searchs = criteria.Split(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
             var args = Array.Empty<MemberExpression>();
 
             Expression searchPredicate = null;
-            if (selector != null && selector.Body is NewExpression expression1)
+            if (selector is { Body: NewExpression expression1 })
             {
                 args = expression1.Arguments.OfType<MemberExpression>().ToArray();
             }
-            else if (selector != null && selector.Body is MemberInitExpression expression2)
+            else if (selector is { Body: MemberInitExpression expression2 })
             {
                 args = expression2.Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
             }
@@ -191,18 +196,18 @@ namespace Persistence.Services
                 {
                     return expression2;
                 }
-
-                if (me.Expression is MemberExpression expression3)
+                else if (me.Expression is MemberExpression expression3)
                 {
                     return NestedMember(expression3);
                 }
-
-                return null;
+                else
+                {
+                    return null;
+                }
             }
 
             var parameter = NestedMember(args.First());
 
-            ConstantExpression constant;
             foreach (var search in searchs)
             {
                 foreach (var item in args)
@@ -218,21 +223,30 @@ namespace Persistence.Services
                         // ignore
                     }
 
-                    if (value != null && value != type.GetDefault())
+                    if (value == null || value == type.GetDefault())
                     {
-                        constant = Expression.Constant(value);
-                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
-                        foreach (var method in methods)
+                        continue;
+                    }
+
+                    ConstantExpression constant = Expression.Constant(value);
+                    var methods = new[]
+                    {
+                        "Contains", "IndexOf", "Equals", "CompareTo"
+                    };
+                    foreach (var method in methods)
+                    {
+                        var methodInfo = type.GetMethod(method, [
+                            type
+                        ]);
+                        if (methodInfo == null)
                         {
-                            var methodInfo = type.GetMethod(method, new[] { type });
-                            if (methodInfo != null)
-                            {
-                                var member = item;
-                                var callExp = Expression.Call(member, methodInfo, constant);
-                                searchPredicate = searchPredicate == null ? (Expression)callExp : Expression.OrElse(searchPredicate, callExp);
-                                break;
-                            }
+                            continue;
                         }
+
+                        var member = item;
+                        var callExp = Expression.Call(member, methodInfo, constant);
+                        searchPredicate = searchPredicate == null ? (Expression)callExp : Expression.OrElse(searchPredicate, callExp);
+                        break;
                     }
                 }
             }
@@ -243,7 +257,7 @@ namespace Persistence.Services
                 expression = Expression.Lambda<Func<TEntity, bool>>(searchPredicate, parameter);
             }
 
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -285,16 +299,16 @@ namespace Persistence.Services
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
             }
 
-            var stprop = _dbSet.EntityType.GetProperties()
+            var stprop = DbSet.EntityType.GetProperties()
                 .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
-            if (skip != null && skip <= 0)
+            if (skip is <= 0)
             {
                 skip = null;
             }
 
-            if (take != null && take <= 0)
+            if (take is <= 0)
             {
                 take = null;
             }
@@ -318,10 +332,10 @@ namespace Persistence.Services
             predicate = PreparePredicate(predicate);
             if (predicate != null)
             {
-                return await _dbSet.CountAsync(predicate, cancellationToken);
+                return await DbSet.CountAsync(predicate, cancellationToken);
             }
 
-            return await _dbSet.CountAsync(cancellationToken);
+            return await DbSet.CountAsync(cancellationToken);
         }
 
         public virtual async Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate = null,
@@ -330,10 +344,10 @@ namespace Persistence.Services
             predicate = PreparePredicate(predicate);
             if (predicate != null)
             {
-                return await _dbSet.LongCountAsync(predicate, cancellationToken);
+                return await DbSet.LongCountAsync(predicate, cancellationToken);
             }
 
-            return await _dbSet.LongCountAsync(cancellationToken);
+            return await DbSet.LongCountAsync(cancellationToken);
         }
 
         public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null,
@@ -342,10 +356,10 @@ namespace Persistence.Services
             predicate = PreparePredicate(predicate);
             if (predicate != null)
             {
-                return await _dbSet.AnyAsync(predicate, cancellationToken);
+                return await DbSet.AnyAsync(predicate, cancellationToken);
             }
 
-            return await _dbSet.AnyAsync(cancellationToken);
+            return await DbSet.AnyAsync(cancellationToken);
         }
 
         public virtual async Task CreateAsync(TEntity[] entities, CancellationToken cancellationToken = default)
@@ -357,7 +371,7 @@ namespace Persistence.Services
 #if USING_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
-                    await _dbSet.AddRangeAsync(entities, cancellationToken);
+                    await DbSet.AddRangeAsync(entities, cancellationToken);
                 }
                 else
                 {
@@ -365,14 +379,14 @@ namespace Persistence.Services
                     var parts = entities.Split(size);
                     foreach (var item in parts)
                     {
-                        await _dbSet.AddRangeAsync(item, cancellationToken);
+                        await DbSet.AddRangeAsync(item, cancellationToken);
                         await _dbContext.SaveChangesAsync(cancellationToken);
                     }
 
                     return;
                 }
 #else
-                await _dbSet.AddRangeAsync(entities, cancellationToken);
+                await DbSet.AddRangeAsync(entities, cancellationToken);
 #endif
             }
 #if USING_BULK
@@ -386,7 +400,7 @@ namespace Persistence.Services
 
         public virtual async Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await _dbSet.AddAsync(entity, cancellationToken);
+            await DbSet.AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -399,7 +413,7 @@ namespace Persistence.Services
 #if USING_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
-                    _dbSet.UpdateRange(entities);
+                    DbSet.UpdateRange(entities);
                 }
                 else
                 {
@@ -407,14 +421,14 @@ namespace Persistence.Services
                     var parts = entities.Split(size);
                     foreach (var item in parts)
                     {
-                        _dbSet.UpdateRange(item);
+                        DbSet.UpdateRange(item);
                         await _dbContext.SaveChangesAsync(cancellationToken);
                     }
 
                     return;
                 }
 #else
-                _dbSet.UpdateRange(entities);
+                DbSet.UpdateRange(entities);
 #endif
             }
 #if USING_BULK
@@ -428,7 +442,7 @@ namespace Persistence.Services
 
         public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            _dbSet.Update(entity);
+            DbSet.Update(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -478,17 +492,15 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
                 foreach (var entity in list.Cast<ISoftDelete>())
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
-                    if (entity != null && !((ISoftDelete)entity).IsDeleted)
+                    if (entity == null || ((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
-                        ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
-                        ((ISoftDelete)entity).DeletedAt = DateTime.Now;
+                        continue;
                     }
+
+                    ((ISoftDelete)entity).IsDeleted = true;
+                    ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                 }
 
                 await UpdateAsync(list.ToArray(), cancellationToken);
@@ -499,7 +511,7 @@ namespace Persistence.Services
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
             {
-                _dbSet.RemoveRange(list);
+                DbSet.RemoveRange(list);
             }
 #if USING_BULK
             else
@@ -517,12 +529,9 @@ namespace Persistence.Services
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
                     if (!((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                     }
 
@@ -531,7 +540,7 @@ namespace Persistence.Services
                 }
             }
 
-            _dbSet.Remove(entity);
+            DbSet.Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -540,7 +549,9 @@ namespace Persistence.Services
             var list = new List<TEntity>();
             foreach (var item in keys)
             {
-                var entity = await _dbSet.FindAsync(new object[] { item }, cancellationToken);
+                var entity = await DbSet.FindAsync([
+                    item
+                ], cancellationToken: cancellationToken);
                 if (entity != null)
                 {
                     list.Add(entity);
@@ -549,17 +560,15 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
                 foreach (var entity in list.Cast<ISoftDelete>())
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
-                    if (entity != null && !((ISoftDelete)entity).IsDeleted)
+                    if (entity == null || ((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
-                        ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
-                        ((ISoftDelete)entity).DeletedAt = DateTime.Now;
+                        continue;
                     }
+
+                    ((ISoftDelete)entity).IsDeleted = true;
+                    ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                 }
 
                 await UpdateAsync(list.ToArray(), cancellationToken);
@@ -570,7 +579,7 @@ namespace Persistence.Services
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
             {
-                _dbSet.RemoveRange(list);
+                DbSet.RemoveRange(list);
             }
 #if USING_BULK
             else
@@ -584,17 +593,16 @@ namespace Persistence.Services
 
         public virtual async Task DeleteAsync<T>(T key, CancellationToken cancellationToken = default) where T : struct, IComparable<T>, IEquatable<T>
         {
-            var entity = await _dbSet.FindAsync(new object[] { key }, cancellationToken);
+            var entity = await DbSet.FindAsync([
+                key
+            ], cancellationToken: cancellationToken);
             if (entity != null)
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
                     if (!((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                     }
 
@@ -603,7 +611,7 @@ namespace Persistence.Services
                 }
             }
 
-            _dbSet.Remove(entity);
+            DbSet.Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -619,7 +627,7 @@ namespace Persistence.Services
             bool includeDeleted = false,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -670,7 +678,7 @@ namespace Persistence.Services
             bool includeDeleted = false,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -724,7 +732,7 @@ namespace Persistence.Services
             bool ignoreQueryFilters = false,
             bool includeDeleted = false)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -761,16 +769,16 @@ namespace Persistence.Services
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
             }
 
-            var stprop = _dbSet.EntityType.GetProperties()
+            var stprop = DbSet.EntityType.GetProperties()
                 .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
-            if (skip != null && skip <= 0)
+            if (skip is <= 0)
             {
                 skip = null;
             }
 
-            if (take != null && take <= 0)
+            if (take is <= 0)
             {
                 take = null;
             }
@@ -803,24 +811,24 @@ namespace Persistence.Services
             var args = Array.Empty<MemberExpression>();
 
             Expression searchPredicate = null;
-            if (selector != null && selector.Body is NewExpression)
+            if (selector is { Body: NewExpression newExpression })
             {
-                args = ((NewExpression)selector.Body).Arguments.OfType<MemberExpression>().ToArray();
+                args = newExpression.Arguments.OfType<MemberExpression>().ToArray();
             }
-            else if (selector != null && selector.Body is MemberInitExpression)
+            else if (selector is { Body: MemberInitExpression initExpression })
             {
-                args = ((MemberInitExpression)selector.Body).Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
+                args = initExpression.Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
             }
 
             ParameterExpression NestedMember(MemberExpression me)
             {
-                if (me.Expression is ParameterExpression)
+                if (me.Expression is ParameterExpression meExpression)
                 {
-                    return (ParameterExpression)me.Expression;
+                    return meExpression;
                 }
-                else if (me.Expression is MemberExpression)
+                else if (me.Expression is MemberExpression memberExpression)
                 {
-                    return NestedMember((MemberExpression)me.Expression);
+                    return NestedMember(memberExpression);
                 }
                 else
                 {
@@ -830,7 +838,6 @@ namespace Persistence.Services
 
             var parameter = NestedMember(args.First());
 
-            ConstantExpression constant;
             foreach (var search in searchs)
             {
                 foreach (var item in args)
@@ -848,17 +855,11 @@ namespace Persistence.Services
 
                     if (value != null && value != type.GetDefault())
                     {
-                        constant = Expression.Constant(value);
-                        var methods = new[]
-                        {
-                            "Contains", "IndexOf", "Equals", "CompareTo"
-                        };
+                        ConstantExpression constant = Expression.Constant(value);
+                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
                         foreach (var method in methods)
                         {
-                            var methodInfo = type.GetMethod(method, new[]
-                            {
-                                type
-                            });
+                            var methodInfo = type.GetMethod(method, [type]);
                             if (methodInfo != null)
                             {
                                 var member = item;
@@ -877,7 +878,7 @@ namespace Persistence.Services
                 expression = Expression.Lambda<Func<TEntity, bool>>(searchPredicate, parameter);
             }
 
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -919,16 +920,16 @@ namespace Persistence.Services
                 query = query.Where(m => (m as ISoftDelete).IsDeleted == false);
             }
 
-            var stprop = _dbSet.EntityType.GetProperties()
+            var stprop = DbSet.EntityType.GetProperties()
                 .FirstOrDefault(m => m.ClrType == typeof(string) || (!typeof(IEnumerable).IsAssignableFrom(m.ClrType) && !m.ClrType.IsClass))?.Name;
             var result = orderBy != null ? orderBy(query).Select(selector) : !string.IsNullOrWhiteSpace(stprop) ? query.OrderBy(stprop).Select(selector) : query.Select(selector);
 
-            if (skip != null && skip <= 0)
+            if (skip is <= 0)
             {
                 skip = null;
             }
 
-            if (take != null && take <= 0)
+            if (take is <= 0)
             {
                 take = null;
             }
@@ -951,10 +952,10 @@ namespace Persistence.Services
             predicate = PreparePredicate(predicate);
             if (predicate != null)
             {
-                return _dbSet.Count(predicate);
+                return DbSet.Count(predicate);
             }
 
-            return _dbSet.Count();
+            return DbSet.Count();
         }
 
         public virtual long LongCount(Expression<Func<TEntity, bool>> predicate = null)
@@ -962,10 +963,10 @@ namespace Persistence.Services
             predicate = PreparePredicate(predicate);
             if (predicate != null)
             {
-                return _dbSet.LongCount(predicate);
+                return DbSet.LongCount(predicate);
             }
 
-            return _dbSet.LongCount();
+            return DbSet.LongCount();
         }
 
         public virtual bool Any(Expression<Func<TEntity, bool>> predicate = null)
@@ -973,10 +974,10 @@ namespace Persistence.Services
             predicate = PreparePredicate(predicate);
             if (predicate != null)
             {
-                return _dbSet.Any(predicate);
+                return DbSet.Any(predicate);
             }
 
-            return _dbSet.Any();
+            return DbSet.Any();
         }
 
         public virtual void Create(params TEntity[] entities)
@@ -988,7 +989,7 @@ namespace Persistence.Services
 #if USING_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
-                    _dbSet.AddRange(entities);
+                    DbSet.AddRange(entities);
                 }
                 else
                 {
@@ -996,14 +997,14 @@ namespace Persistence.Services
                     var parts = entities.Split(size);
                     foreach (var item in parts)
                     {
-                        _dbSet.AddRange(item);
+                        DbSet.AddRange(item);
                         _dbContext.SaveChanges();
                     }
 
                     return;
                 }
 #else
-                _dbSet.AddRange(entities);
+                DbSet.AddRange(entities);
 #endif
             }
 #if USING_BULK
@@ -1018,7 +1019,7 @@ namespace Persistence.Services
 
         public virtual void Create(TEntity entity)
         {
-            _dbSet.Add(entity);
+            DbSet.Add(entity);
             _dbContext.SaveChanges();
         }
 
@@ -1031,7 +1032,7 @@ namespace Persistence.Services
 #if USING_SPLIT
                 if (entities.Length < MinRowsToSplit || MinRowsToSplit == 0)
                 {
-                    _dbSet.UpdateRange(entities);
+                    DbSet.UpdateRange(entities);
                 }
                 else
                 {
@@ -1039,14 +1040,14 @@ namespace Persistence.Services
                     var parts = entities.Split(size);
                     foreach (var item in parts)
                     {
-                        _dbSet.UpdateRange(item);
+                        DbSet.UpdateRange(item);
                         _dbContext.SaveChanges();
                     }
 
                     return;
                 }
 #else
-                _dbSet.UpdateRange(entities);
+                DbSet.UpdateRange(entities);
 #endif
             }
 #if USING_BULK
@@ -1061,7 +1062,7 @@ namespace Persistence.Services
 
         public virtual void Update(TEntity entity)
         {
-            _dbSet.Update(entity);
+            DbSet.Update(entity);
             _dbContext.SaveChanges();
         }
 
@@ -1070,6 +1071,7 @@ namespace Persistence.Services
 #if USING_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
+            {
                 foreach (var item in entities)
                 {
                     if (item.Id.Equals(default))
@@ -1081,6 +1083,7 @@ namespace Persistence.Services
                         Update(item);
                     }
                 }
+            }
 #if USING_BULK
             else
             {
@@ -1109,15 +1112,11 @@ namespace Persistence.Services
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
                 foreach (var entity in list.Cast<ISoftDelete>())
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
                     if (entity != null && !((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                     }
                 }
@@ -1129,7 +1128,9 @@ namespace Persistence.Services
 #if USING_BULK
             if (entities.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
-                _dbSet.RemoveRange(list);
+            {
+                DbSet.RemoveRange(list);
+            }
 #if USING_BULK
             else
             {
@@ -1146,12 +1147,9 @@ namespace Persistence.Services
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
                     if (!((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                     }
 
@@ -1166,27 +1164,15 @@ namespace Persistence.Services
 
         public virtual void Delete<T>(T[] keys) where T : struct, IComparable<T>, IEquatable<T>
         {
-            var list = new List<TEntity>();
-            foreach (var item in keys)
-            {
-                var entity = _dbSet.Find(item);
-                if (entity != null)
-                {
-                    list.Add(entity);
-                }
-            }
+            var list = Enumerable.Select(keys, item => DbSet.Find(item)).Where(entity => entity != null).ToList();
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
                 foreach (var entity in list.Cast<ISoftDelete>())
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
                     if (entity != null && !((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                     }
                 }
@@ -1198,7 +1184,9 @@ namespace Persistence.Services
 #if USING_BULK
             if (keys.Length < MinRowsToBulk || MinRowsToBulk == 0)
 #endif
-                _dbSet.RemoveRange(list);
+            {
+                DbSet.RemoveRange(list);
+            }
 #if USING_BULK
             else
             {
@@ -1211,17 +1199,14 @@ namespace Persistence.Services
 
         public virtual void Delete<T>(T key) where T : struct, IComparable<T>, IEquatable<T>
         {
-            var entity = _dbSet.Find(key);
+            var entity = DbSet.Find(key);
             if (entity != null)
             {
                 if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
                 {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
                     if (!((ISoftDelete)entity).IsDeleted)
                     {
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).IsDeleted = true;
-                        // ReSharper disable once SuspiciousTypeConversion.Global
                         ((ISoftDelete)entity).DeletedAt = DateTime.Now;
                     }
 
@@ -1245,7 +1230,7 @@ namespace Persistence.Services
             bool ignoreQueryFilters = false,
             bool includeDeleted = false)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {
@@ -1295,7 +1280,7 @@ namespace Persistence.Services
             bool ignoreQueryFilters = false,
             bool includeDeleted = false)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (include == null && typeof(IDefaultRepository<TEntity>).IsAssignableFrom(GetType()))
             {

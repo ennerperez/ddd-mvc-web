@@ -1,13 +1,13 @@
-#if USING_SPECFLOW
+#if USING_REQNROLL
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Tests.Abstractions.Interfaces;
 
 namespace Tests.Abstractions.Settings
 {
-    public class SpecFlowConfiguration : IAutomationConfiguration
+    public class ReqnrollConfiguration : IAutomationConfiguration
     {
-        public SpecFlowConfiguration(IConfiguration configuration)
+        public ReqnrollConfiguration(IConfiguration configuration)
         {
             RequiredTags = new List<string>();
             RequiredTagPrefixes = new List<string>();

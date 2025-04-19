@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Persistence.Interfaces
 {
-    public interface IGenericRepository<TEntity> : IGenericRepository<TEntity, int> where TEntity : class, IEntity<int>;
+    public interface IGenericRepository<TEntity> : IGenericRepository<TEntity, int> where TEntity : class, IEntity<int>
+    {
+    }
 
     public interface IGenericRepository<TEntity, TKey> where TEntity : class, IEntity<TKey> where TKey : struct, IComparable<TKey>, IEquatable<TKey>
     {

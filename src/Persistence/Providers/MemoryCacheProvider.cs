@@ -16,8 +16,6 @@ namespace Persistence.Providers
         private Dictionary<string, object> _cache;
         private Dictionary<string, DateTime> _expires;
 
-        private bool _isTimerRunning;
-
         public MemoryCacheProvider(IConfiguration configuration)
         {
             _cache = new Dictionary<string, object>();
@@ -28,24 +26,44 @@ namespace Persistence.Providers
             _timer.Start();
         }
 
+        private bool _isTimerRunning;
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_isTimerRunning)
+            {
+                return;
+            }
+
+            _isTimerRunning = true;
+            foreach (var key in _expires.Where(m => DateTime.Now > m.Value))
+            {
+                InvalidateCache(key.Key);
+            }
+
+            _isTimerRunning = false;
+        }
+
         public T GetObjectFromCache<T>(string key, Func<T> nullValueCallback, long? expires = null) where T : class
         {
             try
             {
-                if (_cache.TryGetValue(key, out var value))
+                if (!_cache.TryGetValue(key, out var value))
                 {
-                    var date = _expires[key];
-                    if (DateTime.Now > date)
+                    return AddToCache(key, nullValueCallback(), expires);
+                }
+
+                var date = _expires[key];
+                if (DateTime.Now > date)
+                {
+                    InvalidateCache(key);
+                }
+                else
+                {
+                    var data = (T)value;
+                    if (data != null)
                     {
-                        InvalidateCache(key);
-                    }
-                    else
-                    {
-                        var data = (T)value;
-                        if (data != null)
-                        {
-                            return data;
-                        }
+                        return data;
                     }
                 }
 
@@ -61,20 +79,22 @@ namespace Persistence.Providers
         {
             try
             {
-                if (_cache.TryGetValue(key, out var value))
+                if (!_cache.TryGetValue(key, out var value))
                 {
-                    var date = _expires[key];
-                    if (DateTime.Now > date)
+                    return await AddToCacheAsync(key, nullValueCallback(), expires);
+                }
+
+                var date = _expires[key];
+                if (DateTime.Now > date)
+                {
+                    InvalidateCache(key);
+                }
+                else
+                {
+                    var data = (T)value;
+                    if (data != null)
                     {
-                        InvalidateCache(key);
-                    }
-                    else
-                    {
-                        var data = (T)value;
-                        if (data != null)
-                        {
-                            return data;
-                        }
+                        return data;
                     }
                 }
 
@@ -114,7 +134,9 @@ namespace Persistence.Providers
         }
 
         public bool KeyExists(string key)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public void InvalidateCache(string key)
         {
@@ -150,28 +172,8 @@ namespace Persistence.Providers
         }
 
         public void InvalidateCachePattern(string pattern)
-            => throw new NotImplementedException();
-
-        public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
-        {
-            if (_isTimerRunning)
-            {
-                return;
-            }
-
-            _isTimerRunning = true;
-            foreach (var key in _expires.Where(m => DateTime.Now > m.Value))
-            {
-                InvalidateCache(key.Key);
-            }
-
-            _isTimerRunning = false;
+            throw new NotImplementedException();
         }
 
         private Task<T> AddToCacheAsync<T>(string key, T value, long? expires = null)
@@ -191,13 +193,21 @@ namespace Persistence.Providers
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing)
             {
-                _cache = null;
-                _expires = null;
-                _timer.Stop();
-                _timer.Dispose();
+                return;
             }
+
+            _cache = null;
+            _expires = null;
+            _timer.Stop();
+            _timer.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~MemoryCacheProvider()

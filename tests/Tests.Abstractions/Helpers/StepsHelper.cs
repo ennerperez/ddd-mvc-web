@@ -1,18 +1,20 @@
-#if USING_SPECFLOW
+#if USING_REQNROLL
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TechTalk.SpecFlow;
+using Gherkin;
+using Reqnroll;
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Resources;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Tests.Abstractions.Helpers
 {
     public class StepsHelper : IStepHelper
     {
-        protected readonly IAutomationConfiguration _automationConfigurations;
-        protected readonly IAutomationContext _automationContext;
+        private readonly IAutomationConfiguration _automationConfigurations;
+        private readonly IAutomationContext _automationContext;
 
         public StepsHelper(IAutomationContext automationContext, IAutomationConfiguration automationConfigurations)
         {
@@ -23,7 +25,7 @@ namespace Tests.Abstractions.Helpers
         }
 
         public IAutomationContext AutomationContext => _automationContext;
-        public IAutomationConfiguration AutomationConfigurations => _automationConfigurations;
+        public IAutomationConfiguration AutomationConfiguration => _automationConfigurations;
 
         public virtual void CaptureTakeScreenshot(object driver, string method = "", bool trace = false)
             => throw new NotImplementedException();
@@ -70,7 +72,7 @@ namespace Tests.Abstractions.Helpers
             return result;
         }
 
-        public static List<string> GetColumnValuesFromTable(string columnName, Table dataTable) => new(dataTable.Rows.Select(m => m[columnName]).ToArray());
+        public static List<string> GetColumnValuesFromTable(string columnName, Table dataTable) => [..dataTable.Rows.Select(m => m[columnName]).ToArray()];
 
         public static List<string> GetUniqueColumnValuesFromTable(string columnName, Table dataTable) => GetColumnValuesFromTable(columnName, dataTable).Distinct().ToList();
 
@@ -93,7 +95,7 @@ namespace Tests.Abstractions.Helpers
         {
             var regEx = new Regex(@$"{substring}\((.*)\)", RegexOptions.Compiled);
             var tags = stringArray.Select(t => regEx.Match(t)).Where(p => p.Success).ToArray();
-            return tags.Any() ? tags.First().Groups[1].Value : null;
+            return tags.Length != 0 ? tags.First().Groups[1].Value : null;
         }
 
         public static bool IsSubstringFoundInStringArray(string substring, string[] stringArray) => stringArray.Any(m => m.Contains(substring));
@@ -102,26 +104,13 @@ namespace Tests.Abstractions.Helpers
 
         public void ThrowExceptionIfRequiredTagsAreNotInPlace()
         {
-            var delimitedListOfMissingRequiredTags = "*";
-            foreach (var requiredTagPrefix in _automationConfigurations.RequiredTagPrefixes)
-            {
-                if (!DoesScenarioOrFeatureContainTagPrefix(requiredTagPrefix))
-                {
-                    delimitedListOfMissingRequiredTags += ", " + requiredTagPrefix;
-                }
-            }
+            var delimitedListOfMissingRequiredTags = _automationConfigurations.RequiredTagPrefixes.Where(requiredTagPrefix => !DoesScenarioOrFeatureContainTagPrefix(requiredTagPrefix)).Aggregate("*", (current, requiredTagPrefix) => current + (", " + requiredTagPrefix));
 
-            foreach (var requiredTag in _automationConfigurations.RequiredTags)
-            {
-                if (!DoesScenarioOrFeatureContainTag(requiredTag))
-                {
-                    delimitedListOfMissingRequiredTags += ", " + requiredTag;
-                }
-            }
+            delimitedListOfMissingRequiredTags = _automationConfigurations.RequiredTags.Where(requiredTag => !DoesScenarioOrFeatureContainTag(requiredTag)).Aggregate(delimitedListOfMissingRequiredTags, (current, requiredTag) => current + (", " + requiredTag));
 
             if (delimitedListOfMissingRequiredTags.Length > 1)
             {
-                throw new Exception($"Not all of the required Tags or Tag Prefixes have been placed in the Feature. Please ensure the following Tags or Tag Prefixes exist: {delimitedListOfMissingRequiredTags.Replace("*, ", "")}");
+                throw new InvalidTagException($"Not all of the required Tags or Tag Prefixes have been placed in the Feature. Please ensure the following Tags or Tag Prefixes exist: {delimitedListOfMissingRequiredTags.Replace("*, ", "")}");
             }
         }
 
@@ -143,19 +132,21 @@ namespace Tests.Abstractions.Helpers
         {
             ThrowExceptionIfRequiredTagsAreNotInPlace();
 
-            if (!AutomationContext.IsInitialized)
+            if (AutomationContext.IsInitialized)
             {
-                AutomationContext.AutomationType = GetTagParameterForTagPrefix(Keywords.AutomationType);
-                AutomationContext.PlatformTarget = GetTagParameterForTagPrefix(Keywords.PlatformTarget);
-                AutomationContext.ApplicationTarget = GetTagParameterForTagPrefix(Keywords.ApplicationTarget);
-                AutomationContext.EnvironmentTarget = DetermineEnvironmentTarget();
-                AutomationContext.Priority = GetTagParameterForTagPrefix(Keywords.Priority);
-
-                AutomationContext.TestPlanTarget = GetTagParameterForTagPrefix(Keywords.TestPlan);
-                AutomationContext.TestSuiteTarget = GetTagParameterForTagPrefix(Keywords.TestSuite);
-                AutomationContext.TestCaseTarget = GetTagParameterForTagPrefix(Keywords.TestCase);
-                AutomationContext.IsInitialized = true;
+                return;
             }
+
+            this.AutomationContext.AutomationType = GetTagParameterForTagPrefix(Keywords.AutomationType);
+            this.AutomationContext.PlatformTarget = GetTagParameterForTagPrefix(Keywords.PlatformTarget);
+            this.AutomationContext.ApplicationTarget = GetTagParameterForTagPrefix(Keywords.ApplicationTarget);
+            this.AutomationContext.EnvironmentTarget = DetermineEnvironmentTarget();
+            this.AutomationContext.Priority = GetTagParameterForTagPrefix(Keywords.Priority);
+
+            this.AutomationContext.TestPlanTarget = GetTagParameterForTagPrefix(Keywords.TestPlan);
+            this.AutomationContext.TestSuiteTarget = GetTagParameterForTagPrefix(Keywords.TestSuite);
+            this.AutomationContext.TestCaseTarget = GetTagParameterForTagPrefix(Keywords.TestCase);
+            this.AutomationContext.IsInitialized = true;
         }
     }
 }

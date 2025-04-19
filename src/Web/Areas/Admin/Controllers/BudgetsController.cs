@@ -65,22 +65,15 @@ namespace Web.Areas.Admin.Controllers
             var definition = _documentService.Compose<BudgetDocument>(model);
             definition.Title = title;
             definition.FileName = $"{definition.Title}.{format}";
-            var report = _documentService.Generate(definition, format);
+            var report = await _documentService.GenerateAsync(definition, format);
 
-            var contentType = string.Empty;
-            switch (format)
+            var contentType = format switch
             {
-                case "pdf":
-                    contentType = MediaTypeNames.Application.Pdf;
-                    break;
-            }
+                "pdf" => MediaTypeNames.Application.Pdf,
+                _ => string.Empty
+            };
 
-            if (download)
-            {
-                return File(report, contentType, definition.FileName);
-            }
-
-            return File(report, contentType);
+            return download ? File(report, contentType, definition.FileName) : File(report, contentType);
         }
     }
 }

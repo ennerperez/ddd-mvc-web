@@ -18,13 +18,13 @@ namespace Web.Areas.Admin.Controllers
             var clients = await Repository<Client>().CountAsync();
             var budgets = await Repository<Budget, Guid>().CountAsync();
 
-            // var clients = await Mediator.SendWithRepository<Client>(s => new Client() {Id = s.Id});
-            // var budgets = await Mediator.SendWithRepository<Budget, Guid>(s => new Budget() {Id = s.Id});
+            // var clients = await Mediator.SendWithRepositoryAsync<Client>(s => new Client() {Id = s.Id});
+            // var budgets = await Mediator.SendWithRepositoryAsync<Budget, Guid>(s => new Budget() {Id = s.Id});
 
             var clientCounter = new DashboardCounterViewModel { DisplayName = "Clients", Counter = clients };
             var budgetCounter = new DashboardCounterViewModel { DisplayName = "Budgets", Counter = budgets };
 
-            var model = new DashboardViewModel { Counters = new[] { clientCounter, budgetCounter } };
+            var model = new DashboardViewModel { Counters = [clientCounter, budgetCounter] };
 
             return View(model);
         }

@@ -118,7 +118,7 @@ namespace Web.Services
                 return _httpContext.HttpContext.User.FindAll(claimType).Select(m => m.Value).ToArray();
             }
 
-            return Array.Empty<string>();
+            return [];
         }
     }
 }

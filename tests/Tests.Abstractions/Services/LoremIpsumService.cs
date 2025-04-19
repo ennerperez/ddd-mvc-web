@@ -7,11 +7,11 @@ namespace Tests.Abstractions.Services
 {
     public class LoremIpsumService
     {
-        public string Text { get; private set; } = @"lorem ipsum amet, pellentesque mattis accumsan maximus etiam mollis ligula non iaculis ornare mauris efficitur ex eu rhoncus aliquam in hac habitasse platea dictumst maecenas ultrices, purus at venenatis auctor, sem nulla urna, molestie nisi mi a ut euismod nibh id libero lacinia, sit amet lacinia lectus viverra donec scelerisque dictum enim, dignissim dolor cursus morbi rhoncus, elementum magna sed, sed velit consectetur adipiscing elit curabitur nulla, eleifend vel, tempor metus phasellus vel pulvinar, lobortis quis, nullam felis orci congue vitae augue nisi, tincidunt id, posuere fermentum facilisis ultricies mi, nisl fusce neque, vulputate integer tortor tempus praesent proin quis nunc massa congue, quam auctor eros placerat eros, leo nec, sapien egestas duis feugiat, vestibulum porttitor, odio sollicitudin arcu, et aenean sagittis ante urna fringilla, risus et, vivamus semper nibh, eget finibus est laoreet justo commodo sagittis, vitae, nunc, diam ac, tellus posuere, condimentum enim tellus, faucibus suscipit ac nec turpis interdum malesuada fames primis quisque pretium ex, feugiat porttitor massa, vehicula dapibus blandit, hendrerit elit, aliquet nam orci, fringilla blandit ullamcorper mauris, ultrices consequat tempor, convallis gravida sodales volutpat finibus, neque pulvinar varius, porta laoreet, eu, ligula, porta, placerat, lacus pharetra erat bibendum leo, tristique cras rutrum at, dui tortor, in, varius arcu interdum, vestibulum, magna, ante, imperdiet erat, luctus odio, non, dui, volutpat, bibendum, quam, euismod, mattis, class aptent taciti sociosqu ad litora torquent per conubia nostra, inceptos himenaeos suspendisse lorem, a, sem, eleifend, commodo, dolor, cursus, luctus, lectus,";
+        private string Text { get; set; } = @"lorem ipsum amet, pellentesque mattis accumsan maximus etiam mollis ligula non iaculis ornare mauris efficitur ex eu rhoncus aliquam in hac habitasse platea dictumst maecenas ultrices, purus at venenatis auctor, sem nulla urna, molestie nisi mi a ut euismod nibh id libero lacinia, sit amet lacinia lectus viverra donec scelerisque dictum enim, dignissim dolor cursus morbi rhoncus, elementum magna sed, sed velit consectetur adipiscing elit curabitur nulla, eleifend vel, tempor metus phasellus vel pulvinar, lobortis quis, nullam felis orci congue vitae augue nisi, tincidunt id, posuere fermentum facilisis ultricies mi, nisl fusce neque, vulputate integer tortor tempus praesent proin quis nunc massa congue, quam auctor eros placerat eros, leo nec, sapien egestas duis feugiat, vestibulum porttitor, odio sollicitudin arcu, et aenean sagittis ante urna fringilla, risus et, vivamus semper nibh, eget finibus est laoreet justo commodo sagittis, vitae, nunc, diam ac, tellus posuere, condimentum enim tellus, faucibus suscipit ac nec turpis interdum malesuada fames primis quisque pretium ex, feugiat porttitor massa, vehicula dapibus blandit, hendrerit elit, aliquet nam orci, fringilla blandit ullamcorper mauris, ultrices consequat tempor, convallis gravida sodales volutpat finibus, neque pulvinar varius, porta laoreet, eu, ligula, porta, placerat, lacus pharetra erat bibendum leo, tristique cras rutrum at, dui tortor, in, varius arcu interdum, vestibulum, magna, ante, imperdiet erat, luctus odio, non, dui, volutpat, bibendum, quam, euismod, mattis, class aptent taciti sociosqu ad litora torquent per conubia nostra, inceptos himenaeos suspendisse lorem, a, sem, eleifend, commodo, dolor, cursus, luctus, lectus,";
 
-        internal static IEnumerable<string> Rearrange(string words) => words.Split(" ").OrderBy(_ => RandomHelper.Random());
+        private static IEnumerable<string> Rearrange(string words) => words.Split(" ").OrderBy(_ => RandomHelper.Random());
 
-        internal IEnumerable<string> WordList(bool includePuncation) => includePuncation ? Rearrange(Text) : Rearrange(Text.Replace(",", ""));
+        private IEnumerable<string> WordList(bool includePunctuation) => includePunctuation ? Rearrange(Text) : Rearrange(Text.Replace(",", ""));
 
         public void Update(string text) => Text = text;
 
@@ -31,17 +31,18 @@ namespace Tests.Abstractions.Services
 
         public static TEnum Enum<TEnum>() where TEnum : struct, IConvertible
         {
-            if (typeof(TEnum).IsEnum)
+            if (!typeof(TEnum).IsEnum)
             {
-                var v = System.Enum.GetValues(typeof(TEnum));
-                return (TEnum)v.GetValue(RandomHelper.Random(v.Length))!;
+                throw new ArgumentException("Generic type must be an enum.");
             }
 
-            throw new ArgumentException("Generic type must be an enum.");
+            var v = System.Enum.GetValues(typeof(TEnum));
+            return (TEnum)v.GetValue(RandomHelper.Random(v.Length))!;
+
         }
 
         /* http://stackoverflow.com/a/6651661/234132 */
-        public static long Number(long min, long max)
+        private static long Number(long min, long max)
         {
             var buf = new byte[8];
             RandomHelper.Instance.NextBytes(buf);
@@ -88,11 +89,11 @@ namespace Tests.Abstractions.Services
 
         #region Text
 
-        public string Email() => string.Format("{0}@{1}.com", Words(1, false), Words(1, false));
+        public string Email() => $"{Words(1, false)}@{Words(1, false)}.com";
 
-        public string Words(int wordCount, bool uppercaseFirstLetter = true, bool includePunctuation = false) => Words(wordCount, wordCount, uppercaseFirstLetter, includePunctuation);
+        private string Words(int wordCount, bool uppercaseFirstLetter = true, bool includePunctuation = false) => Words(wordCount, wordCount, uppercaseFirstLetter, includePunctuation);
 
-        public string Words(int wordCountMin, int wordCountMax, bool uppercaseFirstLetter = true, bool includePunctuation = false)
+        private string Words(int wordCountMin, int wordCountMax, bool uppercaseFirstLetter = true, bool includePunctuation = false)
         {
             var source = string.Join(" ", WordList(includePunctuation).Take(RandomHelper.Instance.Next(wordCountMin, wordCountMax)));
 
@@ -106,17 +107,17 @@ namespace Tests.Abstractions.Services
 
         public string Sentence(int wordCount) => Sentence(wordCount, wordCount);
 
-        public string Sentence(int wordCountMin, int wordCountMax) => string.Format("{0}.", Words(wordCountMin, wordCountMax, true, true)).Replace(",.", ".").Replace("..", "");
+        private string Sentence(int wordCountMin, int wordCountMax) => $"{Words(wordCountMin, wordCountMax, true, true)}.".Replace(",.", ".").Replace("..", "");
 
         public string Paragraph(int wordCount, int sentenceCount) => Paragraph(wordCount, wordCount, sentenceCount, sentenceCount);
 
         public string Paragraph(int wordCountMin, int wordCountMax, int sentenceCount) => Paragraph(wordCountMin, wordCountMax, sentenceCount, sentenceCount);
 
-        public string Paragraph(int wordCountMin, int wordCountMax, int sentenceCountMin, int sentenceCountMax)
+        private string Paragraph(int wordCountMin, int wordCountMax, int sentenceCountMin, int sentenceCountMax)
         {
             var source = string.Join(" ", Enumerable.Range(0, RandomHelper.Instance.Next(sentenceCountMin, sentenceCountMax)).Select(_ => Sentence(wordCountMin, wordCountMax)));
 
-            //remove traililng space
+            //remove trailing space
             return source.Remove(source.Length - 1);
         }
 
@@ -126,7 +127,7 @@ namespace Tests.Abstractions.Services
 
         public IEnumerable<string> Paragraphs(int wordCountMin, int wordCountMax, int sentenceCountMin, int sentenceCountMax, int paragraphCount) => Paragraphs(wordCountMin, wordCountMax, sentenceCountMin, sentenceCountMax, paragraphCount, paragraphCount);
 
-        public IEnumerable<string> Paragraphs(int wordCountMin, int wordCountMax, int sentenceCountMin, int sentenceCountMax, int paragraphCountMin, int paragraphCountMax) => Enumerable.Range(0, RandomHelper.Instance.Next(paragraphCountMin, paragraphCountMax)).Select(_ => Paragraph(wordCountMin, wordCountMax, sentenceCountMin, sentenceCountMax)).ToArray();
+        private string[] Paragraphs(int wordCountMin, int wordCountMax, int sentenceCountMin, int sentenceCountMax, int paragraphCountMin, int paragraphCountMax) => Enumerable.Range(0, RandomHelper.Instance.Next(paragraphCountMin, paragraphCountMax)).Select(_ => Paragraph(wordCountMin, wordCountMax, sentenceCountMin, sentenceCountMax)).ToArray();
 
         #endregion
     }

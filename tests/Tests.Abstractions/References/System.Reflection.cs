@@ -2,42 +2,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-// ReSharper disable once CheckNamespace
-
 namespace System.Reflection
 {
     public class ResourceHelper
     {
         public static string GetResourceLookup(Type resourceType, string resourceName)
         {
-            if (resourceType != null && resourceName != null)
+            if (resourceType == null || resourceName == null)
             {
-                var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("Resource Type Does Not Have Property");
-                if (property.PropertyType != typeof(string))
-                {
-                    throw new InvalidOperationException("Resource Property is Not String Type");
-                }
-
-                return (string)property.GetValue(null, null);
+                return null;
             }
 
-            return null;
+            var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("Resource Type Does Not Have Property");
+            if (property.PropertyType != typeof(string))
+            {
+                throw new InvalidOperationException("Resource Property is Not String Type");
+            }
+
+            return (string)property.GetValue(null, null);
+
         }
 
         public static T GetResourceLookup<T>(Type resourceType, string resourceName)
         {
-            if (resourceType != null && resourceName != null)
+            if (resourceType == null || resourceName == null)
             {
-                var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-                if (property == null)
-                {
-                    return default;
-                }
-
-                return (T)property.GetValue(null, null);
+                return default;
             }
 
-            return default;
+            var property = resourceType.GetProperty(resourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+            if (property == null)
+            {
+                return default;
+            }
+
+            return (T)property.GetValue(null, null);
+
         }
     }
 
@@ -58,6 +58,44 @@ namespace System.Reflection
                 where method.GetParameters()[0].ParameterType == extendedType
                 select method;
             return query;
+        }
+
+        public static object GetDefaultValue(this Type type)
+        {
+            if (type == typeof(DateTime))
+            {
+                return DateTime.Now;
+            }
+            else if (type == typeof(int))
+            {
+                return 0;
+            }
+            else if (type == typeof(long))
+            {
+                return 0;
+            }
+            else if (type == typeof(short))
+            {
+                return 0;
+            }
+            else if (type == typeof(decimal))
+            {
+                return 0.0m;
+            }
+            else if (type == typeof(Guid))
+            {
+                return Guid.Empty;
+            }
+            else if (type == typeof(string))
+            {
+                return string.Empty;
+            }
+            else if (type == typeof(char))
+            {
+                return char.MinValue;
+            }
+
+            return null;
         }
     }
 }

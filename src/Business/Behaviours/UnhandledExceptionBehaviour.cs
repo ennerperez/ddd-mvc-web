@@ -25,7 +25,7 @@ namespace Business.Behaviours
             {
                 var requestName = typeof(TRequest).Name;
 
-                _logger.LogError(ex, "Request: {Name} Unhandled Exception for Request {@Request}", requestName, request);
+                _logger.LogError(ex, message: "Request: {Name} Unhandled Exception for Request {@Request}", requestName, request);
 
                 throw;
             }

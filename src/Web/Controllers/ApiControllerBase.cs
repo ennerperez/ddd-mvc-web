@@ -29,17 +29,17 @@ namespace Web.Controllers
     [ApiController]
     public abstract class ApiControllerBase : ControllerBase
     {
-        private ISender _mediator = null!;
+        private ISender _mediator;
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
         protected bool IsAdmin => User.IsInRole(Roles.Admin);
         protected int UserId => User.GetUserId<int>();
 
-        protected IGenericRepository<E, K> Repository<E, K>() where E : class, IEntity<K> where K : struct, IComparable<K>, IEquatable<K>
-            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<E, K>>();
+        protected IGenericRepository<TE, TK> Repository<TE, TK>() where TE : class, IEntity<TK> where TK : struct, IComparable<TK>, IEquatable<TK>
+            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TE, TK>>();
 
-        protected IGenericRepository<E> Repository<E>() where E : class, IEntity<int>
-            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<E>>();
+        protected IGenericRepository<TE> Repository<TE>() where TE : class, IEntity<int>
+            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TE>>();
     }
 
 #if USING_SMARTSCHEMA
@@ -54,7 +54,7 @@ namespace Web.Controllers
         protected IGenericRepository<TEntity, TKey> Repository()
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
 
-        public async Task<JsonResult> Table<TResult>(TableInfo model,
+        protected async Task<JsonResult> Table<TResult>(TableInfo model,
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
@@ -144,21 +144,24 @@ namespace Web.Controllers
                             // ignore
                         }
 
-                        if (value != null && value != type.GetDefault())
+                        if (value == null || value == type.GetDefault())
                         {
-                            constant = Expression.Constant(value);
-                            var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
-                            foreach (var method in methods)
+                            continue;
+                        }
+
+                        constant = Expression.Constant(value);
+                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
+                        foreach (var method in methods)
+                        {
+                            var methodInfo = type.GetMethod(method, [type]);
+                            if (methodInfo == null)
                             {
-                                var methodInfo = type.GetMethod(method, new[] { type });
-                                if (methodInfo != null)
-                                {
-                                    var member = item;
-                                    var callExp = Expression.Call(member, methodInfo, constant);
-                                    predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
-                                    break;
-                                }
+                                continue;
                             }
+
+                            var callExp = Expression.Call(item, methodInfo, constant);
+                            predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
+                            break;
                         }
                     }
                 }

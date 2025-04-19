@@ -1,6 +1,6 @@
-#if USING_SPECFLOW
+#if USING_REQNROLL
 using System.Linq;
-using TechTalk.SpecFlow;
+using Reqnroll;
 using Tests.Abstractions.Interfaces;
 using Tests.Abstractions.Resources;
 
@@ -8,15 +8,17 @@ namespace Tests.Abstractions.Hooks
 {
     public abstract class ScopedHooks
     {
-        protected readonly IAutomationConfiguration _automationConfiguration;
-        protected readonly IAutomationContext _automationContext;
+        private readonly IAutomationConfiguration _automationConfiguration;
+        private readonly IAutomationContext _automationContext;
 
-        // For additional details on SpecFlow hooks see http://go.specflow.org/doc-hooks
         protected ScopedHooks(IAutomationContext automationContext, IAutomationConfiguration automationConfiguration)
         {
             _automationContext = automationContext;
             _automationConfiguration = automationConfiguration;
         }
+
+        public IAutomationContext AutomationContext => _automationContext;
+        public IAutomationConfiguration AutomationConfiguration => _automationConfiguration;
 
         [BeforeScenario]
         public void FlagScenarioAsPending()

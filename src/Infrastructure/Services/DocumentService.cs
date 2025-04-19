@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+
 #if USING_QUESTPDF
-using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 #endif
 
@@ -55,19 +55,21 @@ namespace Infrastructure.Services
             return Task.FromResult(data);
         }
 
+#if USING_QUESTPDF
         public static void RegisterFonts(string path, string format = "ttf")
         {
-#if USING_QUESTPDF
-            if (Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
-                var fonts = Directory.GetFiles(path, $"*.{format}");
-                foreach (var font in fonts)
-                {
-                    using var fs = File.OpenRead(font);
-                    FontManager.RegisterFont(fs);
-                }
+                return;
             }
-#endif
+
+            var fonts = Directory.GetFiles(path, $"*.{format}");
+            foreach (var font in fonts)
+            {
+                using var fs = File.OpenRead(font);
+                QuestPDF.Drawing.FontManager.RegisterFont(fs);
+            }
         }
+#endif
     }
 }

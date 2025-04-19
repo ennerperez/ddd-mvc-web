@@ -20,11 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{52F87F
 		Directory.Build.props = Directory.Build.props
 		.dockerignore = .dockerignore
 		Makefile = Makefile
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26DB0427-F7EC-46D1-9D9A-66DC36A3FAD8}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.config = .nuget\NuGet.config
+		nuget.config = nuget.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".imports", ".imports", "{559DCA76-61B1-4044-876F-1CD1C274A94A}"
@@ -43,9 +39,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{8B90
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{A162D675-3867-411A-9B4A-4D74C48A7780}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A162D675-3867-411A-9B4A-4D74C48A7780}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", ".build\_build.csproj", "{8B1D92E2-B0EC-4F45-8AEE-D1D0E9F5688A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{8B1D92E2-B0EC-4F45-8AEE-D1D0E9F5688A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}"
 EndProject
@@ -61,11 +57,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Persiste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "src\Business\Business.csproj", "{2AA52CA0-46C3-4898-9E6D-1B17B9062D92}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Business", "tests\Tests.Business\Tests.Business.csproj", "{146B584D-2857-40B0-8E47-81F60C349F0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.IntegrationTests", "tests\Tests.IntegrationTests\Tests.IntegrationTests.csproj", "{146B584D-2857-40B0-8E47-81F60C349F0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj", "{B255D19C-5A8B-4675-9FE7-6CCED0706D16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Web", "tests\Tests.Web\Tests.Web.csproj", "{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.UITests", "tests\Tests.UITests\Tests.UITests.csproj", "{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.UnitTests", "tests\Tests.UnitTests\Tests.UnitTests.csproj", "{3828B163-E82E-4863-8D96-6AD0B5D936B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +105,10 @@ Global
 		{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +124,7 @@ Global
 		{B255D19C-5A8B-4675-9FE7-6CCED0706D16} = {8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}
 		{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB} = {C78F3CE2-1175-4841-B617-2AF391E5D780}
 		{559DCA76-61B1-4044-876F-1CD1C274A94A} = {8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}
+		{3828B163-E82E-4863-8D96-6AD0B5D936B2} = {C78F3CE2-1175-4841-B617-2AF391E5D780}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C58BC0B-8614-406A-AEDB-9B8BFFB86C08}

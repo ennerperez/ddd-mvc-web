@@ -1,5 +1,3 @@
-// ReSharper disable CheckNamespace
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +17,7 @@ namespace Microsoft.Extensions
                 foreach (var type in assembliesToScan.SelectMany(a => a.DefinedTypes).Where(t => !t.IsOpenGeneric()))
                 {
                     var interfaceTypes = type.FindInterfacesThatClose(openRequestInterface).ToArray();
-                    if (!interfaceTypes.Any())
+                    if (interfaceTypes.Length == 0)
                     {
                         continue;
                     }
@@ -50,6 +48,7 @@ namespace Microsoft.Extensions
                                 case ServiceLifetime.Scoped:
                                     services.AddScoped(@interface, type);
                                     break;
+                                case ServiceLifetime.Transient:
                                 default:
                                     services.AddTransient(@interface, type);
                                     break;
@@ -73,6 +72,7 @@ namespace Microsoft.Extensions
                                 case ServiceLifetime.Scoped:
                                     services.TryAddScoped(@interface, type);
                                     break;
+                                case ServiceLifetime.Transient:
                                 default:
                                     services.TryAddTransient(@interface, type);
                                     break;
@@ -87,7 +87,7 @@ namespace Microsoft.Extensions
                 }
             }
 
-            internal static void AddConcretionsThatCouldBeClosed(this IServiceCollection services, Type @interface, List<Type> concretions, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
+            private static void AddConcretionsThatCouldBeClosed(this IServiceCollection services, Type @interface, List<Type> concretions, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
             {
                 foreach (var type in concretions
                              .Where(x => x.IsOpenGeneric() && x.CouldCloseTo(@interface)))
@@ -102,6 +102,7 @@ namespace Microsoft.Extensions
                             case ServiceLifetime.Scoped:
                                 services.TryAddScoped(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
                                 break;
+                            case ServiceLifetime.Transient:
                             default:
                                 services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
                                 break;
@@ -114,9 +115,15 @@ namespace Microsoft.Extensions
                 }
             }
 
-            private static bool IsOpenGeneric(this Type type) => type.GetTypeInfo().IsGenericTypeDefinition || type.GetTypeInfo().ContainsGenericParameters;
+            private static bool IsOpenGeneric(this Type type)
+            {
+                return type.GetTypeInfo().IsGenericTypeDefinition || type.GetTypeInfo().ContainsGenericParameters;
+            }
 
-            private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType) => FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
+            private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
+            {
+                return FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
+            }
 
             private static IEnumerable<Type> FindInterfacesThatClosesCore(this Type pluggedType, Type templateType)
             {
@@ -135,7 +142,7 @@ namespace Microsoft.Extensions
                     foreach (
                         var interfaceType in
                         pluggedType.GetInterfaces()
-                            .Where(type => type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == templateType))
+                            .Where(type => type.GetTypeInfo().IsGenericType && (type.GetGenericTypeDefinition() == templateType)))
                     {
                         yield return interfaceType;
                     }
@@ -143,7 +150,7 @@ namespace Microsoft.Extensions
                 else
                 {
                     var memberInfo = pluggedType.GetTypeInfo().BaseType;
-                    if (memberInfo != null && memberInfo.GetTypeInfo().IsGenericType && memberInfo.GetGenericTypeDefinition() == templateType)
+                    if (memberInfo != null && memberInfo.GetTypeInfo().IsGenericType && (memberInfo.GetGenericTypeDefinition() == templateType))
                     {
                         yield return pluggedType.GetTypeInfo().BaseType;
                     }
@@ -160,9 +167,12 @@ namespace Microsoft.Extensions
                 }
             }
 
-            private static bool IsConcrete(this Type type) => !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
+            private static bool IsConcrete(this Type type)
+            {
+                return !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
+            }
 
-            private static void Fill<T>(this IList<T> list, T value)
+            private static void Fill<T>(this List<T> list, T value)
             {
                 if (list.Contains(value))
                 {
@@ -179,34 +189,33 @@ namespace Microsoft.Extensions
                     return false;
                 }
 
-                if (pluggedType == pluginType)
-                {
-                    return true;
-                }
-
-                return pluginType.GetTypeInfo().IsAssignableFrom(pluggedType.GetTypeInfo());
+                return pluggedType == pluginType || pluginType.GetTypeInfo().IsAssignableFrom(pluggedType.GetTypeInfo());
             }
 
             private static bool IsMatchingWithInterface(this Type handlerType, Type handlerInterface)
             {
-                if (handlerType == null || handlerInterface == null)
+                while (true)
                 {
+                    if (handlerType == null || handlerInterface == null)
+                    {
+                        return false;
+                    }
+
+                    if (handlerType.IsInterface)
+                    {
+                        if (handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        handlerType = handlerType.GetInterface(handlerInterface.Name);
+                        continue;
+                    }
+
                     return false;
                 }
-
-                if (handlerType.IsInterface)
-                {
-                    if (handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments))
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    return IsMatchingWithInterface(handlerType.GetInterface(handlerInterface.Name), handlerInterface);
-                }
-
-                return false;
             }
 
             private static bool CouldCloseTo(this Type openConcretion, Type closedInterface)

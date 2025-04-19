@@ -30,7 +30,6 @@
         "DatabaseClear",
         "DatabaseRollback",
         "DatabaseUpdate",
-        "DbContextOptimize",
         "DockerBuild",
         "DockerLogin",
         "DockerPrune",

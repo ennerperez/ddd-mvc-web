@@ -4,6 +4,8 @@
   "Author": "Enner Pérez",
   "Product": "DDD",
   "ProjectUrl": "https://ennerperez.dev/",
+  "MauiWorkloadVersion": "9.0.203",
+  "PackageId": "dev.ennerperez.app",
   "Project": "Web",
   "TargetProject": "Persistence",
   "StartupProject": "Web",

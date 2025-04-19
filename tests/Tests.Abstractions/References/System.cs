@@ -1,27 +1,27 @@
-// ReSharper disable once CheckNamespace
-
 using System.Threading;
 
 namespace System
 {
     public static class Extensions
     {
-        private static int seedCounter = new Random().Next();
+        private static int s_seedCounter = new Random().Next();
 
         [ThreadStatic]
-        private static Random rng;
+        private static Random s_rng;
 
         internal static Random Instance
         {
             get
             {
-                if (rng == null)
+                if (s_rng != null)
                 {
-                    var seed = Interlocked.Increment(ref seedCounter);
-                    rng = new Random(seed);
+                    return s_rng;
                 }
 
-                return rng;
+                var seed = Interlocked.Increment(ref s_seedCounter);
+                s_rng = new Random(seed);
+
+                return s_rng;
             }
         }
 
@@ -72,12 +72,7 @@ namespace System
 
         public static object AsEnum(this string @this, Type type, bool ignoreCase = true)
         {
-            if (!string.IsNullOrWhiteSpace(@this))
-            {
-                return Enum.Parse(type, @this, ignoreCase);
-            }
-
-            return default;
+            return !string.IsNullOrWhiteSpace(@this) ? Enum.Parse(type, @this, ignoreCase) : null;
         }
 
         public static bool Is(this string @this, string value, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)

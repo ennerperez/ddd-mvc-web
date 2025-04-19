@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
+// ReSharper disable UnusedType.Global
+
 namespace Persistence.Conventions
 {
     internal static class PluralizationConventions

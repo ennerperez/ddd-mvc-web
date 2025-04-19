@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class Setting : IEntity, IAuditable
+    public class Setting : Entity<int>, IAuditable
     {
         public Setting()
         {
@@ -13,15 +14,7 @@ namespace Domain.Entities
             Type = Data.Text;
         }
 
-        public Setting(string key) : this(key, null)
-        {
-        }
-
-        public Setting(KeyValuePair<string, string> pair) : this(pair.Key, pair.Value)
-        {
-        }
-
-        public Setting(string key, string value) : this()
+        public Setting(string key, string value = null) : this()
         {
             Key = key;
             Value = value;
@@ -31,11 +24,9 @@ namespace Domain.Entities
         public Data Type { get; set; }
         public string Value { get; set; }
 
-        public int Id { get; set; }
-
         #region IAuditable
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
 
         #endregion IAuditable

@@ -54,7 +54,9 @@ namespace Web.Controllers.MVC
             // Cookies Clear
             HttpContext.Session.Clear();
             foreach (var cookie in Request.Cookies.Keys)
+            {
                 Response.Cookies.Delete(cookie);
+            }
         }
 
 

@@ -1,0 +1,38 @@
+﻿@TestCase(TE01)
+@Environment(development)
+@RestoreDatabase
+Feature: Clients
+
+    @TestCode(TE01-001)
+    Scenario: Basic Operations
+        Given a client with the following data
+          | Field          | Value        |
+          | Identification | {Random}     |
+          | Full Name      | {Random}     |
+          | Gender         | {M,F}        |
+          | Address        | {Random:100} |
+          | Phone Number   | {Random:7}   |
+          | Category       | {Random:10}  |
+        Then the client should be successfully created
+        Given the client must be partially updated using the following data
+          | Field   | Value        |
+          | Id      | {Last:Id}    |
+          | Gender  | {M,F}        |
+          | Address | {Random:100} |
+        Then the client should be successfully updated
+        Given the client must be deleted using the following data
+          | Field | Value     |
+          | Id    | {Last:Id} |
+        Then the client should be successfully deleted
+
+    @TestCode(TE01-002)
+    Scenario: Basic Denied Operations
+        Given a client with the following data
+          | Field          | Value        |
+          | Identification | {Random}     |
+          | Full Name      | {Random}     |
+          | Gender         | {M,F}        |
+          | Address        | {Random:100} |
+          | Phone Number   | {Random:7}   |
+          | Category       | {Random:10}  |
+        Then the client should be successfully created

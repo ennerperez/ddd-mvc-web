@@ -44,12 +44,12 @@ namespace Persistence.Contexts
             modelBuilder.AddProviderTypeConventions(m =>
             {
                 m.Provider = ProviderName;
-                m.DecimalConfig.Add(6, new[] { "Lat", "Long" });
+                m.DecimalConfig.Add(6, ["Lat", "Long"]);
                 m.Exclude = null;
                 m.UseDateTime = false;
             });
             modelBuilder.AddAuditableEntitiesConventions<IAuditable>(ProviderName);
-            modelBuilder.AddSynchronizableEntitiesConventions<ISyncronizable>();
+            modelBuilder.AddSynchronizableEntitiesConventions<ISynchronizable>(ProviderName);
         }
 
 #if DEBUG

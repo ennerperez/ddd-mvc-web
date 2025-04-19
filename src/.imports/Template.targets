@@ -22,6 +22,7 @@
 
   <Import Project="$(_ImportDirectory)Features.targets"/>
   <Import Project="$(_ImportDirectory)Project.targets"/>
+  <Import Condition="Exists('$(MSBuildProjectDirectory)\Options.targets')" Project="$(MSBuildProjectDirectory)\Options.targets" />
 
   <Target Condition="'$(_DebugTemplate)' == 'true'" Name="Debug" BeforeTargets="Build">
     <!-- Template -->
@@ -45,6 +46,10 @@
     <Message Importance="High" Text="------- MSBuildProjectExtension: $(MSBuildProjectExtension)"/>
     <Message Importance="High" Text="------- MSBuildProjectFullPath: $(MSBuildProjectFullPath)"/>
     <Message Importance="High" Text="------- MSBuildProjectName: $(MSBuildProjectName)"/>
+  </Target>
+
+  <Target Name="RestoreTools" BeforeTargets="Restore;CollectPackageReferences" Condition="Exists('$(_ConfigFile)')">
+    <Exec Condition="!Exists('$(SourceDirectory)/solution.lock.json')" Command="dotnet tool restore &gt; solution.lock.json" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory="$(SourceDirectory)" />
   </Target>
 
 </Project>

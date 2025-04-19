@@ -54,6 +54,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
 #if USING_COOKIES || !USING_IDENTITY
 using Microsoft.AspNetCore.Authentication.Cookies;
+// ReSharper disable MemberCanBePrivate.Global
 #endif
 #if USING_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -92,7 +93,7 @@ using Microsoft.FeatureManagement;
 
 namespace Web
 {
-    public static class Program
+    public class Program
     {
         internal static string Name { get; private set; }
         internal static WebApplication Instance { get; private set; }
@@ -699,7 +700,7 @@ namespace Web
                 app.Use(async (ctx, next) =>
                 {
                     await next();
-                    if (ctx.Response.StatusCode >= 400 && ctx.Response.StatusCode < 500 && !ctx.Response.HasStarted)
+                    if (ctx.Response.StatusCode >= 400 && ctx.Response is { StatusCode: < 500, HasStarted: false })
                     {
                         //Re-execute the request so the user gets the error page
                         ctx.Request.Path = $"/Error/{ctx.Response.StatusCode}";

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -41,7 +40,7 @@ namespace Web.Services
 #if USING_DATABASE_PROVIDER
             using (var scope = _scopeFactory.CreateScope())
             {
-                DbContext defaultContext = scope.ServiceProvider.GetService<DefaultContext>();
+                var defaultContext = scope.ServiceProvider.GetService<DefaultContext>();
                 defaultContext.Initialize();
                 if (defaultContext == null || !await defaultContext.Database.CanConnectAsync(cancellationToken))
                 {
@@ -103,7 +102,7 @@ namespace Web.Services
                     {
                         var responseBody = await File.ReadAllTextAsync(targetFile, cancellationToken);
                         var entities = JsonSerializer.Deserialize<List<T>>(responseBody);
-                        if (entities != null && entities.Any())
+                        if (entities != null && entities.Count != 0)
                         {
                             dbSet.AddRange(entities);
                             await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);
@@ -151,7 +150,7 @@ namespace Web.Services
                         entities = JsonSerializer.Deserialize<List<T>>(responseBody);
                     }
 
-                    if (entities != null && entities.Any())
+                    if (entities != null && entities.Count != 0)
                     {
                         dbSet.AddRange(entities);
                         await context.SaveChangesWithIdentityInsertAsync<T>(cancellationToken);

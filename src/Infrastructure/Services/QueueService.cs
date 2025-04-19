@@ -1,9 +1,10 @@
-﻿#if USING_QUEUES
+#if USING_QUEUES
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using Infrastructure.Interfaces;
@@ -23,7 +24,7 @@ namespace Infrastructure.Services
         {
             _configuration = configuration;
             _logger = logger.CreateLogger(GetType());
-            _clients = new List<QueueClient>();
+            _clients = [];
         }
 
         public string QueueName { get; set; }
@@ -31,24 +32,39 @@ namespace Infrastructure.Services
 
         private async Task<QueueClient> GetClientAsync(string queueName = "", CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(queueName)) queueName = QueueName;
+            if (string.IsNullOrWhiteSpace(queueName))
+            {
+                queueName = QueueName;
+            }
+
             var client = _clients.FirstOrDefault(c => c.Name == queueName);
             if (client != null)
+            {
                 return client;
+            }
 
             try
             {
                 _logger.LogInformation("Initializing [{QueueName}] queue client", queueName);
                 var connectionString = _configuration["AzureSettings:Storage:ConnectionString"];
-                client = new QueueClient(connectionString, queueName);
+                client = new QueueClient(connectionString, queueName, new QueueClientOptions() { MessageEncoding = QueueMessageEncoding.Base64 });
+
                 if (CreateIfNotExists)
+                {
                     await client.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
-                else if (await client.ExistsAsync())
+                }
+                else if (await client.ExistsAsync(cancellationToken))
+                {
                     _clients.Add(client);
+                }
                 else
+                {
                     client = null;
+                }
+
                 return client;
             }
+
             catch (Exception e)
             {
                 _logger.LogError(e, "{Message}", e.Message);
@@ -56,54 +72,77 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<PeekedMessage> PeekMessageAsync(string queueName = "")
+        public async Task<PeekedMessage> PeekMessageAsync(string queueName = "", CancellationToken cancellationToken = default)
         {
-            var client = await GetClientAsync(queueName);
-            if (client == null) return null;
-            var message = await client.PeekMessageAsync();
-            if (message != null && message.Value != null)
-                return message.Value;
+            var client = await GetClientAsync(queueName, cancellationToken);
+            if (client == null)
+            {
+                return null;
+            }
 
-            return null;
+            var message = await client.PeekMessageAsync(cancellationToken);
+            return message is { Value: not null } ? message.Value : null;
         }
 
-        public async Task<IEnumerable<PeekedMessage>> PeekMessagesAsync(string queueName = "", int? maxMessages = default)
+        public async Task<IEnumerable<PeekedMessage>> PeekMessagesAsync(string queueName = "", int? maxMessages = null, CancellationToken cancellationToken = default)
         {
-            var client = await GetClientAsync(queueName);
-            if (client == null) return null;
-            var messages = await client.PeekMessagesAsync(maxMessages);
+            var client = await GetClientAsync(queueName, cancellationToken);
+            if (client == null)
+            {
+                return null;
+            }
+
+            var messages = await client.PeekMessagesAsync(maxMessages, cancellationToken);
             return messages.Value;
         }
 
-        public async Task<QueueMessage> ReceiveMessageAsync(string queueName = "")
+        public async Task<QueueMessage> ReceiveMessageAsync(string queueName = "", TimeSpan? visibilityTimeout = null, CancellationToken cancellationToken = default)
         {
-            var client = await GetClientAsync(queueName);
-            if (client == null) return null;
-            var message = await client.ReceiveMessageAsync();
-            if (message != null && message.Value != null)
-                return message.Value;
+            var client = await GetClientAsync(queueName, cancellationToken);
+            if (client == null)
+            {
+                return null;
+            }
 
-            return null;
-        }
-
-        public async Task<IEnumerable<QueueMessage>> ReceiveMessagesAsync(string queueName = "", int? maxMessages = default)
-        {
-            var client = await GetClientAsync(queueName);
-            if (client == null) return null;
-            var message = await client.ReceiveMessagesAsync(maxMessages);
+            var message = await client.ReceiveMessageAsync(visibilityTimeout, cancellationToken);
             return message.Value;
         }
 
-        public async Task<SendReceipt> SendMessageAsync(string queueName = "", string content = "")
+        public async Task<IEnumerable<QueueMessage>> ReceiveMessagesAsync(string queueName = "", int? maxMessages = null, TimeSpan? visibilityTimeout = null, CancellationToken cancellationToken = default)
         {
-            var client = await GetClientAsync(queueName);
-            if (client == null) return null;
-            var message = await client.SendMessageAsync(content);
-            if (message != null && message.Value != null)
-                return message.Value;
+            var client = await GetClientAsync(queueName, cancellationToken);
+            if (client == null)
+            {
+                return null;
+            }
 
-            return null;
+            var message = await client.ReceiveMessagesAsync(maxMessages, visibilityTimeout, cancellationToken);
+            return message.Value;
+        }
+
+        public async Task<SendReceipt> SendMessageAsync(string queueName = "", string content = "", CancellationToken cancellationToken = default)
+        {
+            var client = await GetClientAsync(queueName, cancellationToken);
+            if (client == null)
+            {
+                return null;
+            }
+
+            var message = await client.SendMessageAsync(content, cancellationToken);
+            return message is { Value: not null } ? message.Value : null;
+        }
+
+        public async Task<Response> DeleteMessageAsync(QueueMessage message, string queueName = "", CancellationToken cancellationToken = default)
+        {
+            var client = await GetClientAsync(queueName, cancellationToken);
+            if (message == null || client == null)
+            {
+                return null;
+            }
+
+            var response = await client.DeleteMessageAsync(message.MessageId, message.PopReceipt, cancellationToken);
+            return response;
         }
     }
-}
 #endif
+}

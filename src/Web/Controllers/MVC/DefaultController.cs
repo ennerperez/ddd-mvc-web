@@ -35,12 +35,7 @@ namespace Web.Controllers.MVC
         {
             _logger.LogError("{TraceIdentifier}", HttpContext.TraceIdentifier);
             var model = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Code = code };
-            if (code != 0)
-            {
-                return View($"Errors/{code.ToString()[..1]}0x", model);
-            }
-
-            return View(model);
+            return code != 0 ? View($"Errors/{code.ToString()[..1]}0x", model) : View(model);
         }
 
         [AllowAnonymous]

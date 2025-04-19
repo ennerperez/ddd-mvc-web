@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Persistence.Providers;
 
 namespace Persistence
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static Func<DbContext> DbContext { get; set; }
@@ -41,7 +43,7 @@ namespace Persistence
 
         private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
         {
-            if (!assemblies.Any())
+            if (assemblies.Length == 0)
             {
                 throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
             }

@@ -15,11 +15,17 @@ namespace System.Security
                 return default;
             }
 
-            public static string GetUserId(this ClaimsPrincipal principal) => principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            public static string GetUserId(this ClaimsPrincipal principal)
+            {
+                return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            }
 
             public static string GetUserFullName(this ClaimsPrincipal principal)
             {
-                var displayName = string.Join(' ', principal.FindFirst(ClaimTypes.GivenName)?.Value, principal.FindFirst(ClaimTypes.Surname)?.Value);
+                var displayName = string.Join(' ', new[]
+                {
+                    principal.FindFirst(ClaimTypes.GivenName)?.Value, principal.FindFirst(ClaimTypes.Surname)?.Value
+                });
                 if (string.IsNullOrWhiteSpace(displayName))
                 {
                     displayName = principal.FindFirst(ClaimTypes.Name)?.Value;

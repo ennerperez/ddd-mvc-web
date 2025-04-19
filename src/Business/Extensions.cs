@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Business.Behaviours;
 using FluentValidation;
@@ -10,9 +11,9 @@ using Persistence.Services;
 
 namespace Business
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
-        
         public static IServiceCollection AddBusiness(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
         {
             var options = new DbContextOptionsBuilder();
@@ -37,6 +38,25 @@ namespace Business
             return services;
         }
 
+        public static IServiceCollection WithRepositories(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        {
+            switch (serviceLifetime)
+            {
+                case ServiceLifetime.Transient:
+                    services.AddTransient<ISettingRepository, SettingRepository>();
+                    break;
+                case ServiceLifetime.Singleton:
+                    services.AddSingleton<ISettingRepository, SettingRepository>();
+                    break;
+                case ServiceLifetime.Scoped:
+                default:
+                    services.AddScoped<ISettingRepository, SettingRepository>();
+                    break;
+            }
+
+            return services;
+        }
+
         public static IServiceCollection WithMediatR(this IServiceCollection services)
         {
             var assemblies = new[] { Assembly.GetExecutingAssembly(), Assembly.GetCallingAssembly() };
@@ -49,24 +69,6 @@ namespace Business
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             });
-            return services;
-        }
-
-        public static IServiceCollection WithRepositories(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-        {
-            switch (serviceLifetime)
-            {
-                case ServiceLifetime.Transient:
-                    services.AddTransient<ISettingRepository, SettingRepository>();
-                    break;
-                case ServiceLifetime.Singleton:
-                    services.AddSingleton<ISettingRepository, SettingRepository>();
-                    break;
-                default:
-                    services.AddScoped<ISettingRepository, SettingRepository>();
-                    break;
-            }
-
             return services;
         }
     }

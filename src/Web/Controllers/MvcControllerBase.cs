@@ -22,7 +22,7 @@ namespace Web.Controllers
 #endif
     public abstract class MvcControllerBase : Controller
     {
-        private ISender _mediator = null!;
+        private ISender _mediator;
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
         protected bool IsAdmin => User.IsInRole(Roles.Admin);

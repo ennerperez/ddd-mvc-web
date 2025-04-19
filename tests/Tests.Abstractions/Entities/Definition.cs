@@ -42,6 +42,7 @@ namespace Tests.Abstractions.Entities
         public Dictionary<string, string> Ids { get; set; }
         public Dictionary<string, string> AutomationIds { get; set; }
         public Dictionary<string, string> AutomationNames { get; set; }
+        // ReSharper disable once InconsistentNaming
         public Dictionary<string, string> AutomationCSSes { get; set; }
         public Dictionary<string, string> AutomationXPaths { get; set; }
         public Dictionary<string, string> AutomationClassNames { get; set; }
@@ -61,22 +62,24 @@ namespace Tests.Abstractions.Entities
             {
                 var matches = regex1.Match(key.Key).Groups;
                 var counter = matches.Count;
-                if (counter >= 4)
+                if (counter < 4)
                 {
-                    var newKey = matches[3].Value;
-                    var source = sources.FirstOrDefault(m => m.ContainsKey(key.Key));
-                    source?.Remove(key.Key);
-                    source?.Add(newKey, key.Value);
+                    continue;
+                }
 
-                    if (matches[1].Value == configuration.ElementUniquenessIdentifier || matches[2].Value == configuration.ElementUniquenessIdentifier)
-                    {
-                        UniqueElements.Add(newKey, key.Value);
-                    }
+                var newKey = matches[3].Value;
+                var source = sources.FirstOrDefault(m => m.ContainsKey(key.Key));
+                source?.Remove(key.Key);
+                source?.Add(newKey, key.Value);
 
-                    if (matches[1].Value == configuration.MustAwaitElementLoadIdentifier || matches[2].Value == configuration.MustAwaitElementLoadIdentifier)
-                    {
-                        MustAwaitElements.Add(newKey, key.Value);
-                    }
+                if (matches[1].Value == configuration.ElementUniquenessIdentifier || matches[2].Value == configuration.ElementUniquenessIdentifier)
+                {
+                    this.UniqueElements.Add(newKey, key.Value);
+                }
+
+                if (matches[1].Value == configuration.MustAwaitElementLoadIdentifier || matches[2].Value == configuration.MustAwaitElementLoadIdentifier)
+                {
+                    this.MustAwaitElements.Add(newKey, key.Value);
                 }
             }
 
@@ -88,17 +91,19 @@ namespace Tests.Abstractions.Entities
             {
                 var matches = regex2.Match(key.Key).Groups;
                 var counter = matches.Count;
-                if (counter >= 2)
+                if (counter < 2)
                 {
-                    var newKey = matches[2].Value;
-                    var source = sources.FirstOrDefault(m => m.ContainsKey(key.Key));
-                    source?.Remove(key.Key);
-                    source?.Add(newKey, key.Value);
+                    continue;
+                }
 
-                    if (matches[1].Value == configuration.OptionalElementIdentifier)
-                    {
-                        OptionalElements.Add(newKey, key.Value);
-                    }
+                var newKey = matches[2].Value;
+                var source = sources.FirstOrDefault(m => m.ContainsKey(key.Key));
+                source?.Remove(key.Key);
+                source?.Add(newKey, key.Value);
+
+                if (matches[1].Value == configuration.OptionalElementIdentifier)
+                {
+                    this.OptionalElements.Add(newKey, key.Value);
                 }
             }
 
@@ -107,25 +112,27 @@ namespace Tests.Abstractions.Entities
 
         private void ValidatePageDefinitionForCorrectness(IDefinitionConfiguration configuration)
         {
-            if (!new[] { "Global", "Scenario" }.Contains(Type))
+            if (new[] { "Global", "Scenario" }.Contains(Type))
             {
-                var isAUniqueElementDefined = UniqueElements.Any();
-                var isAnAwaitableElementDefined = MustAwaitElements.Any();
+                return;
+            }
 
-                if (!isAUniqueElementDefined && !isAnAwaitableElementDefined)
-                {
-                    throw new InvalidDataException($"Neither a Unique Element, designated by a '{configuration.ElementUniquenessIdentifier}', nor an Awaitable Element, designated by a '{configuration.MustAwaitElementLoadIdentifier}', has been specified in the Page Definition file {Name}.ini.  At least one of both types must be specified in the file.");
-                }
+            var isAUniqueElementDefined = this.UniqueElements.Count != 0;
+            var isAnAwaitableElementDefined = this.MustAwaitElements.Count != 0;
 
-                if (!isAUniqueElementDefined)
-                {
-                    throw new InvalidDataException($"A Unique Element, designated by a '{configuration.ElementUniquenessIdentifier}', has not been specified in the Page Definition file {Name}.ini.  At least one globally unique element or unique combination of elements must be designated for each page defined.");
-                }
+            if (!isAUniqueElementDefined && !isAnAwaitableElementDefined)
+            {
+                throw new InvalidDataException($"Neither a Unique Element, designated by a '{configuration.ElementUniquenessIdentifier}', nor an Awaitable Element, designated by a '{configuration.MustAwaitElementLoadIdentifier}', has been specified in the Page Definition file {this.Name}.ini.  At least one of both types must be specified in the file.");
+            }
 
-                if (!isAnAwaitableElementDefined)
-                {
-                    throw new InvalidDataException($"An Awaitable Element, designated by a '{configuration.MustAwaitElementLoadIdentifier}', has not been specified in the Page Definition file {Name}.ini.  At least one element must be defined to indicate when a page has completed loading.");
-                }
+            if (!isAUniqueElementDefined)
+            {
+                throw new InvalidDataException($"A Unique Element, designated by a '{configuration.ElementUniquenessIdentifier}', has not been specified in the Page Definition file {this.Name}.ini.  At least one globally unique element or unique combination of elements must be designated for each page defined.");
+            }
+
+            if (!isAnAwaitableElementDefined)
+            {
+                throw new InvalidDataException($"An Awaitable Element, designated by a '{configuration.MustAwaitElementLoadIdentifier}', has not been specified in the Page Definition file {this.Name}.ini.  At least one element must be defined to indicate when a page has completed loading.");
             }
         }
 

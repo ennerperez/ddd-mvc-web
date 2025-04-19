@@ -1,8 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+// ReSharper disable UnusedMember.Global
 
 namespace Domain
 {
+
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IServiceCollection ChainInterfaceImplementation<TInterface, TImplementor>(this IServiceCollection services) where TInterface : class where TImplementor : TInterface
@@ -23,6 +27,9 @@ namespace Domain
             return services;
         }
 
-        public static IServiceCollection AddDomain(this IServiceCollection services) => services;
+        public static IServiceCollection AddDomain(this IServiceCollection services)
+        {
+            return services;
+        }
     }
 }

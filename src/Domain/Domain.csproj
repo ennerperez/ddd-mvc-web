@@ -1,27 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\src\.imports\Template.props"/>
-    <Import Condition="Exists('Options.props')" Project="Options.props"/>
-    <Import Project="..\..\src\.imports\Template.targets"/>
-    <Import Condition="Exists('Options.targets')" Project="Options.targets"/>
+  <Import Project="..\..\src\.imports\Template.props"/>
+  <Import Project="..\..\src\.imports\Template.targets"/>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>none</DebugType>
-    </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(FrameworkPackagesVersion)" />
+  </ItemGroup>
 
-    <ItemGroup Label="ConditionalReferences">
-        <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="8.0.11" />
-    </ItemGroup>
+  <ItemGroup Label="ConditionalReferences">
+    <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.Extensions.Identity.Stores" Version="$(FrameworkPackagesVersion)" />
+  </ItemGroup>
 
-    <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
-        <Compile Remove="Entities\Identity\**"/>
-        <EmbeddedResource Remove="Entities\Identity\**"/>
-        <None Remove="Entities\Identity\**"/>
-    </ItemGroup>
+  <ItemGroup Condition="'$(UsingIdentity)' == 'false'">
+    <Compile Remove="Entities\Identity\**"/>
+    <EmbeddedResource Remove="Entities\Identity\**"/>
+    <None Remove="Entities\Identity\**"/>
+  </ItemGroup>
 
 </Project>

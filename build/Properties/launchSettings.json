@@ -1,0 +1,103 @@
+﻿{
+  "profiles": {
+    "Build.Clean": {
+      "description": "Clean all the output folders",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Clean --no-logo"
+    },
+    "Build.Prepare": {
+      "description": "Prepares the solution to build, updates build variables with desired configurations",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Prepare --no-logo"
+    },
+    "Build.Versioning": {
+      "description": "Update the version in the app files",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Versioning --no-logo"
+    },
+    "Build.Restore": {
+      "description": "Restore packages, libraries and tooling",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Restore --no-logo"
+    },
+    "Build.Compile": {
+      "description": "Compile the project",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Compile --no-logo"
+    },
+    "Build.Test": {
+      "description": "Execute the test projects",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Test --no-logo"
+    },
+    "Build.Publish:Test": {
+      "description": "Publish the project in the output folder",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Publish --no-logo --configuration Release --environment Test"
+    },
+    "Build.Publish:Staging": {
+      "description": "Publish the project in the output folder",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Publish --no-logo --configuration Release --environment Staging"
+    },
+    "Build.Publish:Production": {
+      "description": "Publish the project in the output folder",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Publish --no-logo --configuration Release --environment Production"
+    },
+    "Build.Pack": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Pack --no-logo"
+    },
+    "Migrate.FastCompile": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target FastCompile --no-logo"
+    },
+    "Migrate.MigrationAdd": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target MigrationAdd --no-logo"
+    },
+    "Migrate.MigrationRemove": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target MigrationRemove --no-logo"
+    },
+    "Migrate.MigrationOutput": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target MigrationOutput --no-logo"
+    },
+    "Migrate.DatabaseUpdate": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DatabaseUpdate --no-logo"
+    },
+    "Migrate.DatabaseClear": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DatabaseClear --no-logo"
+    },
+    "Migrate.DatabaseRollback": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DatabaseRollback --no-logo"
+    },
+    "Migrate.DbContextOptimize": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target DbContextOptimize --no-logo"
+    }
+  }
+}

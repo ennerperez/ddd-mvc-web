@@ -6,8 +6,12 @@ namespace System
 {
     public static class EnumExtensions
     {
-        // This extension method is broken out so you can use a similar pattern with
-        // other MetaData elements in the future. This is your base method for each.
+        /// <summary>
+        /// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T GetAttribute<T>(this Enum value) where T : Attribute
         {
             var type = value.GetType();
@@ -18,8 +22,11 @@ namespace System
                 : null;
         }
 
-        // This method creates a specific call to the above method, requesting the
-        // Description MetaData attribute.
+        /// <summary>
+        /// This method creates a specific call to the above method, requesting the Description MetaData attribute.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string ToName(this Enum value)
         {
             var attribute = value.GetAttribute<DescriptionAttribute>();
@@ -50,9 +57,13 @@ namespace System
         }
 
         public static Dictionary<short, string> ToDictionary<TEnum>() where TEnum : Enum
-            => ToDictionary<TEnum, short>();
+        {
+            return ToDictionary<TEnum, short>();
+        }
 
         public static Dictionary<TValue, string> ToDictionary<TEnum, TValue>() where TEnum : Enum where TValue : struct, IComparable<TValue>, IEquatable<TValue>
-            => typeof(TEnum).ToDictionary<TValue>();
+        {
+            return typeof(TEnum).ToDictionary<TValue>();
+        }
     }
 }

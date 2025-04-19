@@ -1,0 +1,19 @@
+﻿{
+  "trace": {
+    "traceSuccessfulSteps": true
+  },
+  "generator": {
+    "allowDebugGeneratedFiles": false
+  },
+  "bindingCulture": {
+    "language": "en"
+  },
+  "language": {
+    "feature": "en"
+  },
+  "requiredTags": [],
+  "requiredTagPrefixes": [
+    "Browser",
+    "Environment"
+  ]
+}

@@ -2,28 +2,32 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Framework" Condition="'$(UseMaui)' != 'true'">
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Label="Framework" Condition="'$(UseMaui)' == 'true'">
+    <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
   </PropertyGroup>
 
   <PropertyGroup Label="General">
+    <FrameworkPackagesVersion>9.0.4</FrameworkPackagesVersion>
     <UsingAssemblyInfoTemplate>true</UsingAssemblyInfoTemplate>
+    <SkipServerCertificateValidation>true</SkipServerCertificateValidation>
   </PropertyGroup>
 
   <PropertyGroup Label="Databases">
     <UsingSqlite>true</UsingSqlite>
-    <UsingSqlServer>true</UsingSqlServer>
+    <UsingSqlServer>false</UsingSqlServer>
     <UsingMariaDb>false</UsingMariaDb>
     <UsingMySql>false</UsingMySql>
     <UsingPostgreSql>false</UsingPostgreSql>
-    <UsingNonAsync>false</UsingNonAsync>
+    <UsingOracle>false</UsingOracle>
     <UsingDapper>false</UsingDapper>
-    <!--<UsingOracle>false</UsingOracle>-->
-    <UsingBulk>true</UsingBulk>
-    <UsingSplit>true</UsingSplit>
+    <UsingNonAsync>false</UsingNonAsync>
+    <UsingBulk>false</UsingBulk>
+    <UsingSplit>false</UsingSplit>
   </PropertyGroup>
 
   <PropertyGroup Label="Azure">
-    <UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
     <UsingAzureBlobs>false</UsingAzureBlobs>
     <UsingAzureQueues>false</UsingAzureQueues>
     <UsingAzureTables>false</UsingAzureTables>
@@ -32,16 +36,16 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Services">
-    <UsingQuestPDF>true</UsingQuestPDF>
-    <UsingNewtonsoft>true</UsingNewtonsoft>
-    <UsingSwagger>true</UsingSwagger>
+    <UsingQuestPDF>false</UsingQuestPDF>
+    <UsingNewtonsoft>false</UsingNewtonsoft>
+    <UsingSwagger>false</UsingSwagger>
     <UsingLocalization>false</UsingLocalization>
-    <UsingSass>true</UsingSass>
+    <UsingSass>false</UsingSass>
   </PropertyGroup>
 
   <PropertyGroup Label="Auth">
-    <UsingIdentity>true</UsingIdentity>
-    <UsingCookies>true</UsingCookies>
+    <UsingIdentity>false</UsingIdentity>
+    <UsingCookies>false</UsingCookies>
     <UsingApiKey>false</UsingApiKey>
     <UsingBearer>false</UsingBearer>
     <UsingOpenId>false</UsingOpenId>
@@ -53,89 +57,29 @@
 
   <PropertyGroup Label="Options">
     <UsingFeatureFlag>false</UsingFeatureFlag>
-    <UsingSassWatch>true</UsingSassWatch>
-    <UsingDatadog>true</UsingDatadog>
-    <UsingHealthCheck>true</UsingHealthCheck>
-    <UsingCors>true</UsingCors>
-    <UsingCompression>true</UsingCompression>
-    <UsingSession>true</UsingSession>
-    <CookieConsentNeeded>true</CookieConsentNeeded>
+    <UsingSassWatch>false</UsingSassWatch>
+    <UsingDatadog>false</UsingDatadog>
+    <UsingHealthCheck>false</UsingHealthCheck>
+    <UsingCors>false</UsingCors>
+    <UsingCompression>false</UsingCompression>
+    <UsingSession>false</UsingSession>
+    <CookieConsentNeeded>false</CookieConsentNeeded>
+    <UsingAuth0Api>false</UsingAuth0Api>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Telemetry">
+    <UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
+    <UsingDatadog>false</UsingDatadog>
+    <UsingSentry>false</UsingSentry>
   </PropertyGroup>
 
   <PropertyGroup Label="Testing">
     <TestExecutionFramework>xUnit</TestExecutionFramework>
     <DefaultLanguage>EN</DefaultLanguage>
-    <UsingSpecFlow>true</UsingSpecFlow>
-    <UsingChromeDriver>true</UsingChromeDriver>
-    <UsingGeckoDriver>true</UsingGeckoDriver>
-    <UsingIEDriver>true</UsingIEDriver>
-  </PropertyGroup>
-
-  <!-- General -->
-  <PropertyGroup>
-    <BuildConstants Condition="'$(BuildingByReSharper)' == 'true'">$(BuildConstants)USING_RESHARPER;</BuildConstants>
-  </PropertyGroup>
-
-  <!-- Persistence -->
-  <PropertyGroup>
-    <UsingDabaseProvider>false</UsingDabaseProvider>
-    <BuildConstants Condition="'$(UsingSqlite)' == 'true'">$(BuildConstants)USING_SQLITE;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSqlServer)' == 'true'">$(BuildConstants)USING_MSSQL;</BuildConstants>
-    <BuildConstants Condition="'$(UsingMariaDb)' == 'true'">$(BuildConstants)USING_MARIADB;</BuildConstants>
-    <BuildConstants Condition="'$(UsingMySql)' == 'true'">$(BuildConstants)USING_MYSQL;</BuildConstants>
-    <BuildConstants Condition="'$(UsingPostgreSql)' == 'true'">$(BuildConstants)USING_POSTGRESQL;</BuildConstants>
-    <BuildConstants Condition="'$(UsingOracle)' == 'true'">$(BuildConstants)USING_ORACLE;</BuildConstants>
-    <BuildConstants Condition="'$(UsingDapper)' == 'true'">$(BuildConstants)USING_DAPPER;</BuildConstants>
-    <BuildConstants Condition="'$(UsingNonAsync)' == 'true'">$(BuildConstants)USING_NONASYNC;</BuildConstants>
-    <BuildConstants Condition="'$(UsingBulk)' == 'true'">$(BuildConstants)USING_BULK;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSplit)' == 'true'">$(BuildConstants)USING_SPLIT;</BuildConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">
-    <UsingDabaseProvider>true</UsingDabaseProvider>
-    <BuildConstants>$(BuildConstants)USING_DATABASE_PROVIDER;</BuildConstants>
-  </PropertyGroup>
-
-  <!-- Infrastructure -->
-  <PropertyGroup>
-    <BuildConstants Condition="'$(UsingAzureBlobs)' == 'true'">$(BuildConstants)USING_BLOBS;</BuildConstants>
-    <BuildConstants Condition="'$(UsingAzureQueues)' == 'true'">$(BuildConstants)USING_QUEUES;</BuildConstants>
-    <BuildConstants Condition="'$(UsingAzureTables)' == 'true'">$(BuildConstants)USING_TABLES;</BuildConstants>
-    <BuildConstants Condition="'$(UsingQuestPDF)' == 'true'">$(BuildConstants)USING_QUESTPDF;</BuildConstants>
-    <BuildConstants Condition="'$(UsingAzureKeyVault)' == 'true'">$(BuildConstants)USING_VAULT;</BuildConstants>
-    <BuildConstants Condition="'$(UsingAzureAppConfiguration)' == 'true'">$(BuildConstants)USING_APPCONFIGURATION;</BuildConstants>
-  </PropertyGroup>
-
-  <!-- Web -->
-  <PropertyGroup>
-    <BuildConstants Condition="'$(UsingAzureApplicationInsights)' == 'true'">$(BuildConstants)USING_INSIGHTS;</BuildConstants>
-    <BuildConstants Condition="'$(UsingDatadog)' == 'true'">$(BuildConstants)USING_DATADOG;</BuildConstants>
-    <BuildConstants Condition="'$(UsingHealthCheck)' == 'true'">$(BuildConstants)USING_HEALTHCHECK;</BuildConstants>
-    <BuildConstants Condition="'$(UsingNewtonsoft)' == 'true'">$(BuildConstants)USING_NEWTONSOFT;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSwagger)' == 'true'">$(BuildConstants)USING_SWAGGER;</BuildConstants>
-    <BuildConstants Condition="'$(UsingLocalization)' == 'true'">$(BuildConstants)USING_LOCALIZATION;</BuildConstants>
-    <BuildConstants Condition="'$(UsingFeatureFlag)' == 'true'">$(BuildConstants)USING_FEATURE_FLAG;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSass)' == 'true'">$(BuildConstants)USING_SASS;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSassWatch)' == 'true'">$(BuildConstants)USING_SASS_WATCH;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSmartSchema)' == 'true'">$(BuildConstants)USING_SMARTSCHEMA;</BuildConstants>
-    <BuildConstants Condition="'$(UsingIdentity)' == 'true'">$(BuildConstants)USING_IDENTITY;</BuildConstants>
-    <BuildConstants Condition="'$(UsingCookies)' == 'true'">$(BuildConstants)USING_COOKIES;</BuildConstants>
-    <BuildConstants Condition="'$(UsingApiKey)' == 'true'">$(BuildConstants)USING_APIKEY;</BuildConstants>
-    <BuildConstants Condition="'$(UsingBearer)' == 'true'">$(BuildConstants)USING_BEARER;</BuildConstants>
-    <BuildConstants Condition="'$(UsingOpenId)' == 'true'">$(BuildConstants)USING_OPENID;</BuildConstants>
-    <BuildConstants Condition="'$(UsingAuth0)' == 'true'">$(BuildConstants)USING_AUTH0;</BuildConstants>
-    <BuildConstants Condition="'$(UsingTokenValidation)' == 'true'">$(BuildConstants)USING_TOKEN_VALIDATION;</BuildConstants>
-    <BuildConstants Condition="'$(UsingCors)' == 'true'">$(BuildConstants)USING_CORS;</BuildConstants>
-    <BuildConstants Condition="'$(UsingAzureTables)' == 'true' AND '$(UsingApiKeyTables)' == 'true'">$(BuildConstants)USING_APIKEY_TABLES;</BuildConstants>
-    <BuildConstants Condition="'$(UsingCompression)' == 'true'">$(BuildConstants)USING_COMPRESSION;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSession)' == 'true'">$(BuildConstants)USING_SESSION;</BuildConstants>
-    <BuildConstants Condition="'$(CookieConsentNeeded)' == 'true'">$(BuildConstants)USING_COOKIE_CONSENT;</BuildConstants>
-  </PropertyGroup>
-
-  <!-- Testing -->
-  <PropertyGroup>
-    <BuildConstants Condition="'$(TestExecutionFramework)' == 'xUnit'">$(BuildConstants)XUNIT;</BuildConstants>
-    <BuildConstants Condition="'$(TestExecutionFramework)' == 'NUnit'">$(BuildConstants)NUNIT;</BuildConstants>
-    <BuildConstants Condition="'$(UsingSpecFlow)' == 'true'">$(BuildConstants)USING_SPECFLOW;</BuildConstants>
+    <UsingReqnroll>TRUE</UsingReqnroll>
+    <UsingChromeDriver>false</UsingChromeDriver>
+    <UsingGeckoDriver>false</UsingGeckoDriver>
+    <UsingIEDriver>false</UsingIEDriver>
   </PropertyGroup>
 
 </Project>

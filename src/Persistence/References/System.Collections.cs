@@ -1,6 +1,5 @@
 using System.Linq;
 
-// ReSharper disable once CheckNamespace
 namespace System.Collections
 {
     namespace Generic
@@ -26,14 +25,16 @@ namespace System.Collections
                 for (var i = 0; i < t; i++)
                 {
                     temp = temp.Push(data[i]);
-                    if (temp.Length >= size)
+                    if (temp.Length < size)
                     {
-                        result.Add(temp);
-                        temp = Array.Empty<T>();
+                        continue;
                     }
+
+                    result.Add(temp);
+                    temp = [];
                 }
 
-                if (temp.Any())
+                if (temp.Length != 0)
                 {
                     result.Add(temp);
                 }

@@ -11,16 +11,9 @@ namespace Infrastructure.Services
 {
     public class FileSystemService : IFileService, IDirectoryService
     {
-        public string DirectoryExtension { get; set; } = ".dir";
-
         public string ContainerName { get; set; } = "public";
         public bool CreateIfNotExists { get; set; }
-
-        public Task<string[]> GetFilesAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<FileRecord[]> GetFilesInfoAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<FileRecord> GetFileInfoAsync(string path, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public string DirectoryExtension { get; set; } = ".dir";
 
         #region FileService
 
@@ -453,13 +446,15 @@ namespace Infrastructure.Services
                 path = Path.Combine(ContainerName, path);
             }
 
-            if (CreateIfNotExists)
+            if (!this.CreateIfNotExists)
             {
-                var targetDirectory = Path.GetDirectoryName(path);
-                if (!string.IsNullOrWhiteSpace(targetDirectory) && !Directory.Exists(targetDirectory))
-                {
-                    Directory.CreateDirectory(targetDirectory);
-                }
+                return path;
+            }
+
+            var targetDirectory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrWhiteSpace(targetDirectory) && !Directory.Exists(targetDirectory))
+            {
+                Directory.CreateDirectory(targetDirectory);
             }
 
             return path;
@@ -475,7 +470,9 @@ namespace Infrastructure.Services
         }
 
         public Task<Stream> ReadStreamAsync(string path, CancellationToken cancellationToken = default)
-            => InternalReadStreamAsync(path, cancellationToken);
+        {
+            return InternalReadStreamAsync(path, cancellationToken);
+        }
 
         // ReSharper disable once UnusedParameter.Local
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -488,7 +485,9 @@ namespace Infrastructure.Services
         }
 
         public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
-            => InternalExistsAsync(path, cancellationToken);
+        {
+            return InternalExistsAsync(path, cancellationToken);
+        }
 
         // ReSharper disable once UnusedParameter.Local
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -505,48 +504,197 @@ namespace Infrastructure.Services
 
         #region IDirectoryService
 
-        public DirectoryInfo GetParent(string path) => Directory.GetParent(path);
-        public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
-        public string[] GetFiles(string path) => Directory.GetFiles(path);
-        public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
-        public string[] GetFiles(string path, string searchPattern, SearchOption searchOption) => Directory.GetFiles(path, searchPattern, searchOption);
-        public string[] GetFiles(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.GetFiles(path, searchPattern, enumerationOptions);
-        public string[] GetDirectories(string path) => Directory.GetDirectories(path);
-        public string[] GetDirectories(string path, string searchPattern) => Directory.GetDirectories(path, searchPattern);
-        public string[] GetDirectories(string path, string searchPattern, SearchOption searchOption) => Directory.GetDirectories(path, searchPattern, searchOption);
-        public string[] GetDirectories(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.GetDirectories(path, searchPattern, enumerationOptions);
-        public string[] GetFileSystemEntries(string path) => Directory.GetFileSystemEntries(path);
-        public string[] GetFileSystemEntries(string path, string searchPattern) => Directory.GetFileSystemEntries(path, searchPattern);
-        public string[] GetFileSystemEntries(string path, string searchPattern, SearchOption searchOption) => Directory.GetFileSystemEntries(path, searchPattern, searchOption);
-        public string[] GetFileSystemEntries(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.GetFileSystemEntries(path, searchPattern, enumerationOptions);
-        public IEnumerable<string> EnumerateDirectories(string path) => Directory.EnumerateDirectories(path);
-        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern) => Directory.EnumerateDirectories(path, searchPattern);
-        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateDirectories(path, searchPattern, searchOption);
-        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.EnumerateDirectories(path, searchPattern, enumerationOptions);
-        public IEnumerable<string> EnumerateFiles(string path) => Directory.EnumerateFiles(path);
-        public IEnumerable<string> EnumerateFiles(string path, string searchPattern) => Directory.EnumerateFiles(path, searchPattern);
-        public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFiles(path, searchPattern, searchOption);
-        public IEnumerable<string> EnumerateFiles(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.EnumerateFiles(path, searchPattern, enumerationOptions);
-        public IEnumerable<string> EnumerateFileSystemEntries(string path) => Directory.EnumerateFileSystemEntries(path);
-        public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern) => Directory.EnumerateFileSystemEntries(path, searchPattern);
-        public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
-        public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, EnumerationOptions enumerationOptions) => Directory.EnumerateFileSystemEntries(path, searchPattern, enumerationOptions);
-        public string GetDirectoryRoot(string path) => Directory.GetDirectoryRoot(path);
-        public string GetCurrentDirectory() => Directory.GetCurrentDirectory();
-        public void SetCurrentDirectory(string path) => Directory.SetCurrentDirectory(path);
-        public void Delete(string path, bool recursive) => Directory.Delete(path, recursive);
-        public string[] GetLogicalDrives() => Directory.GetLogicalDrives();
-        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget) => Directory.CreateSymbolicLink(path, pathToTarget);
-        public FileSystemInfo ResolveLinkTarget(string linkPath, bool returnFinalTarget) => Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
+        public DirectoryInfo GetParent(string path)
+        {
+            return Directory.GetParent(path);
+        }
+
+        public DirectoryInfo CreateDirectory(string path)
+        {
+            return Directory.CreateDirectory(path);
+        }
+
+        public string[] GetFiles(string path)
+        {
+            return Directory.GetFiles(path);
+        }
+
+        public string[] GetFiles(string path, string searchPattern)
+        {
+            return Directory.GetFiles(path, searchPattern);
+        }
+
+        public string[] GetFiles(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.GetFiles(path, searchPattern, searchOption);
+        }
+
+        public string[] GetFiles(string path, string searchPattern, EnumerationOptions enumerationOptions)
+        {
+            return Directory.GetFiles(path, searchPattern, enumerationOptions);
+        }
+
+        public string[] GetDirectories(string path)
+        {
+            return Directory.GetDirectories(path);
+        }
+
+        public string[] GetDirectories(string path, string searchPattern)
+        {
+            return Directory.GetDirectories(path, searchPattern);
+        }
+
+        public string[] GetDirectories(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.GetDirectories(path, searchPattern, searchOption);
+        }
+
+        public string[] GetDirectories(string path, string searchPattern, EnumerationOptions enumerationOptions)
+        {
+            return Directory.GetDirectories(path, searchPattern, enumerationOptions);
+        }
+
+        public string[] GetFileSystemEntries(string path)
+        {
+            return Directory.GetFileSystemEntries(path);
+        }
+
+        public string[] GetFileSystemEntries(string path, string searchPattern)
+        {
+            return Directory.GetFileSystemEntries(path, searchPattern);
+        }
+
+        public string[] GetFileSystemEntries(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.GetFileSystemEntries(path, searchPattern, searchOption);
+        }
+
+        public string[] GetFileSystemEntries(string path, string searchPattern, EnumerationOptions enumerationOptions)
+        {
+            return Directory.GetFileSystemEntries(path, searchPattern, enumerationOptions);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path)
+        {
+            return Directory.EnumerateDirectories(path);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
+        {
+            return Directory.EnumerateDirectories(path, searchPattern);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.EnumerateDirectories(path, searchPattern, searchOption);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, EnumerationOptions enumerationOptions)
+        {
+            return Directory.EnumerateDirectories(path, searchPattern, enumerationOptions);
+        }
+
+        public IEnumerable<string> EnumerateFiles(string path)
+        {
+            return Directory.EnumerateFiles(path);
+        }
+
+        public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
+        {
+            return Directory.EnumerateFiles(path, searchPattern);
+        }
+
+        public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.EnumerateFiles(path, searchPattern, searchOption);
+        }
+
+        public IEnumerable<string> EnumerateFiles(string path, string searchPattern, EnumerationOptions enumerationOptions)
+        {
+            return Directory.EnumerateFiles(path, searchPattern, enumerationOptions);
+        }
+
+        public IEnumerable<string> EnumerateFileSystemEntries(string path)
+        {
+            return Directory.EnumerateFileSystemEntries(path);
+        }
+
+        public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern)
+        {
+            return Directory.EnumerateFileSystemEntries(path, searchPattern);
+        }
+
+        public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
+        }
+
+        public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, EnumerationOptions enumerationOptions)
+        {
+            return Directory.EnumerateFileSystemEntries(path, searchPattern, enumerationOptions);
+        }
+
+        public string GetDirectoryRoot(string path)
+        {
+            return Directory.GetDirectoryRoot(path);
+        }
+
+        public string GetCurrentDirectory()
+        {
+            return Directory.GetCurrentDirectory();
+        }
+
+        public void SetCurrentDirectory(string path) { Directory.SetCurrentDirectory(path); }
+
+        public void Delete(string path, bool recursive)
+        {
+            Directory.Delete(path, recursive);
+        }
+
+        public string[] GetLogicalDrives()
+        {
+            return Directory.GetLogicalDrives();
+        }
+
+        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
+        {
+            return Directory.CreateSymbolicLink(path, pathToTarget);
+        }
+
+        public FileSystemInfo ResolveLinkTarget(string linkPath, bool returnFinalTarget)
+        {
+            return Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
+        }
 
         #endregion
 
         #region URL
 
-        public Task<string> GetUrlAsync(string path, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<string> GetUrlAsync(string path, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetUrl(string path) => throw new NotImplementedException();
+        public string GetUrl(string path)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
+
+        public Task<string[]> GetFilesAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FileRecord[]> GetFilesInfoAsync(string path, string searchPattern = ".*", SearchOption searchOption = SearchOption.TopDirectoryOnly, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FileRecord> GetFileInfoAsync(string path, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
