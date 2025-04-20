@@ -168,7 +168,7 @@ namespace Reqnroll
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // ignore
                 }
             }
 

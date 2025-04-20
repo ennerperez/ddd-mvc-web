@@ -127,7 +127,7 @@ namespace Test.Framework.Extended
                 try
                 {
                     var elements = @this.FindElements(by);
-                    found = elements != null && elements.Count == amount;
+                    found = elements.Count == amount;
                 }
                 catch (Exception)
                 {

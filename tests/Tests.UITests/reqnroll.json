@@ -1,4 +1,19 @@
 ﻿{
+  "$schema": "https://schemas.reqnroll.net/reqnroll-config-latest.json",
+  "timeouts": {
+    "BeforeScenario": 0,
+    "AfterScenario": 0,
+    "BeforeFeature": 2500,
+    "AfterFeature": 0,
+    "BeforeStep": 2000,
+    "AfterStep": 500,
+    "BeforeScreenshot": 0,
+    "AfterScreenshot": 0,
+    "BeforeRecording": 0,
+    "AfterRecording": 0,
+    "MaxAttempts": 20,
+    "Timeout": 30000
+  },
   "trace": {
     "traceSuccessfulSteps": true
   },
@@ -6,10 +21,10 @@
     "allowDebugGeneratedFiles": false
   },
   "bindingCulture": {
-    "language": "en"
+    "language": "en-US"
   },
   "language": {
-    "feature": "en"
+    "feature": "en-US"
   },
   "requiredTags": [],
   "requiredTagPrefixes": [

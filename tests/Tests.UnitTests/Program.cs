@@ -4,7 +4,6 @@ using Reqnroll;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,9 @@ using Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+#if USING_SERILOG
 using Serilog;
+#endif
 using Tests.Abstractions.Resources;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -41,19 +42,19 @@ namespace Tests.UnitTests
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile(Path.Combine(currentDirectory, "appsettings.json"), false, true)
                 .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.json"), false, true)
-                .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.Timeouts.json"), false, true)
 #if DEBUG
                 .AddJsonFile(Path.Combine(currentDirectory, "appsettings.Development.json"), true, true)
                 .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.Development.json"), true, true)
-                .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.Timeouts.Development.json"), false, true)
 #endif
                 .AddEnvironmentVariables()
                 .Build();
 
+#if USING_SERILOG
             // Initialize Logger
             var logger = Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
+#endif
 
             // Language
             var language = Configuration.GetValue<string>("language:feature") ?? "en";
@@ -66,7 +67,9 @@ namespace Tests.UnitTests
             Services.AddLogging(builder =>
             {
                 builder.SetMinimumLevel(LogLevel.Information);
+#if USING_SERILOG
                 builder.AddSerilog(logger);
+#endif
             }).AddOptions();
 
             Services.AddTests();

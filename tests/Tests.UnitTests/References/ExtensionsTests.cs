@@ -20,13 +20,13 @@ namespace Tests.UnitTests.References
         }
 
         [Fact]
-        public void Should_Get_Attribute()
+        public void Should_Get_Enmum_Attribute()
         {
             TestEnum.None.GetAttribute<DescriptionAttribute>().ShouldNotBeNull();
         }
 
         [Fact]
-        public void Should_Get_Name()
+        public void Should_Get_Enum_Name()
         {
             TestEnum.None.ToName().ShouldNotBeNull();
         }
@@ -104,7 +104,7 @@ namespace Tests.UnitTests.References
         [InlineData(Culture.None)]
         [InlineData(Culture.Invariant)]
         [InlineData(Culture.Current)]
-        public void Should_Convert_To_Title_Case(Culture culture)
+        public void Should_Convert_To_TitleCase(Culture culture)
         {
             string value = culture switch
             {
@@ -121,7 +121,7 @@ namespace Tests.UnitTests.References
         [InlineData(Culture.None)]
         [InlineData(Culture.Invariant)]
         [InlineData(Culture.Current)]
-        public void Should_Convert_To_Camel_Case(Culture culture)
+        public void Should_Convert_To_CamelCase(Culture culture)
         {
             string value = culture switch
             {
@@ -166,7 +166,7 @@ namespace Tests.UnitTests.References
         [InlineData("#28c@5A2&", true, false, false, "#28c@5A2&")]
         [InlineData("#28c@5A2&", true, true, false, "#28C@5A2&")]
         [InlineData("#28c@5A2&", true, true, true, "#28c@5A2&")]
-        public void Should_Normalize(string input, bool specialsChars, bool upperCase, bool lowerCase, string expected)
+        public void Should_Normalize_Text(string input, bool specialsChars, bool upperCase, bool lowerCase, string expected)
         {
             input.Normalize(specialsChars, upperCase, lowerCase).ShouldBe(expected);
         }

@@ -18,7 +18,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Persistence;
 using Persistence.Contexts;
+#if USING_SERILOG
 using Serilog;
+#endif
 using Tests.Abstractions.Resources;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -47,20 +49,19 @@ namespace Tests.IntegrationTests
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile(Path.Combine(currentDirectory, "appsettings.json"), false, true)
                 .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.json"), false, true)
-                .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.Timeouts.json"), false, true)
 #if DEBUG
                 .AddJsonFile(Path.Combine(currentDirectory, "appsettings.Development.json"), true, true)
                 .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.Development.json"), true, true)
-                .AddJsonFile(Path.Combine(currentDirectory, "reqnroll.Timeouts.Development.json"), false, true)
 #endif
                 .AddEnvironmentVariables()
                 .Build();
 
             // Initialize Logger
+#if USING_SERILOG
             var logger = Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
-
+#endif
             // Language
             var language = Configuration.GetValue<string>("language:feature") ?? "en";
             CultureInfo.CurrentCulture = new CultureInfo(language);
@@ -72,7 +73,9 @@ namespace Tests.IntegrationTests
             Services.AddLogging(builder =>
             {
                 builder.SetMinimumLevel(LogLevel.Information);
+#if USING_SERILOG
                 builder.AddSerilog(logger);
+#endif
             }).AddOptions();
 
             Services

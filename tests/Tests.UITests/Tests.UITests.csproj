@@ -32,20 +32,15 @@
   <ItemGroup>
     <PackageReference Include="Flurl" Version="4.0.0"/>
     <PackageReference Include="Flurl.Http" Version="4.0.2"/>
+    <PackageReference Include="SkiaSharp" Version="3.116.1" />
     <PackageReference Include="Selenium.Support" Version="4.31.0"/>
     <PackageReference Include="Selenium.WebDriver" Version="4.31.0"/>
   </ItemGroup>
 
   <ItemGroup Label="ConditionalReferences">
-    <!-- Reqnroll -->
-    <PackageReference Condition="'$(UsingReqnroll)' == 'true'" Include="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="2.4.0"/>
-    <PackageReference Condition="'$(UsingReqnroll)' == 'true'" Include="Reqnroll.Tools.MsBuild.Generation" Version="2.4.0"/>
-    <PackageReference Condition="'$(UsingReqnroll)' == 'true'" Include="Reqnroll" Version="2.4.0"/>
     <!-- NUnit -->
     <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="nunit" Version="4.3.2"/>
     <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" Version="5.0.0"/>
-    <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit' AND '$(UsingReqnroll)' == 'true'" Include="Reqnroll.NUnit" Version="2.4.0"/>
-    <PackageReference Include="SkiaSharp" Version="3.116.1" />
     <!-- xUnit -->
     <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.9.3"/>
     <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0"/>
@@ -59,7 +54,6 @@
     </PackageReference>
     <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.9.3"/>
     <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.9.3"/>
-    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit' AND '$(UsingReqnroll)' == 'true'" Include="Reqnroll.xUnit" Version="2.4.0"/>
     <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="Xunit.Extensions.Ordering" Version="1.4.5"/>
     <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="Xunit.Microsoft.DependencyInjection" Version="9.0.3"/>
     <!-- WebDriver -->
@@ -67,31 +61,7 @@
     <PackageReference Condition="'$(UsingGeckoDriver)' == 'true'" Include="Selenium.WebDriver.GeckoDriver" Version="0.35.0"/>
     <PackageReference Condition="'$(UsingIEDriver)' == 'true'" Include="Selenium.WebDriver.IEDriver" Version="4.14.0"/>
   </ItemGroup>
-
-  <!-- Serilog -->
-  <ItemGroup Label="Serilog">
-    <PackageReference Include="Serilog" Version="4.2.0"/>
-    <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0"/>
-    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1"/>
-    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0"/>
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
-    <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="5.0.0"/>
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
-    <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0"/>
-    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DependentUpon>appsettings.json</DependentUpon>
-    </Content>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
+  
   <ItemGroup>
     <Content Include="Definitions\*.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -105,38 +75,6 @@
     <Content Include="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup Label="Reqnroll Settings" Condition="'$(UsingReqnroll)' == 'false'">
-    <None Remove="reqnroll.json"/>
-    <None Remove="reqnroll.*.json"/>
-  </ItemGroup>
-  <ItemGroup Label="Reqnroll Settings" Condition="'$(UsingReqnroll)' == 'true'">
-    <Content Include="reqnroll.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="reqnroll.Timeouts.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DependentUpon>reqnroll.json</DependentUpon>
-    </Content>
-    <Content Include="reqnroll.Timeouts.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DependentUpon>reqnroll.Timeouts.json</DependentUpon>
-    </Content>
-    <Content Include="reqnroll.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DependentUpon>reqnroll.json</DependentUpon>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup Label="Reqnroll Files" Condition="'$(UsingReqnroll)' == 'false'">
-    <Compile Remove="**/*.Reqnroll.cs"/>
-    <None Remove="**/*.feature"/>
-    <Compile Remove="Helpers/*.cs"/>
-    <Compile Remove="Hooks/*.cs"/>
-    <Compile Remove="Steps/*.cs"/>
-    <Compile Remove="Features/*.cs"/>
-    <Compile Remove="Settings/*Reqnroll*.cs"/>
   </ItemGroup>
 
 </Project>

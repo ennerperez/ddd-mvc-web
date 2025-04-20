@@ -467,7 +467,7 @@ namespace Test.Framework.Extended
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // ignore
                 }
             }
 
