@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,7 +25,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
+#if USING_SERILOG
 using Serilog;
+#endif
 using Web.Services;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 #if USING_IDENTITY
@@ -131,7 +134,9 @@ namespace Web
 #endif
 
             Builder = WebApplication.CreateBuilder(args);
+#if USING_SERILOG
             Builder.Host.UseSerilog();
+#endif
 
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             Builder.Configuration
@@ -171,6 +176,7 @@ namespace Web
             var serviceName = Builder.Configuration["Datadog:Service"];
             serviceName = !string.IsNullOrWhiteSpace(serviceName) ? serviceName : Name;
 #endif
+#if USING_SERILOG
             // Initialize Logger
             var loggerConfiguration = new LoggerConfiguration()
                 .ReadFrom.Configuration(Builder.Configuration)
@@ -187,10 +193,13 @@ namespace Web
             }
 #endif
             var logger = Log.Logger = loggerConfiguration.CreateLogger();
-
+#endif
             Builder.Logging
                 .ClearProviders()
-                .AddSerilog(logger);
+#if USING_SERILOG
+                .AddSerilog(logger)
+#endif
+                .Close();
 
             // Seed Services
             Builder.Services.AddHostedService<SeedService>();
@@ -201,17 +210,25 @@ namespace Web
 
             try
             {
+#if USING_SERILOG
                 Log.Information("Application Starting");
+#endif
                 Instance.Run();
             }
             catch (Exception ex)
             {
+#if USING_SERILOG
                 Log.Fatal(ex, "The Application failed to start");
+#else
+                Console.WriteLine(ex.Message);
+#endif
                 throw;
             }
             finally
             {
+#if USING_SERILOG
                 Log.CloseAndFlush();
+#endif
             }
         }
 
@@ -710,8 +727,9 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+#if USING_SERILOG
             app.UseSerilogRequestLogging();
+#endif
 #if USING_SESSION
             app.UseSession();
 #endif

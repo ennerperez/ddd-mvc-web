@@ -110,7 +110,7 @@ namespace Microsoft.Extensions
                     }
                     catch (Exception)
                     {
-                        // ignored
+                        // ignore
                     }
                 }
             }

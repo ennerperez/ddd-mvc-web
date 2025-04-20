@@ -66,6 +66,10 @@
     <CookieConsentNeeded>false</CookieConsentNeeded>
     <UsingAuth0Api>false</UsingAuth0Api>
   </PropertyGroup>
+  
+  <PropertyGroup Label="Loggin">
+    <UsingSerilog>false</UsingSerilog>
+  </PropertyGroup>
 
   <PropertyGroup Label="Telemetry">
     <UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
@@ -75,8 +79,7 @@
 
   <PropertyGroup Label="Testing">
     <TestExecutionFramework>xUnit</TestExecutionFramework>
-    <DefaultLanguage>EN</DefaultLanguage>
-    <UsingReqnroll>TRUE</UsingReqnroll>
+    <UsingReqnroll>true</UsingReqnroll>
     <UsingChromeDriver>false</UsingChromeDriver>
     <UsingGeckoDriver>false</UsingGeckoDriver>
     <UsingIEDriver>false</UsingIEDriver>

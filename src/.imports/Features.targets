@@ -35,6 +35,11 @@
     <BuildConstants Condition="'$(UsingAzureAppConfiguration)' == 'true'">$(BuildConstants)USING_APPCONFIGURATION;</BuildConstants>
   </PropertyGroup>
 
+  <!-- Loggers -->
+  <PropertyGroup>
+    <BuildConstants Condition="'$(UsingSerilog)' == 'true'">$(BuildConstants)USING_SERILOG;</BuildConstants>
+  </PropertyGroup>
+  
   <!-- Telemetry -->
   <PropertyGroup>
     <BuildConstants Condition="'$(UsingSentry)' == 'true'">$(BuildConstants)USING_SENTRY;</BuildConstants>

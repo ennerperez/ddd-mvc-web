@@ -159,7 +159,7 @@ namespace Persistence.Providers
             }
             catch (Exception)
             {
-                // Ignore
+                // ignore
             }
         }
 

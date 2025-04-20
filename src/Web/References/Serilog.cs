@@ -1,3 +1,4 @@
+#if USING_SERILOG
 using System;
 using Microsoft.AspNetCore.Http;
 using Serilog.Configuration;
@@ -148,3 +149,4 @@ namespace Serilog
         }
     }
 }
+#endif
