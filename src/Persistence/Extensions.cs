@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
@@ -54,5 +55,23 @@ namespace Persistence
         }
 
         #endregion
+
+        public static IServiceCollection WithTenants<T>(this IServiceCollection services, string[] tenants = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) where T : ITenantService
+        {
+            switch (serviceLifetime)
+            {
+                case ServiceLifetime.Transient:
+                    services.AddTransient(typeof(ITenantService), typeof(T));
+                    break;
+                case ServiceLifetime.Singleton:
+                    services.AddSingleton(typeof(ITenantService), typeof(T));
+                    break;
+                default:
+                    services.AddScoped(typeof(ITenantService), typeof(T));
+                    break;
+            }
+
+            return services;
+        }
     }
 }

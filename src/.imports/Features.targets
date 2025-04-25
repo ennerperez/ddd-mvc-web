@@ -19,6 +19,7 @@
     <BuildConstants Condition="'$(UsingNonAsync)' == 'true'">$(BuildConstants)USING_NONASYNC;</BuildConstants>
     <BuildConstants Condition="'$(UsingBulk)' == 'true'">$(BuildConstants)USING_BULK;</BuildConstants>
     <BuildConstants Condition="'$(UsingSplit)' == 'true'">$(BuildConstants)USING_SPLIT;</BuildConstants>
+    <BuildConstants Condition="'$(UsingMultiTenancy)' == 'true'">$(BuildConstants)USING_MULTITENANCY;</BuildConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(UsingSqlite)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingSqlServer)' == 'true' OR '$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true' OR '$(UsingPostgreSql)' == 'true' OR '$(UsingOracle)' == 'true'">
     <UsingDabaseProvider>true</UsingDabaseProvider>

@@ -45,6 +45,7 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\src\Domain\Domain.csproj"/>
     <ProjectReference Include="$(SolutionDir)\src\Infrastructure\Infrastructure.csproj"/>
+    <ProjectReference Include="$(SolutionDir)\src\Persistence\Persistence.csproj"/>
     <ProjectReference Include="$(SolutionDir)\tests\Tests.Abstractions\Tests.Abstractions.csproj"/>
   </ItemGroup>
 

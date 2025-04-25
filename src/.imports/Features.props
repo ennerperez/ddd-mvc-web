@@ -25,6 +25,7 @@
     <UsingNonAsync>false</UsingNonAsync>
     <UsingBulk>false</UsingBulk>
     <UsingSplit>false</UsingSplit>
+    <UsingMultiTenancy>false</UsingMultiTenancy>
   </PropertyGroup>
 
   <PropertyGroup Label="Azure">

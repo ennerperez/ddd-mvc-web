@@ -8,7 +8,6 @@ using Tests.UITests.Services;
 using Tests.UITests.Settings;
 #if USING_REQNROLL
 using Reqnroll;
-using StepsHelper = Tests.UITests.Helpers.StepsHelper;
 #endif
 
 namespace Tests.UITests

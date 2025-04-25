@@ -57,6 +57,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
 #if USING_COOKIES || !USING_IDENTITY
 using Microsoft.AspNetCore.Authentication.Cookies;
+
 // ReSharper disable MemberCanBePrivate.Global
 #endif
 #if USING_OPENID
@@ -195,8 +196,8 @@ namespace Web
             var logger = Log.Logger = loggerConfiguration.CreateLogger();
 #endif
             Builder.Logging
-                .ClearProviders()
 #if USING_SERILOG
+                .ClearProviders()
                 .AddSerilog(logger)
 #endif
                 .Close();
@@ -284,9 +285,13 @@ namespace Web
             services
                 .AddDomain()
                 .AddInfrastructure()
-                .AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
-                .AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
-                .AddBusiness().WithRepositories().WithMediatR();
+                .AddPersistence<DefaultContext>()
+                .AddPersistence<CacheContext>() //options => options.UseDbEngine(Configuration))
+#if USING_MULTITENANCY
+                .WithTenants<TenantService>()
+#endif
+                .AddBusiness()
+                .WithRepositories().WithMediatR();
 
 #if USING_IDENTITY
             services
@@ -382,7 +387,6 @@ namespace Web
 #endif
 
 #if USING_COMPRESSION
-
             services.AddResponseCompression(config =>
             {
                 config.EnableForHttps = true;
@@ -811,7 +815,6 @@ namespace Web
             app.UseRouting();
 
 #if USING_SWAGGER
-
             if (Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
             {
                 // Enable middleware to serve generated Swagger as a JSON endpoint.

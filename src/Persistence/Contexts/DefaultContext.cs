@@ -2,8 +2,12 @@ using System;
 using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces;
+#if USING_MULTITENANCY
+using Infrastructure.Interfaces;
+#endif
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Persistence.Conventions;
 #if USING_IDENTITY
 using Domain.Entities.Identity;
@@ -19,13 +23,27 @@ namespace Persistence.Contexts
         DbContext
 #endif
     {
+#if USING_MULTITENANCY
+        private readonly ITenantService _tenantService;
+#endif
+        private readonly IConfiguration _configuration;
+
         public DefaultContext()
         {
         }
 
-        public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
+        public DefaultContext(DbContextOptions<DefaultContext> options, IConfiguration configuration) : base(options)
         {
+            _configuration = configuration;
         }
+
+#if USING_MULTITENANCY
+        public DefaultContext(DbContextOptions<DefaultContext> options, IConfiguration configuration, ITenantService tenantService) : base(options)
+        {
+            _configuration = configuration;
+            _tenantService = tenantService;
+        }
+#endif
 
         private static string ProviderName { get; set; }
         internal static bool HasSchema => DbContextExtensions.HasSchema(ProviderName);
@@ -58,9 +76,27 @@ namespace Persistence.Contexts
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 #if DEBUG
-            optionsBuilder.EnableDetailedErrors();
-            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder?.EnableDetailedErrors();
+            optionsBuilder?.EnableSensitiveDataLogging();
 #endif
+            if (optionsBuilder.IsConfigured)
+            {
+                return;
+            }
+#if USING_MULTITENANCY
+            if (_tenantService != null)
+            {
+                var tenant = _tenantService.Tenant ?? _tenantService.GetTenants(nameof(DefaultContext)).FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(tenant))
+                {
+                    optionsBuilder.UseMultiTenantDbEngine(_configuration, tenant);
+                }
+            }
+#endif
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseDbEngine(_configuration);
+            }
         }
 
         #region DbSet

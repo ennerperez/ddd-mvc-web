@@ -7,4 +7,4 @@ Initializing the application
     Scenario: Initial Scenario
 
     @NotYetImplemented
-    Scenario: Not implemented scenario
+    Scenario: Not Implemented Scenario

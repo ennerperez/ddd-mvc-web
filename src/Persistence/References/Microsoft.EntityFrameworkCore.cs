@@ -72,7 +72,7 @@ namespace Microsoft.EntityFrameworkCore
         }
     }
 
-    public static class DbContextExtensions
+    public static partial class DbContextExtensions
     {
         public static void Rollback(this DbContext context)
         {
@@ -250,35 +250,8 @@ namespace Microsoft.EntityFrameworkCore
             }.Contains(providerName);
         }
 
-        public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string contextName = "", string providerName = "")
+        private static void SetDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string contextName, string providerName, string connectionString)
         {
-            if (string.IsNullOrWhiteSpace(contextName))
-            {
-                contextName = optionsBuilder.Options.ContextType.Name.Split(".").First();
-            }
-
-            if (string.IsNullOrWhiteSpace(providerName))
-            {
-                var connectionStrings = new Dictionary<string, string>();
-                config.Bind(key: "ConnectionStrings", connectionStrings);
-                connectionStrings = connectionStrings
-                    .Where(m => m.Key.StartsWith(contextName))
-                    .ToDictionary(keySelector: k => k.Key, elementSelector: v => v.Value);
-                if (connectionStrings.Count == 0)
-                {
-                    throw new InvalidDataException($"Unable to found a connection string for {contextName}");
-                }
-
-                if (connectionStrings.Count != 1)
-                {
-                    throw new InvalidDataException($"The context {contextName} has more than one connection string");
-                }
-
-                providerName = connectionStrings.First().Key.Split(".").Last();
-            }
-
-            var connectionString = config.GetConnectionString($"{contextName}.{providerName}");
-
 #if USING_DATABASE_PROVIDER
             const string migrationsHistoryTableName = "__EFMigrationsHistory";
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -291,7 +264,7 @@ namespace Microsoft.EntityFrameworkCore
 #if USING_SQLITE
                 case DatabaseProviders.Sqlite:
                     DbConnectionStringBuilder csb = new SqliteConnectionStringBuilder() { ConnectionString = connectionString ?? string.Empty };
-                    var dbPath = Regex.Match(csb.ConnectionString.ToLower(), "(data source ?= ?)(.*)(;?)").Groups[2].Value;
+                    var dbPath = SqliteFileRegex().Match(csb.ConnectionString.ToLower()).Groups[2].Value;
                     var dbPathExpanded = Environment.ExpandEnvironmentVariables(dbPath);
                     csb.ConnectionString = csb.ConnectionString.Replace(dbPath, dbPathExpanded);
                     optionsBuilder.UseSqlite(csb.ConnectionString, x => x.MigrationsHistoryTable(migrationsHistoryTableName));
@@ -335,6 +308,124 @@ namespace Microsoft.EntityFrameworkCore
                 default:
                     break;
             }
+        }
+
+        [GeneratedRegex(@"(.*)\.(\w+)", RegexOptions.Compiled)]
+        private static partial Regex CsRegex();
+
+#if USING_SQLITE
+        [GeneratedRegex(@"(data source ?= ?)(.*)(;?)", RegexOptions.Compiled)]
+        private static partial Regex SqliteFileRegex();
+#endif
+
+        public static void UseDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string contextName = "", string providerName = "")
+        {
+            if (string.IsNullOrWhiteSpace(contextName))
+            {
+                contextName = optionsBuilder.Options.ContextType.Name;
+            }
+
+            if (string.IsNullOrWhiteSpace(contextName))
+            {
+                throw new ArgumentNullException(nameof(contextName));
+            }
+
+            var connectionStrings = new Dictionary<string, string>();
+            config.Bind(key: "ConnectionStrings", connectionStrings);
+
+            if (string.IsNullOrWhiteSpace(providerName))
+            {
+                connectionStrings = connectionStrings
+                    .Where(m => m.Key.StartsWith(contextName))
+                    .ToDictionary(keySelector: k => k.Key, elementSelector: v => v.Value);
+                if (connectionStrings.Count == 0)
+                {
+                    throw new InvalidDataException($"Unable to found a connection string for {contextName}");
+                }
+
+                // if (connectionStrings.Count != 1)
+                // {
+                //     throw new InvalidDataException($"The context {contextName} has more than one connection string");
+                // }
+
+                var cs = CsRegex().Match(connectionStrings.First().Key);
+                if (cs.Success)
+                {
+                    providerName = cs.Groups[2].Value;
+                }
+            }
+
+            var connectionString = config.GetConnectionString(string.Join(".", new[] { contextName, providerName }));
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                var value = connectionStrings.Select(m => CsRegex().Match(m.Key))
+                    .FirstOrDefault(m => m.Success && m.Groups[1].Value == contextName)
+                    ?.Value;
+                if (value != null)
+                {
+                    connectionString = connectionStrings[value];
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                var value = connectionStrings.Select(m => MultiTenantCsRegex().Match(m.Key))
+                    .FirstOrDefault(m => m.Success && m.Groups[1].Value == contextName)
+                    ?.Value;
+                if (value != null)
+                {
+                    connectionString = connectionStrings[value];
+                }
+            }
+
+            optionsBuilder.SetDbEngine(config, contextName, providerName, connectionString);
+        }
+
+        [GeneratedRegex(@"(.*)\[(.*)\]\.(\w+)", RegexOptions.Compiled)]
+        private static partial Regex MultiTenantCsRegex();
+
+        public static void UseMultiTenantDbEngine(this DbContextOptionsBuilder optionsBuilder, IConfiguration config, string tenant, string contextName = "", string providerName = "")
+        {
+            if (string.IsNullOrWhiteSpace(contextName))
+            {
+                contextName = optionsBuilder.Options.ContextType.Name;
+            }
+
+            if (string.IsNullOrWhiteSpace(contextName))
+            {
+                throw new ArgumentNullException(nameof(contextName));
+            }
+
+            var connectionStrings = new Dictionary<string, string>();
+            config.Bind(key: "ConnectionStrings", connectionStrings);
+
+            var groups = connectionStrings
+                .Select(m => MultiTenantCsRegex().Match(m.Key))
+                .Where(m => m.Success)
+                .GroupBy(m => m.Groups[1].Value)
+                .ToArray();
+
+            if (groups.Any(v => v.Key == contextName && v.GroupBy(c => c.Groups[3].Value).Count() > 1))
+            {
+                throw new InvalidDataException($"Unable to use different providers a connection string for {contextName}");
+            }
+
+            var match = groups.FirstOrDefault(m => m.Key == contextName && m.Any(a => a.Groups[2].Value == tenant))?.FirstOrDefault();
+
+            if (string.IsNullOrWhiteSpace(providerName) && match != null)
+            {
+                providerName = match.Groups[3].Value;
+            }
+
+            var key = match?.Value;
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new InvalidDataException($"Tenant for {contextName} was not found");
+            }
+
+            var connectionString = config.GetConnectionString(key);
+
+            optionsBuilder.SetDbEngine(config, contextName, providerName, connectionString);
         }
 
         public static bool HasChangedOwnedEntities(this EntityEntry entry)
