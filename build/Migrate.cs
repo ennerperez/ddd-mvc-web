@@ -79,7 +79,7 @@ public partial class Build
                     .EnableNoBuild()
                     .SetProject(Persistence)
                     .SetStartupProject(Startup)
-                    .SetName(DateTime.Now.Ticks.ToString())
+                    .SetName($"M{DateTime.Now.Ticks}")
                     .SetContext(item.Item1)
                     .SetOutputDirectory(Path.Combine(MigrationsPath, item.Item2, folderName))
                 );

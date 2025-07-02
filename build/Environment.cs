@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Nuke.Common.Tooling;
 
 [TypeConverter(typeof(TypeConverter<Environment>))]

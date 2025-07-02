@@ -514,6 +514,8 @@ atlassian-ide-plugin.xml
 
 # SonarLint plugin
 .idea/sonarlint/
+.sonarlint/
+.sonarqube/
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml

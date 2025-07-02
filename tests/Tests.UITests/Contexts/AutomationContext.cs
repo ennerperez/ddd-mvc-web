@@ -93,7 +93,6 @@ namespace Tests.UITests.Contexts
                 }
 
                 var i = 0;
-                //return new AllException(_exceptions.Count, _exceptions.Select(m => new Tuple<int, object, Exception>(i++, null, m)).ToArray());
                 return AllException.ForFailures(_exceptions.Count, _exceptions.Select(m => new Tuple<int, string, Exception>(i++, m.Message, m)).ToArray());
 
             }

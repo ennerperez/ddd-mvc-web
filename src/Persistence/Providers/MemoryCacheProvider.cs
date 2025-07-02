@@ -154,7 +154,7 @@ namespace Persistence.Providers
                 }
                 else
                 {
-                    throw new Exception($"Could not invalidate cache object: {key}");
+                    throw new InvalidOperationException($"Could not invalidate cache object: {key}");
                 }
             }
             catch (Exception)

@@ -48,7 +48,6 @@ namespace Business
                 case ServiceLifetime.Singleton:
                     services.AddSingleton<ISettingRepository, SettingRepository>();
                     break;
-                case ServiceLifetime.Scoped:
                 default:
                     services.AddScoped<ISettingRepository, SettingRepository>();
                     break;

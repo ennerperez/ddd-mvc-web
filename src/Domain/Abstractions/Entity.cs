@@ -12,16 +12,9 @@ namespace Domain.Abstractions
     {
         public virtual TKey Id { get; set; }
 
-        //public abstract override string ToString();
-
         public override bool Equals(object obj)
         {
             return obj is Entity<TKey> entity && this.Id.Equals(entity.Id);
-        }
-
-        protected bool Equals(Entity<TKey> other)
-        {
-            return Id.Equals(other.Id);
         }
 
         public override int GetHashCode()

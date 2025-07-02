@@ -10,14 +10,14 @@ using Persistence.Contexts;
 namespace Persistence.Migrations.Cache.Sqlite
 {
     [DbContext(typeof(CacheContext))]
-    [Migration("20250417030322_638804377990459524")]
-    partial class _638804377990459524
+    [Migration("20250702042354_M638870090323382775")]
+    partial class M638870090323382775
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
 
             modelBuilder.Entity("Domain.Entities.Cache.Country", b =>
                 {

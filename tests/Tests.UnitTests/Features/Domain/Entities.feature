@@ -29,16 +29,17 @@ Feature: Entities
     @TestCase(1)
     Scenario: Client
         Given the following data
-          | Field          | Value    |
-          | Code           | {Random} |
-          | Identification | {Random} |
-          | FullName       | {Random} |
-          | Address        | {Random} |
-          | PhoneNumber    | {Random} |
-          | Category       | {Random} |
-          | Id             | 1        |
-          | CreatedAt      | {2dAgo}  |
-          | ModifiedAt     | {1dAgo}  |
+          | Field          | Value        |
+          | Code           | {Random}     |
+          | Identification | {Random}     |
+          | FullName       | {Random}     |
+          | Address        | {Random}     |
+          | PhoneNumber    | {Random}     |
+          | Category       | {Random}     |
+          | Id             | 1            |
+          | Budgets        | {Substitute} |
+          | CreatedAt      | {2dAgo}      |
+          | ModifiedAt     | {1dAgo}      |
         Then a Client should be created
         And all Client ctors should be used
 

@@ -102,7 +102,7 @@ namespace Test.Framework.Extended
         private Exception ThrowTableStructureCannotBeModified()
 #pragma warning restore CA1822
         {
-            return new Exception("The table rows must contain the same number of items as the header count of the table. The structure cannot be modified.");
+            return new InvalidOperationException("The table rows must contain the same number of items as the header count of the table. The structure cannot be modified.");
         }
 
     #region Implementation of ICollection<KeyValuePair<string,string>>
@@ -246,7 +246,7 @@ namespace Test.Framework.Extended
                     ErrorColumnNameNotFound + "\nThe table looks like this:\n{1}",
                     column,
                     this);
-                throw new IndexOutOfRangeException(mess);
+                throw new OperationCanceledException(mess);
             }
 
             return index;
@@ -267,7 +267,7 @@ namespace Test.Framework.Extended
         public void AddRow(params string[] cells)
         {
             if (cells == null)
-                throw new Exception(ErrorNoCellsToAdd);
+                throw new InvalidOperationException(ErrorNoCellsToAdd);
 
             if (cells.Length != _header.Length)
             {

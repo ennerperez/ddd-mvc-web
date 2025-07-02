@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using NSubstitute;
 
 namespace Reqnroll
 {
@@ -193,6 +194,13 @@ namespace Reqnroll
                 return Activator.CreateInstance(type);
             }
 
+            var substituteRegex = new Regex(@"\{(Substitute)\}", RegexOptions.Compiled);
+            var matchSubstituteRegex = substituteRegex.Match(@this);
+            if (matchSubstituteRegex.Success)
+            {
+                return Substitute.For(new []{type}, null);
+            }
+
             var randomRegex = new Regex(@"\{(Random)\:?(\d+)?\}", RegexOptions.Compiled);
             var matchRandomRegex = randomRegex.Match(@this);
 
@@ -279,7 +287,7 @@ namespace Reqnroll
                                     var amount = int.Parse(match.Groups[1].Value);
                                     var interval = match.Groups[2].Value;
                                     //TODO: Translate keywords
-                                    var direction = match.Groups[3].Value == "Ago" ? -1 : 1;
+                                    var direction = match.Groups[3].Value.Equals("ago", StringComparison.InvariantCultureIgnoreCase) ? 0 : 1;
                                     lv = interval switch
                                     {
                                         "y" => DateTime.Now.AddYears(direction * amount),
@@ -289,8 +297,8 @@ namespace Reqnroll
                                         _ => lv
                                     };
 
-                                    ls = direction == -1 ? DateTime.Now : lv;
-                                    li = direction == -1 ? lv : DateTime.Now;
+                                    ls = direction == 0 ? DateTime.Now : lv;
+                                    li = direction == 1 ? lv : DateTime.Now;
                                     result = new DateTime(rnd.NextLong(li.Ticks, ls.Ticks));
                                 }
 

@@ -9,7 +9,6 @@ using System.Text;
 #endif
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Nuke.Common;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
@@ -17,7 +16,6 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.EntityFramework;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Utilities.Collections;
 using Serilog;
@@ -27,6 +25,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 // ReSharper disable UnusedMember.Local
 #pragma warning disable IDE1006 // Naming Styles
 #pragma warning disable CA1050 // Declare types in namespaces
+
 public partial class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -92,10 +91,6 @@ public partial class Build : NukeBuild
     static AbsolutePath PublishDirectory => RootDirectory / "publish";
 
     static AbsolutePath ArtifactsDirectory => RootDirectory / "output";
-
-    static AbsolutePath TestResultsDirectory => RootDirectory / "tests" / "results";
-
-    static AbsolutePath ScriptsDirectory => RootDirectory / "scripts";
 
     #endregion
 
@@ -232,17 +227,10 @@ public partial class Build : NukeBuild
             Log.Information("Cleaning Output Directories");
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach((path) => path.DeleteDirectory());
             TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach((path) => path.DeleteDirectory());
-            Log.Information("Cleaning Test Results Directory");
-            AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
-            Log.Information("Cleaning Scripts Directory");
-            AbsolutePath.Create(ScriptsDirectory).CreateOrCleanDirectory();
             Log.Information("Cleaning Publish Directory");
             AbsolutePath.Create(PublishDirectory).CreateOrCleanDirectory();
             Log.Information("Cleaning Artifacts Directory");
             AbsolutePath.Create(ArtifactsDirectory).CreateOrCleanDirectory();
-
-            AbsolutePath.Create(TestResultsDirectory).CreateOrCleanDirectory();
-            AbsolutePath.Create(TestsDirectory / "coverage").CreateOrCleanDirectory();
 
             if (!DryRun)
             {
@@ -274,17 +262,20 @@ public partial class Build : NukeBuild
                     if (!isMauiInstalled)
                     {
                         Log.Information("Installing MAUI workload...");
-                        var command = $"workload install maui-mobile --version {MauiWorkloadVersion}";
+                        var workloadId = "maui-mobile";
                         if (Platform.Contains("Android"))
                         {
-                            command = $"workload install maui-android --version {MauiWorkloadVersion}";
+                            workloadId = "maui-android";
                         }
                         else if (Platform.Contains("iPhone"))
                         {
-                            command = $"workload install maui-ios --version {MauiWorkloadVersion}";
+                            workloadId = "maui-ios";
                         }
 
-                        DotNet(command);
+                        DotNetWorkloadInstall(options =>
+                            options.SetWorkloadId(workloadId)
+                                .SetProcessAdditionalArguments($"--version {MauiWorkloadVersion}")
+                        );
                     }
                 }
             }
@@ -351,13 +342,13 @@ public partial class Build : NukeBuild
                 ));
         });
 
-    Target Test => d => d
+    Target UnitTest => d => d
         .DependsOn(Compile)
         .Executes(() =>
         {
             if (!Tests.Any())
             {
-                throw new NullReferenceException("No tests found");
+                throw new OperationCanceledException("No tests found");
             }
 
             DotNetTest(s => s
@@ -366,7 +357,7 @@ public partial class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .When((_) => true, configurator: x => x
                     .SetLoggers("trx")
-                    .SetResultsDirectory(TestResultsDirectory))
+                    .SetResultsDirectory(TestsDirectory / "results"))
                 .CombineWith(Tests, configurator: (x, v) => x
                     .SetProjectFile(v.Path)));
 
@@ -382,14 +373,14 @@ public partial class Build : NukeBuild
                 .SetCoverletOutputFormat("cobertura")
                 .SetCoverletOutput(TestsDirectory / "coverage")
                 .SetLoggers("trx")
-                .SetResultsDirectory(TestResultsDirectory)
+                .SetResultsDirectory(TestsDirectory / "results")
                 .SetDataCollector("XPlat Code Coverage")
                 .CombineWith(testsProjects, configurator: (x, v) => x
                     .SetProjectFile(v.Path)));
 
-            DotNet($"reportgenerator -reports:\"{TestResultsDirectory}/**/coverage.cobertura.xml\" -targetdir:{TestsDirectory / "coverage"} -reporttypes:\"cobertura\"");
+            DotNet($"reportgenerator -reports:\"{TestsDirectory / "results"}/**/coverage.cobertura.xml\" -targetdir:{TestsDirectory / "coverage"} -reporttypes:\"cobertura\"");
 
-            TestResultsDirectory.GlobFiles("*.trx")
+            (TestsDirectory / "results").GlobFiles("*.trx")
                 .ForEach(m =>
                 {
                     DotNet($"trx2junit {m}");
@@ -417,7 +408,7 @@ public partial class Build : NukeBuild
         {
             DotNetToolRestore(s => s.SetProcessWorkingDirectory(SourceDirectory));
             AbsolutePath.Create(TestsDirectory / "coverage").CreateOrCleanDirectory();
-            DotNet($"reportgenerator -reports:\"{TestResultsDirectory}/**/coverage.cobertura.xml\" -targetdir:{TestsDirectory / "coverage"} -reporttypes:\"cobertura;html;teamcitysummary\"");
+            DotNet($"reportgenerator -reports:\"{TestsDirectory / "results"}/**/coverage.cobertura.xml\" -targetdir:{TestsDirectory / "coverage"} -reporttypes:\"cobertura;html;teamcitysummary\"");
         });
 
     Target Versioning => d => d
@@ -453,9 +444,7 @@ public partial class Build : NukeBuild
             _versionTag = tag?.Item2;
             _hash = Repository.Commit;
 
-            Log.Information("Version: {Version}", _version);
-            Log.Information("Tag: {VersionTag}", _versionTag);
-            Log.Information("Hash: {Hash}", _hash);
+            Log.Information("Version: {Version} \n Tag: {VersionTag} \n Hash: {Hash}", _version, _versionTag, _hash);
 
             if (_version == null)
             {
@@ -540,41 +529,6 @@ public partial class Build : NukeBuild
 
             if (Project.StartsWith("Web") || Project.StartsWith("Service"))
             {
-                var startupPath = Startup?.Directory ?? string.Empty;
-
-                var config = new ConfigurationBuilder()
-                    .AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
-                    .AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
-                    .Build();
-
-                var connectionStrings = new Dictionary<string, string>();
-                config.Bind(key: "ConnectionStrings", connectionStrings);
-
-                var contexts = from item in connectionStrings
-                    let split = item.Key.Split(".")
-                    where split.Length > 1
-                    let context = split.First()
-                    let provider = split.Last()
-                    where provider != "Sqlite"
-                    select new { Context = context, Name = context.Replace(oldValue: "Context", newValue: ""), Provider = provider, item.Value };
-
-                foreach (var item in contexts)
-                {
-                    var fileName = Path.Combine(ScriptsDirectory, $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.sql");
-                    if (File.Exists(fileName))
-                    {
-                        File.Delete(fileName);
-                    }
-
-                    EntityFrameworkTasks.EntityFrameworkMigrationsScript(c => c
-                        .EnableIdempotent()
-                        .SetProject(Persistence.Path)
-                        .SetStartupProject(Startup.Path)
-                        .SetContext(item.Context)
-                        .SetOutput(fileName)
-                    );
-                }
-
                 DotNetPublish(s => s
                     .SetWarningLevel(WarningLevel)
                     .SetVerbosity(getDotNetVerbosity())
@@ -655,7 +609,7 @@ public partial class Build : NukeBuild
                 }
             }
 
-            Log.Information($"Output: {PublishDirectory}");
+            Log.Information("Output: {PublishDirectory}", PublishDirectory);
         });
 
     Target Pack => d => d
@@ -663,11 +617,6 @@ public partial class Build : NukeBuild
         .DependsOn(Prepare)
         .Executes(() =>
         {
-            if (ScriptsDirectory.Exists())
-            {
-                ScriptsDirectory.CopyToDirectory($"{ArtifactsDirectory}", ExistsPolicy.MergeAndOverwrite);
-            }
-
             var items = loadPublishProjects();
             var target = from item in items
                 from framework in item.project.GetTargetFrameworks()?.Where(m => !string.IsNullOrEmpty(m))
@@ -686,31 +635,96 @@ public partial class Build : NukeBuild
                 }
             }
 
+#if USING_EFCORE
+            if (Project.StartsWith("Web") || Project.StartsWith("Service") || Project.StartsWith("Package"))
+            {
+                var startupPath = Startup?.Directory ?? string.Empty;
+
+                var config = new ConfigurationBuilder()
+                    .AddJsonFile(Path.Combine(startupPath, "appsettings.json"), false, true)
+                    .AddJsonFile(Path.Combine(startupPath, $"appsettings.{Environment}.json"), true, true)
+                    .Build();
+
+                var connectionStrings = new Dictionary<string, string>();
+                config.Bind(key: "ConnectionStrings", connectionStrings);
+
+                var contexts = (from item in connectionStrings
+                        let split = item.Key.Split(".")
+                        where split.Length > 1
+                        let context = split.First()
+                        let provider = split.Last()
+                        select new { Context = context, Name = context.Replace(oldValue: "Context", newValue: ""), Provider = provider, item.Value })
+                    .ToArray();
+
+                var scriptDir = Path.Combine(ArtifactsDirectory, "scripts");
+                if (!Directory.Exists(scriptDir))
+                {
+                    Directory.CreateDirectory(scriptDir);
+                }
+
+                foreach (var item in contexts.Where(m => m.Provider != "Sqlite"))
+                {
+                    if (Startup == null || Persistence == null) continue;
+                    var scripfile = Path.Combine(ArtifactsDirectory, "scripts", $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.sql");
+                    if (File.Exists(scripfile))
+                    {
+                        File.Delete(scripfile);
+                    }
+
+                    DotNetEf(_ => new MigrationsSettings(Migrations.Script)
+                        .EnableIdempotent()
+                        .SetProjectFile(Persistence.Path)
+                        .SetStartupProjectFile(Startup.Path)
+                        .SetContext(item.Context)
+                        .SetOutput(scripfile)
+                    );
+                }
+
+                var bundlesDir = Path.Combine(ArtifactsDirectory, "bundles");
+                if (!Directory.Exists(bundlesDir))
+                {
+                    Directory.CreateDirectory(bundlesDir);
+                }
+
+                foreach (var item in contexts.Where(m => m.Provider == "Sqlite"))
+                {
+                    if (Startup == null || Persistence == null) continue;
+                    var databasefile = Path.Combine(bundlesDir, $"{item.Name}_{item.Provider}_{DateTime.Now:yyyyMMdd}.db");
+                    DotNetEf(_ => new DatabaseSettings(Database.Update)
+                        .SetConnection($"Data Source={databasefile}")
+                        .SetProjectFile(Persistence.Path)
+                        .SetStartupProjectFile(Startup.Path)
+                        .SetContext(item.Context)
+                    );
+                }
+            }
+#endif
+
             foreach (var item in target)
             {
                 if (Project.StartsWith("Desktop"))
                 {
+#if USING_7ZIP
                     if (OperatingSystem.IsWindows())
                     {
-#if USING_7ZIP
-            AbsolutePathExtensions.DeleteFile($"{ArtifactsDirectory}/{item.project.Name}.exe");
-            SevenZip.SevenZipBase.SetLibraryPath(Solution.Directory / ".build" / "7za.bin");
-            var compressor = new SevenZip.SevenZipCompressor();
-            compressor.CompressDirectory(Path.Combine(PublishDirectory, item.project.Name), Path.Combine(ArtifactsDirectory, $"{item.project.Name}.7z"));
+                        AbsolutePathExtensions.DeleteFile($"{ArtifactsDirectory}/{item.project.Name}.exe");
+                        SevenZip.SevenZipBase.SetLibraryPath(Solution.Directory / ".build" / "7za.bin");
+                        var compressor = new SevenZip.SevenZipCompressor();
+                        compressor.CompressDirectory(Path.Combine(PublishDirectory, item.project.Name), Path.Combine(ArtifactsDirectory, $"{item.project.Name}.7z"));
 
-            var configs = new[] { ";!@Install@!UTF-8!", $"Title=\"{Product} {item.project.Name}\"", $"ExecuteFile=\"{item.project.Name}.exe\"", ";!@InstallEnd@!" };
-            var array1 = File.ReadAllBytes(Solution.Directory / ".build" / $"{Product}.sfx");
-            var array2 = Encoding.UTF8.GetBytes(string.Join(System.Environment.NewLine, configs));
-            var array3 = File.ReadAllBytes($"{ArtifactsDirectory / item.project.Name}.7z");
-            var data = array1.Concat(array2).Concat(array3).ToArray();
-            File.WriteAllBytes($"{ArtifactsDirectory}/{item.project.Name}.exe", data);
-            AbsolutePathExtensions.DeleteFile($"{ArtifactsDirectory}/{item.project.Name}.7z");
-#endif
+                        var configs = new[] { ";!@Install@!UTF-8!", $"Title=\"{Product} {item.project.Name}\"", $"ExecuteFile=\"{item.project.Name}.exe\"", ";!@InstallEnd@!" };
+                        var array1 = File.ReadAllBytes(Solution.Directory / ".build" / $"{Product}.sfx");
+                        var array2 = Encoding.UTF8.GetBytes(string.Join(System.Environment.NewLine, configs));
+                        var array3 = File.ReadAllBytes($"{ArtifactsDirectory / item.project.Name}.7z");
+                        var data = array1.Concat(array2).Concat(array3).ToArray();
+                        File.WriteAllBytes($"{ArtifactsDirectory}/{item.project.Name}.exe", data);
+                        AbsolutePathExtensions.DeleteFile($"{ArtifactsDirectory}/{item.project.Name}.7z");
                     }
-                    // else
-                    // {
-                    //   throw new InvalidOperationException("Unable to build in a non-windows machine");
-                    // }
+                    else
+                    {
+                      throw new InvalidOperationException("Unable to build in a non-windows machine");
+                    }
+#endif
                 }
                 else if (Project.StartsWith("Mobile"))
                 {
@@ -772,13 +786,48 @@ public partial class Build : NukeBuild
                 }
             }
 
-            Log.Information($"Output: {ArtifactsDirectory}");
+            Log.Information("Output: {ArtifactsDirectory}", ArtifactsDirectory);
             return Task.CompletedTask;
+        });
+
+    Target Analyze => d => d
+        .DependsOn(Restore)
+        .After(Restore)
+        .Executes(() =>
+        {
+#if USING_SONARQUBE
+            var lintFile = Path.Combine(RootDirectory, ".sonarlint", Solution.Name + ".json");
+            SonarLint lint;
+            if (File.Exists(lintFile))
+            {
+                lint = System.Text.Json.JsonSerializer.Deserialize<SonarLint>(File.ReadAllText(lintFile));
+            }
+            else
+            {
+                lint = new SonarLint(
+                    System.Environment.GetEnvironmentVariable("SONAR_HOST_URL"),
+                    System.Environment.GetEnvironmentVariable("SONAR_TOKEN"),
+                    System.Environment.GetEnvironmentVariable("SONAR_PROJECT_KEY")
+                );
+            }
+
+            if (lint != null)
+            {
+                DotNet(@$"sonarscanner begin /k:""{lint.projectKey}"" /d:sonar.host.url=""{lint.sonarQubeUri}"" /d:sonar.exclusions=""**/.sonarlint/*.*"" /d:sonar.token=""{lint.sonarQubeToken}"" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml");
+                DotNetBuild(s => s.SetProjectFile(Solution));
+                Process.Start("dotnet", "dotnet-coverage collect \"dotnet test\" -f xml -o \"coverage.xml\"")?.WaitForExit();
+                DotNet(@$"sonarscanner end /d:sonar.token=""{lint.sonarQubeToken}""");
+            }
+            else
+            {
+                Log.Warning("SonarQube Lint file not found: {LintFile}", lintFile);
+            }
+#endif
         });
 
     record PublishProjectRecord(Project project, bool useMaui);
 
-    PublishProjectRecord[] loadPublishProjects()
+    private PublishProjectRecord[] loadPublishProjects()
     {
         foreach (var item in Projects)
         {
@@ -826,7 +875,11 @@ public partial class Build : NukeBuild
         return internalProjects;
     }
 
-    static DotNetVerbosity getDotNetVerbosity()
+#if USING_SONARQUBE
+    private record SonarLint(string sonarQubeUri, string sonarQubeToken, string projectKey);
+#endif
+
+    private DotNetVerbosity getDotNetVerbosity()
     {
         return Verbosity switch
         {
@@ -836,6 +889,16 @@ public partial class Build : NukeBuild
             Verbosity.Normal => DotNetVerbosity.normal,
             _ => DotNetVerbosity.diagnostic
         };
+    }
+
+    private string getReleaseNotes()
+    {
+        var gitOutput = GitTasks.Git("log -1 --pretty=%B");
+
+        var releaseNotes = new List<string> { $"Environment: {Environment}", System.Environment.NewLine, "Release Notes:", System.Environment.NewLine };
+        releaseNotes.AddRange(gitOutput.Where(x => !string.IsNullOrWhiteSpace(x.Text)).Select(x => x.Text).ToList());
+
+        return string.Join(System.Environment.NewLine, releaseNotes);
     }
 
     [GeneratedRegex(@"v?\=?((?:[0-9]{1,}\.{0,}){1,})\-?(.*)", RegexOptions.Compiled)]
@@ -849,16 +912,6 @@ public partial class Build : NukeBuild
 
     [GeneratedRegex(@"\[assembly: AssemblyInformationalVersion\(.*\)\]", RegexOptions.Compiled)]
     private static partial Regex AssemblyInformationalVersionRegex();
-
-    string GetReleaseNotes()
-    {
-        var gitOutput = GitTasks.Git("log -1 --pretty=%B");
-
-        var releaseNotes = new List<string> { $"Environment: {Environment}", System.Environment.NewLine, "Release Notes:", System.Environment.NewLine };
-        releaseNotes.AddRange(gitOutput.Where(x => !string.IsNullOrWhiteSpace(x.Text)).Select(x => x.Text).ToList());
-
-        return string.Join(System.Environment.NewLine, releaseNotes);
-    }
 }
 #pragma warning restore CA1050 // Declare types in namespaces
 #pragma warning restore IDE1006 // Naming Styles

@@ -71,7 +71,7 @@ namespace Tests.UITests.Steps
 
             if (result == null || result < 0)
             {
-                throw new IndexOutOfRangeException();
+                throw new OperationCanceledException();
             }
 
             return result.Value;

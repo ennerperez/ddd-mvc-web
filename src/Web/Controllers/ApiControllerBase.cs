@@ -62,27 +62,29 @@ namespace Web.Controllers
         {
             object rows;
 
-            var props = typeof(TResult).GetProperties().ToArray();
-            var orderByKeys = new Dictionary<string, string>();
-            if (model.Order != null)
+            var props = typeof(TResult).GetProperties();
+
+            var converter = new Func<ColumnOrder, string[]>(item =>
             {
-                foreach (var item in model.Order)
+                var column = model.Columns[item.Column];
+                if (column.Data == null)
                 {
-                    var column = model.Columns[item.Column];
-                    if (column.Data == null)
-                    {
-                        continue;
-                    }
-
-                    var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                    if (prop != null)
-                    {
-                        orderByKeys.Add(prop.Name, item.Dir);
-                    }
+                    return default;
                 }
-            }
 
-            var order = orderByKeys.Select(m => new[] { m.Key, m.Value }).ToArray();
+                var prop = props.FirstOrDefault(m => m.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase));
+                if (prop != null)
+                {
+                    return new []{prop.Name, item.Dir};
+                }
+
+                return default;
+            });
+
+            var order = model.Order.Select(m => converter(m))
+                .Where(m => m != default)
+                .ToDictionary(k => k[0], v => v[1])
+                .Select(m => new[] { m.Key, m.Value }).ToArray();
 
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
@@ -108,12 +110,7 @@ namespace Web.Controllers
                     .Select(column =>
                     {
                         var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                        if (prop != null)
-                        {
-                            return new { Property = prop, column.Name, column.Search.Value };
-                        }
-
-                        return null;
+                        return prop != null ? new { Property = prop, column.Name, column.Search.Value } : null;
                     });
 
                 var args = Array.Empty<MemberExpression>();
@@ -126,7 +123,7 @@ namespace Web.Controllers
                     args = expression2.Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
                 }
 
-                parameter = NestedMember(args.First());
+                parameter = NestedMember(args[0]);
 
                 ConstantExpression constant;
                 foreach (var filter in filters)

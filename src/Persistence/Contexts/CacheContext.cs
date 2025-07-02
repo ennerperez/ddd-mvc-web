@@ -59,7 +59,6 @@ namespace Persistence.Contexts
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly, m => m.GetCustomAttributes(typeof(DbContextAttribute), true).OfType<DbContextAttribute>().Any(a => a.ContextType == GetType()));
 
             // Conventions
-            // modelBuilder.RemovePluralizingTableNameConvention();
             modelBuilder.AddProviderTypeConventions(m =>
             {
                 m.Provider = ProviderName;

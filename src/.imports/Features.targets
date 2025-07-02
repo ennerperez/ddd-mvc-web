@@ -79,5 +79,10 @@
     <BuildConstants Condition="'$(TestExecutionFramework)' == 'NUnit'">$(BuildConstants)NUNIT;</BuildConstants>
     <BuildConstants Condition="'$(UsingReqnroll)' == 'true'">$(BuildConstants)USING_REQNROLL;</BuildConstants>
   </PropertyGroup>
+  
+  <!-- Analysis -->
+  <PropertyGroup>
+    <BuildConstants Condition="'$(UsingSonarQube)' == 'true'">$(BuildConstants)USING_SONARQUBE;</BuildConstants>
+  </PropertyGroup>
 
 </Project>

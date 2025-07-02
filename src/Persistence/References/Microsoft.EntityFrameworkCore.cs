@@ -92,7 +92,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             if (!context.Database.GetMigrations().Any())
             {
-                throw new NullReferenceException("There is no migrations in the current context");
+                throw new OperationCanceledException("There is no migrations in the current context");
             }
 
             context.Database.Migrate();

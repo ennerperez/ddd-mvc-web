@@ -4,7 +4,6 @@ using Nuke.Common;
 using Serilog;
 
 // ReSharper disable UsageOfDefaultStructEquality
-
 // ReSharper disable UnusedMember.Local
 #pragma warning disable IDE0051 // Remove unused private members
 public partial class Build
@@ -79,7 +78,7 @@ public partial class Build
                          e.Data.Contains("FAILED", StringComparison.OrdinalIgnoreCase) ||
                          e.Data.Contains("INVALID", StringComparison.OrdinalIgnoreCase))
                 {
-                    var ex = new Exception(e.Data);
+                    var ex = new InvalidOperationException(e.Data);
                     Log.Error(ex, "{Message}", ex.Message);
                     throw ex;
                 }
@@ -128,7 +127,7 @@ public partial class Build
                          e.Data.Contains("FAILED", StringComparison.OrdinalIgnoreCase) ||
                          e.Data.Contains("INVALID", StringComparison.OrdinalIgnoreCase))
                 {
-                    var ex = new Exception(e.Data);
+                    var ex = new InvalidOperationException(e.Data);
                     Log.Error(ex, "{Message}", ex.Message);
                     throw ex;
                 }
@@ -180,7 +179,7 @@ public partial class Build
                          e.Data.Contains("FAILED", StringComparison.OrdinalIgnoreCase) ||
                          e.Data.Contains("INVALID", StringComparison.OrdinalIgnoreCase))
                 {
-                    var ex = new Exception(e.Data);
+                    var ex = new InvalidOperationException(e.Data);
                     Log.Error(ex, "{Message}", ex.Message);
                     throw ex;
                 }
@@ -222,7 +221,7 @@ public partial class Build
                          e.Data.Contains("FAILED", StringComparison.OrdinalIgnoreCase) ||
                          e.Data.Contains("INVALID", StringComparison.OrdinalIgnoreCase))
                 {
-                    var ex = new Exception(e.Data);
+                    var ex = new InvalidOperationException(e.Data);
                     Log.Error(ex, "{Message}", ex.Message);
                     throw ex;
                 }

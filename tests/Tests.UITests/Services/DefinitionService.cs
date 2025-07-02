@@ -268,7 +268,7 @@ namespace Tests.UITests.Services
 
                 if (element == null)
                 {
-                    throw new NullReferenceException($"Element [{selector}] was not found after {attempts} attempts");
+                    throw new OperationCanceledException($"Element [{selector}] was not found after {attempts} attempts");
                 }
 
                 return element;
@@ -322,7 +322,7 @@ namespace Tests.UITests.Services
 
                 if (element == null)
                 {
-                    throw new NullReferenceException($"Element [{selector}] was not found after {attempts} attempts");
+                    throw new OperationCanceledException($"Element [{selector}] was not found after {attempts} attempts");
                 }
 
                 return element;
@@ -537,7 +537,7 @@ namespace Tests.UITests.Services
 
                 if (elements == null)
                 {
-                    throw new NullReferenceException($"Elements [{selector}] was not found after {attempts} attempts");
+                    throw new OperationCanceledException($"Elements [{selector}] was not found after {attempts} attempts");
                 }
 
                 return elements;
@@ -591,7 +591,7 @@ namespace Tests.UITests.Services
 
                 if (elements == null)
                 {
-                    throw new NullReferenceException($"Elements [{selector}] was not found after {attempts} attempts");
+                    throw new OperationCanceledException($"Elements [{selector}] was not found after {attempts} attempts");
                 }
 
                 return elements;

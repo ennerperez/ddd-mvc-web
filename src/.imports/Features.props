@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="General">
-    <FrameworkPackagesVersion>9.0.4</FrameworkPackagesVersion>
+    <FrameworkPackagesVersion>[9.0.6]</FrameworkPackagesVersion>
     <UsingAssemblyInfoTemplate>true</UsingAssemblyInfoTemplate>
     <SkipServerCertificateValidation>true</SkipServerCertificateValidation>
   </PropertyGroup>
@@ -76,6 +76,10 @@
     <UsingAzureApplicationInsights>false</UsingAzureApplicationInsights>
     <UsingDatadog>false</UsingDatadog>
     <UsingSentry>false</UsingSentry>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Analysis">
+    <UsingSonarQube>true</UsingSonarQube>
   </PropertyGroup>
 
   <PropertyGroup Label="Testing">

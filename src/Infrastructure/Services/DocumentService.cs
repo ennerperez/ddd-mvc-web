@@ -19,7 +19,7 @@ namespace Infrastructure.Services
 
         public byte[] Generate<T>(T instance, string format) where T : IDocument
         {
-            if (instance == null)
+            if (Equals(instance, default(T)))
             {
                 return null;
             }

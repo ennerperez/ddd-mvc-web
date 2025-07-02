@@ -62,7 +62,7 @@ namespace Web.Areas.Admin.Controllers
                 title = "Budgets";
             }
 
-            var definition = _documentService.Compose<BudgetDocument>(model);
+            var definition = await _documentService.ComposeAsync<BudgetDocument>(model);
             definition.Title = title;
             definition.FileName = $"{definition.Title}.{format}";
             var report = await _documentService.GenerateAsync(definition, format);

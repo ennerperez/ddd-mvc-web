@@ -30,12 +30,6 @@
       "dotnetRunMessages": true,
       "commandLineArgs": "--target Compile --no-logo"
     },
-    "Build.Test": {
-      "description": "Execute the test projects",
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "commandLineArgs": "--target Test --no-logo"
-    },
     "Build.Publish:Test": {
       "description": "Publish the project in the output folder",
       "commandName": "Project",
@@ -58,11 +52,6 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "commandLineArgs": "--target Pack --no-logo"
-    },
-    "Migrate.FastCompile": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "commandLineArgs": "--target FastCompile --no-logo"
     },
     "Migrate.MigrationAdd": {
       "commandName": "Project",
@@ -98,6 +87,30 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "commandLineArgs": "--target DbContextOptimize --no-logo"
+    },
+    "Test.UnitTest": {
+      "description": "Execute the unit test projects",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target UnitTest --no-logo"
+    },
+    "Test.UITest": {
+      "description": "Execute the UI test projects",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target UITest --no-logo"
+    },
+    "Test.Coverage": {
+      "description": "Execute the test coverage",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Coverage --no-logo"
+    },
+    "Analyze": {
+      "description": "Execute the code analysis",
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--target Analyze"
     }
   }
 }

@@ -24,6 +24,7 @@
     "ExecutableTarget": {
       "type": "string",
       "enum": [
+        "Analyze",
         "Clean",
         "Compile",
         "Coverage",
@@ -42,8 +43,8 @@
         "Prepare",
         "Publish",
         "Restore",
-        "Test",
         "UITest",
+        "UnitTest",
         "Versioning"
       ]
     },
