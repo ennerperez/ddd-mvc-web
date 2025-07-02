@@ -217,6 +217,11 @@ public partial class Build : NukeBuild
             _androidExt = Environment == Environment.Production ? "aab" : "apk";
             _iOSExt = Platform != null && Platform.Contains("iPhoneSimulator", StringComparison.InvariantCultureIgnoreCase) ? "app" : "ipa";
 
+            // if (System.OperatingSystem.IsLinux())
+            // {
+            //     System.Environment.SetEnvironmentVariable("DOTNET_ROOT", "/usr/share/dotnet");
+            // }
+
             #endregion
         });
 

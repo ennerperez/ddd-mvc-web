@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
@@ -40,8 +41,10 @@ public partial class Build
         var combinations = from item in connectionStrings
             let split = item.Key.Split(".")
             where split.Length > 1
-            let context = split.First()
-            let provider = split.Last()
+            let lcontext = split[0]
+            let mx = MultiTenantCsRegex().Match(item.Key)
+            let context = mx.Success ? mx.Groups[1].Value : lcontext
+            let provider = split[split.Length - 1]
             select new Tuple<string, string, string, string>(context, context.Replace(oldValue: "Context", newValue: ""), provider, item.Value);
 
         return combinations;
@@ -52,7 +55,7 @@ public partial class Build
         .Executes(() =>
         {
             var projects = Solution.AllProjects
-                .Where(m => !m.Name.StartsWith("."))
+                .Where(m => !m.Name.StartsWith('.'))
                 .Where(m => new[]
                 {
                     Persistence, Startup
@@ -70,7 +73,9 @@ public partial class Build
         .DependsOn(FastCompile)
         .Executes(() =>
         {
-            var combinations = GetConnectionStringsCombinations();
+            var combinations = GetConnectionStringsCombinations()
+                .GroupBy(m=> m.Item1)
+                .Select(g => g.First());
             foreach (var item in combinations)
             {
                 var folderName = item.Item2 == item.Item3 ? "" : item.Item3;
@@ -184,7 +189,7 @@ public partial class Build
                     continue;
                 }
 
-                var lastIndex = migrations.IndexOf(migrations.Last());
+                var lastIndex = migrations.IndexOf(migrations[migrations.Count - 1]);
                 lastIndex--;
                 if (lastIndex < 0)
                 {
@@ -202,4 +207,7 @@ public partial class Build
                 );
             }
         });
+
+    [GeneratedRegex(@"(.*)\[(.*)\]\.(\w+)", RegexOptions.Compiled)]
+    private static partial Regex MultiTenantCsRegex();
 }

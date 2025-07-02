@@ -10,8 +10,8 @@ using Persistence.Contexts;
 namespace Persistence.Migrations.Cache.Sqlite
 {
     [DbContext(typeof(CacheContext))]
-    [Migration("20250702042354_M638870090323382775")]
-    partial class M638870090323382775
+    [Migration("20250702055927_M638870147647749377")]
+    partial class M638870147647749377
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

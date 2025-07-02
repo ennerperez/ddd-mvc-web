@@ -5,7 +5,7 @@
 namespace Persistence.Migrations.Cache.Sqlite
 {
     /// <inheritdoc />
-    public partial class M638870090323382775 : Migration
+    public partial class M638870147647749377 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
