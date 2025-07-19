@@ -45,11 +45,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.cspr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C78F3CE2-1175-4841-B617-2AF391E5D780}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C78F3CE2-1175-4841-B617-2AF391E5D780}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{ECF4017B-7659-433F-86DE-1CB29695A6C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Abstractions", "tests\Tests.Abstractions\Tests.Abstractions.csproj", "{23003795-3098-4E28-89D7-2C42312EFBFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Abstractions", "test\Tests.Abstractions\Tests.Abstractions.csproj", "{23003795-3098-4E28-89D7-2C42312EFBFD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{F3BDE0F2-45AD-4E8D-B286-155031900445}"
 EndProject
@@ -57,13 +57,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Persiste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "src\Business\Business.csproj", "{2AA52CA0-46C3-4898-9E6D-1B17B9062D92}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.IntegrationTests", "tests\Tests.IntegrationTests\Tests.IntegrationTests.csproj", "{146B584D-2857-40B0-8E47-81F60C349F0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.IntegrationTests", "test\Tests.IntegrationTests\Tests.IntegrationTests.csproj", "{146B584D-2857-40B0-8E47-81F60C349F0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj", "{B255D19C-5A8B-4675-9FE7-6CCED0706D16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.UITests", "tests\Tests.UITests\Tests.UITests.csproj", "{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.UITests", "test\Tests.UITests\Tests.UITests.csproj", "{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.UnitTests", "tests\Tests.UnitTests\Tests.UnitTests.csproj", "{3828B163-E82E-4863-8D96-6AD0B5D936B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.UnitTests", "test\Tests.UnitTests\Tests.UnitTests.csproj", "{3828B163-E82E-4863-8D96-6AD0B5D936B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "src\Client\Client.csproj", "{F639348A-7DE1-4423-A5A9-475FA6EEE1C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3828B163-E82E-4863-8D96-6AD0B5D936B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F639348A-7DE1-4423-A5A9-475FA6EEE1C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F639348A-7DE1-4423-A5A9-475FA6EEE1C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F639348A-7DE1-4423-A5A9-475FA6EEE1C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F639348A-7DE1-4423-A5A9-475FA6EEE1C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{123FEC7F-37D4-43F4-8E2B-EBB50963FCBB} = {C78F3CE2-1175-4841-B617-2AF391E5D780}
 		{559DCA76-61B1-4044-876F-1CD1C274A94A} = {8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}
 		{3828B163-E82E-4863-8D96-6AD0B5D936B2} = {C78F3CE2-1175-4841-B617-2AF391E5D780}
+		{F639348A-7DE1-4423-A5A9-475FA6EEE1C7} = {8587D5F2-F0A1-43E9-9F0A-EAFDEA4B5881}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C58BC0B-8614-406A-AEDB-9B8BFFB86C08}

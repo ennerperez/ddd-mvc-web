@@ -1,0 +1,407 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b2969274-8849-4159-a27e-27e43a4ac5fb" name="ennerperez@DSKWIN01A 2025-07-08 02:27:24" runUser="DSKWIN01A\ennerperez" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-07-08T02:27:24.1233053-05:00" queuing="2025-07-08T02:27:24.1233056-05:00" start="2025-07-08T02:27:20.4231475-05:00" finish="2025-07-08T02:27:24.9218783-05:00" />
+  <TestSettings name="default" id="912f46fc-d6ea-4de7-99bd-38ad9186ee88">
+    <Deployment runDeploymentRoot="ennerperez_DSKWIN01A_2025-07-08_02_27_24" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6248f333-f91c-415d-a7e1-2b4f11453a8e" testId="6911c69c-e4aa-9fb4-4f85-63a9f69a095c" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_Sentence(culture: Current)" computerName="DSKWIN01A" duration="00:00:00.0001895" startTime="2025-07-08T02:27:24.4445811-05:00" endTime="2025-07-08T02:27:24.4448746-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6248f333-f91c-415d-a7e1-2b4f11453a8e" />
+    <UnitTestResult executionId="1f7a3297-c849-48c1-ba7d-1b8319b44c26" testId="a51e0620-af75-9119-a66d-8347ed8f56dd" testName="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: True, upperCase: True, lowerCase: False, expected: &quot;#28C@5A2&amp;&quot;)" computerName="DSKWIN01A" duration="00:00:00.0000142" startTime="2025-07-08T02:27:24.4382436-05:00" endTime="2025-07-08T02:27:24.4383284-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f7a3297-c849-48c1-ba7d-1b8319b44c26" />
+    <UnitTestResult executionId="fd240933-362d-4abd-9fda-fe5f3b34ab57" testId="12663faf-6ff7-b4ac-a884-43a626e64863" testName="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.CustomEntity_WithCustomKeyType" computerName="DSKWIN01A" duration="00:00:00.0035902" startTime="2025-07-08T02:27:24.2240399-05:00" endTime="2025-07-08T02:27:24.2277202-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd240933-362d-4abd-9fda-fe5f3b34ab57" />
+    <UnitTestResult executionId="a770cb66-0006-4493-a541-3fc71acba88a" testId="911ff62d-c2a8-7e4b-cf79-609e11dde5ff" testName="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.Entity_Equality_WithNull" computerName="DSKWIN01A" duration="00:00:00.0071918" startTime="2025-07-08T02:27:24.2031039-05:00" endTime="2025-07-08T02:27:24.2104306-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a770cb66-0006-4493-a541-3fc71acba88a" />
+    <UnitTestResult executionId="1d763cc0-3b97-401f-a86b-78575ac2088c" testId="7c4556cc-e484-fcb9-b156-ec2988c8607f" testName="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: False, upperCase: False, lowerCase: False, expected: &quot;28c5A2&quot;)" computerName="DSKWIN01A" duration="00:00:00.0000211" startTime="2025-07-08T02:27:24.4387719-05:00" endTime="2025-07-08T02:27:24.4388494-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d763cc0-3b97-401f-a86b-78575ac2088c" />
+    <UnitTestResult executionId="a84e7de3-1368-4314-9d15-5af9198248ac" testId="cf05f5b0-a131-5155-6cc8-74568175a04c" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_Sentence(culture: None)" computerName="DSKWIN01A" duration="00:00:00.0004517" startTime="2025-07-08T02:27:24.4430328-05:00" endTime="2025-07-08T02:27:24.4435609-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a84e7de3-1368-4314-9d15-5af9198248ac" />
+    <UnitTestResult executionId="7f746718-c598-4d43-a8c5-bd8cd0c65f4c" testId="cf55736e-adb6-04f1-bae1-b9f722fcf9f8" testName="Budget" computerName="DSKWIN01A" duration="00:00:00.0556091" startTime="2025-07-08T02:27:24.1369620-05:00" endTime="2025-07-08T02:27:24.1932653-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f746718-c598-4d43-a8c5-bd8cd0c65f4c">
+      <Output>
+        <StdOut>Given the Domain.Entities namespace in the Domain assembly&#xD;
+-&gt; done: ScopedSteps.GivenTheNamespaceInAssembly("Domain.Entities", "Domain") (0.0s)&#xD;
+Given the following data&#xD;
+  --- table step argument ---&#xD;
+  | Field        | Value      |&#xD;
+  | Code         | {Random}   |&#xD;
+  | Id           | {Guid}     |&#xD;
+  | Status       | 1          |&#xD;
+  | ClientId     | 1          |&#xD;
+  | Client       | {Instance} |&#xD;
+  | Subtotal     | 1.0        |&#xD;
+  | Total        | 1.0        |&#xD;
+  | Taxes        | 1.0        |&#xD;
+  | ExpireAt     | {2dAhead}  |&#xD;
+  | CreatedAt    | {2dAgo}    |&#xD;
+  | CreatedById  | 1          |&#xD;
+  | ModifiedAt   | {1dAgo}    |&#xD;
+  | ModifiedById | 1          |&#xD;
+  | DeletedById  | 1          |&#xD;
+  | IsDeleted    | true       |&#xD;
+  | DeletedAt    | {Now}      |&#xD;
+-&gt; done: ScopedSteps.GivenTheFollowingData(&lt;table&gt;) (0.0s)&#xD;
+Then a Budget should be created&#xD;
+-&gt; done: ScopedSteps.ThenAEntityShouldBeCreated("Budget") (0.1s)&#xD;
+And all Budget ctors should be used&#xD;
+-&gt; done: ScopedSteps.ThenAllCtorsShouldBeUsed("Budget") (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a9c8c2bd-e1b4-4e8e-9646-1fb1c9a88ef4" testId="c4d33f8e-b3fe-e532-5cf9-1d2bb6b7139a" testName="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: False, upperCase: True, lowerCase: True, expected: &quot;28c5A2&quot;)" computerName="DSKWIN01A" duration="00:00:00.0000594" startTime="2025-07-08T02:27:24.4376973-05:00" endTime="2025-07-08T02:27:24.4378173-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a9c8c2bd-e1b4-4e8e-9646-1fb1c9a88ef4" />
+    <UnitTestResult executionId="f4237f01-6f2a-481c-9484-f6a7aca11760" testId="7892ddbf-a1cb-010f-c0c1-c965a8e17388" testName="File Service" computerName="DSKWIN01A" duration="00:00:00.0198763" startTime="2025-07-08T02:27:24.3127717-05:00" endTime="2025-07-08T02:27:24.3390833-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4237f01-6f2a-481c-9484-f6a7aca11760">
+      <Output>
+        <StdOut>Given the service create a new test file&#xD;
+-&gt; done: ScopedSteps.GivenTheUserCreateANewFile("service", "test") (0.0s)&#xD;
+Then the test file should be created&#xD;
+-&gt; done: ScopedSteps.ThenTheFileTestShouldBeCreated("test") (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6d2816cb-1eb9-48fc-a25c-d45304c10638" testId="18c1714e-01e7-29dc-6bd4-cfddce546988" testName="Country" computerName="DSKWIN01A" duration="00:00:00.0188200" startTime="2025-07-08T02:27:23.9367657-05:00" endTime="2025-07-08T02:27:23.9619852-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d2816cb-1eb9-48fc-a25c-d45304c10638">
+      <Output>
+        <StdOut>Given the Domain.Entities namespace in the Domain assembly&#xD;
+-&gt; done: ScopedSteps.GivenTheNamespaceInAssembly("Domain.Entities", "Domain") (0.0s)&#xD;
+Given the Domain.Entities.Cache namespace in the Domain assembly&#xD;
+-&gt; done: ScopedSteps.GivenTheNamespaceInAssembly("Domain.Entities.C...", "Domain") (0.0s)&#xD;
+Given the following data&#xD;
+  --- table step argument ---&#xD;
+  | Field   | Value    |&#xD;
+  | Name    | {Random} |&#xD;
+  | ISO3166 | {Random} |&#xD;
+  | Id      | 1        |&#xD;
+-&gt; done: ScopedSteps.GivenTheFollowingData(&lt;table&gt;) (0.0s)&#xD;
+Then a Country should be created&#xD;
+-&gt; done: ScopedSteps.ThenAEntityShouldBeCreated("Country") (0.0s)&#xD;
+And all Country ctors should be used&#xD;
+-&gt; done: ScopedSteps.ThenAllCtorsShouldBeUsed("Country") (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f16571e7-d6da-4eea-858f-405347806b4d" testId="0f988805-1fd4-8fe0-dfa3-ab8804405af8" testName="Tests.UnitTests.References.System.ReflectionTests.Should_Return_False_When_Not_IsSoftDelete" computerName="DSKWIN01A" duration="00:00:00.0007605" startTime="2025-07-08T02:27:24.2285110-05:00" endTime="2025-07-08T02:27:24.2293817-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f16571e7-d6da-4eea-858f-405347806b4d" />
+    <UnitTestResult executionId="0c7fc384-8540-4b81-a52c-6b670c966e6f" testId="e1cd60c3-b3f7-03d8-cd53-3babfaefa3a9" testName="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.Entity_GetHashCode_ReturnsSameValueForEqualEntities" computerName="DSKWIN01A" duration="00:00:00.0107131" startTime="2025-07-08T02:27:24.2126800-05:00" endTime="2025-07-08T02:27:24.2234905-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c7fc384-8540-4b81-a52c-6b670c966e6f" />
+    <UnitTestResult executionId="a0acd94c-cee3-4721-825b-02ee5c447045" testId="278c4d48-ff70-5245-9f68-665fed2a1f46" testName="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: False, upperCase: False, lowerCase: True, expected: &quot;28c5a2&quot;)" computerName="DSKWIN01A" duration="00:00:00.0034319" startTime="2025-07-08T02:27:24.4337311-05:00" endTime="2025-07-08T02:27:24.4372554-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a0acd94c-cee3-4721-825b-02ee5c447045" />
+    <UnitTestResult executionId="4272a76d-9055-4981-bf92-0474ebd7f8c6" testId="70ad6c00-741d-9d15-774e-829051b6652c" testName="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseMultiTenantDbEngine_Should_Return_True_When_Multiple_ContextName" computerName="DSKWIN01A" duration="00:00:00.0003906" startTime="2025-07-08T02:27:24.4281362-05:00" endTime="2025-07-08T02:27:24.4286178-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4272a76d-9055-4981-bf92-0474ebd7f8c6" />
+    <UnitTestResult executionId="fb117e24-d1a2-4d09-9d64-b0756d4e7d08" testId="272b4474-20fb-660b-8bce-4c4efe32fe5a" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_TitleCase(culture: Current)" computerName="DSKWIN01A" duration="00:00:00.0000100" startTime="2025-07-08T02:27:24.4483644-05:00" endTime="2025-07-08T02:27:24.4484265-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb117e24-d1a2-4d09-9d64-b0756d4e7d08" />
+    <UnitTestResult executionId="513c2b53-2050-417b-b5e0-fcf2dafd9bd4" testId="e3844f6b-7ecb-9874-ddb0-0f369d2625b6" testName="Client" computerName="DSKWIN01A" duration="00:00:00.1712886" startTime="2025-07-08T02:27:23.9639343-05:00" endTime="2025-07-08T02:27:24.1360661-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="513c2b53-2050-417b-b5e0-fcf2dafd9bd4">
+      <Output>
+        <StdOut>Given the Domain.Entities namespace in the Domain assembly&#xD;
+-&gt; done: ScopedSteps.GivenTheNamespaceInAssembly("Domain.Entities", "Domain") (0.0s)&#xD;
+Given the following data&#xD;
+  --- table step argument ---&#xD;
+  | Field          | Value        |&#xD;
+  | Code           | {Random}     |&#xD;
+  | Identification | {Random}     |&#xD;
+  | FullName       | {Random}     |&#xD;
+  | Address        | {Random}     |&#xD;
+  | PhoneNumber    | {Random}     |&#xD;
+  | Category       | {Random}     |&#xD;
+  | Id             | 1            |&#xD;
+  | Budgets        | {Substitute} |&#xD;
+  | CreatedAt      | {2dAgo}      |&#xD;
+  | ModifiedAt     | {1dAgo}      |&#xD;
+-&gt; done: ScopedSteps.GivenTheFollowingData(&lt;table&gt;) (0.0s)&#xD;
+Then a Client should be created&#xD;
+-&gt; done: ScopedSteps.ThenAEntityShouldBeCreated("Client") (0.2s)&#xD;
+And all Client ctors should be used&#xD;
+-&gt; done: ScopedSteps.ThenAllCtorsShouldBeUsed("Client") (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="05f21d2e-77c5-417c-b021-a6f32e21cf5c" testId="8c01a638-871f-fe5c-d3ac-835f07f53655" testName="Email Service" computerName="DSKWIN01A" duration="00:00:00.0465386" startTime="2025-07-08T02:27:24.2646838-05:00" endTime="2025-07-08T02:27:24.3120094-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05f21d2e-77c5-417c-b021-a6f32e21cf5c">
+      <Output>
+        <StdOut>Given the service send an email to noreply@test.com&#xD;
+-&gt; done: ScopedSteps.GivenTheServiceSendAnEmailTo("service", "noreply@test.com") (0.0s)&#xD;
+Then the email should be received&#xD;
+-&gt; done: ScopedSteps.ThenTheEmailShouldBeReceived() (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f6218bcc-344e-48d9-aa91-672b765ec897" testId="02427291-b5c9-8aa7-bd06-ef511ef45e82" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_CamelCase(culture: Current)" computerName="DSKWIN01A" duration="00:00:00.0012135" startTime="2025-07-08T02:27:24.4392929-05:00" endTime="2025-07-08T02:27:24.4405841-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f6218bcc-344e-48d9-aa91-672b765ec897" />
+    <UnitTestResult executionId="69a81d92-9d4f-4abd-9e24-f3147ac1fd54" testId="86760d67-f1c2-1a8e-3cc1-8ead6fca0156" testName="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseMultiTenantDbEngine_Should_Return_False_When_Different_Providers" computerName="DSKWIN01A" duration="00:00:00.0042806" startTime="2025-07-08T02:27:24.4205711-05:00" endTime="2025-07-08T02:27:24.4249587-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69a81d92-9d4f-4abd-9e24-f3147ac1fd54" />
+    <UnitTestResult executionId="51dd2c5a-f7a8-4e45-b5d0-0a5e7767412b" testId="293661ba-3900-b73e-f8ff-441a5aae66d2" testName="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseDbEngine_Should_Return_True_When_Single_ContextName" computerName="DSKWIN01A" duration="00:00:00.0004310" startTime="2025-07-08T02:27:24.4256299-05:00" endTime="2025-07-08T02:27:24.4261595-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51dd2c5a-f7a8-4e45-b5d0-0a5e7767412b" />
+    <UnitTestResult executionId="265ada02-a71b-4e3f-af81-aff488d5a05d" testId="8544d492-1756-a226-abcd-25735c94516e" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_CamelCase(culture: Invariant)" computerName="DSKWIN01A" duration="00:00:00.0009683" startTime="2025-07-08T02:27:24.4410141-05:00" endTime="2025-07-08T02:27:24.4420853-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="265ada02-a71b-4e3f-af81-aff488d5a05d" />
+    <UnitTestResult executionId="a2d6b244-8f6d-4ddd-b753-d237a15e9a7d" testId="5d461006-6e89-900b-8bda-2c454c181323" testName="Tests.UnitTests.References.System.SystemTests.Should_Get_Enum_Attribute" computerName="DSKWIN01A" duration="00:00:00.0010446" startTime="2025-07-08T02:27:24.4507923-05:00" endTime="2025-07-08T02:27:24.4519270-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2d6b244-8f6d-4ddd-b753-d237a15e9a7d" />
+    <UnitTestResult executionId="83bafb7a-c7b4-4399-870b-ef7d32f4556b" testId="8e7247a6-6903-853c-67a2-3e526bec292f" testName="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.Entity_Equality_Comparison" computerName="DSKWIN01A" duration="00:00:00.0009714" startTime="2025-07-08T02:27:24.2110580-05:00" endTime="2025-07-08T02:27:24.2121221-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83bafb7a-c7b4-4399-870b-ef7d32f4556b" />
+    <UnitTestResult executionId="43d1faf5-3b39-49a3-aaa0-2acb9afb2b4c" testId="5f903bcc-427b-16e5-bc20-dde75bbd0817" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_CamelCase(culture: None)" computerName="DSKWIN01A" duration="00:00:00.0000131" startTime="2025-07-08T02:27:24.4425201-05:00" endTime="2025-07-08T02:27:24.4425909-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43d1faf5-3b39-49a3-aaa0-2acb9afb2b4c" />
+    <UnitTestResult executionId="0a2ba278-b57e-4930-9110-38c7ea845dd3" testId="5a93a435-21b5-b3bb-4aee-0c062d57c5a4" testName="Tests.UnitTests.References.System.SystemTests.Should_Convert_To_Dictionary" computerName="DSKWIN01A" duration="00:00:00.0023328" startTime="2025-07-08T02:27:24.4544147-05:00" endTime="2025-07-08T02:27:24.4568289-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a2ba278-b57e-4930-9110-38c7ea845dd3" />
+    <UnitTestResult executionId="1ebdca66-8b1b-4ce9-ba58-b6a15594b008" testId="bfd78f3e-4e7d-fa45-1175-775f479c4687" testName="Tests.UnitTests.References.System.SystemTests.Should_Get_Enum_Name" computerName="DSKWIN01A" duration="00:00:00.0003494" startTime="2025-07-08T02:27:24.4574905-05:00" endTime="2025-07-08T02:27:24.4579356-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ebdca66-8b1b-4ce9-ba58-b6a15594b008" />
+    <UnitTestResult executionId="7395ada4-e7ef-4bb7-a9e2-17d2bcaebf6d" testId="29fec7ff-2e03-87d3-acfa-a84d92eeb801" testName="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseMultiTenantDbEngine_Should_Return_True_When_Single_ContextName" computerName="DSKWIN01A" duration="00:00:00.0008737" startTime="2025-07-08T02:27:24.4266696-05:00" endTime="2025-07-08T02:27:24.4276236-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7395ada4-e7ef-4bb7-a9e2-17d2bcaebf6d" />
+    <UnitTestResult executionId="dcf15236-7d74-4ac7-b194-a3606d9b94c4" testId="51464cf7-dd4a-4406-c31e-5a922f02415f" testName="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseDbEngine_Should_Return_True_When_Multiple_ContextNames" computerName="DSKWIN01A" duration="00:00:00.0688856" startTime="2025-07-08T02:27:24.3493810-05:00" endTime="2025-07-08T02:27:24.4184530-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dcf15236-7d74-4ac7-b194-a3606d9b94c4" />
+    <UnitTestResult executionId="b1e38d14-c264-476d-b5b7-4b0094064149" testId="dee53112-53d5-7060-c59c-ff693391b60e" testName="Tests.UnitTests.References.System.TextTests.Should_Replace_Values(input: &quot;28CA562C&quot;, find: [&quot;C&quot;, &quot;A&quot;], replace: &quot;1&quot;, expected: &quot;28115621&quot;)" computerName="DSKWIN01A" duration="00:00:00.0001907" startTime="2025-07-08T02:27:24.4499197-05:00" endTime="2025-07-08T02:27:24.4501810-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1e38d14-c264-476d-b5b7-4b0094064149" />
+    <UnitTestResult executionId="d84d2e48-9961-4653-bd5a-6249e31e70ff" testId="e529a308-c35b-48dd-2874-c6a0f50e0ca1" testName="Tests.UnitTests.References.System.ReflectionTests.Should_Return_True_When_IsSoftDelete" computerName="DSKWIN01A" duration="00:00:00.0003249" startTime="2025-07-08T02:27:24.2299365-05:00" endTime="2025-07-08T02:27:24.2303393-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d84d2e48-9961-4653-bd5a-6249e31e70ff" />
+    <UnitTestResult executionId="3417632e-ff5e-4035-91c3-aca3011a9e2d" testId="102f0e26-dd99-628e-81bd-14ed0a9a1c8e" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_Sentence(culture: Invariant)" computerName="DSKWIN01A" duration="00:00:00.0001860" startTime="2025-07-08T02:27:24.4453135-05:00" endTime="2025-07-08T02:27:24.4455720-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3417632e-ff5e-4035-91c3-aca3011a9e2d" />
+    <UnitTestResult executionId="1c589bb4-886b-47ee-a611-d877312bc5a6" testId="3729b7ba-b03a-3706-5f67-d5f6a51d13ab" testName="Setting" computerName="DSKWIN01A" duration="00:00:00.1371139" startTime="2025-07-08T02:27:23.5657394-05:00" endTime="2025-07-08T02:27:23.9055704-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c589bb4-886b-47ee-a611-d877312bc5a6">
+      <Output>
+        <StdOut>Given the Domain.Entities namespace in the Domain assembly&#xD;
+-&gt; done: ScopedSteps.GivenTheNamespaceInAssembly("Domain.Entities", "Domain") (0.0s)&#xD;
+Given the following data&#xD;
+  --- table step argument ---&#xD;
+  | Field      | Value    |&#xD;
+  | Id         | 1        |&#xD;
+  | Key        | {Random} |&#xD;
+  | Type       | 7        |&#xD;
+  | Value      | {Random} |&#xD;
+  | CreatedAt  | {2dAgo}  |&#xD;
+  | ModifiedAt | {1dAgo}  |&#xD;
+-&gt; done: ScopedSteps.GivenTheFollowingData(&lt;table&gt;) (0.0s)&#xD;
+Then a Setting should be created&#xD;
+-&gt; done: ScopedSteps.ThenAEntityShouldBeCreated("Setting") (0.0s)&#xD;
+And all Setting ctors should be used&#xD;
+-&gt; done: ScopedSteps.ThenAllCtorsShouldBeUsed("Setting") (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="00666c2f-8668-425f-a8e7-1cb0c45a48a9" testId="a59870c5-bc17-d8f3-7fdd-a9ecadd8ac5b" testName="Document Service" computerName="DSKWIN01A" duration="00:00:00.0222391" startTime="2025-07-08T02:27:24.2324249-05:00" endTime="2025-07-08T02:27:24.2611806-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00666c2f-8668-425f-a8e7-1cb0c45a48a9">
+      <Output>
+        <StdOut>Given the service compose a new test document&#xD;
+-&gt; done: ScopedSteps.GivenComposeANewDocument("service", "test") (0.0s)&#xD;
+Then the test document is generated as pdf&#xD;
+-&gt; done: ScopedSteps.WhenDocumentIsGeneratedAs("test", "pdf") (0.0s)&#xD;
+Then the test document is generated as xlsx&#xD;
+-&gt; done: ScopedSteps.WhenDocumentIsGeneratedAs("test", "xlsx") (0.0s)&#xD;
+Then the test document is generated as csv&#xD;
+-&gt; done: ScopedSteps.WhenDocumentIsGeneratedAs("test", "csv") (0.0s)</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="04955972-e3a1-4d4e-8dfc-74d397f1d857" testId="3c8e1427-cc50-99e5-21f2-09c3820d8f44" testName="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: True, upperCase: False, lowerCase: False, expected: &quot;#28c@5A2&amp;&quot;)" computerName="DSKWIN01A" duration="00:00:00.0022667" startTime="2025-07-08T02:27:24.4294535-05:00" endTime="2025-07-08T02:27:24.4318132-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04955972-e3a1-4d4e-8dfc-74d397f1d857" />
+    <UnitTestResult executionId="5811b913-8608-4a87-8cb3-45766c9256f3" testId="102eee61-f1a3-789b-2550-ad6aeee9aaa5" testName="Tests.UnitTests.References.System.SystemTests.Should_Not_Convert_To_Dictionary" computerName="DSKWIN01A" duration="00:00:00.0009401" startTime="2025-07-08T02:27:24.4523917-05:00" endTime="2025-07-08T02:27:24.4534071-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5811b913-8608-4a87-8cb3-45766c9256f3" />
+    <UnitTestResult executionId="10b3625e-70ae-458e-873d-deb3894fde14" testId="8ef92c48-a38b-63bb-b2c2-3dcde8934ca0" testName="Tests.UnitTests.References.System.TextTests.Should_Replace_Values(input: &quot;28CA562C&quot;, find: [&quot;2&quot;, &quot;8&quot;, &quot;C&quot;, &quot;A&quot;, &quot;5&quot;, ···], replace: &quot;1&quot;, expected: &quot;11111111&quot;)" computerName="DSKWIN01A" duration="00:00:00.0005588" startTime="2025-07-08T02:27:24.4488473-05:00" endTime="2025-07-08T02:27:24.4494954-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10b3625e-70ae-458e-873d-deb3894fde14" />
+    <UnitTestResult executionId="8fff0297-2d66-4a1e-a0c5-e4c192ba8320" testId="d8c36c43-c99e-d190-5892-7d09c1e1ed94" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_TitleCase(culture: None)" computerName="DSKWIN01A" duration="00:00:00.0006886" startTime="2025-07-08T02:27:24.4471780-05:00" endTime="2025-07-08T02:27:24.4479618-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fff0297-2d66-4a1e-a0c5-e4c192ba8320" />
+    <UnitTestResult executionId="f0be7e3e-c32d-44d2-955b-eb54c42655ca" testId="5a2ce7a8-b06a-be9e-1b28-2f43f2efb9f1" testName="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseDbEngine_Should_Return_False_When_Duplicated_ContextName" computerName="DSKWIN01A" duration="00:00:00.0008044" startTime="2025-07-08T02:27:24.4191093-05:00" endTime="2025-07-08T02:27:24.4200274-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0be7e3e-c32d-44d2-955b-eb54c42655ca" />
+    <UnitTestResult executionId="dfb18a0e-86d3-4da6-9b66-780df2a5d349" testId="e6abc48c-311d-d343-c7f2-9709908ce4db" testName="Tests.UnitTests.References.System.SystemTests.Should_Convert_To_Dictionary_With_Values" computerName="DSKWIN01A" duration="00:00:00.0001863" startTime="2025-07-08T02:27:24.4584316-05:00" endTime="2025-07-08T02:27:24.4586867-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfb18a0e-86d3-4da6-9b66-780df2a5d349" />
+    <UnitTestResult executionId="f014dcb4-86ec-41cb-8eba-f734c07e9dc1" testId="cfc23e08-47a8-96f0-60ff-b074ff48371c" testName="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: True, upperCase: True, lowerCase: True, expected: &quot;#28c@5A2&amp;&quot;)" computerName="DSKWIN01A" duration="00:00:00.0003230" startTime="2025-07-08T02:27:24.4328984-05:00" endTime="2025-07-08T02:27:24.4333011-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f014dcb4-86ec-41cb-8eba-f734c07e9dc1" />
+    <UnitTestResult executionId="17ad1f43-f694-4028-a5ce-9163ddaec582" testId="c032ded2-b0f0-94e8-cbcd-6971236a23ed" testName="Tests.UnitTests.References.System.TextTests.Should_Convert_To_TitleCase(culture: Invariant)" computerName="DSKWIN01A" duration="00:00:00.0006610" startTime="2025-07-08T02:27:24.4460299-05:00" endTime="2025-07-08T02:27:24.4467680-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17ad1f43-f694-4028-a5ce-9163ddaec582" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Client" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="e3844f6b-7ecb-9874-ddb0-0f369d2625b6">
+      <Execution id="513c2b53-2050-417b-b5e0-fcf2dafd9bd4" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Domain.EntitiesFeature" name="Client" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_CamelCase(culture: Invariant)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="8544d492-1756-a226-abcd-25735c94516e">
+      <Execution id="265ada02-a71b-4e3f-af81-aff488d5a05d" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_CamelCase" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.SystemTests.Should_Not_Convert_To_Dictionary" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="102eee61-f1a3-789b-2550-ad6aeee9aaa5">
+      <Execution id="5811b913-8608-4a87-8cb3-45766c9256f3" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.SystemTests" name="Should_Not_Convert_To_Dictionary" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: True, upperCase: True, lowerCase: False, expected: &quot;#28C@5A2&amp;&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="a51e0620-af75-9119-a66d-8347ed8f56dd">
+      <Execution id="1f7a3297-c849-48c1-ba7d-1b8319b44c26" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Normalize_Text" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseMultiTenantDbEngine_Should_Return_True_When_Single_ContextName" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="29fec7ff-2e03-87d3-acfa-a84d92eeb801">
+      <Execution id="7395ada4-e7ef-4bb7-a9e2-17d2bcaebf6d" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests" name="UseMultiTenantDbEngine_Should_Return_True_When_Single_ContextName" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.Entity_GetHashCode_ReturnsSameValueForEqualEntities" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="e1cd60c3-b3f7-03d8-cd53-3babfaefa3a9">
+      <Execution id="0c7fc384-8540-4b81-a52c-6b670c966e6f" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests" name="Entity_GetHashCode_ReturnsSameValueForEqualEntities" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_Sentence(culture: None)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="cf05f5b0-a131-5155-6cc8-74568175a04c">
+      <Execution id="a84e7de3-1368-4314-9d15-5af9198248ac" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_Sentence" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.Entity_Equality_Comparison" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="8e7247a6-6903-853c-67a2-3e526bec292f">
+      <Execution id="83bafb7a-c7b4-4399-870b-ef7d32f4556b" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests" name="Entity_Equality_Comparison" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.CustomEntity_WithCustomKeyType" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="12663faf-6ff7-b4ac-a884-43a626e64863">
+      <Execution id="fd240933-362d-4abd-9fda-fe5f3b34ab57" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests" name="CustomEntity_WithCustomKeyType" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.SystemTests.Should_Get_Enum_Attribute" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="5d461006-6e89-900b-8bda-2c454c181323">
+      <Execution id="a2d6b244-8f6d-4ddd-b753-d237a15e9a7d" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.SystemTests" name="Should_Get_Enum_Attribute" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseMultiTenantDbEngine_Should_Return_True_When_Multiple_ContextName" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="70ad6c00-741d-9d15-774e-829051b6652c">
+      <Execution id="4272a76d-9055-4981-bf92-0474ebd7f8c6" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests" name="UseMultiTenantDbEngine_Should_Return_True_When_Multiple_ContextName" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_Sentence(culture: Current)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="6911c69c-e4aa-9fb4-4f85-63a9f69a095c">
+      <Execution id="6248f333-f91c-415d-a7e1-2b4f11453a8e" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_Sentence" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseDbEngine_Should_Return_False_When_Duplicated_ContextName" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="5a2ce7a8-b06a-be9e-1b28-2f43f2efb9f1">
+      <Execution id="f0be7e3e-c32d-44d2-955b-eb54c42655ca" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests" name="UseDbEngine_Should_Return_False_When_Duplicated_ContextName" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_TitleCase(culture: Invariant)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="c032ded2-b0f0-94e8-cbcd-6971236a23ed">
+      <Execution id="17ad1f43-f694-4028-a5ce-9163ddaec582" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_TitleCase" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Replace_Values(input: &quot;28CA562C&quot;, find: [&quot;C&quot;, &quot;A&quot;], replace: &quot;1&quot;, expected: &quot;28115621&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="dee53112-53d5-7060-c59c-ff693391b60e">
+      <Execution id="b1e38d14-c264-476d-b5b7-4b0094064149" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Replace_Values" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests.Entity_Equality_WithNull" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="911ff62d-c2a8-7e4b-cf79-609e11dde5ff">
+      <Execution id="a770cb66-0006-4493-a541-3fc71acba88a" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Cases.Domain.Abstractions.EntityTests" name="Entity_Equality_WithNull" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: True, upperCase: True, lowerCase: True, expected: &quot;#28c@5A2&amp;&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="cfc23e08-47a8-96f0-60ff-b074ff48371c">
+      <Execution id="f014dcb4-86ec-41cb-8eba-f734c07e9dc1" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Normalize_Text" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_CamelCase(culture: None)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="5f903bcc-427b-16e5-bc20-dde75bbd0817">
+      <Execution id="43d1faf5-3b39-49a3-aaa0-2acb9afb2b4c" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_CamelCase" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.ReflectionTests.Should_Return_False_When_Not_IsSoftDelete" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="0f988805-1fd4-8fe0-dfa3-ab8804405af8">
+      <Execution id="f16571e7-d6da-4eea-858f-405347806b4d" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.ReflectionTests" name="Should_Return_False_When_Not_IsSoftDelete" />
+    </UnitTest>
+    <UnitTest name="Country" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="18c1714e-01e7-29dc-6bd4-cfddce546988">
+      <Execution id="6d2816cb-1eb9-48fc-a25c-d45304c10638" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Domain.EntitiesFeature" name="Country" />
+    </UnitTest>
+    <UnitTest name="Document Service" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="a59870c5-bc17-d8f3-7fdd-a9ecadd8ac5b">
+      <Execution id="00666c2f-8668-425f-a8e7-1cb0c45a48a9" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Infrastructure.ServicesFeature" name="DocumentService" />
+    </UnitTest>
+    <UnitTest name="Email Service" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="8c01a638-871f-fe5c-d3ac-835f07f53655">
+      <Execution id="05f21d2e-77c5-417c-b021-a6f32e21cf5c" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Infrastructure.ServicesFeature" name="EmailService" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.SystemTests.Should_Convert_To_Dictionary_With_Values" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="e6abc48c-311d-d343-c7f2-9709908ce4db">
+      <Execution id="dfb18a0e-86d3-4da6-9b66-780df2a5d349" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.SystemTests" name="Should_Convert_To_Dictionary_With_Values" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_Sentence(culture: Invariant)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="102f0e26-dd99-628e-81bd-14ed0a9a1c8e">
+      <Execution id="3417632e-ff5e-4035-91c3-aca3011a9e2d" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_Sentence" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Replace_Values(input: &quot;28CA562C&quot;, find: [&quot;2&quot;, &quot;8&quot;, &quot;C&quot;, &quot;A&quot;, &quot;5&quot;, ···], replace: &quot;1&quot;, expected: &quot;11111111&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="8ef92c48-a38b-63bb-b2c2-3dcde8934ca0">
+      <Execution id="10b3625e-70ae-458e-873d-deb3894fde14" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Replace_Values" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: True, upperCase: False, lowerCase: False, expected: &quot;#28c@5A2&amp;&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="3c8e1427-cc50-99e5-21f2-09c3820d8f44">
+      <Execution id="04955972-e3a1-4d4e-8dfc-74d397f1d857" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Normalize_Text" />
+    </UnitTest>
+    <UnitTest name="File Service" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="7892ddbf-a1cb-010f-c0c1-c965a8e17388">
+      <Execution id="f4237f01-6f2a-481c-9484-f6a7aca11760" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Infrastructure.ServicesFeature" name="FileService" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.ReflectionTests.Should_Return_True_When_IsSoftDelete" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="e529a308-c35b-48dd-2874-c6a0f50e0ca1">
+      <Execution id="d84d2e48-9961-4653-bd5a-6249e31e70ff" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.ReflectionTests" name="Should_Return_True_When_IsSoftDelete" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseDbEngine_Should_Return_True_When_Multiple_ContextNames" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="51464cf7-dd4a-4406-c31e-5a922f02415f">
+      <Execution id="dcf15236-7d74-4ac7-b194-a3606d9b94c4" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests" name="UseDbEngine_Should_Return_True_When_Multiple_ContextNames" />
+    </UnitTest>
+    <UnitTest name="Setting" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="3729b7ba-b03a-3706-5f67-d5f6a51d13ab">
+      <Execution id="1c589bb4-886b-47ee-a611-d877312bc5a6" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Domain.EntitiesFeature" name="Setting" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: False, upperCase: False, lowerCase: True, expected: &quot;28c5a2&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="278c4d48-ff70-5245-9f68-665fed2a1f46">
+      <Execution id="a0acd94c-cee3-4721-825b-02ee5c447045" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Normalize_Text" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: False, upperCase: True, lowerCase: True, expected: &quot;28c5A2&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="c4d33f8e-b3fe-e532-5cf9-1d2bb6b7139a">
+      <Execution id="a9c8c2bd-e1b4-4e8e-9646-1fb1c9a88ef4" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Normalize_Text" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseDbEngine_Should_Return_True_When_Single_ContextName" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="293661ba-3900-b73e-f8ff-441a5aae66d2">
+      <Execution id="51dd2c5a-f7a8-4e45-b5d0-0a5e7767412b" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests" name="UseDbEngine_Should_Return_True_When_Single_ContextName" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Normalize_Text(input: &quot;#28c@5A2&amp;&quot;, specialsChars: False, upperCase: False, lowerCase: False, expected: &quot;28c5A2&quot;)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="7c4556cc-e484-fcb9-b156-ec2988c8607f">
+      <Execution id="1d763cc0-3b97-401f-a86b-78575ac2088c" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Normalize_Text" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests.UseMultiTenantDbEngine_Should_Return_False_When_Different_Providers" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="86760d67-f1c2-1a8e-3cc1-8ead6fca0156">
+      <Execution id="69a81d92-9d4f-4abd-9e24-f3147ac1fd54" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.Microsoft.EntityFrameworkCore.DbContextExtensionsTests" name="UseMultiTenantDbEngine_Should_Return_False_When_Different_Providers" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.SystemTests.Should_Convert_To_Dictionary" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="5a93a435-21b5-b3bb-4aee-0c062d57c5a4">
+      <Execution id="0a2ba278-b57e-4930-9110-38c7ea845dd3" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.SystemTests" name="Should_Convert_To_Dictionary" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_TitleCase(culture: Current)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="272b4474-20fb-660b-8bce-4c4efe32fe5a">
+      <Execution id="fb117e24-d1a2-4d09-9d64-b0756d4e7d08" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_TitleCase" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_CamelCase(culture: Current)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="02427291-b5c9-8aa7-bd06-ef511ef45e82">
+      <Execution id="f6218bcc-344e-48d9-aa91-672b765ec897" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_CamelCase" />
+    </UnitTest>
+    <UnitTest name="Budget" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="cf55736e-adb6-04f1-bae1-b9f722fcf9f8">
+      <Execution id="7f746718-c598-4d43-a8c5-bd8cd0c65f4c" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.Features.Domain.EntitiesFeature" name="Budget" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.TextTests.Should_Convert_To_TitleCase(culture: None)" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="d8c36c43-c99e-d190-5892-7d09c1e1ed94">
+      <Execution id="8fff0297-2d66-4a1e-a0c5-e4c192ba8320" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.TextTests" name="Should_Convert_To_TitleCase" />
+    </UnitTest>
+    <UnitTest name="Tests.UnitTests.References.System.SystemTests.Should_Get_Enum_Name" storage="d:\sources\templates\ddd-mvc-web\test\tests.unittests\bin\debug\net9.0\tests.unittests.dll" id="bfd78f3e-4e7d-fa45-1175-775f479c4687">
+      <Execution id="1ebdca66-8b1b-4ce9-ba58-b6a15594b008" />
+      <TestMethod codeBase="D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Tests.UnitTests.References.System.SystemTests" name="Should_Get_Enum_Name" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6911c69c-e4aa-9fb4-4f85-63a9f69a095c" executionId="6248f333-f91c-415d-a7e1-2b4f11453a8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a51e0620-af75-9119-a66d-8347ed8f56dd" executionId="1f7a3297-c849-48c1-ba7d-1b8319b44c26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12663faf-6ff7-b4ac-a884-43a626e64863" executionId="fd240933-362d-4abd-9fda-fe5f3b34ab57" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="911ff62d-c2a8-7e4b-cf79-609e11dde5ff" executionId="a770cb66-0006-4493-a541-3fc71acba88a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c4556cc-e484-fcb9-b156-ec2988c8607f" executionId="1d763cc0-3b97-401f-a86b-78575ac2088c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf05f5b0-a131-5155-6cc8-74568175a04c" executionId="a84e7de3-1368-4314-9d15-5af9198248ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf55736e-adb6-04f1-bae1-b9f722fcf9f8" executionId="7f746718-c598-4d43-a8c5-bd8cd0c65f4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4d33f8e-b3fe-e532-5cf9-1d2bb6b7139a" executionId="a9c8c2bd-e1b4-4e8e-9646-1fb1c9a88ef4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7892ddbf-a1cb-010f-c0c1-c965a8e17388" executionId="f4237f01-6f2a-481c-9484-f6a7aca11760" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18c1714e-01e7-29dc-6bd4-cfddce546988" executionId="6d2816cb-1eb9-48fc-a25c-d45304c10638" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f988805-1fd4-8fe0-dfa3-ab8804405af8" executionId="f16571e7-d6da-4eea-858f-405347806b4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e1cd60c3-b3f7-03d8-cd53-3babfaefa3a9" executionId="0c7fc384-8540-4b81-a52c-6b670c966e6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="278c4d48-ff70-5245-9f68-665fed2a1f46" executionId="a0acd94c-cee3-4721-825b-02ee5c447045" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70ad6c00-741d-9d15-774e-829051b6652c" executionId="4272a76d-9055-4981-bf92-0474ebd7f8c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="272b4474-20fb-660b-8bce-4c4efe32fe5a" executionId="fb117e24-d1a2-4d09-9d64-b0756d4e7d08" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3844f6b-7ecb-9874-ddb0-0f369d2625b6" executionId="513c2b53-2050-417b-b5e0-fcf2dafd9bd4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c01a638-871f-fe5c-d3ac-835f07f53655" executionId="05f21d2e-77c5-417c-b021-a6f32e21cf5c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02427291-b5c9-8aa7-bd06-ef511ef45e82" executionId="f6218bcc-344e-48d9-aa91-672b765ec897" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="86760d67-f1c2-1a8e-3cc1-8ead6fca0156" executionId="69a81d92-9d4f-4abd-9e24-f3147ac1fd54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="293661ba-3900-b73e-f8ff-441a5aae66d2" executionId="51dd2c5a-f7a8-4e45-b5d0-0a5e7767412b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8544d492-1756-a226-abcd-25735c94516e" executionId="265ada02-a71b-4e3f-af81-aff488d5a05d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d461006-6e89-900b-8bda-2c454c181323" executionId="a2d6b244-8f6d-4ddd-b753-d237a15e9a7d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e7247a6-6903-853c-67a2-3e526bec292f" executionId="83bafb7a-c7b4-4399-870b-ef7d32f4556b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f903bcc-427b-16e5-bc20-dde75bbd0817" executionId="43d1faf5-3b39-49a3-aaa0-2acb9afb2b4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a93a435-21b5-b3bb-4aee-0c062d57c5a4" executionId="0a2ba278-b57e-4930-9110-38c7ea845dd3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bfd78f3e-4e7d-fa45-1175-775f479c4687" executionId="1ebdca66-8b1b-4ce9-ba58-b6a15594b008" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="29fec7ff-2e03-87d3-acfa-a84d92eeb801" executionId="7395ada4-e7ef-4bb7-a9e2-17d2bcaebf6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51464cf7-dd4a-4406-c31e-5a922f02415f" executionId="dcf15236-7d74-4ac7-b194-a3606d9b94c4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dee53112-53d5-7060-c59c-ff693391b60e" executionId="b1e38d14-c264-476d-b5b7-4b0094064149" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e529a308-c35b-48dd-2874-c6a0f50e0ca1" executionId="d84d2e48-9961-4653-bd5a-6249e31e70ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="102f0e26-dd99-628e-81bd-14ed0a9a1c8e" executionId="3417632e-ff5e-4035-91c3-aca3011a9e2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3729b7ba-b03a-3706-5f67-d5f6a51d13ab" executionId="1c589bb4-886b-47ee-a611-d877312bc5a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a59870c5-bc17-d8f3-7fdd-a9ecadd8ac5b" executionId="00666c2f-8668-425f-a8e7-1cb0c45a48a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c8e1427-cc50-99e5-21f2-09c3820d8f44" executionId="04955972-e3a1-4d4e-8dfc-74d397f1d857" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="102eee61-f1a3-789b-2550-ad6aeee9aaa5" executionId="5811b913-8608-4a87-8cb3-45766c9256f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ef92c48-a38b-63bb-b2c2-3dcde8934ca0" executionId="10b3625e-70ae-458e-873d-deb3894fde14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8c36c43-c99e-d190-5892-7d09c1e1ed94" executionId="8fff0297-2d66-4a1e-a0c5-e4c192ba8320" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a2ce7a8-b06a-be9e-1b28-2f43f2efb9f1" executionId="f0be7e3e-c32d-44d2-955b-eb54c42655ca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6abc48c-311d-d343-c7f2-9709908ce4db" executionId="dfb18a0e-86d3-4da6-9b66-780df2a5d349" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfc23e08-47a8-96f0-60ff-b074ff48371c" executionId="f014dcb4-86ec-41cb-8eba-f734c07e9dc1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c032ded2-b0f0-94e8-cbcd-6971236a23ed" executionId="17ad1f43-f694-4028-a5ce-9163ddaec582" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="41" executed="41" passed="41" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.0.2+dd36e86129 (64-bit .NET 9.0.6)&#xD;
+[xUnit.net 00:00:00.14]   Discovering: Tests.UnitTests&#xD;
+[xUnit.net 00:00:00.21]   Discovered:  Tests.UnitTests&#xD;
+[xUnit.net 00:00:00.25]   Starting:    Tests.UnitTests&#xD;
+-&gt; Loading plugin D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Reqnroll.Microsoft.Extensions.DependencyInjection.ReqnrollPlugin.dll&#xD;
+-&gt; Loading plugin D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Reqnroll.xUnit.ReqnrollPlugin.dll&#xD;
+-&gt; Loading plugin D:\Sources\Templates\ddd-mvc-web\test\Tests.UnitTests\bin\Debug\net9.0\Tests.UnitTests.dll&#xD;
+-&gt; Using reqnroll.json&#xD;
+[DocumentService]: Temporal document generated in: C:\Users\ennerperez\AppData\Local\Temp\tmptpmgzv.pdf&#xD;
+[DocumentService]: Temporal document generated in: C:\Users\ennerperez\AppData\Local\Temp\tmpp0sb2v.pdf&#xD;
+[DocumentService]: Temporal document generated in: C:\Users\ennerperez\AppData\Local\Temp\tmpedt1hc.xlsx&#xD;
+[DocumentService]: Temporal document generated in: C:\Users\ennerperez\AppData\Local\Temp\tmpi0valu.xlsx&#xD;
+[DocumentService]: Temporal document generated in: C:\Users\ennerperez\AppData\Local\Temp\tmpxkwnrq.csv&#xD;
+[DocumentService]: Temporal document generated in: C:\Users\ennerperez\AppData\Local\Temp\tmpdfgzzo.csv&#xD;
+[xUnit.net 00:00:01.85]   Finished:    Tests.UnitTests&#xD;
+</StdOut>
+    </Output>
+    <CollectorDataEntries>
+      <Collector agentName="DSKWIN01A" uri="datacollector://microsoft/CoverletCodeCoverage/1.0" collectorDisplayName="XPlat code coverage">
+        <UriAttachments>
+          <UriAttachment>
+            <A href="DSKWIN01A\coverage.cobertura.xml"></A>
+          </UriAttachment>
+        </UriAttachments>
+      </Collector>
+    </CollectorDataEntries>
+  </ResultSummary>
+</TestRun>

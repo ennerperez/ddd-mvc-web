@@ -1,58 +1,66 @@
 .PHONY: * #since no targets will produce files, saves us from needing to specify on all https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 
 environment = Test
+configuration = Release
 nukeproject = "build\_build.csproj"
+
+# DOTNET #
+
+restore:
+	dotnet restore
+
+# NUKE BUILD #
 
 nuke:
 	dotnet build ${nukeproject} /nodeReuse:false /p:UseSharedCompilation=false -nologo -clp:NoSummary --verbosity quiet
 
-clean: nuke
+nuke-clean: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Clean
 
-prepare: nuke
+nuke-prepare: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Prepare
-	
-versioning: nuke
+
+nuke-versioning: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Versioning
 
-restore: nuke
+nuke-restore: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Restore
 
-compile: nuke
+nuke-compile: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Compile
 
-publish: nuke
+nuke-publish: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Publish --configuration Release --environment $environment
-	
-pack: nuke
+
+nuke-pack: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Pack
 
-migration-add: nuke
+nuke-migration-add: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target MigrationAdd
 
-migration-remove: nuke
+nuke-migration-remove: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target MigrationRemove
 
-migration-output: nuke
+nuke-migration-output: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target MigrationOutput
 
-database-update: nuke
+nuke-database-update: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DatabaseUpdate
 
-database-clear: nuke
+nuke-database-clear: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DatabaseClear
 
-database-rollback: nuke
+nuke-database-rollback: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DatabaseRollback
 
-dbcontext-optimize: nuke
+nuke-dbcontext-optimize: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DbContextOptimize
-	
-test-unittest: nuke
+
+nuke-test-unittest: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target UnitTest
 
-test-uitest: nuke
+nuke-test-uitest: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target UITest
 
-analyze: nuke
+nuke-analyze: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Analyze

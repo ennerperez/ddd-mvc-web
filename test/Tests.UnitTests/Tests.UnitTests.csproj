@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\src\.imports\Template.props"/>
+  <Import Project="..\..\src\.imports\Template.targets"/>
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+    <NoWarn>$(NoWarn);NETSDK1206</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" Version="5.3.0"/>
+    <PackageReference Include="coverlet.collector" Version="6.0.4"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
+  </ItemGroup>
+
+  <ItemGroup Label="ConditionalReferences">
+    <!-- NUnit -->
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="nunit" Version="4.3.2"/>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'NUnit'" Include="NUnit3TestAdapter" Version="5.0.0"/>
+    <!-- xUnit -->
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit" Version="2.9.3"/>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runners" Version="2.0.0"/>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.visualstudio" Version="3.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.console" Version="2.9.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.utility" Version="2.9.3"/>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="xunit.runner.reporters" Version="2.9.3"/>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="Xunit.Extensions.Ordering" Version="1.4.5"/>
+    <PackageReference Condition="'$(TestExecutionFramework)' == 'xUnit'" Include="Xunit.Microsoft.DependencyInjection" Version="9.0.3"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Domain\Domain.csproj"/>
+    <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\src\Persistence\Persistence.csproj"/>
+    <ProjectReference Include="..\Tests.Abstractions\Tests.Abstractions.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Definitions\*.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Label="NUnit" Condition="'$(TestExecutionFramework)' == 'NUnit'">
+    <None Remove="xunit.runner.json"/>
+  </ItemGroup>
+  <ItemGroup Label="xUnit" Condition="'$(TestExecutionFramework)' == 'xUnit'">
+    <Content Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

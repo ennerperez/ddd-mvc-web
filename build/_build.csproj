@@ -44,7 +44,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageDownload Include="coverlet.console" Version="[6.0.4]">
+      <ExcludeAssets>all</ExcludeAssets>
+    </PackageDownload>
     <PackageDownload Include="dotnet-ef" Version="$(FrameworkPackagesVersion)" />
+    <PackageDownload Include="GitVersion.Tool" Version="[6.3.0]"/>
+    <PackageDownload Include="ReportGenerator" Version="[5.4.8]"/>
   </ItemGroup>
 
 </Project>

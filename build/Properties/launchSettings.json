@@ -88,23 +88,11 @@
       "dotnetRunMessages": true,
       "commandLineArgs": "--target DbContextOptimize --no-logo"
     },
-    "Test.UnitTest": {
-      "description": "Execute the unit test projects",
+    "Tests": {
+      "description": "Execute the tests projects",
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "commandLineArgs": "--target UnitTest --no-logo"
-    },
-    "Test.UITest": {
-      "description": "Execute the UI test projects",
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "commandLineArgs": "--target UITest --no-logo"
-    },
-    "Test.Coverage": {
-      "description": "Execute the test coverage",
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "commandLineArgs": "--target Coverage --no-logo"
+      "commandLineArgs": "--target Tests --no-logo"
     },
     "Analyze": {
       "description": "Execute the code analysis",
