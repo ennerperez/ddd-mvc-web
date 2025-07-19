@@ -38,13 +38,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 #endif
 
-// ReSharper disable MemberCanBePrivate.Global
-
 #if USING_AUTH0
 using Auth0.AspNetCore.Authentication;
 #endif
-
-// ReSharper disable CheckNamespace
 
 #if USING_AUTH0
 namespace Auth0.AspNetCore.Authentication
@@ -226,7 +222,7 @@ namespace Microsoft.AspNetCore
 
             public class AppSettingsApiKeyProvider : IApiKeyProvider
             {
-                private readonly IDictionary<string, ApiKey> _apiKeys;
+                private readonly Dictionary<string, ApiKey> _apiKeys;
 
                 public AppSettingsApiKeyProvider(IConfiguration configuration)
                 {
@@ -451,7 +447,7 @@ namespace Microsoft.AspNetCore
                 var result = new List<string>();
                 foreach (var qitem in items)
                 {
-                    while (qitem.Any())
+                    while (qitem.Count != 0)
                     {
                         var value = qitem.Dequeue();
                         if (!string.IsNullOrWhiteSpace(value) && !result.Contains(value))
@@ -472,7 +468,7 @@ namespace Microsoft.AspNetCore
                     return pageBlocks;
                 }
 
-                pageBlocks = new List<string>();
+                pageBlocks = [];
                 httpContext.Items[key] = pageBlocks;
 
                 return pageBlocks;

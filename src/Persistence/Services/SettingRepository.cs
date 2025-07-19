@@ -18,12 +18,12 @@ namespace Persistence.Services
         {
         }
 
-        public string GetValue(string key) => _dbSet.FirstOrDefault(m => m.Key == key)?.Value;
+        public string GetValue(string key) => DbSet.FirstOrDefault(m => m.Key == key)?.Value;
 
         public TValue GetValue<TValue>(string key) where TValue : struct
         {
             var currencyCulture = new CultureInfo(Configuration["CultureInfo:CurrencyCulture"] ?? CultureInfo.CurrentCulture.Name);
-            object value = _dbSet.FirstOrDefault(m => m.Key == key)?.Value;
+            object value = DbSet.FirstOrDefault(m => m.Key == key)?.Value;
             if (value != null)
             {
                 return (TValue)Convert.ChangeType(value, typeof(TValue), currencyCulture);
@@ -32,12 +32,12 @@ namespace Persistence.Services
             return default;
         }
 
-        public async Task<string> GetValueAsync(string key, CancellationToken cancellationToken = default) => await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
+        public async Task<string> GetValueAsync(string key, CancellationToken cancellationToken = default) => await DbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
 
         public async Task<TValue> GetValueAsync<TValue>(string key, CancellationToken cancellationToken = default) where TValue : struct
         {
             var currencyCulture = new CultureInfo(Configuration["CultureInfo:CurrencyCulture"] ?? CultureInfo.CurrentCulture.Name);
-            object value = await _dbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
+            object value = await DbSet.Where(m => m.Key == key).Select(m => m.Value).FirstOrDefaultAsync(cancellationToken);
             if (value != null)
             {
                 return (TValue)Convert.ChangeType(value, typeof(TValue), currencyCulture);

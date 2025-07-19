@@ -30,8 +30,8 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>(new Budget().Select(s => s));
-                if (collection == null || !collection.Any())
+                var collection = await Mediator.SendWithRepositoryAsync<Budget, Guid, Budget>(new Budget().Select(s => s));
+                if (collection == null || collection.Length == 0)
                 {
                     return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Budget>() });
                 }
@@ -50,38 +50,38 @@ namespace Web.Controllers.API
         }
 
         [SwaggerOperation("Get specific element by id")]
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            if (id != Guid.Empty)
+            if (id == Guid.Empty)
             {
-                try
-                {
-                    var collection = await Mediator.SendWithRepository<Budget, Guid, Budget>(new Budget().Select(s => s), p => p.Id == id);
-
-                    return new JsonResult(collection);
-                }
-                catch (ValidationException v)
-                {
-                    return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "{Message}", e.Message);
-                    return Problem(e.Message);
-                }
+                return new JsonResult(null);
             }
 
-            return new JsonResult(null);
+            try
+            {
+                var collection = await this.Mediator.SendWithRepositoryAsync<Budget, Guid, Budget>(new Budget().Select(s => s), p => p.Id == id);
+
+                return new JsonResult(collection);
+            }
+            catch (ValidationException v)
+            {
+                return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Message}", e.Message);
+                return Problem(e.Message);
+            }
         }
 
         [SwaggerOperation("List all using a paged list")]
-        [HttpGet("Page/{page}")]
+        [HttpGet("Page/{page:int}")]
         public async Task<IActionResult> GetPage(int page, int size = 10)
         {
             try
             {
-                var collection = await Mediator.SendWithPage<Budget, Guid, Budget>(new Budget().Select(s => s),
+                var collection = await Mediator.SendWithPageAsync<Budget, Guid, Budget>(new Budget().Select(s => s),
                     skip: (page - 1) * size, take: size);
                 return new JsonResult(collection);
             }
@@ -124,7 +124,7 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBudgetRequest model)
         {
             if (model == null || id != model.Id)
@@ -150,7 +150,7 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Partial update an existing element by id")]
         [DisableRequestSizeLimit]
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:guid}")]
         public async Task<IActionResult> PartialUpdate(Guid id, [FromBody] PartialUpdateBudgetRequest model)
         {
             if (model == null || id != model.Id)
@@ -175,7 +175,7 @@ namespace Web.Controllers.API
         }
 
         [SwaggerOperation("Delete an existing element by id")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

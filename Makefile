@@ -1,52 +1,66 @@
 .PHONY: * #since no targets will produce files, saves us from needing to specify on all https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 
 environment = Test
-nukeproject = ".build\_build.csproj"
+configuration = Release
+nukeproject = "build\_build.csproj"
+
+# DOTNET #
+
+restore:
+	dotnet restore
+
+# NUKE BUILD #
 
 nuke:
 	dotnet build ${nukeproject} /nodeReuse:false /p:UseSharedCompilation=false -nologo -clp:NoSummary --verbosity quiet
 
-clean: nuke
+nuke-clean: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Clean
 
-prepare: nuke
+nuke-prepare: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Prepare
-	
-versioning: nuke
+
+nuke-versioning: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Versioning
 
-restore: nuke
+nuke-restore: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Restore
 
-compile: nuke
+nuke-compile: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Compile
 
-test: nuke
-	dotnet run --project ${nukeproject} --no-build -- --target Test
-
-publish: nuke
+nuke-publish: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Publish --configuration Release --environment $environment
-	
-pack: nuke
+
+nuke-pack: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target Pack
 
-migration_add: nuke
+nuke-migration-add: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target MigrationAdd
 
-migration remove: nuke
+nuke-migration-remove: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target MigrationRemove
 
-migration_output: nuke
+nuke-migration-output: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target MigrationOutput
 
-database_update: nuke
+nuke-database-update: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DatabaseUpdate
 
-database_clear: nuke
+nuke-database-clear: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DatabaseClear
 
-database_rollback: nuke
+nuke-database-rollback: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DatabaseRollback
 
-dbcontext_optimize: nuke
+nuke-dbcontext-optimize: nuke
 	dotnet run --project ${nukeproject} --no-build -- --target DbContextOptimize
+
+nuke-test-unittest: nuke
+	dotnet run --project ${nukeproject} --no-build -- --target UnitTest
+
+nuke-test-uitest: nuke
+	dotnet run --project ${nukeproject} --no-build -- --target UITest
+
+nuke-analyze: nuke
+	dotnet run --project ${nukeproject} --no-build -- --target Analyze

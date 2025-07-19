@@ -18,7 +18,7 @@ See the [changelog](CHANGELOG.md) for changes.
 
 ### Build
 
-No more implementation instructions for now.
+Edit the file [parameters.json](.nuke/parameters.json) and replace with the new values
 
 ### Implementing
 

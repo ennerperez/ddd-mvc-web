@@ -1,5 +1,6 @@
 #if !USING_SWAGGER
 using System;
+// ReSharper disable CheckNamespace
 
 namespace Swashbuckle.AspNetCore
 {

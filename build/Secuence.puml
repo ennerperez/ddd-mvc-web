@@ -1,0 +1,61 @@
+@startuml
+title Build Process Workflow (Corrected)
+
+skinparam state {
+  BackgroundColor #ADD8E6
+  BorderColor #4682B4
+  ArrowColor #4682B4
+}
+
+[*] --> Clean
+[*] --> Setup
+
+state "Setup" as Setup {
+  state Prepare
+  state Restore
+  state Versioning
+
+  Prepare --> Restore
+  Prepare --> Versioning
+}
+
+' All setup tasks and Clean must complete before Compile
+Clean --> Compile
+Setup --> Compile
+
+state "Testing (Optional)" as Testing {
+  state UnitTest
+  state UITest
+  state Coverage
+
+  Compile --> UnitTest
+  Compile --> UITest
+  UnitTest --> Coverage
+  UITest --> Coverage
+}
+
+note top of Testing : Not on the default execution path
+
+Compile --> Publish
+Publish --> Pack
+
+Pack --> [*]
+
+' Separate Analysis Flow
+' Analyze depends on Restore, which is part of the Setup group.
+Setup --> Analyze
+Analyze --> [*]
+
+note right of Pack
+  The default target is **Pack**.
+  This diagram shows the main
+  execution path and dependencies
+  required to create the final artifacts.
+end note
+
+note left of Analyze
+  **Analyze** is a separate target
+  that can be run after Restore
+  for static code analysis.
+end note
+@enduml

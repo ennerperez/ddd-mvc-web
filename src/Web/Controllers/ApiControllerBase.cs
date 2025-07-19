@@ -29,17 +29,17 @@ namespace Web.Controllers
     [ApiController]
     public abstract class ApiControllerBase : ControllerBase
     {
-        private ISender _mediator = null!;
+        private ISender _mediator;
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
         protected bool IsAdmin => User.IsInRole(Roles.Admin);
         protected int UserId => User.GetUserId<int>();
 
-        protected IGenericRepository<E, K> Repository<E, K>() where E : class, IEntity<K> where K : struct, IComparable<K>, IEquatable<K>
-            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<E, K>>();
+        protected IGenericRepository<TE, TK> Repository<TE, TK>() where TE : class, IEntity<TK> where TK : struct, IComparable<TK>, IEquatable<TK>
+            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TE, TK>>();
 
-        protected IGenericRepository<E> Repository<E>() where E : class, IEntity<int>
-            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<E>>();
+        protected IGenericRepository<TE> Repository<TE>() where TE : class, IEntity<int>
+            => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TE>>();
     }
 
 #if USING_SMARTSCHEMA
@@ -54,7 +54,7 @@ namespace Web.Controllers
         protected IGenericRepository<TEntity, TKey> Repository()
             => HttpContext.RequestServices.GetRequiredService<IGenericRepository<TEntity, TKey>>();
 
-        public async Task<JsonResult> Table<TResult>(TableInfo model,
+        protected async Task<JsonResult> Table<TResult>(TableInfo model,
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
@@ -62,27 +62,29 @@ namespace Web.Controllers
         {
             object rows;
 
-            var props = typeof(TResult).GetProperties().ToArray();
-            var orderByKeys = new Dictionary<string, string>();
-            if (model.Order != null)
+            var props = typeof(TResult).GetProperties();
+
+            var converter = new Func<ColumnOrder, string[]>(item =>
             {
-                foreach (var item in model.Order)
+                var column = model.Columns[item.Column];
+                if (column.Data == null)
                 {
-                    var column = model.Columns[item.Column];
-                    if (column.Data == null)
-                    {
-                        continue;
-                    }
-
-                    var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                    if (prop != null)
-                    {
-                        orderByKeys.Add(prop.Name, item.Dir);
-                    }
+                    return default;
                 }
-            }
 
-            var order = orderByKeys.Select(m => new[] { m.Key, m.Value }).ToArray();
+                var prop = props.FirstOrDefault(m => m.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase));
+                if (prop != null)
+                {
+                    return new []{prop.Name, item.Dir};
+                }
+
+                return default;
+            });
+
+            var order = model.Order.Select(m => converter(m))
+                .Where(m => m != default)
+                .ToDictionary(k => k[0], v => v[1])
+                .Select(m => new[] { m.Key, m.Value }).ToArray();
 
             Expression predicateExpression = null;
             ParameterExpression parameter = null;
@@ -108,12 +110,7 @@ namespace Web.Controllers
                     .Select(column =>
                     {
                         var prop = props.FirstOrDefault(m => m.Name.ToLower() == column.Name.ToLower());
-                        if (prop != null)
-                        {
-                            return new { Property = prop, column.Name, column.Search.Value };
-                        }
-
-                        return null;
+                        return prop != null ? new { Property = prop, column.Name, column.Search.Value } : null;
                     });
 
                 var args = Array.Empty<MemberExpression>();
@@ -126,7 +123,7 @@ namespace Web.Controllers
                     args = expression2.Bindings.Select(m => (m as MemberAssignment)?.Expression).OfType<MemberExpression>().ToArray();
                 }
 
-                parameter = NestedMember(args.First());
+                parameter = NestedMember(args[0]);
 
                 ConstantExpression constant;
                 foreach (var filter in filters)
@@ -144,21 +141,24 @@ namespace Web.Controllers
                             // ignore
                         }
 
-                        if (value != null && value != type.GetDefault())
+                        if (value == null || value == type.GetDefault())
                         {
-                            constant = Expression.Constant(value);
-                            var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
-                            foreach (var method in methods)
+                            continue;
+                        }
+
+                        constant = Expression.Constant(value);
+                        var methods = new[] { "Contains", "IndexOf", "Equals", "CompareTo" };
+                        foreach (var method in methods)
+                        {
+                            var methodInfo = type.GetMethod(method, [type]);
+                            if (methodInfo == null)
                             {
-                                var methodInfo = type.GetMethod(method, new[] { type });
-                                if (methodInfo != null)
-                                {
-                                    var member = item;
-                                    var callExp = Expression.Call(member, methodInfo, constant);
-                                    predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
-                                    break;
-                                }
+                                continue;
                             }
+
+                            var callExp = Expression.Call(item, methodInfo, constant);
+                            predicateExpression = predicateExpression == null ? (Expression)callExp : Expression.AndAlso(predicateExpression, callExp);
+                            break;
                         }
                     }
                 }

@@ -8,18 +8,25 @@ namespace Infrastructure.Interfaces
         string FileName { get; set; }
     }
 
-    public interface IDocument<TModel> : IDocument
+    public interface IDocument<out TModel> : IDocument
     {
         TModel Model { get; }
     }
 
-#if USING_QUESTPDF
-    public interface IPdfDocument : IDocument, QuestPDF.Infrastructure.IDocument;
 
-    public interface IPdfDocument<TModel> : IDocument<TModel>, QuestPDF.Infrastructure.IDocument;
+#if USING_QUESTPDF
+    public interface IPdfDocument : IDocument, QuestPDF.Infrastructure.IDocument
+    {
+    }
+
+    public interface IPdfDocument<TModel> : IDocument<TModel>, QuestPDF.Infrastructure.IDocument
+    {
+    }
 #endif
 
-    public interface IDocumentService : IDocumentService<IDocument>;
+    public interface IDocumentService : IDocumentService<IDocument>
+    {
+    }
 
     public interface IDocumentService<in TDocument> where TDocument : IDocument
     {

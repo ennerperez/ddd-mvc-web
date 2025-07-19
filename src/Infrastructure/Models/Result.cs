@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,8 +15,14 @@ namespace Infrastructure.Models
 
         public string[] Errors { get; set; }
 
-        public static Result Success() => new(true, Array.Empty<string>());
+        public static Result Success()
+        {
+            return new Result(true, []);
+        }
 
-        public static Result Failure(IEnumerable<string> errors) => new(false, errors);
+        public static Result Failure(IEnumerable<string> errors)
+        {
+            return new Result(false, errors);
+        }
     }
 }

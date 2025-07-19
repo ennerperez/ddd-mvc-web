@@ -1,11 +1,13 @@
 {
   "$schema": "./build.schema.json",
   "Solution": "Solution.sln",
-  "Author": "Enner Pérez",
+  "Author": "Author Name",
   "Product": "DDD",
-  "ProjectUrl": "https://ennerperez.dev/",
-  "Project": "Web",
-  "TargetProject": "Persistence",
-  "StartupProject": "Web",
-  "WebProjects": ["Web"]
+  "ProjectUrl": "https://solution.dev/",
+  "PackageId": "dev.solution.app",
+  "Projects": [
+    "Web:Web",
+    "Package:Client",
+    "Test:Tests.UnitTests"
+  ]
 }

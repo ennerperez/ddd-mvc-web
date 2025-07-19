@@ -1,9 +1,8 @@
-using System;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 #if DEBUG
 using System.Diagnostics;
 #endif
+using System.Linq;
 
 namespace Persistence.Conventions
 {
@@ -17,7 +16,7 @@ namespace Persistence.Conventions
 #endif
             if (exclude == null || exclude.Length == 0)
             {
-                exclude = Array.Empty<string>();
+                exclude = [];
             }
 
             var defaultDateFunction = provider switch
@@ -39,17 +38,23 @@ namespace Persistence.Conventions
                 }
 
                 var properties = t.GetProperties().ToArray();
-                if (!properties.Any())
+                if (properties.Length == 0)
                 {
                     continue;
                 }
 
                 var created = properties.First(m => m.Name == "CreatedAt");
                 created.SetDefaultValueSql(defaultDateFunction);
-                t.AddIndex(created);
+                if (t.FindIndex(created) == null)
+                {
+                    t.AddIndex(created);
+                }
 
                 var modified = properties.First(m => m.Name == "ModifiedAt");
-                t.AddIndex(modified);
+                if (t.FindIndex(modified) == null)
+                {
+                    t.AddIndex(modified);
+                }
             }
 
 #if DEBUG

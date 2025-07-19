@@ -1,3 +1,5 @@
+// ReSharper disable UnusedMember.Global
+
 namespace Domain
 {
     public static class Roles

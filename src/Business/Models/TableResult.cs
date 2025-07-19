@@ -1,18 +1,16 @@
 using System.Collections.Generic;
 
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InconsistentNaming
+
 namespace Business.Models
 {
     public class TableResult : TableResult<object>;
 
     public class TableResult<T> where T : class
     {
-        // ReSharper disable once InconsistentNaming
         public int iTotalRecords { get; set; }
-
-        // ReSharper disable once InconsistentNaming
         public int iTotalDisplayRecords { get; set; }
-
-        // ReSharper disable once InconsistentNaming
         public List<T> aaData { get; set; }
     }
 
@@ -41,7 +39,6 @@ namespace Business.Models
 
         public bool Searchable { get; set; }
 
-        // ReSharper disable once IdentifierTypo
         public bool Orderable { get; set; }
 
         public Search Search { get; set; }

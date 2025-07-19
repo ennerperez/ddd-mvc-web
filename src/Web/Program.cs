@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,7 +25,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Persistence;
 using Persistence.Contexts;
+#if USING_SERILOG
 using Serilog;
+#endif
 using Web.Services;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 #if USING_IDENTITY
@@ -54,6 +57,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 #endif
 #if USING_COOKIES || !USING_IDENTITY
 using Microsoft.AspNetCore.Authentication.Cookies;
+
+// ReSharper disable MemberCanBePrivate.Global
 #endif
 #if USING_OPENID
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -92,7 +97,7 @@ using Microsoft.FeatureManagement;
 
 namespace Web
 {
-    public static class Program
+    public class Program
     {
         internal static string Name { get; private set; }
         internal static WebApplication Instance { get; private set; }
@@ -130,7 +135,9 @@ namespace Web
 #endif
 
             Builder = WebApplication.CreateBuilder(args);
+#if USING_SERILOG
             Builder.Host.UseSerilog();
+#endif
 
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             Builder.Configuration
@@ -170,6 +177,7 @@ namespace Web
             var serviceName = Builder.Configuration["Datadog:Service"];
             serviceName = !string.IsNullOrWhiteSpace(serviceName) ? serviceName : Name;
 #endif
+#if USING_SERILOG
             // Initialize Logger
             var loggerConfiguration = new LoggerConfiguration()
                 .ReadFrom.Configuration(Builder.Configuration)
@@ -186,10 +194,13 @@ namespace Web
             }
 #endif
             var logger = Log.Logger = loggerConfiguration.CreateLogger();
-
+#endif
             Builder.Logging
+#if USING_SERILOG
                 .ClearProviders()
-                .AddSerilog(logger);
+                .AddSerilog(logger)
+#endif
+                .Close();
 
             // Seed Services
             Builder.Services.AddHostedService<SeedService>();
@@ -200,17 +211,25 @@ namespace Web
 
             try
             {
+#if USING_SERILOG
                 Log.Information("Application Starting");
+#endif
                 Instance.Run();
             }
             catch (Exception ex)
             {
+#if USING_SERILOG
                 Log.Fatal(ex, "The Application failed to start");
+#else
+                Console.WriteLine(ex.Message);
+#endif
                 throw;
             }
             finally
             {
+#if USING_SERILOG
                 Log.CloseAndFlush();
+#endif
             }
         }
 
@@ -266,9 +285,13 @@ namespace Web
             services
                 .AddDomain()
                 .AddInfrastructure()
-                .AddPersistence<DefaultContext>(options => options.UseDbEngine(Configuration))
-                .AddPersistence<CacheContext>(options => options.UseDbEngine(Configuration), ServiceLifetime.Transient)
-                .AddBusiness().WithRepositories().WithMediatR();
+                .AddPersistence<DefaultContext>()
+                .AddPersistence<CacheContext>() //options => options.UseDbEngine(Configuration))
+#if USING_MULTITENANCY
+                .WithTenants<TenantService>()
+#endif
+                .AddBusiness()
+                .WithRepositories().WithMediatR();
 
 #if USING_IDENTITY
             services
@@ -364,7 +387,6 @@ namespace Web
 #endif
 
 #if USING_COMPRESSION
-
             services.AddResponseCompression(config =>
             {
                 config.EnableForHttps = true;
@@ -699,7 +721,7 @@ namespace Web
                 app.Use(async (ctx, next) =>
                 {
                     await next();
-                    if (ctx.Response.StatusCode >= 400 && ctx.Response.StatusCode < 500 && !ctx.Response.HasStarted)
+                    if (ctx.Response.StatusCode >= 400 && ctx.Response is { StatusCode: < 500, HasStarted: false })
                     {
                         //Re-execute the request so the user gets the error page
                         ctx.Request.Path = $"/Error/{ctx.Response.StatusCode}";
@@ -709,8 +731,9 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+#if USING_SERILOG
             app.UseSerilogRequestLogging();
+#endif
 #if USING_SESSION
             app.UseSession();
 #endif
@@ -792,7 +815,6 @@ namespace Web
             app.UseRouting();
 
 #if USING_SWAGGER
-
             if (Configuration.GetValue<bool>("SwaggerSettings:EnableUI"))
             {
                 // Enable middleware to serve generated Swagger as a JSON endpoint.

@@ -1,4 +1,5 @@
 using System;
+using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Interfaces;
 #if USING_IDENTITY
@@ -7,7 +8,7 @@ using Domain.Entities.Identity;
 
 namespace Domain.Entities
 {
-    public class Budget : IEntity<Guid>, IAuditable, IExtendedAuditable, ISoftDelete, IExtendedSoftDelete
+    public class Budget : Entity<Guid>, IAuditable, IExtendedAuditable, ISoftDelete, IExtendedSoftDelete
     {
         public Budget()
         {
@@ -18,7 +19,7 @@ namespace Domain.Entities
         public string Code { get; set; }
 
         public int ClientId { get; set; }
-        public Client Client { get; set; }
+        public virtual Client Client { get; set; }
 
         public Status Status { get; set; }
 
@@ -28,10 +29,9 @@ namespace Domain.Entities
 
         public DateTime? ExpireAt { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public DateTime? ModifiedAt { get; set; }
-        public Guid Id { get; set; }
 
         public int? CreatedById { get; set; }
 

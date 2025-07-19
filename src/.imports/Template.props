@@ -10,9 +10,11 @@
     <_ImportDirectory>$(SourceDirectory)src\.imports\</_ImportDirectory>
     <_FilesDirectory>$(SourceDirectory)src\.files\</_FilesDirectory>
     <TestsDirectory>$(MSBuildThisFileDirectory)..\..\tests\</TestsDirectory>
+    <_ConfigFile>$(SourceDirectory).config\dotnet-tools.json</_ConfigFile>
   </PropertyGroup>
 
   <Import Project="$(_ImportDirectory)Features.props"/>
   <Import Project="$(_ImportDirectory)Project.props"/>
+  <Import Condition="Exists('$(MSBuildProjectDirectory)\Options.props')" Project="$(MSBuildProjectDirectory)\Options.props" />
 
 </Project>

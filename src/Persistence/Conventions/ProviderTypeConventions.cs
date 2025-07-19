@@ -1,29 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 #if DEBUG
 using System.Diagnostics;
+#endif
+using System.Linq;
+#if USING_MSSQL
+using Microsoft.EntityFrameworkCore.SqlServer.Metadata.Internal;
 #endif
 
 namespace Persistence.Conventions
 {
     internal class ProviderTypeOptions
     {
-        public ProviderTypeOptions()
-        {
-            DecimalConfig = new Dictionary<int, string[]>();
-            Exclude = new[] { "Identity" };
-            UseDateTime = true;
-        }
-
-        public Dictionary<int, string[]> DecimalConfig { get; set; }
+        public Dictionary<int, string[]> DecimalConfig { get; set; } = new();
         public string Provider { get; set; }
-        public string[] Exclude { get; set; }
+        public string[] Exclude { get; set; } = ["Identity"];
 
-        public bool UseDateTime { get; set; }
+        public bool UseDateTime { get; set; } = true;
+        public string ClusteredColumn { get; set; } = "CreatedAt";
     }
 
     internal static class ProviderTypeConventions
@@ -38,7 +35,7 @@ namespace Persistence.Conventions
             var options = new ProviderTypeOptions();
             optionsAction?.Invoke(options);
 
-            options.Exclude ??= Array.Empty<string>();
+            options.Exclude ??= [];
 
             // Fix datetime offset support for integration tests
             // See: https://blog.dangl.me/archive/handling-datetimeoffset-in-sqlite-with-entity-framework-core/
@@ -64,7 +61,7 @@ namespace Persistence.Conventions
                 var guidProperties = modelBuilder.Model.GetEntityTypes()
                     .Where(m => !m.IsOwned())
                     .SelectMany(m => m.GetProperties())
-                    .Where(m => (m.IsPrimaryKey() && m.ClrType == typeof(Guid)) || m.ClrType == typeof(Guid?))
+                    .Where(m => m.IsPrimaryKey() && m.ClrType == typeof(Guid) || m.ClrType == typeof(Guid?))
                     .ToArray();
 
                 foreach (var p in guidProperties)
@@ -104,6 +101,51 @@ namespace Persistence.Conventions
                                 .Property(property.Name)
                                 .HasConversion<double?>();
                         }
+                    }
+                }
+            }
+            else if (new[] { DatabaseProviders.SqlServer }.Contains(options.Provider))
+            {
+                var entities = modelBuilder.Model.GetEntityTypes().Where(m => !m.IsOwned());
+
+                foreach (var entity in entities)
+                {
+                    var pk = entity.FindPrimaryKey();
+                    if (pk is not { Properties.Count: 1 } || !pk.Properties.Any(p => p.ClrType == typeof(Guid)))
+                    {
+                        continue;
+                    }
+
+#if USING_MSSQL
+                    pk.SetAnnotation(SqlServerAnnotationNames.Clustered, false);
+#endif
+                    var ck = entity.FindProperty(options.ClusteredColumn);
+                    if (ck == null || ck.ClrType != typeof(DateTime))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        var ix = entity.FindIndex(ck);
+                        if (ix != null)
+                        {
+#if USING_MSSQL
+                            ix.SetAnnotation(SqlServerAnnotationNames.Clustered, true);
+#endif
+                        }
+                        else
+                        {
+                            var name = $"IX_{entity.ClrType.Name}_{ck.Name}";
+                            var clusteredPropertyIndex = ck;
+#if USING_MSSQL
+                            entity.AddIndex(clusteredPropertyIndex, name).SetAnnotation(SqlServerAnnotationNames.Clustered, true);
+#endif
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
                     }
                 }
             }
@@ -152,9 +194,9 @@ namespace Persistence.Conventions
                     columnType = p.GetColumnType();
                     entity.HasColumnType(columnType);
                 }
-                else if (p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?))
+                else if ((p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
                 {
-                    if (options.UseDateTime || new[] { DatabaseProviders.Sqlite }.Contains(options.Provider))
+                    if (options.UseDateTime || (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider)))
                     {
                         p.SetColumnType("datetime");
                         columnType = p.GetColumnType();
@@ -166,17 +208,17 @@ namespace Persistence.Conventions
                     var maxValue = p.GetMaxLength();
                     var max = maxValue.HasValue ? maxValue.ToString() : "max";
 
-                    if (new[] { DatabaseProviders.MySql, DatabaseProviders.MariaDb }.Contains(options.Provider) && ((maxValue.HasValue && maxValue.Value > 500) || !maxValue.HasValue))
+                    if (new[] { DatabaseProviders.MySql, DatabaseProviders.MariaDb }.Contains(options.Provider) && (maxValue is > 500 || !maxValue.HasValue))
                     {
-                        p.SetColumnType(max == "max" ? "longtext" : "text");
+                        p.SetColumnType(max == "max" ? $"longtext" : $"text");
                     }
                     else if (new[] { DatabaseProviders.Sqlite }.Contains(options.Provider))
                     {
-                        p.SetColumnType(max != "max" ? $"varchar({max})" : "varchar(500)");
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"varchar(500)");
                     }
                     else if (new[] { DatabaseProviders.PostgreSql }.Contains(options.Provider))
                     {
-                        p.SetColumnType(max != "max" ? $"varchar({max})" : "text");
+                        p.SetColumnType(max != "max" ? $"varchar({max})" : $"text");
                     }
                     else
                     {

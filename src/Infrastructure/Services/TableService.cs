@@ -7,10 +7,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure;
+using Azure.Data.Tables;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Azure.Data.Tables;
 
 namespace Infrastructure.Services
 {
@@ -25,7 +25,7 @@ namespace Infrastructure.Services
         {
             _configuration = configuration;
             _logger = logger.CreateLogger(GetType());
-            _clients = new List<TableClient>();
+            _clients = [];
         }
 
         public string TableName { get; set; }
@@ -33,21 +33,29 @@ namespace Infrastructure.Services
 
         private async Task<TableClient> GetClientAsync(string tableName = "", CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = TableName;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = TableName;
+            }
+
             var client = _clients.FirstOrDefault(c => c.Name == tableName);
             if (client != null)
+            {
                 return client;
+            }
 
             try
             {
                 _logger.LogInformation("Initializing [{TableName}] table client", tableName);
                 var connectionString = _configuration["AzureSettings:Storage:ConnectionString"];
                 client = new TableClient(connectionString, tableName);
-                if (CreateIfNotExists)
+                if (!this.CreateIfNotExists)
                 {
-                    await client.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
-                    _clients.Add(client);
+                    return client;
                 }
+
+                await client.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+                _clients.Add(client);
 
                 return client;
             }
@@ -60,16 +68,24 @@ namespace Infrastructure.Services
 
         public async Task CreateAsync<T>(T model, string tableName = "", CancellationToken cancellationToken = default) where T : class, ITableEntity, new()
         {
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return;
+            }
 
             try
             {
                 var result = await client.AddEntityAsync(model, cancellationToken);
                 if (result.IsError)
+                {
                     throw new Exception();
+                }
             }
             catch (Exception e)
             {
@@ -82,16 +98,23 @@ namespace Infrastructure.Services
         {
             long result = 0;
 
-            if (predicate == null) predicate = p => true;
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            predicate ??= p => true;
+
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return result;
+            }
 
             try
             {
-                var data = client.QueryAsync(predicate, select: new[] { "RowKey" }, cancellationToken: cancellationToken);
-                await foreach (var item in data.AsPages())
+                var data = client.QueryAsync(predicate, select: ["RowKey"], cancellationToken: cancellationToken);
+                await foreach (var item in data.AsPages().WithCancellation(cancellationToken))
                 {
                     result += item.Values.Count;
                 }
@@ -107,15 +130,23 @@ namespace Infrastructure.Services
 
         public async IAsyncEnumerable<T> ReadAsync<T>(Expression<Func<T, bool>> predicate = null, IEnumerable<string> select = null, int maxPerPage = 100, string tableName = "", [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : class, ITableEntity, new()
         {
-            if (predicate == null) predicate = p => true;
-            if (select == null) select = typeof(T).GetProperties().Select(m => m.Name).ToArray();
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            predicate ??= p => true;
+
+            select ??= typeof(T).GetProperties().Select(m => m.Name).ToArray();
+
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 yield break;
+            }
 
             var data = client.QueryAsync(predicate, maxPerPage, select, cancellationToken);
-            await foreach (var item in data.AsPages())
+            await foreach (var item in data.AsPages().WithCancellation(cancellationToken))
             {
                 foreach (var subitem in item.Values)
                 {
@@ -126,19 +157,27 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<T>> ReadAllAsync<T>(Expression<Func<T, bool>> predicate = null, IEnumerable<string> select = null, int maxPerPage = 100, string tableName = "", CancellationToken cancellationToken = default) where T : class, ITableEntity, new()
         {
-            if (predicate == null) predicate = p => true;
-            if (select == null) select = typeof(T).GetProperties().Select(m => m.Name).ToArray();
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            predicate ??= p => true;
+
+            select ??= typeof(T).GetProperties().Select(m => m.Name).ToArray();
+
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return null;
+            }
 
             var result = new List<T>();
 
             try
             {
                 var data = client.QueryAsync(predicate, maxPerPage, select, cancellationToken);
-                await foreach (var item in data.AsPages())
+                await foreach (var item in data.AsPages().WithCancellation(cancellationToken))
                 {
                     result.AddRange(item.Values);
                 }
@@ -151,18 +190,27 @@ namespace Infrastructure.Services
 
             return result;
         }
+
         public async Task UpdateAsync<T>(T model, string tableName = "", bool @override = true, CancellationToken cancellationToken = default) where T : class, ITableEntity, new()
         {
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return;
+            }
 
             try
             {
                 var result = await client.UpdateEntityAsync(model, ETag.All, @override ? TableUpdateMode.Replace : TableUpdateMode.Merge, cancellationToken);
                 if (result.IsError)
+                {
                     throw new Exception();
+                }
             }
             catch (Exception e)
             {
@@ -173,16 +221,24 @@ namespace Infrastructure.Services
 
         public async Task DeleteAsync<T>(T model, string tableName = "", CancellationToken cancellationToken = default) where T : class, ITableEntity, new()
         {
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return;
+            }
 
             try
             {
                 var result = await client.DeleteEntityAsync(model.PartitionKey, model.RowKey, ETag.All, cancellationToken);
                 if (result.IsError)
+                {
                     throw new Exception();
+                }
             }
             catch (Exception e)
             {
@@ -193,16 +249,24 @@ namespace Infrastructure.Services
 
         public async Task DeleteAsync(string partitionKey, string rowKey, string tableName = "", CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = TableName;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = TableName;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return;
+            }
 
             try
             {
                 var result = await client.DeleteEntityAsync(partitionKey, rowKey, cancellationToken: cancellationToken);
                 if (result.IsError)
+                {
                     throw new Exception();
+                }
             }
             catch (Exception e)
             {
@@ -210,21 +274,30 @@ namespace Infrastructure.Services
                 throw new Exception($"Could not delete from the [{tableName}] table.", e);
             }
         }
+
         public async Task<T> FirstOrDefaultAsync<T>(Expression<Func<T, bool>> predicate = null, IEnumerable<string> select = null, string tableName = "", CancellationToken cancellationToken = default) where T : class, ITableEntity, new()
         {
-            if (predicate == null) predicate = p => true;
-            if (select == null) select = typeof(T).GetProperties().Select(m => m.Name).ToArray();
-            if (string.IsNullOrWhiteSpace(tableName)) tableName = typeof(T).Name;
+            predicate ??= p => true;
+
+            select ??= typeof(T).GetProperties().Select(m => m.Name).ToArray();
+
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                tableName = typeof(T).Name;
+            }
+
             var client = await GetClientAsync(tableName, cancellationToken);
             if (client == null)
+            {
                 return null;
+            }
 
             var result = new List<T>();
 
             try
             {
                 var data = client.QueryAsync(predicate, 100, select, cancellationToken);
-                await foreach (var item in data.AsPages())
+                await foreach (var item in data.AsPages().WithCancellation(cancellationToken))
                 {
                     result.AddRange(item.Values);
                 }

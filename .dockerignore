@@ -1,12 +1,9 @@
-### VisualStudio ###
-
 # Tool Runtime Dir
 **/.dotnet/
 **/.packages/
 **/.tools/
 
 # User-specific files
-**/*.suo
 **/*.user
 **/*.userosscache
 **/*.sln.docstates
@@ -57,7 +54,6 @@
 **/*_i.c
 **/*_p.c
 **/*.ilk
-**/*.meta
 **/*.obj
 **/*.pch
 **/*.pdb
@@ -149,13 +145,8 @@
 
 # NuGet Packages
 **/*.nupkg
-**/*.nuget.g.props
-**/*.nuget.g.targets
-**/*.nuget.cache
 **/**/packages/*
 **/project.lock.json
-**/project.assets.json
-**/*.nuget.dgspec.json
 
 # Windows Azure Build Output
 **/csx/
@@ -209,7 +200,6 @@
 
 ### MonoDevelop ###
 
-**/*.pidb
 **/*.userprefs
 
 ### Windows ###
@@ -265,11 +255,9 @@
 
 # vim temporary files
 **/[._]*.s[a-w][a-z]
-**/[._]s[a-w][a-z]
 **/*.un~
 **/Session.vim
 **/.netrwhist
-**/*~
 
 # Visual Studio Code
 **/.vscode/
@@ -335,3 +323,25 @@
 
 #IL linker for testing
 **/linker
+
+# Extra files
+**/.classpath
+**/.dockerignore
+**/.env
+**/.gitignore
+**/.project
+**/.settings
+**/.toolstarget
+**/.vscode
+**/.proj.user
+**/.dbmdl
+****/.jfm
+**/azds.yaml
+**/charts
+**/docker-compose*
+**/Dockerfile*
+**/node_modules
+**/npm-debug.log
+**/secrets.dev.yaml
+**/values.dev.yaml
+!**/development.pfx

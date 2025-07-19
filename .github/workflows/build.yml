@@ -18,7 +18,7 @@ jobs:
       - name: Permissions
         run: chmod +x build.sh
       - name: Pack
-        run: ./build.sh --target Pack
+        run: ./build.sh --target Pack --no-logo
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Migrations

@@ -5,19 +5,9 @@ using Domain.Entities.Identity;
 
 namespace Domain.Interfaces
 {
-    /// <summary>
-    /// Auditable structure for entities
-    /// </summary>
     public interface IAuditable
     {
-        /// <summary>
-        /// Created datetime
-        /// </summary>
-        DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// Last modification datetime
-        /// </summary>
+        DateTime? CreatedAt { get; set; }
         DateTime? ModifiedAt { get; set; }
     }
 
@@ -31,5 +21,7 @@ namespace Domain.Interfaces
 #endif
     }
 
-    public interface IExtendedAuditable : IExtendedAuditable<int>;
+    public interface IExtendedAuditable : IExtendedAuditable<int>
+    {
+    }
 }

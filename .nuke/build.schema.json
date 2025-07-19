@@ -24,17 +24,12 @@
     "ExecutableTarget": {
       "type": "string",
       "enum": [
+        "Analyze",
         "Clean",
         "Compile",
-        "Coverage",
         "DatabaseClear",
         "DatabaseRollback",
         "DatabaseUpdate",
-        "DbContextOptimize",
-        "DockerBuild",
-        "DockerLogin",
-        "DockerPrune",
-        "DockerPush",
         "FastCompile",
         "MigrationAdd",
         "MigrationOutput",
@@ -43,7 +38,7 @@
         "Prepare",
         "Publish",
         "Restore",
-        "Test",
+        "Tests",
         "UITest",
         "Versioning"
       ]
@@ -145,16 +140,6 @@
             "Release"
           ]
         },
-        "ContainerName": {
-          "type": "string",
-          "description": "Container Name"
-        },
-        "DesktopProjects": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "DryRun": {
           "type": "boolean",
           "description": "Dry Run"
@@ -169,24 +154,8 @@
             "Test"
           ]
         },
-        "MauiWorkloadVersion": {
-          "type": "string",
-          "description": "MAUI Workload Version"
-        },
-        "MobileProjects": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "PackageId": {
           "type": "string"
-        },
-        "PackageProjects": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "Platform": {
           "type": "string",
@@ -195,40 +164,15 @@
         "Product": {
           "type": "string"
         },
-        "Project": {
-          "type": "string",
-          "description": "Project Name to Build and Deploy"
-        },
-        "ProjectName": {
-          "type": "string",
-          "description": "Project Name"
-        },
-        "ProjectUrl": {
-          "type": "string"
-        },
-        "RegistryHost": {
-          "type": "string",
-          "description": "Registry Host"
-        },
-        "RegistryName": {
-          "type": "string",
-          "description": "Registry Name"
-        },
-        "RegistryPassword": {
-          "type": "string",
-          "description": "Registry Password",
-          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
-        },
-        "RegistryUsername": {
-          "type": "string",
-          "description": "Registry Username",
-          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
-        },
-        "ServiceProjects": {
+        "Projects": {
           "type": "array",
+          "description": "Projects to Build and Deploy",
           "items": {
             "type": "string"
           }
+        },
+        "ProjectUrl": {
+          "type": "string"
         },
         "Signing": {
           "type": "boolean",
@@ -246,22 +190,10 @@
           "type": "string",
           "description": "The project is also known as the target project because it's where the commands add or remove files"
         },
-        "TestsProjects": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "WarningLevel": {
           "type": "integer",
           "description": "Warning Level",
           "format": "int32"
-        },
-        "WebProjects": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },

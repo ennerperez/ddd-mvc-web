@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Interfaces;
@@ -8,6 +10,7 @@ using Persistence.Providers;
 
 namespace Persistence
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static Func<DbContext> DbContext { get; set; }
@@ -41,7 +44,7 @@ namespace Persistence
 
         private static void AddFromAssembly(this IServiceCollection services, params Assembly[] assemblies)
         {
-            if (!assemblies.Any())
+            if (assemblies.Length == 0)
             {
                 throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
             }
@@ -52,5 +55,23 @@ namespace Persistence
         }
 
         #endregion
+
+        public static IServiceCollection WithTenants<T>(this IServiceCollection services, string[] tenants = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) where T : ITenantService
+        {
+            switch (serviceLifetime)
+            {
+                case ServiceLifetime.Transient:
+                    services.AddTransient(typeof(ITenantService), typeof(T));
+                    break;
+                case ServiceLifetime.Singleton:
+                    services.AddSingleton(typeof(ITenantService), typeof(T));
+                    break;
+                default:
+                    services.AddScoped(typeof(ITenantService), typeof(T));
+                    break;
+            }
+
+            return services;
+        }
     }
 }

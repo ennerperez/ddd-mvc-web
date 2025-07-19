@@ -1,0 +1,16 @@
+[*.cs]
+
+dotnet_diagnostic.IDE0073.severity = warning # Require file header
+dotnet_diagnostic.IDE0130.severity = none # Namespace does not match folder structure
+dotnet_diagnostic.IDE0060.severity = none # Remove unused parameter
+dotnet_diagnostic.IDE0051.severity = none # Remove unused private member
+dotnet_diagnostic.IDE0052.severity = none # Remove unread private member
+dotnet_diagnostic.IDE0060.severity = none # Remove unused parameter
+
+resharper_check_namespace_highlighting = none
+resharper_member_can_be_private_global_highlighting = none
+resharper_unused_type_global_highlighting = none
+resharper_unused_member_global_highlighting = none
+resharper_unused_parameter_global_highlighting = none
+resharper_unused_auto_property_accessor_global_highlighting = none
+resharper_unused_parameter_local_highlighting = none

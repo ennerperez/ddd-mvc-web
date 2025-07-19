@@ -1,19 +1,19 @@
 using System;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Infrastructure.Interfaces;
-using Infrastructure.Services;
-using Microsoft.Extensions.DependencyInjection;
 #if USING_VAULT
 using Azure.Security.KeyVault.Secrets;
 #endif
-
-#if USING_AUTH0
-using Infrastructure.Factories;
-#endif
+using Infrastructure.Interfaces;
+using Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMethodReturnValue.Global
 
 namespace Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IServiceCollection AddInfrastructure<T>(this IServiceCollection services, Action<T> configureOptions = null)
@@ -29,13 +29,9 @@ namespace Infrastructure
             services.AddTransient<IEmailService, SmtpService>();
 
             var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
-            var types = assemblies.Where(m => m != null).SelectMany(m => m.GetTypes()).ToArray();
 
-            var userAccessorServiceType = types.FirstOrDefault(m => m.IsClass && typeof(IUserAccessorService).IsAssignableFrom(m));
-            if (userAccessorServiceType != null)
-            {
-                services.AddTransient(typeof(IUserAccessorService), userAccessorServiceType);
-            }
+            services.ConnectImplementationsToTypesClosing(typeof(IUserContext), assemblies, false);
+            services.ConnectImplementationsToTypesClosing(typeof(IUserContext<>), assemblies, false);
 
             services.AddHttpClient();
 
@@ -45,8 +41,8 @@ namespace Infrastructure
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IDirectoryService, DirectoryService>();
 #else
-            services.AddSingleton<IFileService>(new FileSystemService { ContainerName = "Data", CreateIfNotExists = true });
-            services.AddSingleton<IDirectoryService>(new FileSystemService { ContainerName = "Data", CreateIfNotExists = true });
+            services.AddSingleton<IFileService>(new FileSystemService() { ContainerName = "Data", CreateIfNotExists = true });
+            services.AddSingleton<IDirectoryService>(new FileSystemService() { ContainerName = "Data", CreateIfNotExists = true });
 #endif
 #if USING_QUEUES
             services.AddTransient<IQueueService, QueueService>();
@@ -63,7 +59,7 @@ namespace Infrastructure
 #if USING_AUTH0
         public static IServiceCollection WithAuth0ApiManagement(this IServiceCollection services)
         {
-            services.AddSingleton<IAuth0ApiClientFactory, Auth0ApiClientFactory>();
+            // services.AddSingleton<IAuth0ApiClientFactory, Auth0ApiClientFactory>();
             return services;
         }
 #endif

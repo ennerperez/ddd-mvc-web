@@ -1,0 +1,10 @@
+mode: ContinuousDeployment
+tag-prefix: 'v'
+commit-message-incrementing: Enabled
+major-version-bump-message: '(BREAKING CHANGE:|major:)'
+minor-version-bump-message: '(feat:)'
+patch-version-bump-message: "(fix:|build:|chore:|ci:|docs:|style:|refactor:|perf:|test:)"
+branches: {}
+ignore:
+  sha: []
+merge-message-formats: {}

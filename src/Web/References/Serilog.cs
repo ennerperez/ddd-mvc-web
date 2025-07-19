@@ -1,3 +1,4 @@
+#if USING_SERILOG
 using System;
 using Microsoft.AspNetCore.Http;
 using Serilog.Configuration;
@@ -37,7 +38,7 @@ namespace Serilog
 
     namespace Enrichers.ClientInfo
     {
-        internal class ClientIpConfiguration
+        internal static class ClientIpConfiguration
         {
             public static string XForwardHeaderName { get; set; } = "X-forwarded-for";
         }
@@ -84,9 +85,9 @@ namespace Serilog
         public class ClientIpEnricher : ILogEventEnricher
         {
             private const string IpAddressPropertyName = "ClientIp";
-            private const string IpAddressForwaredForPropertyName = "ForwardedFor";
+            private const string IpAddressForwardedForPropertyName = "ForwardedFor";
             private const string IpAddressItemKey = "Serilog_ClientIp";
-            private const string IpAddressForwaredForItemKey = "Serilog_ForwaredFor";
+            private const string IpAddressForwardedForItemKey = "Serilog_ForwardedFor";
 
             private readonly IHttpContextAccessor _contextAccessor;
 
@@ -123,15 +124,15 @@ namespace Serilog
                 httpContext.Items.Add(IpAddressItemKey, ipAddressProperty);
                 logEvent.AddPropertyIfAbsent(ipAddressProperty);
 
-                var ipAddressForwaredFor = GetForwardedFor();
-                if (string.IsNullOrWhiteSpace(ipAddressForwaredFor))
+                var ipAddressForwardedFor = GetForwardedFor();
+                if (string.IsNullOrWhiteSpace(ipAddressForwardedFor))
                 {
-                    ipAddressForwaredFor = "unknown";
+                    ipAddressForwardedFor = "unknown";
                 }
 
-                var ipAddressForwaredForProperty = new LogEventProperty(IpAddressForwaredForPropertyName, new ScalarValue(ipAddressForwaredFor));
-                httpContext.Items.Add(IpAddressForwaredForItemKey, ipAddressForwaredForProperty);
-                logEvent.AddPropertyIfAbsent(ipAddressForwaredForProperty);
+                var ipAddressForwardedForProperty = new LogEventProperty(IpAddressForwardedForPropertyName, new ScalarValue(ipAddressForwardedFor));
+                httpContext.Items.Add(IpAddressForwardedForItemKey, ipAddressForwardedForProperty);
+                logEvent.AddPropertyIfAbsent(ipAddressForwardedForProperty);
             }
 
             private string GetRemoteIpAddress() => _contextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
@@ -148,3 +149,4 @@ namespace Serilog
         }
     }
 }
+#endif

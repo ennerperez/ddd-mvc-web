@@ -30,8 +30,8 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithRepository<Setting>();
-                if (collection == null || !collection.Any())
+                var collection = await Mediator.SendWithRepositoryAsync<Setting>();
+                if (collection == null || collection.Length == 0)
                 {
                     return new JsonResult(new { lastCreated = default(DateTime?), lastUpdated = default(DateTime?), items = new List<Setting>() });
                 }
@@ -50,29 +50,29 @@ namespace Web.Controllers.API
         }
 
         [SwaggerOperation("Get specific element by id")]
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
-            if (id != 0)
+            if (id == 0)
             {
-                try
-                {
-                    var collection = await Mediator.SendWithRepository<Setting>(predicate: p => p.Id == id);
-
-                    return new JsonResult(collection);
-                }
-                catch (ValidationException v)
-                {
-                    return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "{Message}", e.Message);
-                    return Problem(e.Message);
-                }
+                return new JsonResult(null);
             }
 
-            return new JsonResult(null);
+            try
+            {
+                var collection = await this.Mediator.SendWithRepositoryAsync<Setting>(predicate: p => p.Id == id);
+
+                return new JsonResult(collection);
+            }
+            catch (ValidationException v)
+            {
+                return Problem(string.Join(Environment.NewLine, v.Errors.Select(m => m.ErrorMessage)));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Message}", e.Message);
+                return Problem(e.Message);
+            }
         }
 
         [SwaggerOperation("List all using a paged list")]
@@ -81,7 +81,7 @@ namespace Web.Controllers.API
         {
             try
             {
-                var collection = await Mediator.SendWithPage<Setting>(skip: (page - 1) * size, take: size);
+                var collection = await Mediator.SendWithPageAsync<Setting>(skip: (page - 1) * size, take: size);
                 return new JsonResult(collection);
             }
             catch (ValidationException v)
@@ -123,7 +123,7 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Update an existing element by id")]
         [DisableRequestSizeLimit]
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateSettingRequest model)
         {
             if (model == null || id != model.Id)
@@ -149,7 +149,7 @@ namespace Web.Controllers.API
 
         [SwaggerOperation("Partial update an existing element by id")]
         [DisableRequestSizeLimit]
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         public async Task<IActionResult> PartialUpdate(int id, [FromBody] PartialUpdateSettingRequest model)
         {
             if (model == null || id != model.Id)
@@ -174,7 +174,7 @@ namespace Web.Controllers.API
         }
 
         [SwaggerOperation("Delete an existing element by id")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

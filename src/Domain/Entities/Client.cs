@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Domain.Abstractions;
 using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class Client : IEntity, IAuditable
+    public class Client : Entity<int>, IAuditable
     {
         public Client()
         {
@@ -18,11 +19,10 @@ namespace Domain.Entities
         public string Category { get; set; }
 
         public ICollection<Budget> Budgets { get; set; }
-        public int Id { get; set; }
 
         #region IAuditable
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
 
         #endregion
