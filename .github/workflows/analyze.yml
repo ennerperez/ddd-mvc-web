@@ -1,14 +1,17 @@
 name: Analyze
 
 on:
+  workflow_dispatch:
+  pull_request:
   push:
     branches:
       - master
       - develop
+      - feature/*
 
 jobs:
-  analyze:
-    name: Analyze
+  sonarqube:
+    name: SonarQube
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,9 +21,9 @@ jobs:
           fetch-depth: 3
       - name: Permissions
         run: chmod +x build.sh
-      - name: Analyze
+      - name: 'SonarQube Scan'
         run: ./build.sh --target Analyze --no-logo
         env:
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }} 
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

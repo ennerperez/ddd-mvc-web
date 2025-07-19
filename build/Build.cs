@@ -16,7 +16,6 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Coverlet;
-using Nuke.Common.Tools.DotCover;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.GitVersion;
@@ -760,10 +759,10 @@ public partial class Build : NukeBuild
                     .SetAdditionalParameter("sonar.cs.vscoveragexml.reportsPaths", TestsDirectory / "coverage" / "coverage.xml")
                 );
                 DotNetBuild(s => s.SetProjectFile(Solution));
-                DotCoverTasks.DotCoverCover(c => c
-                    .SetReportType(DotCoverReportType.Xml)
-                    .SetOutputFile(TestsDirectory / "coverage" / "coverage.xml")
-                );
+                // DotCoverTasks.DotCoverCover(c => c
+                //     .SetReportType(DotCoverReportType.Xml)
+                //     .SetOutputFile(TestsDirectory / "coverage" / "coverage.xml")
+                // );
                 SonarScannerTasks.SonarScannerEnd(s => s
                     .SetToken(lint.sonarQubeToken)
                 );

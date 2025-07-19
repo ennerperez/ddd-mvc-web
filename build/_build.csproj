@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"/>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
   <PropertyGroup Condition=" Exists('7za.bin') ">
@@ -48,8 +48,9 @@
       <ExcludeAssets>all</ExcludeAssets>
     </PackageDownload>
     <PackageDownload Include="dotnet-ef" Version="$(FrameworkPackagesVersion)" />
-    <PackageDownload Include="GitVersion.Tool" Version="[6.3.0]"/>
-    <PackageDownload Include="ReportGenerator" Version="[5.4.8]"/>
+    <PackageDownload Include="dotnet-sonarscanner" Version="[10.3.0]" />
+    <PackageDownload Include="GitVersion.Tool" Version="[6.3.0]" />
+    <PackageDownload Include="ReportGenerator" Version="[5.4.8]" />
   </ItemGroup>
 
 </Project>
