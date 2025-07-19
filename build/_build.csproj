@@ -23,9 +23,9 @@
 
   <ItemGroup>
     <PackageReference Include="Nuke.Common" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(FrameworkPackagesVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
     <PackageReference Include="Squid-Box.SevenZipSharp" Version="1.6.2.24" Condition="Exists('7za.bin')" />
   </ItemGroup>
 
@@ -47,7 +47,7 @@
     <PackageDownload Include="coverlet.console" Version="[6.0.4]">
       <ExcludeAssets>all</ExcludeAssets>
     </PackageDownload>
-    <PackageDownload Include="dotnet-ef" Version="$(FrameworkPackagesVersion)" />
+    <PackageDownload Include="dotnet-ef" Version="[9.0.7]" />
     <PackageDownload Include="dotnet-sonarscanner" Version="[10.3.0]" />
     <PackageDownload Include="GitVersion.Tool" Version="[6.3.0]" />
     <PackageDownload Include="ReportGenerator" Version="[5.4.8]" />

@@ -14,31 +14,35 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkPackagesVersion)">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="9.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(FrameworkPackagesVersion)">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.7" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.6" />
+    <PackageReference Update="Reqnroll" Version="2.4.1" />
+    <PackageReference Update="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="2.4.1" />
+    <PackageReference Update="Reqnroll.Tools.MsBuild.Generation" Version="2.4.1" />
+    <PackageReference Update="Reqnroll.xUnit" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup Label="ConditionalReferences">
     <PackageReference Condition="'$(UsingIdentity)' == 'true'" Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(FrameworkPackagesVersion)" />
-    <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(FrameworkPackagesVersion)" />
+    <PackageReference Condition="'$(UsingSqlite)' == 'true'" Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.7" />
+    <PackageReference Condition="'$(UsingSqlServer)' == 'true'" Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
     <PackageReference Condition="'$(UsingMariaDb)' == 'true' OR '$(UsingMySql)' == 'true'" Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Condition="'$(UsingPostgreSql)' == 'true'" Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     <PackageReference Condition="'$(UsingOracle)' == 'true'" Include="Oracle.EntityFrameworkCore" Version="7.21.12" />

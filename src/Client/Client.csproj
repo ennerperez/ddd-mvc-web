@@ -8,4 +8,13 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Refit" Version="8.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Handlers\" />
+  </ItemGroup>
+
 </Project>
